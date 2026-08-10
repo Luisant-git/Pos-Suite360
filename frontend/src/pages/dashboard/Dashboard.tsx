@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import api from '../../api';
+import { useSettings } from '../../contexts/SettingsContext';
 
 const StatCard = ({ title, value, icon: Icon, colorClass, desc }: any) => (
   <div className="bg-white border border-[#E6E9ED] shadow-sm p-4 relative flex items-center justify-between">
@@ -24,6 +25,7 @@ const StatCard = ({ title, value, icon: Icon, colorClass, desc }: any) => (
 );
 
 const Dashboard = () => {
+  const { formatCurrency } = useSettings();
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
@@ -58,24 +60,24 @@ const Dashboard = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
         <StatCard
           title="Today's Sales"
-          value={`₹${data.salesToday.toLocaleString()}`}
+          value={formatCurrency(data.salesToday)}
           desc="Today's total sales"
           icon={IndianRupee}
           colorClass="bg-[#26B99A]"
         />
         <StatCard
-          title="Purchases"
-          value={`₹${data.purchasesToday.toLocaleString()}`}
+          title="Today's Purchases"
+          value={formatCurrency(data.purchasesToday)}
           desc="Today's total purchases"
           icon={ShoppingCart}
-          colorClass="bg-[#3498DB]"
+          colorClass="bg-[#3B82F6]"
         />
         <StatCard
-          title="Expenses"
-          value={`₹${data.expensesToday.toLocaleString()}`}
+          title="Today's Expenses"
+          value={formatCurrency(data.expensesToday)}
           desc="Operational costs"
           icon={TrendingDown}
-          colorClass="bg-[#E74C3C]"
+          colorClass="bg-[#E11D48]"
         />
         <StatCard
           title="Products"
@@ -121,7 +123,7 @@ const Dashboard = () => {
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} />
                   <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 12 }} />
-                  <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12 }} tickFormatter={(val) => `₹${val}`} />
+                  <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12 }} tickFormatter={(val) => formatCurrency(val)} />
                   <Tooltip contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
                   <Area type="monotone" dataKey="sales" stroke="#3B82F6" strokeWidth={3} fillOpacity={1} fill="url(#colorSales)" />
                 </AreaChart>
@@ -152,7 +154,7 @@ const Dashboard = () => {
                       </div>
                     </div>
                     <div className="font-bold text-[#26B99A]">
-                      ₹{product.amount.toLocaleString()}
+                      {formatCurrency(product.amount)}
                     </div>
                   </li>
                 ))}

@@ -2,13 +2,15 @@ import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Search, FileText, Download, Calendar, FileDigit, Truck, CreditCard, RotateCcw, Plus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useSettings } from '../../contexts/SettingsContext';
 import api from '../../services/api';
 import ReportTabs from '../../components/ReportTabs';
 import { exportToExcel } from '../../utils/exportExcel';
 
 const PurchaseReport = () => {
   const navigate = useNavigate();
-  const [fromDate, setFromDate] = useState(new Date(new Date().setDate(1)).toISOString().split('T')[0]); // First of month
+  const { formatCurrency } = useSettings();
+  const [fromDate, setFromDate] = useState(() => new Date(new Date().setDate(1)).toISOString().split('T')[0]);
   const [toDate, setToDate] = useState(new Date().toISOString().split('T')[0]); // Today
   const [supplierId, setSupplierId] = useState('');
   const [invoiceNo, setInvoiceNo] = useState('');
@@ -46,9 +48,9 @@ const PurchaseReport = () => {
         date: new Date(p.date).toISOString().split('T')[0],
         supplierName: p.supplier?.name || '-',
         mode: p.paymentMode?.name || '-',
-        totalAmount: `RM ${Number(p.subtotal).toFixed(2)}`,
-        taxAmount: `RM ${Number(p.tax).toFixed(2)}`,
-        netAmount: `RM ${Number(p.grandTotal).toFixed(2)}`,
+        totalAmount: formatCurrency(p.subtotal),
+        taxAmount: formatCurrency(p.tax),
+        netAmount: formatCurrency(p.grandTotal),
       }));
     },
   });

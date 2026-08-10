@@ -4,8 +4,10 @@ import { Download, Box, Activity } from 'lucide-react';
 import api from '../../services/api';
 import ReportTabs from '../../components/ReportTabs';
 import { exportToExcel } from '../../utils/exportExcel';
+import { useSettings } from '../../contexts/SettingsContext';
 
 const StockReport = () => {
+  const { formatCurrency } = useSettings();
   const { data: categories = [] } = useQuery({ queryKey: ['categories'], queryFn: async () => (await api.get('/categories')).data });
   const { data: brands = [] } = useQuery({ queryKey: ['brands'], queryFn: async () => (await api.get('/brands')).data });
 
@@ -31,8 +33,8 @@ const StockReport = () => {
         brandName: p.brand?.name || '-',
         categoryName: p.category?.name || '-',
         currentQty: p.currentStock,
-        purRate: `₹${Number(p.purchaseRate).toFixed(2)}`,
-        stockValue: `₹${(Number(p.currentStock) * Number(p.purchaseRate)).toFixed(2)}`,
+        purRate: formatCurrency(p.purchaseRate),
+        stockValue: formatCurrency(Number(p.currentStock) * Number(p.purchaseRate)),
       }));
     },
   });

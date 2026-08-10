@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Search, FileText, Download, Calendar, FileDigit, Users, CreditCard, RotateCcw, Plus, Printer, MessageCircle } from 'lucide-react';
+import { Download, FileText, Search, Calendar, FileDigit, Users, CreditCard, RotateCcw, Plus, Printer, MessageCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useSettings } from '../../contexts/SettingsContext';
 import api from '../../services/api';
 import ReportTabs from '../../components/ReportTabs';
 import { exportToExcel } from '../../utils/exportExcel';
@@ -9,7 +10,8 @@ import InvoicePrintModal from '../../components/InvoicePrintModal';
 
 const SalesReport = () => {
   const navigate = useNavigate();
-  const [fromDate, setFromDate] = useState(new Date(new Date().setDate(1)).toISOString().split('T')[0]); // First of month
+  const { formatCurrency } = useSettings();
+  const [fromDate, setFromDate] = useState(() => new Date(new Date().setDate(1)).toISOString().split('T')[0]); // First of month
   const [toDate, setToDate] = useState(new Date().toISOString().split('T')[0]); // Today
   const [customerId, setCustomerId] = useState('');
   const [invoiceNo, setInvoiceNo] = useState('');
@@ -48,7 +50,7 @@ const SalesReport = () => {
         date: new Date(s.date).toISOString().split('T')[0],
         customerName: s.customer?.name || '-',
         paymentMode: s.paymentMode?.name || '-',
-        netPayable: `RM ${Number(s.grandTotal).toFixed(2)}`,
+        netPayable: formatCurrency(s.grandTotal),
       }));
     },
   });
@@ -229,14 +231,14 @@ const SalesReport = () => {
                               invoiceNo: s.invoiceNo,
                               date: s.date,
                               customer: { name: s.customerName },
-                              grandTotal: parseFloat(s.netPayable.replace('RM ', '')),
+                              grandTotal: parseFloat(s.netPayable.replace(/[^0-9.-]+/g, "")),
                               items: [
-                                { product: { code: 'PTEST100', name: 'Test Multi Filter Product' }, quantity: 1, unit: { name: 'Nos' }, rate: parseFloat(s.netPayable.replace('RM ', '')), amount: parseFloat(s.netPayable.replace('RM ', '')) }
+                                { product: { code: 'PTEST100', name: 'Test Multi Filter Product' }, quantity: 1, unit: { name: 'Nos' }, rate: parseFloat(s.netPayable.replace(/[^0-9.-]+/g, "")), amount: parseFloat(s.netPayable.replace(/[^0-9.-]+/g, "")) }
                               ]
                             });
                             setIsPrintModalOpen(true);
                           }}
-                          className="text-[#3B82F6] flex items-center gap-1 hover:underline font-medium text-[11px]"
+                          className="bg-[#3B82F6] hover:bg-[#2563EB] text-white px-2 py-1 rounded-full flex items-center gap-1 font-bold text-[11px] transition-colors"
                         >
                           <Printer size={12} /> Print
                         </button>
@@ -246,9 +248,9 @@ const SalesReport = () => {
                               invoiceNo: s.invoiceNo,
                               date: s.date,
                               customer: { name: s.customerName },
-                              grandTotal: parseFloat(s.netPayable.replace('RM ', '')),
+                              grandTotal: parseFloat(s.netPayable.replace(/[^0-9.-]+/g, "")),
                               items: [
-                                { product: { code: 'PTEST100', name: 'Test Multi Filter Product' }, quantity: 1, unit: { name: 'Nos' }, rate: parseFloat(s.netPayable.replace('RM ', '')), amount: parseFloat(s.netPayable.replace('RM ', '')) }
+                                { product: { code: 'PTEST100', name: 'Test Multi Filter Product' }, quantity: 1, unit: { name: 'Nos' }, rate: parseFloat(s.netPayable.replace(/[^0-9.-]+/g, "")), amount: parseFloat(s.netPayable.replace(/[^0-9.-]+/g, "")) }
                               ]
                             });
                             setIsPrintModalOpen(true);

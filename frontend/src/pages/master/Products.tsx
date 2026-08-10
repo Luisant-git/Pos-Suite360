@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Edit, Trash2, CheckCircle, Package, Search, Grid, Maximize, Minimize } from 'lucide-react';
+import { Edit, Trash2, CheckCircle, Package, Grid, Maximize, Minimize } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -33,7 +33,7 @@ const Products = () => {
   const [isFullTable, setIsFullTable] = useState(false);
 
   const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm<ProductFormValues>({
-    resolver: zodResolver(productSchema),
+    resolver: zodResolver(productSchema) as any,
     defaultValues: {
       code: '',
       name: '',
@@ -132,7 +132,7 @@ const Products = () => {
           </button>
         </div>
         
-        <form onSubmit={handleSubmit(onSubmit)} className="p-4 flex flex-col gap-3">
+        <form onSubmit={handleSubmit(onSubmit as any)} className="p-4 flex flex-col gap-3">
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="block text-[12px] font-bold text-[#1F2937] mb-1">Product Code *</label>

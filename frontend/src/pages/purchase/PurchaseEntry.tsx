@@ -46,8 +46,8 @@ const PurchaseEntry = () => {
   const [isSupplierModalOpen, setIsSupplierModalOpen] = useState(false);
   const [newSupplier, setNewSupplier] = useState({ name: '', phone: '', address: '' });
 
-  const { register, control, handleSubmit, watch, setValue, formState: { errors } } = useForm<PurchaseFormValues>({
-    resolver: zodResolver(purchaseSchema),
+  const { register, control, handleSubmit, watch, setValue, reset } = useForm<PurchaseFormValues>({
+    resolver: zodResolver(purchaseSchema) as any,
     defaultValues: {
       entryNo: 'Generating...',
       invoiceNo: '',
@@ -134,7 +134,7 @@ const PurchaseEntry = () => {
 
   const createMutation = useMutation({
     mutationFn: (data: PurchaseFormValues) => api.post('/purchases', data),
-    onSuccess: (res) => {
+    onSuccess: () => {
       toast.success('Purchase recorded successfully!');
       queryClient.invalidateQueries({ queryKey: ['products'] });
       queryClient.invalidateQueries({ queryKey: ['nextEntryNo'] });
@@ -210,7 +210,7 @@ const PurchaseEntry = () => {
         <div className="flex gap-2">
           <button 
             type="button"
-            onClick={handleSubmit(onSubmit)}
+            onClick={handleSubmit(onSubmit as any)}
             className="bg-[#059669] hover:bg-[#047857] text-white px-4 py-1.5 rounded flex items-center gap-2 font-bold text-[13px] transition-colors"
           >
             <CheckCircle size={16} /> SAVE PURCHASE
@@ -225,7 +225,7 @@ const PurchaseEntry = () => {
         </button>
       </div>
 
-      <form className="flex flex-col flex-1 overflow-hidden" onSubmit={handleSubmit(onSubmit)}>
+      <form className="flex flex-col flex-1 overflow-hidden" onSubmit={handleSubmit(onSubmit as any)}>
         
         {/* Header Section */}
         <div className="bg-white p-4 border-b border-[#E5E7EB] shrink-0">

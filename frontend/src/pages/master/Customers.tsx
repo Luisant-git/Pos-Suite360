@@ -28,7 +28,7 @@ const Customers = () => {
   const [isFullTable, setIsFullTable] = useState(false);
 
   const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm<CustomerFormValues>({
-    resolver: zodResolver(customerSchema),
+    resolver: zodResolver(customerSchema) as any,
     defaultValues: {
       name: '',
       contactPerson: '',
@@ -101,7 +101,7 @@ const Customers = () => {
           <h2 className="font-bold text-[14px] text-[#1E3A8A]">CUSTOMER MASTER FORM</h2>
         </div>
         
-        <form onSubmit={handleSubmit(onSubmit)} className="p-4 flex flex-col gap-3">
+        <form onSubmit={handleSubmit(onSubmit as any)} className="p-4 flex flex-col gap-3">
           
           <div>
             <label className="block text-[12px] font-bold text-[#1F2937] mb-1">Customer Name *</label>

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Edit, Trash2, CheckCircle, Tag, Grid, Maximize, Minimize } from 'lucide-react';
+import { Edit, Trash2, CheckCircle, Grid, Maximize, Minimize } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';

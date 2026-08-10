@@ -41,12 +41,13 @@ type SaleFormValues = z.infer<typeof saleSchema>;
 const POS = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const [activeTab, setActiveTab] = useState('Amount Details');
+  
   const [isCustomerModalOpen, setIsCustomerModalOpen] = useState(false);
   const [newCustomer, setNewCustomer] = useState({ name: '', phone: '', address: '' });
-
-  const { register, control, handleSubmit, watch, setValue, formState: { errors }, reset } = useForm<SaleFormValues>({
-    resolver: zodResolver(saleSchema),
+  const activeTab = 'Amount Details';
+  
+  const { register, control, handleSubmit, watch, setValue, reset } = useForm<SaleFormValues>({
+    resolver: zodResolver(saleSchema) as any,
     defaultValues: {
       date: new Date().toISOString().split('T')[0],
       invoiceNo: 'Generating...',
@@ -139,7 +140,7 @@ const POS = () => {
 
   const createMutation = useMutation({
     mutationFn: (data: SaleFormValues) => api.post('/sales', data),
-    onSuccess: (res) => {
+    onSuccess: () => {
       toast.success('Sale recorded successfully!');
       queryClient.invalidateQueries({ queryKey: ['products'] });
       queryClient.invalidateQueries({ queryKey: ['nextInvoiceNo'] });
@@ -215,7 +216,7 @@ const POS = () => {
         <div className="flex gap-2">
           <button 
             type="button"
-            onClick={handleSubmit(onSubmit)}
+            onClick={handleSubmit(onSubmit as any)}
             className="bg-[#10B981] hover:bg-[#059669] text-white px-4 py-1.5 rounded flex items-center gap-2 font-bold text-[13px] transition-colors"
           >
             <Printer size={16} /> SAVE & PRINT (F10)
@@ -236,7 +237,7 @@ const POS = () => {
         </button>
       </div>
 
-      <form className="flex flex-col flex-1 overflow-hidden" onSubmit={handleSubmit(onSubmit)}>
+      <form className="flex flex-col flex-1 overflow-hidden" onSubmit={handleSubmit(onSubmit as any)}>
         
         {/* Header Section */}
         <div className="bg-white p-4 border-b border-[#E5E7EB] shrink-0">
@@ -499,7 +500,7 @@ const POS = () => {
             )}
             {activeTab !== 'Amount Details' && (
               <div className="text-[13px] text-gray-500 italic py-4">
-                {tab} fields will go here in future updates.
+                More fields will go here in future updates.
               </div>
             )}
           </div>
@@ -510,7 +511,7 @@ const POS = () => {
               <div className="bg-[#2563EB] text-white text-[11px] font-bold px-3 py-1.5 rounded-sm flex items-center gap-1">
                 <span className="opacity-70 border-r border-[#60A5FA] pr-1 mr-1">F2</span> POS
               </div>
-              <div className="bg-[#4B5563] text-white text-[11px] font-bold px-3 py-1.5 rounded-sm flex items-center gap-1 cursor-pointer hover:bg-[#374151]" onClick={handleSubmit(onSubmit)}>
+              <div className="bg-[#4B5563] text-white text-[11px] font-bold px-3 py-1.5 rounded-sm flex items-center gap-1 cursor-pointer hover:bg-[#374151]" onClick={handleSubmit(onSubmit as any)}>
                 <span className="opacity-70 border-r border-[#9CA3AF] pr-1 mr-1">F10</span> Save & Print
               </div>
               <div className="bg-[#0891B2] text-white text-[11px] font-bold px-3 py-1.5 rounded-sm flex items-center gap-1 cursor-pointer hover:bg-[#0E7490]" onClick={() => navigate('/dashboard')}>

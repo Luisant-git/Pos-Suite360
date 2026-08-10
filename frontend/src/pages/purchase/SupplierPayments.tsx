@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Search, Save, X, RotateCcw, Filter, FileText } from 'lucide-react';
+import { Save, X, Filter, FileText } from 'lucide-react';
 import toast from 'react-hot-toast';
 import api from '../../services/api';
 
@@ -30,8 +30,8 @@ const SupplierPayments = () => {
   const [filterToDate, setFilterToDate] = useState('');
   const [currentBalance, setCurrentBalance] = useState(0);
 
-  const { register, handleSubmit, watch, setValue, reset, formState: { errors } } = useForm<PaymentFormValues>({
-    resolver: zodResolver(paymentSchema),
+  const { register, handleSubmit, watch, setValue, reset, } = useForm<PaymentFormValues>({
+    resolver: zodResolver(paymentSchema) as any,
     defaultValues: {
       paymentNo: 'Generating...',
       date: new Date().toISOString().split('T')[0],
@@ -137,7 +137,7 @@ const SupplierPayments = () => {
             <h2 className="font-bold text-[13px] text-[#1E293B]">NEW SUPPLIER PAYMENT ENTRY</h2>
           </div>
           
-          <form onSubmit={handleSubmit(onSubmit)} className="p-4 flex flex-col gap-4">
+          <form onSubmit={handleSubmit(onSubmit as any)} className="p-4 flex flex-col gap-4">
             
             <div className="grid grid-cols-2 gap-4">
               <div>

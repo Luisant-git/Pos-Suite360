@@ -28,7 +28,7 @@ const Suppliers = () => {
   const [isFullTable, setIsFullTable] = useState(false);
 
   const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm<SupplierFormValues>({
-    resolver: zodResolver(supplierSchema),
+    resolver: zodResolver(supplierSchema) as any,
     defaultValues: {
       name: '',
       contactPerson: '',
@@ -101,7 +101,7 @@ const Suppliers = () => {
           <h2 className="font-bold text-[14px]">SUPPLIER MASTER</h2>
         </div>
         
-        <form onSubmit={handleSubmit(onSubmit)} className="p-4 flex flex-col gap-3">
+        <form onSubmit={handleSubmit(onSubmit as any)} className="p-4 flex flex-col gap-3">
           
           <div>
             <label className="block text-[12px] font-bold text-[#1F2937] mb-1">Supplier Name *</label>

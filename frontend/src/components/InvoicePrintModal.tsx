@@ -1,5 +1,5 @@
 import { X, Printer } from 'lucide-react';
-import { useEffect } from 'react';
+
 
 // Basic number to words converter (for Malaysian Ringgit / general use)
 const numberToWords = (num: number): string => {

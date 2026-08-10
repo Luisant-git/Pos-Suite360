@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Plus, Search, FileText, Trash2 } from 'lucide-react';
+import { Plus, FileText, Trash2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../services/api';
 import InvoicePrintModal from '../../components/InvoicePrintModal';

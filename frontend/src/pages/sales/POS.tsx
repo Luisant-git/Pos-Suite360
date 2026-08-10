@@ -449,36 +449,41 @@ const POS = () => {
                 <div className="flex-1 flex flex-col gap-1">
                   <label className="text-[12px] font-bold text-[#4B5563]">Total Discount:</label>
                   <div className="flex gap-2">
-                    <input
-                      {...register('totalDiscountPercent')}
-                      type="number"
-                      placeholder="%"
-                      step="0.01"
-                      onChange={(e) => {
-                        register('totalDiscountPercent').onChange(e);
-                        const percent = Number(e.target.value) || 0;
-                        const amount = (watch('grossAmount') * percent) / 100;
-                        setValue('totalDiscount', Number(amount.toFixed(2)));
-                      }}
-                      className="w-1/3 px-2 py-2 border border-[#D1D5DB] rounded text-[14px] outline-none focus:border-[#3B82F6] text-center font-medium"
-                    />
-                    <input
-                      {...register('totalDiscount')}
-                      type="number"
-                      placeholder="RM Amount"
-                      step="0.01"
-                      onChange={(e) => {
-                        register('totalDiscount').onChange(e);
-                        const amt = Number(e.target.value) || 0;
-                        const grossAmt = watch('grossAmount');
-                        if (grossAmt > 0) {
-                          setValue('totalDiscountPercent', Number(((amt / grossAmt) * 100).toFixed(2)));
-                        } else {
-                          setValue('totalDiscountPercent', 0);
-                        }
-                      }}
-                      className="w-2/3 px-3 py-2 border border-[#D1D5DB] rounded text-[14px] outline-none focus:border-[#3B82F6] text-right font-medium"
-                    />
+                    <div className="relative w-1/3">
+                      <input
+                        {...register('totalDiscountPercent')}
+                        type="number"
+                        step="0.01"
+                        onChange={(e) => {
+                          register('totalDiscountPercent').onChange(e);
+                          const percent = Number(e.target.value) || 0;
+                          const amount = (watch('grossAmount') * percent) / 100;
+                          setValue('totalDiscount', Number(amount.toFixed(2)));
+                        }}
+                        className="w-full pl-2 pr-6 py-2 border border-[#D1D5DB] rounded text-[14px] outline-none focus:border-[#3B82F6] text-right font-medium"
+                      />
+                      <span className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-[13px] pointer-events-none">%</span>
+                    </div>
+                    
+                    <div className="relative w-2/3">
+                      <span className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-[13px] pointer-events-none">RM</span>
+                      <input
+                        {...register('totalDiscount')}
+                        type="number"
+                        step="0.01"
+                        onChange={(e) => {
+                          register('totalDiscount').onChange(e);
+                          const amt = Number(e.target.value) || 0;
+                          const grossAmt = watch('grossAmount');
+                          if (grossAmt > 0) {
+                            setValue('totalDiscountPercent', Number(((amt / grossAmt) * 100).toFixed(2)));
+                          } else {
+                            setValue('totalDiscountPercent', 0);
+                          }
+                        }}
+                        className="w-full pl-8 pr-3 py-2 border border-[#D1D5DB] rounded text-[14px] outline-none focus:border-[#3B82F6] text-right font-medium"
+                      />
+                    </div>
                   </div>
                 </div>
 

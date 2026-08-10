@@ -1,0 +1,318 @@
+import { useState } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { Edit, Trash2, CheckCircle, Users, Grid, Maximize, Minimize } from 'lucide-react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import api from '../../services/api';
+
+const customerSchema = z.object({
+  name: z.string().min(1, 'Customer Name is required'),
+  contactPerson: z.string().optional(),
+  phone: z.string().optional(),
+  email: z.string().email('Invalid email').optional().or(z.literal('')),
+  address: z.string().optional(), // Billing Address
+  shippingAddress: z.string().optional(),
+  openingBalance: z.number().default(0),
+  openingBalanceType: z.string().default('Dr'),
+  creditLimit: z.number().default(0),
+  creditDays: z.number().default(30),
+});
+
+type CustomerFormValues = z.infer<typeof customerSchema>;
+
+const Customers = () => {
+  const queryClient = useQueryClient();
+  const [editingId, setEditingId] = useState<number | null>(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [isFullTable, setIsFullTable] = useState(false);
+
+  const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm<CustomerFormValues>({
+    resolver: zodResolver(customerSchema),
+    defaultValues: {
+      name: '',
+      contactPerson: '',
+      phone: '',
+      email: '',
+      address: '',
+      shippingAddress: '',
+      openingBalance: 0,
+      openingBalanceType: 'Dr',
+      creditLimit: 0,
+      creditDays: 30,
+    }
+  });
+
+  const { data: customers = [], isLoading } = useQuery({ 
+    queryKey: ['customers'], 
+    queryFn: async () => (await api.get('/customers')).data 
+  });
+
+  const filteredCustomers = customers.filter((c: any) => {
+    if (searchTerm && !c.name.toLowerCase().includes(searchTerm.toLowerCase()) && !c.phone?.includes(searchTerm)) return false;
+    return true;
+  });
+
+  const mutation = useMutation({
+    mutationFn: async (data: CustomerFormValues) => {
+      if (editingId) {
+        return api.patch(`/customers/${editingId}`, data);
+      }
+      return api.post('/customers', data);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['customers'] });
+      reset();
+      setEditingId(null);
+    }
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: (id: number) => api.delete(`/customers/${id}`),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['customers'] })
+  });
+
+  const onSubmit = (data: CustomerFormValues) => {
+    mutation.mutate(data);
+  };
+
+  const handleEdit = (customer: any) => {
+    setEditingId(customer.id);
+    setValue('name', customer.name);
+    setValue('contactPerson', customer.contactPerson || '');
+    setValue('phone', customer.phone || '');
+    setValue('email', customer.email || '');
+    setValue('address', customer.address || '');
+    setValue('shippingAddress', customer.shippingAddress || '');
+    setValue('openingBalance', Number(customer.openingBalance));
+    setValue('openingBalanceType', customer.openingBalanceType || 'Dr');
+    setValue('creditLimit', Number(customer.creditLimit));
+    setValue('creditDays', Number(customer.creditDays));
+  };
+
+  return (
+    <div className="bg-[#F7F7F7] min-h-[calc(100vh-100px)] grid grid-cols-1 xl:grid-cols-3 gap-4">
+      
+      {/* Left Column: Form */}
+      {!isFullTable && (
+      <div className="xl:col-span-1 bg-white border border-[#E6E9ED] shadow-sm rounded-sm flex flex-col">
+        <div className="bg-[#EBF5FF] border-b border-[#3B82F6] px-4 py-3 flex items-center gap-2 rounded-t-sm">
+          <Users size={16} className="text-[#1E3A8A]" />
+          <h2 className="font-bold text-[14px] text-[#1E3A8A]">CUSTOMER MASTER FORM</h2>
+        </div>
+        
+        <form onSubmit={handleSubmit(onSubmit)} className="p-4 flex flex-col gap-3">
+          
+          <div>
+            <label className="block text-[12px] font-bold text-[#1F2937] mb-1">Customer Name *</label>
+            <input 
+              {...register('name')}
+              type="text" 
+              placeholder="Enter customer name"
+              className="w-full px-3 py-1.5 border border-[#ccc] rounded shadow-inner focus:border-[#3B82F6] outline-none text-[13px]"
+            />
+            {errors.name && <span className="text-red-500 text-xs mt-1 block">{errors.name.message}</span>}
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-[12px] text-[#1F2937] mb-1">Contact Person</label>
+              <input 
+                {...register('contactPerson')}
+                type="text" 
+                className="w-full px-3 py-1.5 border border-[#ccc] rounded shadow-inner focus:border-[#3B82F6] outline-none text-[13px]"
+              />
+            </div>
+            <div>
+              <label className="block text-[12px] text-[#1F2937] mb-1">Mobile Number</label>
+              <input 
+                {...register('phone')}
+                type="text" 
+                className="w-full px-3 py-1.5 border border-[#ccc] rounded shadow-inner focus:border-[#3B82F6] outline-none text-[13px]"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-[12px] text-[#1F2937] mb-1">Email Address</label>
+            <input 
+              {...register('email')}
+              type="email" 
+              className="w-full px-3 py-1.5 border border-[#ccc] rounded shadow-inner focus:border-[#3B82F6] outline-none text-[13px]"
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-[12px] text-[#1F2937] mb-1">Billing Address</label>
+              <textarea 
+                {...register('address')}
+                rows={3}
+                className="w-full px-3 py-1.5 border border-[#ccc] rounded shadow-inner focus:border-[#3B82F6] outline-none text-[13px] resize-none"
+              ></textarea>
+            </div>
+            <div>
+              <label className="block text-[12px] text-[#1F2937] mb-1">Shipping Address</label>
+              <textarea 
+                {...register('shippingAddress')}
+                rows={3}
+                className="w-full px-3 py-1.5 border border-[#ccc] rounded shadow-inner focus:border-[#3B82F6] outline-none text-[13px] resize-none"
+              ></textarea>
+            </div>
+          </div>
+
+          <div className="bg-[#F9FAFB] border border-[#E5E7EB] p-3 rounded-md">
+            <div className="grid grid-cols-2 gap-3 mb-3">
+              <div>
+                <label className="block text-[12px] text-[#1F2937] mb-1">Opening Bal</label>
+                <input 
+                  {...register('openingBalance', { valueAsNumber: true })}
+                  type="number" 
+                  className="w-full px-3 py-1.5 border border-[#ccc] rounded shadow-inner focus:border-[#3B82F6] outline-none text-[13px] text-right"
+                />
+              </div>
+              <div>
+                <label className="block text-[12px] text-[#1F2937] mb-1">Balance Type</label>
+                <select 
+                  {...register('openingBalanceType')}
+                  className="w-full px-3 py-1.5 border border-[#ccc] rounded shadow-inner focus:border-[#3B82F6] outline-none text-[13px] bg-white"
+                >
+                  <option value="Dr">Debit (Receivable)</option>
+                  <option value="Cr">Credit (Payable)</option>
+                </select>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="block text-[12px] text-[#1F2937] mb-1">Credit Limit</label>
+                <input 
+                  {...register('creditLimit', { valueAsNumber: true })}
+                  type="number" 
+                  className="w-full px-3 py-1.5 border border-[#ccc] rounded shadow-inner focus:border-[#3B82F6] outline-none text-[13px] text-right"
+                />
+              </div>
+              <div>
+                <label className="block text-[12px] text-[#1F2937] mb-1">Credit Days</label>
+                <input 
+                  {...register('creditDays', { valueAsNumber: true })}
+                  type="number" 
+                  className="w-full px-3 py-1.5 border border-[#ccc] rounded shadow-inner focus:border-[#3B82F6] outline-none text-[13px] text-right"
+                />
+              </div>
+            </div>
+          </div>
+
+          <button 
+            type="submit" 
+            disabled={mutation.isPending}
+            className="w-full bg-[#16A34A] hover:bg-[#15803D] text-white font-bold py-2.5 rounded flex justify-center items-center gap-2 mt-2 transition-colors"
+          >
+            <CheckCircle size={16} />
+            {editingId ? 'UPDATE CUSTOMER' : 'SAVE CUSTOMER (F10)'}
+          </button>
+          
+          {editingId && (
+            <button 
+              type="button" 
+              onClick={() => { reset(); setEditingId(null); }}
+              className="w-full bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 rounded flex justify-center items-center gap-2 transition-colors"
+            >
+              CANCEL EDIT
+            </button>
+          )}
+        </form>
+      </div>
+      )}
+
+      {/* Right Column: List */}
+      <div className={`${isFullTable ? 'xl:col-span-3' : 'xl:col-span-2'} bg-white border border-[#E6E9ED] shadow-sm rounded-sm overflow-hidden flex flex-col`}>
+        <div className="bg-[#EBF5FF] border-b border-[#3B82F6] px-4 py-3 flex justify-between items-center">
+          <div className="flex items-center gap-2 text-[#1E3A8A]">
+            <Grid size={16} className="text-[#1E3A8A]" />
+            <h2 className="font-bold text-[14px]">CUSTOMER LIST</h2>
+          </div>
+          <div className="flex items-center gap-3">
+            <button 
+              onClick={() => setIsFullTable(!isFullTable)}
+              className="text-[#3B82F6] hover:bg-white px-2 py-1 rounded text-[12px] font-bold flex items-center gap-1 transition-colors border border-[#3B82F6]"
+            >
+              {isFullTable ? <Minimize size={14} /> : <Maximize size={14} />}
+              {isFullTable ? 'Show Form' : 'View Full Table'}
+            </button>
+            <div className="bg-gray-500 text-white text-[11px] font-bold px-2 py-0.5 rounded-xl">
+              {filteredCustomers.length} Customers
+            </div>
+          </div>
+        </div>
+        
+        {/* Filter */}
+        <div className="p-3 border-b border-[#E6E9ED] bg-white">
+          <input 
+            type="text" 
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="Search customer by name or phone number..."
+            className="w-full px-3 py-2 border border-[#ccc] rounded outline-none text-[13px]"
+          />
+        </div>
+
+        <div className="flex-1 overflow-auto">
+          <table className="w-full text-left text-[13px] whitespace-nowrap">
+            <thead>
+              <tr className="bg-[#2A2A2A] text-white font-bold">
+                <th className="px-3 py-2.5 border-r border-[#444] text-center w-8">#</th>
+                <th className="px-3 py-2.5 border-r border-[#444]">Customer Name</th>
+                <th className="px-3 py-2.5 border-r border-[#444] text-center">Mobile</th>
+                <th className="px-3 py-2.5 border-r border-[#444]">Billing Address</th>
+                <th className="px-3 py-2.5 border-r border-[#444] text-right">Opening Bal</th>
+                <th className="px-3 py-2.5 text-center w-20">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {isLoading ? (
+                <tr><td colSpan={6} className="text-center p-4">Loading...</td></tr>
+              ) : filteredCustomers.length === 0 ? (
+                <tr><td colSpan={6} className="text-center p-4">No customers found.</td></tr>
+              ) : (
+                filteredCustomers.map((customer: any, index: number) => (
+                  <tr key={customer.id} className={`border-b border-[#E5E7EB] ${index % 2 === 0 ? 'bg-white' : 'bg-[#F9F9F9]'} hover:bg-blue-50`}>
+                    <td className="px-3 py-3 border-r border-[#E5E7EB] text-center font-bold text-gray-700">{index + 1}</td>
+                    <td className="px-3 py-3 border-r border-[#E5E7EB] font-bold text-[#3B82F6]">{customer.name}</td>
+                    <td className="px-3 py-3 border-r border-[#E5E7EB] text-center font-medium text-gray-700">{customer.phone || '-'}</td>
+                    <td className="px-3 py-3 border-r border-[#E5E7EB] text-gray-600 truncate max-w-[200px]">{customer.address || '-'}</td>
+                    <td className="px-3 py-3 border-r border-[#E5E7EB] text-right font-bold text-gray-800">
+                      RM {Number(customer.openingBalance).toFixed(2)} ({customer.openingBalanceType})
+                    </td>
+                    <td className="px-3 py-3 text-center">
+                      <div className="flex justify-center gap-2">
+                        <button 
+                          onClick={() => handleEdit(customer)}
+                          className="text-[#3B82F6] border border-[#3B82F6] rounded p-1 hover:bg-[#3B82F6] hover:text-white transition-colors"
+                        >
+                          <Edit size={12} />
+                        </button>
+                        <button 
+                          onClick={() => {
+                            if (window.confirm('Are you sure you want to delete this customer?')) {
+                              deleteMutation.mutate(customer.id);
+                            }
+                          }}
+                          className="text-[#EF4444] border border-[#EF4444] rounded p-1 hover:bg-[#EF4444] hover:text-white transition-colors"
+                        >
+                          <Trash2 size={12} />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      
+    </div>
+  );
+};
+
+export default Customers;

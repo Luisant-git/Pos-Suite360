@@ -7,6 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Save, X, Filter, FileText } from 'lucide-react';
 import toast from 'react-hot-toast';
 import api from '../../services/api';
+import { useSettings } from '../../contexts/SettingsContext';
 
 const paymentSchema = z.object({
   paymentNo: z.string(),
@@ -21,6 +22,7 @@ const paymentSchema = z.object({
 type PaymentFormValues = z.infer<typeof paymentSchema>;
 
 const SupplierPayments = () => {
+  const { formatCurrency } = useSettings();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
@@ -183,7 +185,7 @@ const SupplierPayments = () => {
               <div className="flex flex-col gap-3">
                 <div className="border border-[#CBD5E1] rounded-lg p-3 flex justify-between items-center bg-white">
                   <div className="text-[13px] font-bold text-[#475569]">
-                    Over All Outstanding Balance: <span className="text-[#E11D48] text-[15px]">RM {currentBalance.toFixed(2)}</span>
+                    Over All Outstanding Balance: <span className="text-[#E11D48] text-[15px]">{formatCurrency(currentBalance)}</span>
                   </div>
                   <button 
                     type="button"
@@ -216,9 +218,9 @@ const SupplierPayments = () => {
                             <tr key={idx} className="border-b border-[#E2E8F0] hover:bg-[#F8FAFC]">
                               <td className="px-3 py-2 font-bold text-[#1E293B]">{bill.entryNo}</td>
                               <td className="px-3 py-2 text-[#475569]">{new Date(bill.date).toISOString().split('T')[0]}</td>
-                              <td className="px-3 py-2 text-right text-[#475569]">RM {bill.total.toFixed(2)}</td>
-                              <td className="px-3 py-2 text-right text-[#10B981]">RM {bill.received.toFixed(2)}</td>
-                              <td className="px-3 py-2 text-right font-bold text-[#E11D48]">RM {bill.pending.toFixed(2)}</td>
+                              <td className="px-3 py-2 text-right text-[#475569]">{formatCurrency(bill.total)}</td>
+                              <td className="px-3 py-2 text-right text-[#10B981]">{formatCurrency(bill.received)}</td>
+                              <td className="px-3 py-2 text-right font-bold text-[#E11D48]">{formatCurrency(bill.pending)}</td>
                             </tr>
                           )) : (
                             <tr>
@@ -246,7 +248,7 @@ const SupplierPayments = () => {
               <div>
                 <label className="block text-[12px] font-bold text-[#64748B] mb-1">Remaining Balance After Payment</label>
                 <div className="w-full px-3 py-2 bg-[#F8FAFC] border border-[#E2E8F0] rounded text-[13px] font-bold text-[#1E293B]">
-                  ₹ {(currentBalance - amountToPay).toFixed(2)}
+                  {formatCurrency(currentBalance - amountToPay)}
                 </div>
               </div>
             </div>
@@ -369,7 +371,7 @@ const SupplierPayments = () => {
                           {p.paymentMode?.name}
                         </span>
                       </td>
-                      <td className="px-3 py-2 text-right font-bold text-[#E11D48]">RM {Number(p.amount).toFixed(2)}</td>
+                      <td className="px-3 py-2 text-right font-bold text-[#E11D48]">{formatCurrency(p.amount)}</td>
                     </tr>
                   ))
                 )}

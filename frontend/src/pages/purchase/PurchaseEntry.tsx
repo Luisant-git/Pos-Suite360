@@ -4,9 +4,10 @@ import { useNavigate } from 'react-router-dom';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Plus, Trash2, List, X, CheckCircle, PlusCircle } from 'lucide-react';
+import { List, Plus, Trash2, CheckCircle, PlusCircle, X } from 'lucide-react';
 import toast from 'react-hot-toast';
 import api from '../../services/api';
+import { useSettings } from '../../contexts/SettingsContext';
 import SearchableSelect from '../../components/SearchableSelect';
 
 const purchaseItemSchema = z.object({
@@ -41,6 +42,7 @@ const purchaseSchema = z.object({
 type PurchaseFormValues = z.infer<typeof purchaseSchema>;
 
 const PurchaseEntry = () => {
+  const { settings, formatCurrency } = useSettings();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [isSupplierModalOpen, setIsSupplierModalOpen] = useState(false);
@@ -427,9 +429,8 @@ const PurchaseEntry = () => {
                   />
                   <span className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-[13px] pointer-events-none">%</span>
                 </div>
-                
                 <div className="relative w-2/3">
-                  <span className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-[13px] pointer-events-none">RM</span>
+                  <span className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-[13px] pointer-events-none">{settings?.currencySymbol || 'RM'}</span>
                   <input
                     {...register('totalDiscount')}
                     type="number"
@@ -464,7 +465,7 @@ const PurchaseEntry = () => {
               <div className="flex items-center gap-4">
                 <span className="text-[16px] font-bold text-[#1F2937]">NET PURCHASE AMOUNT:</span>
                 <span className="text-[28px] font-bold text-[#059669]">
-                  ₹{watch('netAmount')?.toFixed(2) || '0.00'}
+                  {formatCurrency(watch('netAmount') || 0)}
                 </span>
               </div>
             </div>

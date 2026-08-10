@@ -4,6 +4,7 @@ import { Search, FileText, Download, Calendar, FileDigit, Users, CreditCard, Rot
 import { useNavigate } from 'react-router-dom';
 import api from '../../services/api';
 import ReportTabs from '../../components/ReportTabs';
+import { exportToExcel } from '../../utils/exportExcel';
 import InvoicePrintModal from '../../components/InvoicePrintModal';
 
 const SalesReport = () => {
@@ -23,24 +24,32 @@ const SalesReport = () => {
     queryFn: async () => (await api.get('/customers')).data 
   });
 
+  const { data: paymentModes = [] } = useQuery({ 
+    queryKey: ['paymentModes'], 
+    queryFn: async () => (await api.get('/payment-modes')).data 
+  });
+
   // Fetch Report Data
-  const { data: sales = [], isLoading } = useQuery({
-    queryKey: ['salesReport', fromDate, toDate, customerId],
+  const { data: sales = [], isLoading, refetch } = useQuery({
+    queryKey: ['salesReport', fromDate, toDate, customerId, invoiceNo, paymentMode],
     queryFn: async () => {
-      // Stub: Replace with actual report endpoint
-      return [
-        { id: 1, invoiceNo: 'INV-00118', date: '2026-08-08', customerName: 'Cash A/C', paymentMode: 'Credit', netPayable: 'RM 100.00' },
-        { id: 2, invoiceNo: 'INV-00116', date: '2026-08-08', customerName: 'Arunkarthick', paymentMode: 'Cash', netPayable: 'RM 200.00' },
-        { id: 3, invoiceNo: 'INV-00114', date: '2026-08-07', customerName: 'Cash A/C', paymentMode: 'Cash', netPayable: 'RM 105.00' },
-        { id: 4, invoiceNo: 'INV00113', date: '2026-08-07', customerName: 'Cash A/C', paymentMode: 'Cash', netPayable: 'RM 20.00' },
-        { id: 5, invoiceNo: 'INV00112', date: '2026-08-07', customerName: 'Arunkarthick', paymentMode: 'Cash', netPayable: 'RM 200.00' },
-        { id: 6, invoiceNo: 'INV00111', date: '2026-08-07', customerName: 'Cash A/C', paymentMode: 'Cash', netPayable: 'RM 40.00' },
-        { id: 7, invoiceNo: 'INV00110', date: '2026-08-07', customerName: 'Cash A/C', paymentMode: 'Cash', netPayable: 'RM 200.00' },
-        { id: 8, invoiceNo: 'INV749803', date: '2026-08-07', customerName: 'Filter Test Customer', paymentMode: 'Cash', netPayable: 'RM 100.00' },
-        { id: 9, invoiceNo: 'INV401102', date: '2026-08-07', customerName: 'Filter Test Customer', paymentMode: 'Credit', netPayable: 'RM 575.00' },
-        { id: 10, invoiceNo: 'REC-TEST-INV-1786070224', date: '2026-08-07', customerName: 'Report Test Customer', paymentMode: 'Credit', netPayable: 'RM 1200.00' },
-        { id: 11, invoiceNo: 'INV451570', date: '2026-08-07', customerName: 'Test Customer 339', paymentMode: 'Credit', netPayable: 'RM 2405.00' },
-      ]; 
+      const { data } = await api.get(`/sales`, { 
+        params: { 
+          fromDate, 
+          toDate, 
+          customerId: customerId || undefined,
+          invoiceNo: invoiceNo || undefined,
+          paymentModeId: paymentMode || undefined,
+        } 
+      });
+      return data.map((s: any) => ({
+        id: s.id,
+        invoiceNo: s.invoiceNo,
+        date: new Date(s.date).toISOString().split('T')[0],
+        customerName: s.customer?.name || '-',
+        paymentMode: s.paymentMode?.name || '-',
+        netPayable: `RM ${Number(s.grandTotal).toFixed(2)}`,
+      }));
     },
   });
 
@@ -112,9 +121,9 @@ const SalesReport = () => {
               className="w-full px-3 py-1.5 border border-[#CBD5E1] rounded outline-none text-[13px] text-[#334155] bg-white focus:border-[#3B82F6]"
             >
               <option value="">All Payment Modes</option>
-              <option value="Cash">Cash</option>
-              <option value="Card">Card</option>
-              <option value="Credit">Credit</option>
+              {paymentModes.map((pm: any) => (
+                <option key={pm.id} value={pm.id}>{pm.name}</option>
+              ))}
             </select>
           </div>
 
@@ -122,16 +131,30 @@ const SalesReport = () => {
 
         <div className="flex justify-between items-center pt-2 border-t border-dashed border-[#E2E8F0]">
           <div className="flex items-center gap-3">
-            <button className="bg-[#0F172A] hover:bg-[#1E293B] text-white px-4 py-1.5 rounded-md flex items-center gap-2 text-[13px] font-bold transition-colors">
+            <button onClick={() => refetch()} className="bg-[#0F172A] hover:bg-[#1E293B] text-white px-4 py-1.5 rounded-md flex items-center gap-2 text-[13px] font-bold transition-colors">
               <Search size={14} /> Apply Filter
             </button>
-            <button className="text-[#64748B] hover:text-[#334155] flex items-center gap-1 text-[13px] font-bold transition-colors">
+            <button onClick={() => {
+              setFromDate(new Date(new Date().setDate(1)).toISOString().split('T')[0]);
+              setToDate(new Date().toISOString().split('T')[0]);
+              setCustomerId('');
+              setInvoiceNo('');
+              setPaymentMode('');
+              setQuickSearch('');
+            }} className="text-[#64748B] hover:text-[#334155] flex items-center gap-1 text-[13px] font-bold transition-colors">
               <RotateCcw size={14} /> Reset Filters
             </button>
           </div>
           <div className="flex items-center gap-2">
-            <button className="text-[#3B82F6] hover:bg-[#EFF6FF] px-3 py-1 rounded text-[12px] font-bold transition-colors">Today</button>
-            <button className="text-[#3B82F6] hover:bg-[#EFF6FF] px-3 py-1 rounded text-[12px] font-bold transition-colors">This Month</button>
+            <button onClick={() => {
+              const today = new Date().toISOString().split('T')[0];
+              setFromDate(today);
+              setToDate(today);
+            }} className="text-[#3B82F6] hover:bg-[#EFF6FF] px-3 py-1 rounded text-[12px] font-bold transition-colors">Today</button>
+            <button onClick={() => {
+              setFromDate(new Date(new Date().setDate(1)).toISOString().split('T')[0]);
+              setToDate(new Date().toISOString().split('T')[0]);
+            }} className="text-[#3B82F6] hover:bg-[#EFF6FF] px-3 py-1 rounded text-[12px] font-bold transition-colors">This Month</button>
           </div>
         </div>
       </div>
@@ -154,8 +177,11 @@ const SalesReport = () => {
                 className="pl-8 pr-3 py-1.5 border border-[#CBD5E1] rounded outline-none text-[12px] w-64 focus:border-[#3B82F6]"
               />
             </div>
-            <button className="bg-[#10B981] hover:bg-[#059669] text-white px-3 py-1.5 rounded flex items-center gap-1.5 text-[12px] font-bold transition-colors">
-              <Download size={14} /> Export Excel / CSV
+            <button 
+              onClick={() => exportToExcel(sales, `Sales_Report_${fromDate}_to_${toDate}`)}
+              className="bg-[#10B981] hover:bg-[#059669] text-white px-3 py-1.5 rounded flex items-center gap-1.5 text-[12px] font-bold transition-colors"
+            >
+              <Download size={14} /> Export Excel
             </button>
             <button 
               onClick={() => navigate('/sales/pos')}

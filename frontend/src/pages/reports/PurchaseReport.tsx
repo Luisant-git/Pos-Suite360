@@ -4,6 +4,7 @@ import { Search, FileText, Download, Calendar, FileDigit, Truck, CreditCard, Rot
 import { useNavigate } from 'react-router-dom';
 import api from '../../services/api';
 import ReportTabs from '../../components/ReportTabs';
+import { exportToExcel } from '../../utils/exportExcel';
 
 const PurchaseReport = () => {
   const navigate = useNavigate();
@@ -20,21 +21,35 @@ const PurchaseReport = () => {
     queryFn: async () => (await api.get('/suppliers')).data 
   });
 
+  const { data: paymentModes = [] } = useQuery({ 
+    queryKey: ['paymentModes'], 
+    queryFn: async () => (await api.get('/payment-modes')).data 
+  });
+
   // Fetch Report Data
-  const { data: purchases = [], isLoading } = useQuery({
-    queryKey: ['purchaseReport', fromDate, toDate, supplierId],
+  const { data: purchases = [], isLoading, refetch } = useQuery({
+    queryKey: ['purchaseReport', fromDate, toDate, supplierId, invoiceNo, paymentMode],
     queryFn: async () => {
-      // Stub: Replace with actual report endpoint
-      // const { data } = await api.get(`/reports/purchases`, { params: { fromDate, toDate, supplierId } });
-      return [
-        { id: 1, entryNo: 'PUR-537624', invoiceNo: '-', date: '2026-08-08', supplierName: 'BASKAR & CO', mode: 'Cash', totalAmount: 'RM 100.00', taxAmount: 'RM 0.00', netAmount: 'RM 100.00' },
-        { id: 2, entryNo: 'PUR-377930', invoiceNo: '-', date: '2026-08-07', supplierName: 'Filter Test Supplier', mode: 'Cash', totalAmount: 'RM 3050.00', taxAmount: 'RM 0.00', netAmount: 'RM 3050.00' },
-        { id: 3, entryNo: 'PURTEST427', invoiceNo: 'INV-V1', date: '2026-08-05', supplierName: 'Filter Test Supplier', mode: 'Card', totalAmount: 'RM 0.00', taxAmount: 'RM 0.00', netAmount: 'RM 50.00' },
-        { id: 4, entryNo: 'PURTEST913', invoiceNo: 'INV-V1', date: '2026-08-05', supplierName: 'Filter Test Supplier', mode: 'Card', totalAmount: 'RM 0.00', taxAmount: 'RM 0.00', netAmount: 'RM 50.00' },
-        { id: 5, entryNo: 'PUR-538984', invoiceNo: '232', date: '2026-08-04', supplierName: 'BASKAR & CO', mode: 'Credit', totalAmount: 'RM 420.00', taxAmount: 'RM 0.00', netAmount: 'RM 420.00' },
-        { id: 6, entryNo: 'PURTEST3113', invoiceNo: 'INV123', date: '2026-08-04', supplierName: 'Test Supplier 802', mode: 'Credit', totalAmount: 'RM 250.00', taxAmount: 'RM 0.00', netAmount: 'RM 250.00' },
-        { id: 7, entryNo: 'PUR-892736', invoiceNo: '-', date: '2026-08-04', supplierName: 'BASKAR & CO', mode: 'Credit', totalAmount: 'RM 875.00', taxAmount: 'RM 0.00', netAmount: 'RM 875.00' },
-      ]; 
+      const { data } = await api.get(`/purchases`, { 
+        params: { 
+          fromDate, 
+          toDate, 
+          supplierId: supplierId || undefined,
+          invoiceNo: invoiceNo || undefined,
+          paymentModeId: paymentMode || undefined,
+        } 
+      });
+      return data.map((p: any) => ({
+        id: p.id,
+        entryNo: `PUR-${p.id.toString().padStart(6, '0')}`,
+        invoiceNo: p.invoiceNo || '-',
+        date: new Date(p.date).toISOString().split('T')[0],
+        supplierName: p.supplier?.name || '-',
+        mode: p.paymentMode?.name || '-',
+        totalAmount: `RM ${Number(p.subtotal).toFixed(2)}`,
+        taxAmount: `RM ${Number(p.tax).toFixed(2)}`,
+        netAmount: `RM ${Number(p.grandTotal).toFixed(2)}`,
+      }));
     },
   });
 
@@ -106,9 +121,9 @@ const PurchaseReport = () => {
               className="w-full px-3 py-1.5 border border-[#CBD5E1] rounded outline-none text-[13px] text-[#334155] bg-white focus:border-[#3B82F6]"
             >
               <option value="">All Payment Modes</option>
-              <option value="Cash">Cash</option>
-              <option value="Card">Card</option>
-              <option value="Credit">Credit</option>
+              {paymentModes.map((pm: any) => (
+                <option key={pm.id} value={pm.id}>{pm.name}</option>
+              ))}
             </select>
           </div>
 
@@ -116,16 +131,30 @@ const PurchaseReport = () => {
 
         <div className="flex justify-between items-center pt-2 border-t border-dashed border-[#E2E8F0]">
           <div className="flex items-center gap-3">
-            <button className="bg-[#0F172A] hover:bg-[#1E293B] text-white px-4 py-1.5 rounded-md flex items-center gap-2 text-[13px] font-bold transition-colors">
+            <button onClick={() => refetch()} className="bg-[#0F172A] hover:bg-[#1E293B] text-white px-4 py-1.5 rounded-md flex items-center gap-2 text-[13px] font-bold transition-colors">
               <Search size={14} /> Apply Filter
             </button>
-            <button className="text-[#64748B] hover:text-[#334155] flex items-center gap-1 text-[13px] font-bold transition-colors">
+            <button onClick={() => {
+              setFromDate(new Date(new Date().setDate(1)).toISOString().split('T')[0]);
+              setToDate(new Date().toISOString().split('T')[0]);
+              setSupplierId('');
+              setInvoiceNo('');
+              setPaymentMode('');
+              setQuickSearch('');
+            }} className="text-[#64748B] hover:text-[#334155] flex items-center gap-1 text-[13px] font-bold transition-colors">
               <RotateCcw size={14} /> Reset Filters
             </button>
           </div>
           <div className="flex items-center gap-2">
-            <button className="text-[#3B82F6] hover:bg-[#EFF6FF] px-3 py-1 rounded text-[12px] font-bold transition-colors">Today</button>
-            <button className="text-[#3B82F6] hover:bg-[#EFF6FF] px-3 py-1 rounded text-[12px] font-bold transition-colors">This Month</button>
+            <button onClick={() => {
+              const today = new Date().toISOString().split('T')[0];
+              setFromDate(today);
+              setToDate(today);
+            }} className="text-[#3B82F6] hover:bg-[#EFF6FF] px-3 py-1 rounded text-[12px] font-bold transition-colors">Today</button>
+            <button onClick={() => {
+              setFromDate(new Date(new Date().setDate(1)).toISOString().split('T')[0]);
+              setToDate(new Date().toISOString().split('T')[0]);
+            }} className="text-[#3B82F6] hover:bg-[#EFF6FF] px-3 py-1 rounded text-[12px] font-bold transition-colors">This Month</button>
           </div>
         </div>
       </div>
@@ -148,8 +177,11 @@ const PurchaseReport = () => {
                 className="pl-8 pr-3 py-1.5 border border-[#CBD5E1] rounded outline-none text-[12px] w-64 focus:border-[#3B82F6]"
               />
             </div>
-            <button className="bg-[#10B981] hover:bg-[#059669] text-white px-3 py-1.5 rounded flex items-center gap-1.5 text-[12px] font-bold transition-colors">
-              <Download size={14} /> Export Excel / CSV
+            <button 
+              onClick={() => exportToExcel(purchases, `Purchase_Report_${fromDate}_to_${toDate}`)}
+              className="bg-[#10B981] hover:bg-[#059669] text-white px-3 py-1.5 rounded flex items-center gap-1.5 text-[12px] font-bold transition-colors"
+            >
+              <Download size={14} /> Export Excel
             </button>
             <button 
               onClick={() => navigate('/purchase/new')}

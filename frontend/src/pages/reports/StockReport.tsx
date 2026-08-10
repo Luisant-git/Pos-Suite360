@@ -3,26 +3,37 @@ import { useQuery } from '@tanstack/react-query';
 import { Download, Box, Activity } from 'lucide-react';
 import api from '../../services/api';
 import ReportTabs from '../../components/ReportTabs';
+import { exportToExcel } from '../../utils/exportExcel';
 
 const StockReport = () => {
-  const [categoryId] = useState('');
-  const [brandId] = useState('');
+  const { data: categories = [] } = useQuery({ queryKey: ['categories'], queryFn: async () => (await api.get('/categories')).data });
+  const { data: brands = [] } = useQuery({ queryKey: ['brands'], queryFn: async () => (await api.get('/brands')).data });
+
+  const [categoryId, setCategoryId] = useState('');
+  const [brandId, setBrandId] = useState('');
+  const [quickSearch, setQuickSearch] = useState('');
 
   // Fetch Stock Data
-  const { data: products = [], isLoading } = useQuery({
-    queryKey: ['stockReport', categoryId, brandId],
+  const { data: products = [], isLoading, refetch } = useQuery({
+    queryKey: ['stockReport', categoryId, brandId, quickSearch],
     queryFn: async () => {
-      // Stub: Replace with actual report endpoint
-      return [
-        { id: 1, code: 'P2113', name: '3 ROSES TEA POWDER(100G)', brandName: '-', categoryName: 'GROCERY', currentQty: '63', purRate: '₹80.00', stockValue: '₹5040.00' },
-        { id: 2, code: 'P5570', name: 'CHAKRA GOLD TEA POWDER', brandName: '-', categoryName: 'GROCERY', currentQty: '73', purRate: '₹60.00', stockValue: '₹4380.00' },
-        { id: 3, code: 'P1286', name: 'HAMAM SOAP(100G)', brandName: '-', categoryName: 'GROCERY', currentQty: '1', purRate: '₹55.00', stockValue: '₹55.00' },
-        { id: 4, code: 'PTEST459', name: 'Test Multi Filter Product', brandName: 'TestBrand_1785933914', categoryName: 'TestCat_1785933914', currentQty: '152', purRate: '₹10.00', stockValue: '₹1520.00' },
-        { id: 5, code: 'PTEST494', name: 'Test Multi Filter Product', brandName: 'TestBrand_1785933925', categoryName: 'TestCat_1785933925', currentQty: '33', purRate: '₹10.00', stockValue: '₹330.00' },
-        { id: 6, code: 'PTEST100', name: 'Test Multi Filter Product', brandName: 'TestBrand_1785933938', categoryName: 'TestCat_1785933938', currentQty: '14', purRate: '₹10.00', stockValue: '₹140.00' },
-        { id: 7, code: 'PTEST292', name: 'Test Product', brandName: 'Test Brand 836', categoryName: 'Test Cat 484', currentQty: '4', purRate: '₹50.00', stockValue: '₹200.00' },
-        { id: 8, code: 'PTEST837', name: 'Test Product', brandName: 'Test Brand 471', categoryName: 'Test Cat 993', currentQty: '0', purRate: '₹50.00', stockValue: '₹0.00' },
-      ]; 
+      const { data } = await api.get('/products', {
+        params: {
+          categoryId: categoryId || undefined,
+          brandId: brandId || undefined,
+          search: quickSearch || undefined,
+        }
+      });
+      return data.map((p: any) => ({
+        id: p.id,
+        code: p.code,
+        name: p.name,
+        brandName: p.brand?.name || '-',
+        categoryName: p.category?.name || '-',
+        currentQty: p.currentStock,
+        purRate: `₹${Number(p.purchaseRate).toFixed(2)}`,
+        stockValue: `₹${(Number(p.currentStock) * Number(p.purchaseRate)).toFixed(2)}`,
+      }));
     },
   });
 
@@ -30,6 +41,62 @@ const StockReport = () => {
     <div className="bg-[#F8FAFC] min-h-[calc(100vh-100px)] p-4">
       
       <ReportTabs />
+
+      {/* Filter Section */}
+      <div className="bg-white border border-[#E2E8F0] shadow-sm rounded-md mb-4 p-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end mb-4">
+          <div>
+            <label className="flex items-center gap-1 text-[12px] text-[#64748B] mb-1 font-bold">Category</label>
+            <select
+              value={categoryId}
+              onChange={(e) => setCategoryId(e.target.value)}
+              className="w-full px-3 py-1.5 border border-[#CBD5E1] rounded outline-none text-[13px] text-[#334155] bg-white focus:border-[#3B82F6]"
+            >
+              <option value="">All Categories</option>
+              {categories.map((c: any) => (
+                <option key={c.id} value={c.id}>{c.name}</option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label className="flex items-center gap-1 text-[12px] text-[#64748B] mb-1 font-bold">Brand</label>
+            <select
+              value={brandId}
+              onChange={(e) => setBrandId(e.target.value)}
+              className="w-full px-3 py-1.5 border border-[#CBD5E1] rounded outline-none text-[13px] text-[#334155] bg-white focus:border-[#3B82F6]"
+            >
+              <option value="">All Brands</option>
+              {brands.map((b: any) => (
+                <option key={b.id} value={b.id}>{b.name}</option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label className="flex items-center gap-1 text-[12px] text-[#64748B] mb-1 font-bold">Search Product</label>
+            <input 
+              type="text" 
+              value={quickSearch}
+              onChange={(e) => setQuickSearch(e.target.value)}
+              placeholder="Search by name or code..."
+              className="w-full px-3 py-1.5 border border-[#CBD5E1] rounded outline-none text-[13px] text-[#334155] focus:border-[#3B82F6]"
+            />
+          </div>
+        </div>
+        <div className="flex justify-between items-center pt-2 border-t border-dashed border-[#E2E8F0]">
+          <div className="flex items-center gap-3">
+            <button onClick={() => refetch()} className="bg-[#0F172A] hover:bg-[#1E293B] text-white px-4 py-1.5 rounded-md flex items-center gap-2 text-[13px] font-bold transition-colors">
+              Apply Filter
+            </button>
+            <button onClick={() => {
+              setCategoryId('');
+              setBrandId('');
+              setQuickSearch('');
+            }} className="text-[#64748B] hover:text-[#334155] flex items-center gap-1 text-[13px] font-bold transition-colors">
+              Reset Filters
+            </button>
+          </div>
+        </div>
+      </div>
 
       {/* Report Table Section */}
       <div className="bg-white border border-[#E2E8F0] shadow-sm rounded-md overflow-hidden flex flex-col">
@@ -39,8 +106,11 @@ const StockReport = () => {
             <h2 className="font-bold text-[13px] tracking-wide text-[#334155]">STOCK AS ON DATE REPORT</h2>
           </div>
           <div className="flex items-center gap-3">
-            <button className="bg-[#10B981] hover:bg-[#059669] text-white px-3 py-1.5 rounded flex items-center gap-1.5 text-[12px] font-bold transition-colors">
-              <Download size={14} /> Export Excel / CSV
+            <button 
+              onClick={() => exportToExcel(products, 'Stock_Report')}
+              className="bg-[#10B981] hover:bg-[#059669] text-white px-3 py-1.5 rounded flex items-center gap-1.5 text-[12px] font-bold transition-colors"
+            >
+              <Download size={14} /> Export Excel
             </button>
             <button className="bg-[#64748B] hover:bg-[#475569] text-white px-3 py-1.5 rounded flex items-center gap-1.5 text-[12px] font-bold transition-colors">
               <Activity size={14} /> Live Inventory Valuation

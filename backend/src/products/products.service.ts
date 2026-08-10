@@ -13,8 +13,22 @@ export class ProductsService {
     });
   }
 
-  findAll() {
+  findAll(query?: any) {
+    const where: any = {};
+    if (query?.categoryId) {
+      where.categoryId = Number(query.categoryId);
+    }
+    if (query?.brandId) {
+      where.brandId = Number(query.brandId);
+    }
+    if (query?.search) {
+      where.OR = [
+        { name: { contains: query.search, mode: 'insensitive' } },
+        { code: { contains: query.search, mode: 'insensitive' } },
+      ];
+    }
     return this.prisma.product.findMany({
+      where,
       orderBy: { id: 'desc' },
       include: {
         category: true,

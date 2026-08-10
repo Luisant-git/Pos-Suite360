@@ -5,7 +5,9 @@ import { useForm, useFieldArray } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Plus, Trash2, List, X, CheckCircle, PlusCircle } from 'lucide-react';
+import toast from 'react-hot-toast';
 import api from '../../services/api';
+import SearchableSelect from '../../components/SearchableSelect';
 
 const purchaseItemSchema = z.object({
   productId: z.coerce.number().min(1, 'Product is required').or(z.literal(0)),
@@ -29,6 +31,7 @@ const purchaseSchema = z.object({
   
   totalAmount: z.coerce.number(),
   totalDiscount: z.coerce.number(),
+  totalDiscountPercent: z.coerce.number().optional(),
   roundOff: z.coerce.number(),
   netAmount: z.coerce.number(),
 
@@ -40,17 +43,20 @@ type PurchaseFormValues = z.infer<typeof purchaseSchema>;
 const PurchaseEntry = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const [isSupplierModalOpen, setIsSupplierModalOpen] = useState(false);
+  const [newSupplier, setNewSupplier] = useState({ name: '', phone: '', address: '' });
 
   const { register, control, handleSubmit, watch, setValue, formState: { errors } } = useForm<PurchaseFormValues>({
     resolver: zodResolver(purchaseSchema),
     defaultValues: {
-      entryNo: `PUR-${Math.floor(100000 + Math.random() * 900000)}`,
+      entryNo: 'Generating...',
       invoiceNo: '',
       supplierId: 0,
       date: new Date().toISOString().split('T')[0],
       paymentModeId: 0,
       items: [{ productId: 0, quantity: 1, unit: 'Nos', pRate: 0, wRate: 0, sRate: 0, mrp: 0, discPercent: 0, discAmt: 0, total: 0 }],
       totalAmount: 0,
+      totalDiscountPercent: 0,
       totalDiscount: 0,
       roundOff: 0,
       netAmount: 0
@@ -62,10 +68,18 @@ const PurchaseEntry = () => {
     name: "items"
   });
 
-  // Fetch Masters
+  // Fetch Masters & Next Entry No
   const { data: suppliers = [] } = useQuery({ queryKey: ['suppliers'], queryFn: async () => (await api.get('/suppliers')).data });
   const { data: products = [] } = useQuery({ queryKey: ['products'], queryFn: async () => (await api.get('/products')).data });
   const { data: paymentModes = [] } = useQuery({ queryKey: ['paymentModes'], queryFn: async () => (await api.get('/payment-modes')).data });
+  const { data: nextEntryData } = useQuery({ queryKey: ['nextEntryNo'], queryFn: async () => (await api.get('/purchases/next-entry-no')).data });
+
+  // Update default entry no
+  useEffect(() => {
+    if (nextEntryData?.entryNo) {
+      setValue('entryNo', nextEntryData.entryNo);
+    }
+  }, [nextEntryData, setValue]);
 
   // Watch values for calculation
   const items = watch('items');
@@ -120,22 +134,76 @@ const PurchaseEntry = () => {
 
   const createMutation = useMutation({
     mutationFn: (data: PurchaseFormValues) => api.post('/purchases', data),
-    onSuccess: () => {
-      alert('Purchase recorded successfully!');
+    onSuccess: (res) => {
+      toast.success('Purchase recorded successfully!');
       queryClient.invalidateQueries({ queryKey: ['products'] });
+      queryClient.invalidateQueries({ queryKey: ['nextEntryNo'] });
+      reset();
       navigate('/purchase');
     },
-    onError: () => {
-      alert('Note: The backend endpoint POST /purchases needs to be implemented first! But the UI is fully functional.');
+    onError: (error) => {
+      console.error(error);
+      toast.error('Failed to record purchase. Please check your inputs.');
     }
   });
 
   const onSubmit = (data: PurchaseFormValues) => {
-    createMutation.mutate(data);
+    if (!data.supplierId) {
+      toast.error('Please select a Supplier before saving.');
+      return;
+    }
+    if (!data.paymentModeId) {
+      toast.error('Please select a Payment Mode before saving.');
+      return;
+    }
+    
+    const validItems = data.items.filter(item => item.productId > 0);
+    if (validItems.length === 0) {
+      toast.error('Please add at least one product before saving.');
+      return;
+    }
+
+    const payload = {
+      ...data,
+      invoiceNo: data.entryNo,
+      subtotal: data.totalAmount,
+      discount: data.totalDiscount,
+      tax: 0,
+      grandTotal: data.netAmount,
+      items: validItems.map(item => ({
+        productId: item.productId,
+        quantity: item.quantity,
+        rate: item.pRate,
+        tax: 0,
+        amount: item.total,
+      }))
+    };
+
+    createMutation.mutate(payload as any);
+  };
+
+  const addSupplierMutation = useMutation({
+    mutationFn: (data: any) => api.post('/suppliers', data),
+    onSuccess: (res) => {
+      queryClient.invalidateQueries({ queryKey: ['suppliers'] });
+      setIsSupplierModalOpen(false);
+      setNewSupplier({ name: '', phone: '', address: '' });
+      if (res.data && res.data.id) {
+        setValue('supplierId', res.data.id);
+      }
+    },
+    onError: () => {
+      alert('Failed to add supplier.');
+    }
+  });
+
+  const handleQuickAddSupplier = () => {
+    if (!newSupplier.name) return;
+    addSupplierMutation.mutate(newSupplier);
   };
 
   return (
-    <div className="bg-[#F3F4F6] min-h-screen flex flex-col font-sans">
+    <div className="absolute inset-0 bg-[#F3F4F6] flex flex-col font-sans overflow-hidden z-10">
       
       {/* Top Bar */}
       <div className="bg-[#0B355B] text-white px-4 py-2 flex justify-between items-center shrink-0">
@@ -157,7 +225,7 @@ const PurchaseEntry = () => {
         </button>
       </div>
 
-      <form className="flex flex-col flex-1" onSubmit={handleSubmit(onSubmit)}>
+      <form className="flex flex-col flex-1 overflow-hidden" onSubmit={handleSubmit(onSubmit)}>
         
         {/* Header Section */}
         <div className="bg-white p-4 border-b border-[#E5E7EB] shrink-0">
@@ -185,17 +253,18 @@ const PurchaseEntry = () => {
 
             <div className="flex-[2]">
               <label className="block text-[11px] font-bold text-[#1F2937] mb-1">Supplier Name (Searchable Dropdown) *</label>
-              <select
-                {...register('supplierId')}
-                className="w-full px-2 py-1.5 border border-[#D1D5DB] rounded text-[13px] outline-none focus:border-[#3B82F6] bg-white"
-              >
-                <option value="0">Click or type supplier name / mobile...</option>
-                {suppliers.map((s: any) => (
-                  <option key={s.id} value={s.id}>{s.name} - {s.phone}</option>
-                ))}
-              </select>
+              <div className="flex items-center gap-1">
+                <SearchableSelect
+                  value={watch('supplierId')}
+                  onChange={(val) => setValue('supplierId', Number(val))}
+                  options={[
+                    { label: 'Click or type supplier name / phone...', value: 0 },
+                    ...suppliers.map((s: any) => ({ label: `${s.name} - ${s.phone || ''}`, value: s.id }))
+                  ]}
+                />
+              </div>
               <div className="flex justify-between mt-1">
-                <button type="button" className="text-[#059669] text-[12px] font-medium flex items-center gap-1 hover:underline">
+                <button type="button" onClick={() => setIsSupplierModalOpen(true)} className="bg-[#059669] hover:bg-[#047857] text-white px-2 py-1 rounded transition-colors flex items-center gap-1 text-[11px] font-bold">
                   <Plus size={12} /> Add Supplier
                 </button>
                 <span className="text-[11px] text-[#6B7280]">
@@ -219,7 +288,7 @@ const PurchaseEntry = () => {
                 {...register('paymentModeId')}
                 className="w-full px-2 py-1.5 border border-[#D1D5DB] rounded text-[13px] outline-none focus:border-[#3B82F6] bg-white"
               >
-                <option value="0">Select</option>
+                <option value="0">Select Payment Mode...</option>
                 {paymentModes.map((m: any) => (
                   <option key={m.id} value={m.id}>{m.name}</option>
                 ))}
@@ -342,12 +411,38 @@ const PurchaseEntry = () => {
 
             <div className="flex-1 flex flex-col gap-1">
               <label className="text-[12px] font-bold text-[#4B5563]">Total Discount:</label>
-              <input
-                {...register('totalDiscount')}
-                type="number"
-                step="0.01"
-                className="w-full px-3 py-2 border border-[#D1D5DB] rounded text-[14px] outline-none focus:border-[#3B82F6] text-right font-medium"
-              />
+              <div className="flex gap-2">
+                <input
+                  {...register('totalDiscountPercent')}
+                  type="number"
+                  placeholder="%"
+                  step="0.01"
+                  onChange={(e) => {
+                    register('totalDiscountPercent').onChange(e);
+                    const percent = Number(e.target.value) || 0;
+                    const amount = (watch('totalAmount') * percent) / 100;
+                    setValue('totalDiscount', Number(amount.toFixed(2)));
+                  }}
+                  className="w-1/3 px-2 py-2 border border-[#D1D5DB] rounded text-[14px] outline-none focus:border-[#3B82F6] text-center font-medium"
+                />
+                <input
+                  {...register('totalDiscount')}
+                  type="number"
+                  placeholder="₹ Amount"
+                  step="0.01"
+                  onChange={(e) => {
+                    register('totalDiscount').onChange(e);
+                    const amt = Number(e.target.value) || 0;
+                    const totalAmt = watch('totalAmount');
+                    if (totalAmt > 0) {
+                      setValue('totalDiscountPercent', Number(((amt / totalAmt) * 100).toFixed(2)));
+                    } else {
+                      setValue('totalDiscountPercent', 0);
+                    }
+                  }}
+                  className="w-2/3 px-3 py-2 border border-[#D1D5DB] rounded text-[14px] outline-none focus:border-[#3B82F6] text-right font-medium"
+                />
+              </div>
             </div>
 
             <div className="flex-1 flex flex-col gap-1">
@@ -373,6 +468,61 @@ const PurchaseEntry = () => {
         </div>
 
       </form>
+
+      {/* Quick Add Supplier Modal */}
+      {isSupplierModalOpen && (
+        <div className="fixed inset-0 bg-black/50 z-[100] flex items-center justify-center p-4">
+          <div className="bg-white rounded shadow-lg w-full max-w-md overflow-hidden flex flex-col">
+            <div className="bg-[#059669] text-white px-4 py-3 flex justify-between items-center">
+              <div className="flex items-center gap-2 font-bold text-[15px]">
+                <Plus size={18} /> Quick Add New Supplier
+              </div>
+              <button type="button" onClick={() => setIsSupplierModalOpen(false)} className="hover:text-gray-200">
+                <X size={18} />
+              </button>
+            </div>
+            <div className="p-4 flex flex-col gap-4">
+              <div>
+                <label className="block text-[13px] font-bold text-[#1F2937] mb-1">Supplier Name *</label>
+                <input 
+                  type="text" 
+                  value={newSupplier.name}
+                  onChange={(e) => setNewSupplier({...newSupplier, name: e.target.value})}
+                  className="w-full px-3 py-2 border border-[#D1D5DB] rounded text-[13px] outline-none focus:border-[#3B82F6]" 
+                />
+              </div>
+              <div>
+                <label className="block text-[13px] text-[#4B5563] mb-1">Mobile Number</label>
+                <input 
+                  type="text" 
+                  value={newSupplier.phone}
+                  onChange={(e) => setNewSupplier({...newSupplier, phone: e.target.value})}
+                  className="w-full px-3 py-2 border border-[#D1D5DB] rounded text-[13px] outline-none focus:border-[#3B82F6]" 
+                />
+              </div>
+              <div>
+                <label className="block text-[13px] text-[#4B5563] mb-1">Address</label>
+                <textarea 
+                  value={newSupplier.address}
+                  onChange={(e) => setNewSupplier({...newSupplier, address: e.target.value})}
+                  className="w-full px-3 py-2 border border-[#D1D5DB] rounded text-[13px] outline-none focus:border-[#3B82F6] min-h-[80px]" 
+                />
+              </div>
+            </div>
+            <div className="p-4 bg-white pt-2 border-none pb-5">
+              <button 
+                type="button"
+                onClick={handleQuickAddSupplier}
+                disabled={!newSupplier.name || addSupplierMutation.isPending}
+                className="w-full bg-[#059669] hover:bg-[#047857] text-white py-2.5 rounded font-bold text-[14px] flex items-center justify-center gap-2 transition-colors disabled:opacity-50"
+              >
+                <CheckCircle size={16} /> Save Supplier & Select
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 };

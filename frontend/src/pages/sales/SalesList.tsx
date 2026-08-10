@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Plus, Search, FileText, Trash2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../services/api';
@@ -11,23 +11,32 @@ const SalesList = () => {
   const [selectedSale, setSelectedSale] = useState<any>(null);
   const [isPrintModalOpen, setIsPrintModalOpen] = useState(false);
 
-  // Fetch Sales (Stubbed since backend isn't ready)
+  // Fetch Sales from API
   const { data: sales = [], isLoading } = useQuery({
     queryKey: ['sales'],
     queryFn: async () => {
-      // Stub: return dummy data for testing invoice print
-      return [{
-        id: 1,
-        invoiceNo: 'INV-00123',
-        date: new Date().toISOString().split('T')[0],
-        customer: { name: 'CASH A/C\nCounter Sale' },
-        grandTotal: 20.00,
-        items: [
-          { product: { code: 'PTEST100', name: 'Test Multi Filter Product' }, quantity: 1, unit: { name: 'Nos' }, rate: 20.00, amount: 20.00 }
-        ]
-      }]; 
+      const { data } = await api.get('/sales');
+      return data;
     },
   });
+
+  const queryClient = useQueryClient();
+
+  const deleteMutation = useMutation({
+    mutationFn: (id: number) => api.delete(`/sales/${id}`),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['sales'] });
+    },
+    onError: () => {
+      alert('Failed to delete sale.');
+    }
+  });
+
+  const handleDelete = (id: number) => {
+    if (window.confirm('Are you sure you want to delete this sale? This will revert the stock and ledger entries.')) {
+      deleteMutation.mutate(id);
+    }
+  };
 
   return (
     <div className="bg-white min-h-[calc(100vh-100px)] p-6 shadow-sm border border-[#E6E9ED]">
@@ -114,9 +123,9 @@ const SalesList = () => {
               ) : (
                 sales.map((sale: any, index: number) => (
                   <tr key={sale.id} className={`border-b border-[#E5E7EB] ${index % 2 === 0 ? 'bg-[#F9F9F9]' : 'bg-white'} hover:bg-blue-50`}>
-                    <td className="px-3 py-2.5 border-r border-[#E5E7EB] text-[#333] font-medium">{sale.date}</td>
+                    <td className="px-3 py-2.5 border-r border-[#E5E7EB] text-[#333] font-medium">{sale.date ? new Date(sale.date).toISOString().split('T')[0] : '-'}</td>
                     <td className="px-3 py-2.5 border-r border-[#E5E7EB] text-[#3B82F6] font-bold cursor-pointer hover:underline">{sale.invoiceNo}</td>
-                    <td className="px-3 py-2.5 border-r border-[#E5E7EB] text-[#333] font-medium">{sale.customer?.name}</td>
+                    <td className="px-3 py-2.5 border-r border-[#E5E7EB] text-[#333] font-medium">{sale.customer?.name || 'Counter Sale'}</td>
                     <td className="px-3 py-2.5 border-r border-[#E5E7EB] text-[#333] font-bold text-right">{sale.grandTotal}</td>
                     <td className="px-3 py-2.5 border-r border-[#E5E7EB] text-center">
                       <span className="bg-[#22C55E] text-white px-2 py-0.5 rounded text-[11px] font-bold tracking-wide">PAID</span>
@@ -133,7 +142,12 @@ const SalesList = () => {
                         >
                           <FileText size={14} />
                         </button>
-                        <button className="text-[#EF4444] border border-[#EF4444] rounded p-1 hover:bg-[#EF4444] hover:text-white transition-colors">
+                        <button 
+                          onClick={() => handleDelete(sale.id)}
+                          disabled={deleteMutation.isPending}
+                          className="text-[#EF4444] border border-[#EF4444] rounded p-1 hover:bg-[#EF4444] hover:text-white transition-colors disabled:opacity-50"
+                          title="Delete Invoice"
+                        >
                           <Trash2 size={14} />
                         </button>
                       </div>

@@ -5,7 +5,9 @@ import { useForm, useFieldArray } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Plus, Trash2, Save, X, Printer, RefreshCw, List, UserPlus, Phone } from 'lucide-react';
+import toast from 'react-hot-toast';
 import api from '../../services/api';
+import SearchableSelect from '../../components/SearchableSelect';
 
 const saleItemSchema = z.object({
   productId: z.coerce.number().min(1, 'Product is required').or(z.literal(0)),
@@ -27,6 +29,7 @@ const saleSchema = z.object({
   
   grossAmount: z.coerce.number(),
   totalDiscount: z.coerce.number(),
+  totalDiscountPercent: z.coerce.number().optional(),
   roundOff: z.coerce.number(),
   netAmount: z.coerce.number(),
 
@@ -39,17 +42,20 @@ const POS = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState('Amount Details');
+  const [isCustomerModalOpen, setIsCustomerModalOpen] = useState(false);
+  const [newCustomer, setNewCustomer] = useState({ name: '', phone: '', address: '' });
 
   const { register, control, handleSubmit, watch, setValue, formState: { errors }, reset } = useForm<SaleFormValues>({
     resolver: zodResolver(saleSchema),
     defaultValues: {
       date: new Date().toISOString().split('T')[0],
-      invoiceNo: `INV-${Date.now().toString().slice(-6)}`,
+      invoiceNo: 'Generating...',
       customerId: 0,
       rateType: 'Wholesale Rate',
       paymentModeId: 0,
       items: [{ productId: 0, quantity: 1, stock: 0, rate: 0, unit: 'Nos', discPercent: 0, discAmt: 0, total: 0 }],
       grossAmount: 0,
+      totalDiscountPercent: 0,
       totalDiscount: 0,
       roundOff: 0,
       netAmount: 0
@@ -61,10 +67,18 @@ const POS = () => {
     name: "items"
   });
 
-  // Fetch Masters
+  // Fetch Masters & Next Invoice
   const { data: customers = [] } = useQuery({ queryKey: ['customers'], queryFn: async () => (await api.get('/customers')).data });
   const { data: products = [] } = useQuery({ queryKey: ['products'], queryFn: async () => (await api.get('/products')).data });
   const { data: paymentModes = [] } = useQuery({ queryKey: ['paymentModes'], queryFn: async () => (await api.get('/payment-modes')).data });
+  const { data: nextInvoiceData } = useQuery({ queryKey: ['nextInvoiceNo'], queryFn: async () => (await api.get('/sales/next-invoice-no')).data });
+
+  // Update default invoice no
+  useEffect(() => {
+    if (nextInvoiceData?.invoiceNo) {
+      setValue('invoiceNo', nextInvoiceData.invoiceNo);
+    }
+  }, [nextInvoiceData, setValue]);
 
   // Watch values
   const items = watch('items');
@@ -125,22 +139,76 @@ const POS = () => {
 
   const createMutation = useMutation({
     mutationFn: (data: SaleFormValues) => api.post('/sales', data),
-    onSuccess: () => {
-      alert('Sale recorded successfully!');
+    onSuccess: (res) => {
+      toast.success('Sale recorded successfully!');
       queryClient.invalidateQueries({ queryKey: ['products'] });
+      queryClient.invalidateQueries({ queryKey: ['nextInvoiceNo'] });
       reset();
+      navigate('/sales');
     },
-    onError: () => {
-      alert('Note: The backend endpoint POST /sales needs to be implemented first! But the UI is fully functional.');
+    onError: (error) => {
+      console.error(error);
+      toast.error('Failed to record sale. Please check your inputs.');
     }
   });
 
   const onSubmit = (data: SaleFormValues) => {
-    createMutation.mutate(data);
+    if (!data.customerId) {
+      toast.error('Please select a Customer before saving.');
+      return;
+    }
+    if (!data.paymentModeId) {
+      toast.error('Please select a Payment Mode before saving.');
+      return;
+    }
+    
+    const validItems = data.items.filter(item => item.productId > 0);
+    if (validItems.length === 0) {
+      toast.error('Please add at least one product before saving.');
+      return;
+    }
+
+    const payload = {
+      ...data,
+      subtotal: data.grossAmount,
+      discount: data.totalDiscount,
+      tax: 0,
+      grandTotal: data.netAmount,
+      items: validItems.map(item => ({
+        productId: item.productId,
+        quantity: item.quantity,
+        rate: item.rate,
+        discount: item.discAmt,
+        tax: 0,
+        amount: item.total,
+      }))
+    };
+
+    createMutation.mutate(payload as any);
+  };
+
+  const addCustomerMutation = useMutation({
+    mutationFn: (data: any) => api.post('/customers', data),
+    onSuccess: (res) => {
+      queryClient.invalidateQueries({ queryKey: ['customers'] });
+      setIsCustomerModalOpen(false);
+      setNewCustomer({ name: '', phone: '', address: '' });
+      if (res.data && res.data.id) {
+        setValue('customerId', res.data.id);
+      }
+    },
+    onError: () => {
+      alert('Failed to add customer.');
+    }
+  });
+
+  const handleQuickAddCustomer = () => {
+    if (!newCustomer.name) return;
+    addCustomerMutation.mutate(newCustomer);
   };
 
   return (
-    <div className="bg-[#F3F4F6] min-h-screen flex flex-col font-sans">
+    <div className="absolute inset-0 bg-[#F3F4F6] flex flex-col font-sans overflow-hidden z-10">
       
       {/* Top Bar */}
       <div className="bg-gradient-to-r from-[#0F172A] to-[#1E3A8A] text-white px-4 py-2 flex justify-between items-center shrink-0">
@@ -168,7 +236,7 @@ const POS = () => {
         </button>
       </div>
 
-      <form className="flex flex-col flex-1" onSubmit={handleSubmit(onSubmit)}>
+      <form className="flex flex-col flex-1 overflow-hidden" onSubmit={handleSubmit(onSubmit)}>
         
         {/* Header Section */}
         <div className="bg-white p-4 border-b border-[#E5E7EB] shrink-0">
@@ -196,19 +264,18 @@ const POS = () => {
             <div className="flex-[2]">
               <label className="block text-[11px] font-bold text-[#1F2937] mb-1">Customer Name (Searchable Dropdown) *</label>
               <div className="flex items-center gap-1">
-                <select
-                  {...register('customerId')}
-                  className="w-full px-2 py-1.5 border border-[#D1D5DB] rounded text-[13px] outline-none focus:border-[#3B82F6] bg-white"
-                >
-                  <option value="0">Click or type customer name / phone...</option>
-                  {customers.map((c: any) => (
-                    <option key={c.id} value={c.id}>{c.name} - {c.phone}</option>
-                  ))}
-                </select>
+                <SearchableSelect
+                  value={watch('customerId')}
+                  onChange={(val) => setValue('customerId', Number(val))}
+                  options={[
+                    { label: 'Click or type customer name / phone...', value: 0 },
+                    ...customers.map((c: any) => ({ label: `${c.name} - ${c.phone || ''}`, value: c.id }))
+                  ]}
+                />
               </div>
               <div className="flex justify-between mt-1">
-                <button type="button" className="text-[#059669] border border-[#059669] p-0.5 rounded hover:bg-[#D1FAE5]">
-                  <UserPlus size={14} />
+                <button type="button" onClick={() => setIsCustomerModalOpen(true)} className="bg-[#059669] hover:bg-[#047857] text-white px-2 py-1 rounded transition-colors flex items-center gap-1 text-[11px] font-bold">
+                  <UserPlus size={12} /> Add Customer
                 </button>
                 <span className="text-[11px] text-[#6B7280]">
                   {selectedCustomer ? `${selectedCustomer.address || 'Counter Sale'}` : 'Counter Sale'}
@@ -234,7 +301,7 @@ const POS = () => {
                 {...register('paymentModeId')}
                 className="w-full px-2 py-1.5 border border-[#D1D5DB] rounded text-[13px] outline-none focus:border-[#3B82F6] bg-white"
               >
-                <option value="0">Cash</option>
+                <option value="0">Select Payment Mode...</option>
                 {paymentModes.map((m: any) => (
                   <option key={m.id} value={m.id}>{m.name}</option>
                 ))}
@@ -345,6 +412,7 @@ const POS = () => {
         {/* Tabs & Footer Calculation Area */}
         <div className="bg-[#F9FAFB] shrink-0">
           
+          {/* 
           <div className="flex border-b border-[#E5E7EB]">
             {['Amount Details', 'Shipping Address', 'Delivery Address', 'Extra Details'].map(tab => (
               <button
@@ -361,6 +429,7 @@ const POS = () => {
               </button>
             ))}
           </div>
+          */}
 
           <div className="p-4 bg-white border-b border-[#E5E7EB]">
             {activeTab === 'Amount Details' && (
@@ -378,12 +447,38 @@ const POS = () => {
 
                 <div className="flex-1 flex flex-col gap-1">
                   <label className="text-[12px] font-bold text-[#4B5563]">Total Discount:</label>
-                  <input
-                    {...register('totalDiscount')}
-                    type="number"
-                    step="0.01"
-                    className="w-full px-3 py-2 border border-[#D1D5DB] rounded text-[14px] outline-none focus:border-[#3B82F6] text-right font-medium"
-                  />
+                  <div className="flex gap-2">
+                    <input
+                      {...register('totalDiscountPercent')}
+                      type="number"
+                      placeholder="%"
+                      step="0.01"
+                      onChange={(e) => {
+                        register('totalDiscountPercent').onChange(e);
+                        const percent = Number(e.target.value) || 0;
+                        const amount = (watch('grossAmount') * percent) / 100;
+                        setValue('totalDiscount', Number(amount.toFixed(2)));
+                      }}
+                      className="w-1/3 px-2 py-2 border border-[#D1D5DB] rounded text-[14px] outline-none focus:border-[#3B82F6] text-center font-medium"
+                    />
+                    <input
+                      {...register('totalDiscount')}
+                      type="number"
+                      placeholder="RM Amount"
+                      step="0.01"
+                      onChange={(e) => {
+                        register('totalDiscount').onChange(e);
+                        const amt = Number(e.target.value) || 0;
+                        const grossAmt = watch('grossAmount');
+                        if (grossAmt > 0) {
+                          setValue('totalDiscountPercent', Number(((amt / grossAmt) * 100).toFixed(2)));
+                        } else {
+                          setValue('totalDiscountPercent', 0);
+                        }
+                      }}
+                      className="w-2/3 px-3 py-2 border border-[#D1D5DB] rounded text-[14px] outline-none focus:border-[#3B82F6] text-right font-medium"
+                    />
+                  </div>
                 </div>
 
                 <div className="flex-1 flex flex-col gap-1">
@@ -434,6 +529,61 @@ const POS = () => {
         </div>
 
       </form>
+
+      {/* Quick Add Customer Modal */}
+      {isCustomerModalOpen && (
+        <div className="fixed inset-0 bg-black/50 z-[100] flex items-center justify-center p-4">
+          <div className="bg-white rounded shadow-lg w-full max-w-md overflow-hidden flex flex-col">
+            <div className="bg-[#059669] text-white px-4 py-3 flex justify-between items-center">
+              <div className="flex items-center gap-2 font-bold text-[15px]">
+                <UserPlus size={18} /> Quick Add New Customer
+              </div>
+              <button type="button" onClick={() => setIsCustomerModalOpen(false)} className="hover:text-gray-200">
+                <X size={18} />
+              </button>
+            </div>
+            <div className="p-4 flex flex-col gap-4">
+              <div>
+                <label className="block text-[13px] font-bold text-[#1F2937] mb-1">Customer Name *</label>
+                <input 
+                  type="text" 
+                  value={newCustomer.name}
+                  onChange={(e) => setNewCustomer({...newCustomer, name: e.target.value})}
+                  className="w-full px-3 py-2 border border-[#D1D5DB] rounded text-[13px] outline-none focus:border-[#3B82F6]" 
+                />
+              </div>
+              <div>
+                <label className="block text-[13px] text-[#4B5563] mb-1">Mobile Number</label>
+                <input 
+                  type="text" 
+                  value={newCustomer.phone}
+                  onChange={(e) => setNewCustomer({...newCustomer, phone: e.target.value})}
+                  className="w-full px-3 py-2 border border-[#D1D5DB] rounded text-[13px] outline-none focus:border-[#3B82F6]" 
+                />
+              </div>
+              <div>
+                <label className="block text-[13px] text-[#4B5563] mb-1">Billing Address</label>
+                <textarea 
+                  value={newCustomer.address}
+                  onChange={(e) => setNewCustomer({...newCustomer, address: e.target.value})}
+                  className="w-full px-3 py-2 border border-[#D1D5DB] rounded text-[13px] outline-none focus:border-[#3B82F6] min-h-[80px]" 
+                />
+              </div>
+            </div>
+            <div className="p-4 bg-white pt-2 border-none pb-5">
+              <button 
+                type="button"
+                onClick={handleQuickAddCustomer}
+                disabled={!newCustomer.name || addCustomerMutation.isPending}
+                className="w-full bg-[#059669] hover:bg-[#047857] text-white py-2.5 rounded font-bold text-[14px] flex items-center justify-center gap-2 transition-colors disabled:opacity-50"
+              >
+                <Save size={16} /> Save Customer & Select
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 };

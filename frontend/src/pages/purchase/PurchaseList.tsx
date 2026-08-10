@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Plus, Search, FileText, Edit, Trash2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../services/api';
@@ -8,14 +8,32 @@ const PurchaseList = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
 
-  // Fetch Purchases (Stubbed since backend isn't ready)
+  // Fetch Purchases
   const { data: purchases = [], isLoading } = useQuery({
     queryKey: ['purchases'],
     queryFn: async () => {
-      // Stub: return [] until backend is implemented
-      return []; 
+      const { data } = await api.get('/purchases');
+      return data;
     },
   });
+
+  const queryClient = useQueryClient();
+
+  const deleteMutation = useMutation({
+    mutationFn: (id: number) => api.delete(`/purchases/${id}`),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['purchases'] });
+    },
+    onError: () => {
+      alert('Failed to delete purchase.');
+    }
+  });
+
+  const handleDelete = (id: number) => {
+    if (window.confirm('Are you sure you want to delete this purchase? This will revert the stock and ledger entries.')) {
+      deleteMutation.mutate(id);
+    }
+  };
 
   return (
     <div className="bg-white min-h-[calc(100vh-100px)] p-6 shadow-sm border border-[#E6E9ED]">
@@ -102,9 +120,9 @@ const PurchaseList = () => {
               ) : (
                 purchases.map((purchase: any, index: number) => (
                   <tr key={purchase.id} className={`border-b border-[#E5E7EB] ${index % 2 === 0 ? 'bg-[#F9F9F9]' : 'bg-white'} hover:bg-blue-50`}>
-                    <td className="px-3 py-2.5 border-r border-[#E5E7EB] text-[#333] font-medium">{purchase.date}</td>
+                    <td className="px-3 py-2.5 border-r border-[#E5E7EB] text-[#333] font-medium">{purchase.date ? new Date(purchase.date).toISOString().split('T')[0] : '-'}</td>
                     <td className="px-3 py-2.5 border-r border-[#E5E7EB] text-[#3B82F6] font-bold cursor-pointer hover:underline">{purchase.invoiceNo}</td>
-                    <td className="px-3 py-2.5 border-r border-[#E5E7EB] text-[#333] font-medium">{purchase.supplier?.name}</td>
+                    <td className="px-3 py-2.5 border-r border-[#E5E7EB] text-[#333] font-medium">{purchase.supplier?.name || 'Unknown Supplier'}</td>
                     <td className="px-3 py-2.5 border-r border-[#E5E7EB] text-[#333] font-bold text-right">{purchase.grandTotal}</td>
                     <td className="px-3 py-2.5 border-r border-[#E5E7EB] text-center">
                       <span className="bg-[#22C55E] text-white px-2 py-0.5 rounded text-[11px] font-bold tracking-wide">PAID</span>
@@ -114,7 +132,12 @@ const PurchaseList = () => {
                         <button className="text-[#3B82F6] border border-[#3B82F6] rounded p-1 hover:bg-[#3B82F6] hover:text-white transition-colors">
                           <FileText size={14} />
                         </button>
-                        <button className="text-[#EF4444] border border-[#EF4444] rounded p-1 hover:bg-[#EF4444] hover:text-white transition-colors">
+                        <button 
+                          onClick={() => handleDelete(purchase.id)}
+                          disabled={deleteMutation.isPending}
+                          className="text-[#EF4444] border border-[#EF4444] rounded p-1 hover:bg-[#EF4444] hover:text-white transition-colors disabled:opacity-50"
+                          title="Delete Invoice"
+                        >
                           <Trash2 size={14} />
                         </button>
                       </div>

@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, UseGuards, Query, Delete } from '@nestjs/common';
 import { PurchasesService } from './purchases.service';
 import { CreatePurchaseDto } from './dto/create-purchase.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
@@ -14,12 +14,22 @@ export class PurchasesController {
   }
 
   @Get()
-  findAll() {
-    return this.purchasesService.findAll();
+  findAll(@Query() query: any) {
+    return this.purchasesService.findAll(query);
+  }
+
+  @Get('next-entry-no')
+  async getNextEntryNo() {
+    return { entryNo: await this.purchasesService.getNextEntryNo() };
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.purchasesService.findOne(+id);
+  }
+
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return this.purchasesService.remove(+id);
   }
 }

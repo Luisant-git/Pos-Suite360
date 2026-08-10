@@ -64,8 +64,29 @@ export class SalesService {
     });
   }
 
-  findAll() {
+  findAll(query?: any) {
+    const where: any = {};
+    if (query?.fromDate || query?.toDate) {
+      where.date = {};
+      if (query.fromDate) where.date.gte = new Date(query.fromDate);
+      if (query.toDate) {
+        const toDate = new Date(query.toDate);
+        toDate.setHours(23, 59, 59, 999);
+        where.date.lte = toDate;
+      }
+    }
+    if (query?.customerId) {
+      where.customerId = Number(query.customerId);
+    }
+    if (query?.invoiceNo) {
+      where.invoiceNo = { contains: query.invoiceNo, mode: 'insensitive' };
+    }
+    if (query?.paymentModeId) {
+      where.paymentModeId = Number(query.paymentModeId);
+    }
+
     return this.prisma.sale.findMany({
+      where,
       include: {
         customer: true,
         paymentMode: true,
@@ -93,6 +114,69 @@ export class SalesService {
           },
         },
       },
+    });
+  }
+
+  async getNextInvoiceNo() {
+    const lastSale = await this.prisma.sale.findFirst({
+      orderBy: { id: 'desc' },
+      select: { invoiceNo: true },
+    });
+
+    let nextNumber = 1;
+    if (lastSale && lastSale.invoiceNo.startsWith('INV-')) {
+      const match = lastSale.invoiceNo.match(/INV-(\d+)/);
+      if (match && !isNaN(parseInt(match[1], 10))) {
+        nextNumber = parseInt(match[1], 10) + 1;
+      }
+    }
+    
+    return `INV-${String(nextNumber).padStart(5, '0')}`;
+  }
+
+  async remove(id: number) {
+    return this.prisma.$transaction(async (tx) => {
+      const sale = await tx.sale.findUnique({
+        where: { id },
+        include: { items: true }
+      });
+
+      if (!sale) {
+        throw new BadRequestException('Sale not found');
+      }
+
+      // 1. Reverse stock and ledger
+      for (const item of sale.items) {
+        const updatedProduct = await tx.product.update({
+          where: { id: item.productId },
+          data: {
+            currentStock: { increment: item.quantity },
+          },
+        });
+
+        // Add reverting ledger entry
+        await tx.stockTransaction.create({
+          data: {
+            date: new Date(),
+            productId: item.productId,
+            type: TransactionType.SALE_RETURN,
+            quantityIn: item.quantity,
+            quantityOut: 0,
+            balance: updatedProduct.currentStock,
+            reference: `Reverted ${sale.invoiceNo}`,
+          },
+        });
+      }
+
+      // 2. Delete Sale Items
+      await tx.saleItem.deleteMany({
+        where: { saleId: id },
+      });
+
+      // 3. Delete Sale
+      return tx.sale.delete({
+        where: { id },
+      });
     });
   }
 }

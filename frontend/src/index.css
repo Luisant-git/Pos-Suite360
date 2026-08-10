@@ -1,0 +1,39 @@
+@import url('https://fonts.googleapis.com/css2?family=Helvetica+Neue:wght@300;400;500;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #3B82F6; /* Classic Bootstrap Blue */
+  --color-primary-focus: #2563EB; 
+  --color-sidebar: #2A3F54; /* Dark Charcoal */
+  --color-sidebar-hover: #172D44;
+  --color-secondary: #73879C; /* Sidebar text */
+  --color-background: #F7F7F7; /* Light grey canvas */
+  --color-surface: #ffffff; /* White */
+  --color-surface-hover: #f9f9f9; 
+  --color-border: #E6E9ED; /* Subtle borders */
+  --color-text: #73879C; /* Classic grey text */
+  --color-text-dark: #2A3F54; /* Headings */
+  
+  --font-sans: "Helvetica Neue", Roboto, Arial, sans-serif;
+}
+
+@layer base {
+  body {
+    background-color: var(--color-background);
+    color: var(--color-text);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  input, textarea, select {
+    color: var(--color-text-dark);
+    font-weight: bold;
+  }
+
+  input::placeholder, textarea::placeholder {
+    color: #9CA3AF; /* lighter gray for placeholder */
+    font-weight: 400;
+  }
+}
+

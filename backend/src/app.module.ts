@@ -1,0 +1,24 @@
+import { Module } from '@nestjs/common';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
+import { ProductsModule } from './products/products.module';
+import { CategoriesModule } from './categories/categories.module';
+import { BrandsModule } from './brands/brands.module';
+import { SuppliersModule } from './suppliers/suppliers.module';
+import { CustomersModule } from './customers/customers.module';
+import { UnitsModule } from './units/units.module';
+import { PaymentModesModule } from './payment-modes/payment-modes.module';
+import { ExpenseCategoriesModule } from './expense-categories/expense-categories.module';
+import { PrismaModule } from './prisma/prisma.module';
+import { UsersModule } from './users/users.module';
+import { AuthModule } from './auth/auth.module';
+import { DashboardModule } from './dashboard/dashboard.module';
+import { PurchasesModule } from './purchases/purchases.module';
+import { SalesModule } from './sales/sales.module';
+
+@Module({
+  imports: [ProductsModule, CategoriesModule, BrandsModule, SuppliersModule, CustomersModule, UnitsModule, PaymentModesModule, ExpenseCategoriesModule, PrismaModule, UsersModule, AuthModule, DashboardModule, PurchasesModule, SalesModule],
+  controllers: [AppController],
+  providers: [AppService],
+})
+export class AppModule {}

@@ -36,4 +36,20 @@ export class AuthService {
     const user = await this.usersService.create(username, hashedPassword);
     return this.login(user);
   }
+
+  async changePassword(userId: number, currentPass: string, newPass: string) {
+    const user = await this.usersService.findById(userId);
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    const isMatch = await bcrypt.compare(currentPass, user.password);
+    if (!isMatch) {
+      throw new Error('Incorrect current password');
+    }
+
+    const hashedNewPass = await bcrypt.hash(newPass, 10);
+    await this.usersService.updatePassword(userId, hashedNewPass);
+    return { success: true };
+  }
 }

@@ -12,6 +12,12 @@ export class UsersService {
     });
   }
 
+  async findById(id: number): Promise<User | null> {
+    return this.prisma.user.findUnique({
+      where: { id },
+    });
+  }
+
   async create(username: string, pass: string): Promise<User> {
     let role = await this.prisma.role.findFirst();
     if (!role) {
@@ -32,6 +38,13 @@ export class UsersService {
         name: username,
         roleId: role.id,
       },
+    });
+  }
+
+  async updatePassword(userId: number, hash: string): Promise<User> {
+    return this.prisma.user.update({
+      where: { id: userId },
+      data: { password: hash },
     });
   }
 }

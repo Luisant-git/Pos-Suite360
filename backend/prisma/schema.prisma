@@ -363,3 +363,21 @@ enum TransactionType {
   SALE_RETURN
   ADJUSTMENT
 }
+
+// ------------------------------------------------------
+// Settings Model
+// ------------------------------------------------------
+
+model Settings {
+  id               Int      @id @default(autoincrement())
+  shopName         String   @default("My Shop")
+  shopAddress      String?
+  phone            String?
+  email            String?
+  currencySymbol   String   @default("RM")
+  currencyPosition String   @default("before")
+  invoicePrefix    String   @default("INV-")
+
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Outlet, NavLink, useNavigate } from 'react-router-dom';
+import { Outlet, NavLink, Link, useNavigate } from 'react-router-dom';
 
 const MainLayout = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -137,9 +137,9 @@ const MainLayout = () => {
         </div>
         
         <div className="flex bg-[#1F2937] text-[#E7E7E7]">
-          <button className="flex-1 py-3 flex justify-center hover:bg-[#111827] font-bold transition-colors text-xl" title="Settings">
+          <Link to="/settings" className="flex-1 py-3 flex justify-center hover:bg-[#111827] font-bold transition-colors text-xl" title="Settings">
             <i className="fa fa-cog"></i>
-          </button>
+          </Link>
           <button onClick={() => { localStorage.removeItem('token'); navigate('/login'); }} className="flex-1 py-3 flex justify-center hover:bg-[#111827] font-bold transition-colors text-xl" title="Logout">
             <i className="fa fa-sign-out"></i>
           </button>

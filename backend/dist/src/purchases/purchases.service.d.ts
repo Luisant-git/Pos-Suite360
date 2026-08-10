@@ -1,0 +1,155 @@
+import { CreatePurchaseDto } from './dto/create-purchase.dto';
+import { PrismaService } from '../prisma/prisma.service';
+export declare class PurchasesService {
+    private prisma;
+    constructor(prisma: PrismaService);
+    create(createPurchaseDto: CreatePurchaseDto): Promise<{
+        items: {
+            id: number;
+            tax: import("@prisma/client-runtime-utils").Decimal;
+            amount: import("@prisma/client-runtime-utils").Decimal;
+            quantity: number;
+            rate: import("@prisma/client-runtime-utils").Decimal;
+            productId: number;
+            purchaseId: number;
+        }[];
+    } & {
+        id: number;
+        invoiceNo: string;
+        date: Date;
+        supplierId: number;
+        subtotal: import("@prisma/client-runtime-utils").Decimal;
+        tax: import("@prisma/client-runtime-utils").Decimal;
+        discount: import("@prisma/client-runtime-utils").Decimal;
+        grandTotal: import("@prisma/client-runtime-utils").Decimal;
+        paymentModeId: number;
+        createdAt: Date;
+        updatedAt: Date;
+    }>;
+    findAll(query?: any): import("@prisma/client").Prisma.PrismaPromise<({
+        supplier: {
+            id: number;
+            createdAt: Date;
+            updatedAt: Date;
+            name: string;
+            contactPerson: string | null;
+            phone: string | null;
+            email: string | null;
+            address: string | null;
+            gstNumber: string | null;
+            openingBalance: import("@prisma/client-runtime-utils").Decimal;
+            openingBalanceType: string;
+            accountNo: string | null;
+            ifscCode: string | null;
+            bankBranch: string | null;
+        };
+        paymentMode: {
+            id: number;
+            createdAt: Date;
+            updatedAt: Date;
+            name: string;
+            description: string | null;
+        };
+    } & {
+        id: number;
+        invoiceNo: string;
+        date: Date;
+        supplierId: number;
+        subtotal: import("@prisma/client-runtime-utils").Decimal;
+        tax: import("@prisma/client-runtime-utils").Decimal;
+        discount: import("@prisma/client-runtime-utils").Decimal;
+        grandTotal: import("@prisma/client-runtime-utils").Decimal;
+        paymentModeId: number;
+        createdAt: Date;
+        updatedAt: Date;
+    })[]>;
+    findOne(id: number): import("@prisma/client").Prisma.Prisma__PurchaseClient<({
+        supplier: {
+            id: number;
+            createdAt: Date;
+            updatedAt: Date;
+            name: string;
+            contactPerson: string | null;
+            phone: string | null;
+            email: string | null;
+            address: string | null;
+            gstNumber: string | null;
+            openingBalance: import("@prisma/client-runtime-utils").Decimal;
+            openingBalanceType: string;
+            accountNo: string | null;
+            ifscCode: string | null;
+            bankBranch: string | null;
+        };
+        paymentMode: {
+            id: number;
+            createdAt: Date;
+            updatedAt: Date;
+            name: string;
+            description: string | null;
+        };
+        items: ({
+            product: {
+                unit: {
+                    id: number;
+                    createdAt: Date;
+                    updatedAt: Date;
+                    name: string;
+                    shortCode: string | null;
+                };
+            } & {
+                id: number;
+                supplierId: number | null;
+                createdAt: Date;
+                updatedAt: Date;
+                name: string;
+                code: string;
+                barcode: string | null;
+                purchaseRate: import("@prisma/client-runtime-utils").Decimal;
+                sellingRate: import("@prisma/client-runtime-utils").Decimal;
+                wholesaleRate: import("@prisma/client-runtime-utils").Decimal;
+                mrp: import("@prisma/client-runtime-utils").Decimal;
+                taxPercent: import("@prisma/client-runtime-utils").Decimal;
+                minStock: number;
+                reorderLevel: number;
+                currentStock: number;
+                categoryId: number;
+                brandId: number | null;
+                unitId: number;
+            };
+        } & {
+            id: number;
+            tax: import("@prisma/client-runtime-utils").Decimal;
+            amount: import("@prisma/client-runtime-utils").Decimal;
+            quantity: number;
+            rate: import("@prisma/client-runtime-utils").Decimal;
+            productId: number;
+            purchaseId: number;
+        })[];
+    } & {
+        id: number;
+        invoiceNo: string;
+        date: Date;
+        supplierId: number;
+        subtotal: import("@prisma/client-runtime-utils").Decimal;
+        tax: import("@prisma/client-runtime-utils").Decimal;
+        discount: import("@prisma/client-runtime-utils").Decimal;
+        grandTotal: import("@prisma/client-runtime-utils").Decimal;
+        paymentModeId: number;
+        createdAt: Date;
+        updatedAt: Date;
+    }) | null, null, import("@prisma/client/runtime/client").DefaultArgs, import("@prisma/client").Prisma.PrismaClientOptions>;
+    getNextEntryNo(): Promise<string>;
+    remove(id: number): Promise<{
+        id: number;
+        invoiceNo: string;
+        date: Date;
+        supplierId: number;
+        subtotal: import("@prisma/client-runtime-utils").Decimal;
+        tax: import("@prisma/client-runtime-utils").Decimal;
+        discount: import("@prisma/client-runtime-utils").Decimal;
+        grandTotal: import("@prisma/client-runtime-utils").Decimal;
+        paymentModeId: number;
+        createdAt: Date;
+        updatedAt: Date;
+    }>;
+}

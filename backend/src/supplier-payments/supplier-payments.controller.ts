@@ -17,6 +17,11 @@ export class SupplierPaymentsController {
     return this.supplierPaymentsService.getBalance(Number(id));
   }
 
+  @Get('unpaid-bills/:id')
+  async getUnpaidBills(@Param('id') id: string) {
+    return this.supplierPaymentsService.getUnpaidBills(Number(id));
+  }
+
   @Post()
   async create(@Body() createSupplierPaymentDto: any, @Request() req: any) {
     // req.user from JwtAuthGuard contains the user payload

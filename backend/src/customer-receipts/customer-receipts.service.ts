@@ -95,4 +95,81 @@ export class CustomerReceiptsService {
 
     return `REC-${nextNo.toString().padStart(6, '0')}`;
   }
+
+  async getUnpaidBills(customerId: number) {
+    const customer = await this.prisma.customer.findUnique({
+      where: { id: customerId },
+    });
+
+    if (!customer) {
+      throw new BadRequestException('Customer not found');
+    }
+
+    // 1. Get total collected
+    const receipts = await this.prisma.customerReceipt.aggregate({
+      where: { customerId },
+      _sum: { amount: true },
+    });
+    let totalCollected = Number(receipts._sum.amount) || 0;
+
+    // 2. Fetch Opening Balance & Sales (in chronological order)
+    const openingBalance = Number(customer.openingBalance) || 0;
+    const isOpeningDebit = customer.openingBalanceType === 'Dr'; // Dr means they owe us
+    const isOpeningCredit = customer.openingBalanceType === 'Cr';
+    
+    let bills: any[] = [];
+    
+    // If they owe us an opening balance, treat it as the first bill
+    if (isOpeningDebit && openingBalance > 0) {
+      bills.push({
+        entryNo: 'Opening Balance',
+        date: customer.createdAt, // Or a specific OB date if available
+        total: openingBalance,
+        received: 0,
+        pending: openingBalance
+      });
+    } else if (isOpeningCredit && openingBalance > 0) {
+      // If we owe them, this effectively increases their "totalCollected" pool
+      totalCollected += openingBalance;
+    }
+
+    const sales = await this.prisma.sale.findMany({
+      where: { customerId },
+      orderBy: { date: 'asc' },
+    });
+
+    for (const sale of sales) {
+      bills.push({
+        entryNo: sale.invoiceNo,
+        date: sale.date,
+        total: Number(sale.grandTotal) || 0,
+        received: 0,
+        pending: Number(sale.grandTotal) || 0
+      });
+    }
+
+    // 3. Apply FIFO
+    const unpaidBills = [];
+    for (const bill of bills) {
+      if (totalCollected >= bill.total) {
+        // Fully paid
+        bill.received = bill.total;
+        bill.pending = 0;
+        totalCollected -= bill.total;
+      } else if (totalCollected > 0 && totalCollected < bill.total) {
+        // Partially paid
+        bill.received = totalCollected;
+        bill.pending = bill.total - totalCollected;
+        totalCollected = 0;
+        unpaidBills.push(bill);
+      } else {
+        // Completely unpaid
+        bill.received = 0;
+        bill.pending = bill.total;
+        unpaidBills.push(bill);
+      }
+    }
+
+    return unpaidBills;
+  }
 }

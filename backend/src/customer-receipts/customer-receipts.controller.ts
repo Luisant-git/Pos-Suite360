@@ -17,6 +17,11 @@ export class CustomerReceiptsController {
     return this.customerReceiptsService.getBalance(Number(id));
   }
 
+  @Get('unpaid-bills/:id')
+  async getUnpaidBills(@Param('id') id: string) {
+    return this.customerReceiptsService.getUnpaidBills(Number(id));
+  }
+
   @Post()
   async create(@Body() createCustomerReceiptDto: any, @Request() req: any) {
     const userId = req.user?.userId || 1;

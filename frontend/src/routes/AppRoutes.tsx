@@ -44,6 +44,9 @@ import StockReport from '../pages/reports/StockReport';
 import StockLedgerReport from '../pages/reports/StockLedgerReport';
 import ExpenseReport from '../pages/reports/ExpenseReport';
 
+// Settings
+import Settings from '../pages/Settings';
+
 const AppRoutes = () => {
   return (
     <Routes>
@@ -95,6 +98,9 @@ const AppRoutes = () => {
         <Route path="/reports/stock" element={<StockReport />} />
         <Route path="/reports/stock-ledger" element={<StockLedgerReport />} />
         <Route path="/reports/expenses" element={<ExpenseReport />} />
+
+        {/* Settings */}
+        <Route path="/settings" element={<Settings />} />
       </Route>
       
       <Route path="*" element={<Navigate to="/dashboard" replace />} />

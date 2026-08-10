@@ -19,12 +19,14 @@ import Users from '../pages/master/Users';
 import PurchaseList from '../pages/purchase/PurchaseList';
 import PurchaseEntry from '../pages/purchase/PurchaseEntry';
 import PurchaseView from '../pages/purchase/PurchaseView';
+import SupplierPayments from '../pages/purchase/SupplierPayments';
 
 // Sales
 import SalesList from '../pages/sales/SalesList';
 import POS from '../pages/sales/POS';
 import SalesHistory from '../pages/sales/SalesHistory';
 import SalesView from '../pages/sales/SalesView';
+import CustomerReceipts from '../pages/sales/CustomerReceipts';
 
 // Inventory
 import Stock from '../pages/inventory/Stock';
@@ -67,11 +69,13 @@ const AppRoutes = () => {
         {/* Purchase Routes */}
         <Route path="/purchase" element={<PurchaseList />} />
         <Route path="/purchase/new" element={<PurchaseEntry />} />
+        <Route path="/purchase/payments" element={<SupplierPayments />} />
         <Route path="/purchase/:id" element={<PurchaseView />} />
 
         {/* Sales Routes */}
         <Route path="/sales" element={<SalesList />} />
         <Route path="/sales/pos" element={<POS />} />
+        <Route path="/sales/receipts" element={<CustomerReceipts />} />
         <Route path="/sales/history" element={<SalesHistory />} />
         <Route path="/sales/:id" element={<SalesView />} />
 

@@ -18,8 +18,10 @@ model User {
   roleId    Int
   role      Role     @relation(fields: [roleId], references: [id])
   
-  sales     Sale[]
-  createdAt DateTime @default(now())
+  sales            Sale[]
+  supplierPayments SupplierPayment[]
+  customerReceipts CustomerReceipt[]
+  createdAt        DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
@@ -88,6 +90,7 @@ model Supplier {
   bankBranch         String?
   purchases          Purchase[]
   products           Product[]
+  payments           SupplierPayment[]
   
   createdAt          DateTime   @default(now())
   updatedAt          DateTime   @updatedAt
@@ -106,6 +109,7 @@ model Customer {
   creditLimit        Decimal  @default(0)
   creditDays         Int      @default(30)
   sales              Sale[]
+  receipts           CustomerReceipt[]
   
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
@@ -115,9 +119,11 @@ model PaymentMode {
   id          Int        @id @default(autoincrement())
   name        String     @unique // e.g., Cash, UPI, Credit Card
   description String?
-  purchases   Purchase[]
-  sales       Sale[]
-  expenses    Expense[]
+  purchases        Purchase[]
+  sales            Sale[]
+  expenses         Expense[]
+  supplierPayments SupplierPayment[]
+  customerReceipts CustomerReceipt[]
   
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
@@ -276,6 +282,56 @@ model Expense {
   
   createdAt         DateTime        @default(now())
   updatedAt         DateTime        @updatedAt
+}
+
+// ------------------------------------------------------
+// Payment & Receipt Models
+// ------------------------------------------------------
+
+model SupplierPayment {
+  id              Int      @id @default(autoincrement())
+  paymentNo       String   @unique
+  date            DateTime @default(now())
+  
+  supplierId      Int
+  supplier        Supplier @relation(fields: [supplierId], references: [id])
+  
+  amount          Decimal
+  
+  paymentModeId   Int
+  paymentMode     PaymentMode @relation(fields: [paymentModeId], references: [id])
+  
+  reference       String?
+  remarks         String?
+  
+  userId          Int
+  user            User     @relation(fields: [userId], references: [id])
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model CustomerReceipt {
+  id              Int      @id @default(autoincrement())
+  receiptNo       String   @unique
+  date            DateTime @default(now())
+  
+  customerId      Int
+  customer        Customer @relation(fields: [customerId], references: [id])
+  
+  amount          Decimal
+  
+  paymentModeId   Int
+  paymentMode     PaymentMode @relation(fields: [paymentModeId], references: [id])
+  
+  reference       String?
+  remarks         String?
+  
+  userId          Int
+  user            User     @relation(fields: [userId], references: [id])
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 }
 
 // ------------------------------------------------------

@@ -15,9 +15,11 @@ import { AuthModule } from './auth/auth.module';
 import { DashboardModule } from './dashboard/dashboard.module';
 import { PurchasesModule } from './purchases/purchases.module';
 import { SalesModule } from './sales/sales.module';
+import { SupplierPaymentsModule } from './supplier-payments/supplier-payments.module';
+import { CustomerReceiptsModule } from './customer-receipts/customer-receipts.module';
 
 @Module({
-  imports: [ProductsModule, CategoriesModule, BrandsModule, SuppliersModule, CustomersModule, UnitsModule, PaymentModesModule, ExpenseCategoriesModule, PrismaModule, UsersModule, AuthModule, DashboardModule, PurchasesModule, SalesModule],
+  imports: [ProductsModule, CategoriesModule, BrandsModule, SuppliersModule, CustomersModule, UnitsModule, PaymentModesModule, ExpenseCategoriesModule, PrismaModule, UsersModule, AuthModule, DashboardModule, PurchasesModule, SalesModule, SupplierPaymentsModule, CustomerReceiptsModule],
   controllers: [AppController],
   providers: [AppService],
 })

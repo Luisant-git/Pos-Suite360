@@ -1,0 +1,82 @@
+import { CreateCustomerDto } from './dto/create-customer.dto';
+import { UpdateCustomerDto } from './dto/update-customer.dto';
+import { PrismaService } from '../prisma/prisma.service';
+export declare class CustomersService {
+    private prisma;
+    constructor(prisma: PrismaService);
+    create(createCustomerDto: CreateCustomerDto): import("@prisma/client").Prisma.Prisma__CustomerClient<{
+        id: number;
+        name: string;
+        createdAt: Date;
+        updatedAt: Date;
+        contactPerson: string | null;
+        phone: string | null;
+        email: string | null;
+        address: string | null;
+        openingBalance: import("@prisma/client-runtime-utils").Decimal;
+        openingBalanceType: string;
+        shippingAddress: string | null;
+        creditLimit: import("@prisma/client-runtime-utils").Decimal;
+        creditDays: number;
+    }, never, import("@prisma/client/runtime/client").DefaultArgs, import("@prisma/client").Prisma.PrismaClientOptions>;
+    findAll(): import("@prisma/client").Prisma.PrismaPromise<{
+        id: number;
+        name: string;
+        createdAt: Date;
+        updatedAt: Date;
+        contactPerson: string | null;
+        phone: string | null;
+        email: string | null;
+        address: string | null;
+        openingBalance: import("@prisma/client-runtime-utils").Decimal;
+        openingBalanceType: string;
+        shippingAddress: string | null;
+        creditLimit: import("@prisma/client-runtime-utils").Decimal;
+        creditDays: number;
+    }[]>;
+    findOne(id: number): import("@prisma/client").Prisma.Prisma__CustomerClient<{
+        id: number;
+        name: string;
+        createdAt: Date;
+        updatedAt: Date;
+        contactPerson: string | null;
+        phone: string | null;
+        email: string | null;
+        address: string | null;
+        openingBalance: import("@prisma/client-runtime-utils").Decimal;
+        openingBalanceType: string;
+        shippingAddress: string | null;
+        creditLimit: import("@prisma/client-runtime-utils").Decimal;
+        creditDays: number;
+    } | null, null, import("@prisma/client/runtime/client").DefaultArgs, import("@prisma/client").Prisma.PrismaClientOptions>;
+    update(id: number, updateCustomerDto: UpdateCustomerDto): import("@prisma/client").Prisma.Prisma__CustomerClient<{
+        id: number;
+        name: string;
+        createdAt: Date;
+        updatedAt: Date;
+        contactPerson: string | null;
+        phone: string | null;
+        email: string | null;
+        address: string | null;
+        openingBalance: import("@prisma/client-runtime-utils").Decimal;
+        openingBalanceType: string;
+        shippingAddress: string | null;
+        creditLimit: import("@prisma/client-runtime-utils").Decimal;
+        creditDays: number;
+    }, never, import("@prisma/client/runtime/client").DefaultArgs, import("@prisma/client").Prisma.PrismaClientOptions>;
+    remove(id: number): import("@prisma/client").Prisma.Prisma__CustomerClient<{
+        id: number;
+        name: string;
+        createdAt: Date;
+        updatedAt: Date;
+        contactPerson: string | null;
+        phone: string | null;
+        email: string | null;
+        address: string | null;
+        openingBalance: import("@prisma/client-runtime-utils").Decimal;
+        openingBalanceType: string;
+        shippingAddress: string | null;
+        creditLimit: import("@prisma/client-runtime-utils").Decimal;
+        creditDays: number;
+    }, never, import("@prisma/client/runtime/client").DefaultArgs, import("@prisma/client").Prisma.PrismaClientOptions>;
+}

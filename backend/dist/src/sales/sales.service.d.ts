@@ -5,91 +5,114 @@ export declare class SalesService {
     constructor(prisma: PrismaService);
     create(createSaleDto: CreateSaleDto, userId: number): Promise<{
         items: {
-            id: number;
             tax: import("@prisma/client-runtime-utils").Decimal;
             discount: import("@prisma/client-runtime-utils").Decimal;
-            amount: import("@prisma/client-runtime-utils").Decimal;
+            id: number;
             quantity: number;
             rate: import("@prisma/client-runtime-utils").Decimal;
+            amount: import("@prisma/client-runtime-utils").Decimal;
             productId: number;
             saleId: number;
         }[];
     } & {
-        id: number;
         invoiceNo: string;
         date: Date;
         subtotal: import("@prisma/client-runtime-utils").Decimal;
         tax: import("@prisma/client-runtime-utils").Decimal;
         discount: import("@prisma/client-runtime-utils").Decimal;
         grandTotal: import("@prisma/client-runtime-utils").Decimal;
-        paymentModeId: number;
         createdAt: Date;
         updatedAt: Date;
+        id: number;
         customerId: number;
         userId: number;
+        paymentModeId: number;
     }>;
     findAll(query?: any): import("@prisma/client").Prisma.PrismaPromise<({
-        paymentMode: {
-            id: number;
-            createdAt: Date;
-            updatedAt: Date;
-            name: string;
-            description: string | null;
-        };
         customer: {
-            id: number;
             createdAt: Date;
             updatedAt: Date;
+            id: number;
             name: string;
             contactPerson: string | null;
             phone: string | null;
             email: string | null;
             address: string | null;
+            shippingAddress: string | null;
             openingBalance: import("@prisma/client-runtime-utils").Decimal;
             openingBalanceType: string;
-            shippingAddress: string | null;
             creditLimit: import("@prisma/client-runtime-utils").Decimal;
             creditDays: number;
         };
+        paymentMode: {
+            createdAt: Date;
+            updatedAt: Date;
+            id: number;
+            name: string;
+            description: string | null;
+        };
     } & {
-        id: number;
         invoiceNo: string;
         date: Date;
         subtotal: import("@prisma/client-runtime-utils").Decimal;
         tax: import("@prisma/client-runtime-utils").Decimal;
         discount: import("@prisma/client-runtime-utils").Decimal;
         grandTotal: import("@prisma/client-runtime-utils").Decimal;
-        paymentModeId: number;
         createdAt: Date;
         updatedAt: Date;
+        id: number;
         customerId: number;
         userId: number;
+        paymentModeId: number;
     })[]>;
     findOne(id: number): import("@prisma/client").Prisma.Prisma__SaleClient<({
-        paymentMode: {
+        user: {
             id: number;
+            name: string;
+            username: string;
+        };
+        customer: {
             createdAt: Date;
             updatedAt: Date;
+            id: number;
+            name: string;
+            contactPerson: string | null;
+            phone: string | null;
+            email: string | null;
+            address: string | null;
+            shippingAddress: string | null;
+            openingBalance: import("@prisma/client-runtime-utils").Decimal;
+            openingBalanceType: string;
+            creditLimit: import("@prisma/client-runtime-utils").Decimal;
+            creditDays: number;
+        };
+        paymentMode: {
+            createdAt: Date;
+            updatedAt: Date;
+            id: number;
             name: string;
             description: string | null;
         };
         items: ({
             product: {
                 unit: {
-                    id: number;
                     createdAt: Date;
                     updatedAt: Date;
+                    id: number;
                     name: string;
                     shortCode: string | null;
                 };
             } & {
-                id: number;
-                supplierId: number | null;
                 createdAt: Date;
                 updatedAt: Date;
+                id: number;
                 name: string;
                 code: string;
                 barcode: string | null;
+                categoryId: number;
+                brandId: number | null;
+                unitId: number;
+                supplierId: number | null;
                 purchaseRate: import("@prisma/client-runtime-utils").Decimal;
                 sellingRate: import("@prisma/client-runtime-utils").Decimal;
                 wholesaleRate: import("@prisma/client-runtime-utils").Decimal;
@@ -98,67 +121,44 @@ export declare class SalesService {
                 minStock: number;
                 reorderLevel: number;
                 currentStock: number;
-                categoryId: number;
-                brandId: number | null;
-                unitId: number;
             };
         } & {
-            id: number;
             tax: import("@prisma/client-runtime-utils").Decimal;
             discount: import("@prisma/client-runtime-utils").Decimal;
-            amount: import("@prisma/client-runtime-utils").Decimal;
+            id: number;
             quantity: number;
             rate: import("@prisma/client-runtime-utils").Decimal;
+            amount: import("@prisma/client-runtime-utils").Decimal;
             productId: number;
             saleId: number;
         })[];
-        user: {
-            id: number;
-            name: string;
-            username: string;
-        };
-        customer: {
-            id: number;
-            createdAt: Date;
-            updatedAt: Date;
-            name: string;
-            contactPerson: string | null;
-            phone: string | null;
-            email: string | null;
-            address: string | null;
-            openingBalance: import("@prisma/client-runtime-utils").Decimal;
-            openingBalanceType: string;
-            shippingAddress: string | null;
-            creditLimit: import("@prisma/client-runtime-utils").Decimal;
-            creditDays: number;
-        };
     } & {
-        id: number;
         invoiceNo: string;
         date: Date;
         subtotal: import("@prisma/client-runtime-utils").Decimal;
         tax: import("@prisma/client-runtime-utils").Decimal;
         discount: import("@prisma/client-runtime-utils").Decimal;
         grandTotal: import("@prisma/client-runtime-utils").Decimal;
-        paymentModeId: number;
         createdAt: Date;
         updatedAt: Date;
+        id: number;
         customerId: number;
         userId: number;
+        paymentModeId: number;
     }) | null, null, import("@prisma/client/runtime/client").DefaultArgs, import("@prisma/client").Prisma.PrismaClientOptions>;
     getNextInvoiceNo(): Promise<string>;
     remove(id: number): Promise<{
-        id: number;
         invoiceNo: string;
         date: Date;
         subtotal: import("@prisma/client-runtime-utils").Decimal;
         tax: import("@prisma/client-runtime-utils").Decimal;
         discount: import("@prisma/client-runtime-utils").Decimal;
         grandTotal: import("@prisma/client-runtime-utils").Decimal;
-        paymentModeId: number;
         createdAt: Date;
         updatedAt: Date;
+        id: number;
         customerId: number;
         userId: number;
+        paymentModeId: number;
     }>;
 }

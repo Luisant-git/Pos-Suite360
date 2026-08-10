@@ -118,20 +118,24 @@ export class SalesService {
   }
 
   async getNextInvoiceNo() {
+    const settings = await this.prisma.settings.findUnique({ where: { id: 1 } });
+    const prefix = settings?.invoicePrefix || 'INV-';
+
     const lastSale = await this.prisma.sale.findFirst({
       orderBy: { id: 'desc' },
       select: { invoiceNo: true },
     });
 
     let nextNumber = 1;
-    if (lastSale && lastSale.invoiceNo.startsWith('INV-')) {
-      const match = lastSale.invoiceNo.match(/INV-(\d+)/);
+    if (lastSale && lastSale.invoiceNo.startsWith(prefix)) {
+      const remainingStr = lastSale.invoiceNo.substring(prefix.length);
+      const match = remainingStr.match(/^(\d+)/);
       if (match && !isNaN(parseInt(match[1], 10))) {
         nextNumber = parseInt(match[1], 10) + 1;
       }
     }
     
-    return `INV-${String(nextNumber).padStart(5, '0')}`;
+    return `${prefix}${String(nextNumber).padStart(5, '0')}`;
   }
 
   async remove(id: number) {

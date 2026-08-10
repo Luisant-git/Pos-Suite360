@@ -1,4 +1,5 @@
 import { X, Printer } from 'lucide-react';
+import { useSettings } from '../contexts/SettingsContext';
 
 
 // Basic number to words converter (for Malaysian Ringgit / general use)
@@ -32,6 +33,8 @@ interface InvoicePrintModalProps {
 }
 
 const InvoicePrintModal = ({ isOpen, onClose, sale }: InvoicePrintModalProps) => {
+  const { settings } = useSettings();
+
   if (!isOpen) return null;
 
   // Fallback data if sale is not fully populated yet
@@ -44,7 +47,49 @@ const InvoicePrintModal = ({ isOpen, onClose, sale }: InvoicePrintModalProps) =>
   const grandTotal = sale?.grandTotal || 20.00;
 
   const handlePrint = () => {
-    window.print();
+    const printContent = document.getElementById('printable-invoice');
+    if (!printContent) return;
+
+    const iframe = document.createElement('iframe');
+    iframe.style.display = 'none';
+    document.body.appendChild(iframe);
+    
+    const doc = iframe.contentWindow?.document;
+    if (doc) {
+      doc.open();
+      // Get all styles to ensure Tailwind works in the iframe
+      const styles = document.querySelectorAll('style, link[rel="stylesheet"]');
+      let stylesHtml = '';
+      styles.forEach(s => stylesHtml += s.outerHTML);
+      
+      doc.write(`
+        <html>
+          <head>
+            <title>Print Invoice</title>
+            ${stylesHtml}
+          </head>
+          <body class="bg-white text-black p-0 m-0">
+            <div class="w-full max-w-[210mm] mx-auto p-5 font-sans">
+              ${printContent.innerHTML}
+            </div>
+            <script>
+              window.onload = function() {
+                window.focus();
+                window.print();
+              };
+            </script>
+          </body>
+        </html>
+      `);
+      doc.close();
+
+      // Clean up iframe after printing dialogue is closed (or after a delay)
+      setTimeout(() => {
+        if (document.body.contains(iframe)) {
+          document.body.removeChild(iframe);
+        }
+      }, 5000);
+    }
   };
 
   const handleWhatsApp = () => {
@@ -52,9 +97,9 @@ const InvoicePrintModal = ({ isOpen, onClose, sale }: InvoicePrintModalProps) =>
     text += `Invoice No: ${invoiceNo}\n`;
     text += `Date: ${date}\n\n`;
     items.forEach((item: any) => {
-      text += `${item.quantity}x ${item.product?.name || 'Product'} - RM ${item.amount}\n`;
+      text += `${item.quantity}x ${item.product?.name || 'Product'} - ${settings?.currencySymbol || 'RM'} ${item.amount}\n`;
     });
-    text += `\n*TOTAL: RM ${grandTotal}*`;
+    text += `\n*TOTAL: ${settings?.currencySymbol || 'RM'} ${grandTotal}*`;
     
     const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
     window.open(url, '_blank');
@@ -76,8 +121,8 @@ const InvoicePrintModal = ({ isOpen, onClose, sale }: InvoicePrintModalProps) =>
           </button>
         </div>
 
-        {/* Printable Area - no scroll, content scales to fit */}
-        <div className="flex-1 overflow-hidden p-5 font-sans text-black print:p-0 bg-white">
+        {/* Printable Area */}
+        <div id="printable-invoice" className="flex-1 overflow-hidden p-5 font-sans text-black print:p-0 bg-white">
           {/* Company Header */}
           <div className="text-center mb-3">
             <h1 className="text-2xl font-black mb-0.5 tracking-wide">NSA FRESH MART</h1>
@@ -167,11 +212,11 @@ const InvoicePrintModal = ({ isOpen, onClose, sale }: InvoicePrintModalProps) =>
           {/* Totals Section */}
           <div className="flex justify-between items-end mb-6">
             <div className="w-1/2 pt-2">
-              <p className="font-bold text-xs">RM {numberToWords(Number(grandTotal))} ONLY</p>
+              <p className="font-bold text-xs">{settings?.currencySymbol || 'RM'} {numberToWords(Number(grandTotal))} ONLY</p>
             </div>
             <div className="w-1/2 flex justify-end">
               <div className="border-t-2 border-b-[3px] border-double border-black pt-1.5 pb-1 px-2 flex items-center gap-4 min-w-[200px] justify-between">
-                <span className="font-bold text-base">TOTAL : RM</span>
+                <span className="font-bold text-base">TOTAL : {settings?.currencySymbol || 'RM'}</span>
                 <span className="font-bold text-lg">{Number(grandTotal).toFixed(2)}</span>
               </div>
             </div>

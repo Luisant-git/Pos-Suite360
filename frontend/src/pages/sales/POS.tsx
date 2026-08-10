@@ -5,6 +5,7 @@ import { useForm, useFieldArray } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Plus, Trash2, Save, X, Printer, RefreshCw, List, UserPlus, Phone } from 'lucide-react';
+import { useSettings } from '../../contexts/SettingsContext';
 import toast from 'react-hot-toast';
 import api from '../../services/api';
 import SearchableSelect from '../../components/SearchableSelect';
@@ -39,6 +40,7 @@ const saleSchema = z.object({
 type SaleFormValues = z.infer<typeof saleSchema>;
 
 const POS = () => {
+  const { settings, formatCurrency } = useSettings();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   
@@ -466,7 +468,7 @@ const POS = () => {
                     </div>
                     
                     <div className="relative w-2/3">
-                      <span className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-[13px] pointer-events-none">RM</span>
+                      <span className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-[13px] pointer-events-none">{settings?.currencySymbol || 'RM'}</span>
                       <input
                         {...register('totalDiscount')}
                         type="number"
@@ -527,7 +529,7 @@ const POS = () => {
             <div className="flex items-center gap-4">
               <span className="text-[16px] font-bold text-white uppercase tracking-wide">TOTAL NET AMOUNT:</span>
               <span className="text-[28px] font-bold text-[#38BDF8]">
-                RM {watch('netAmount')?.toFixed(2) || '0.00'}
+                {formatCurrency(watch('netAmount') || 0)}
               </span>
             </div>
           </div>

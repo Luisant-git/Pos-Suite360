@@ -126,7 +126,7 @@ const Units = () => {
             <h2 className="font-bold text-[14px]">UNIT LIST</h2>
           </div>
           <div className="flex items-center gap-3">
-            <button 
+            <button type="button" 
               onClick={() => setIsFullTable(!isFullTable)}
               className="text-[#3B82F6] hover:bg-white px-2 py-1 rounded text-[12px] font-bold flex items-center gap-1 transition-colors border border-[#3B82F6]"
             >
@@ -176,13 +176,13 @@ const Units = () => {
                     </td>
                     <td className="px-3 py-2.5 text-center">
                       <div className="flex justify-center gap-2">
-                        <button 
+                        <button type="button" 
                           onClick={() => handleEdit(unit)}
                           className="text-[#3B82F6] border border-[#3B82F6] rounded p-1 hover:bg-[#3B82F6] hover:text-white transition-colors"
                         >
                           <Edit size={14} />
                         </button>
-                        <button 
+                        <button type="button" 
                           onClick={() => {
                             if (window.confirm('Are you sure you want to delete this unit?')) {
                               deleteMutation.mutate(unit.id);

@@ -34,6 +34,7 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
       return res.data;
     },
     staleTime: 1000 * 60 * 5, // 5 minutes
+    enabled: !!localStorage.getItem('token'), // Prevent fetching when not logged in
   });
 
   const formatCurrency = (amount: number | string) => {

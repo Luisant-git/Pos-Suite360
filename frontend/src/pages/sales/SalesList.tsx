@@ -42,6 +42,7 @@ const SalesList = () => {
 
   return (
     <div className="bg-white min-h-[calc(100vh-100px)] p-6 shadow-sm border border-[#E6E9ED]">
+      <div className="print:hidden">
       {/* Header & Breadcrumbs */}
       <div className="flex justify-between items-center mb-6 pb-4 border-b border-[#E6E9ED]">
         <div>
@@ -85,7 +86,7 @@ const SalesList = () => {
             />
           </div>
 
-          <button 
+          <button type="button" 
             onClick={() => navigate('/sales/pos')}
             className="bg-[#22C55E] hover:bg-[#16A34A] font-bold text-white px-3 py-1 rounded border border-[#16A34A] flex items-center gap-1 transition-colors font-bold"
           >
@@ -134,7 +135,7 @@ const SalesList = () => {
                     </td>
                     <td className="px-3 py-2.5 text-center">
                       <div className="flex justify-center gap-2">
-                        <button 
+                        <button type="button" 
                           onClick={() => {
                             setSelectedSale(sale);
                             setIsPrintModalOpen(true);
@@ -144,7 +145,7 @@ const SalesList = () => {
                         >
                           <FileText size={14} />
                         </button>
-                        <button 
+                        <button type="button" 
                           onClick={() => handleDelete(sale.id)}
                           disabled={deleteMutation.isPending}
                           className="text-[#EF4444] border border-[#EF4444] rounded p-1 hover:bg-[#EF4444] hover:text-white transition-colors disabled:opacity-50"
@@ -160,6 +161,7 @@ const SalesList = () => {
             </tbody>
           </table>
         </div>
+      </div>
       </div>
 
       <InvoicePrintModal 

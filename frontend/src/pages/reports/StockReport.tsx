@@ -86,10 +86,10 @@ const StockReport = () => {
         </div>
         <div className="flex justify-between items-center pt-2 border-t border-dashed border-[#E2E8F0]">
           <div className="flex items-center gap-3">
-            <button onClick={() => refetch()} className="bg-[#0F172A] hover:bg-[#1E293B] text-white px-4 py-1.5 rounded-md flex items-center gap-2 text-[13px] font-bold transition-colors">
+            <button type="button" onClick={() => refetch()} className="bg-[#0F172A] hover:bg-[#1E293B] text-white px-4 py-1.5 rounded-md flex items-center gap-2 text-[13px] font-bold transition-colors">
               Apply Filter
             </button>
-            <button onClick={() => {
+            <button type="button" onClick={() => {
               setCategoryId('');
               setBrandId('');
               setQuickSearch('');
@@ -108,13 +108,13 @@ const StockReport = () => {
             <h2 className="font-bold text-[13px] tracking-wide text-[#334155]">STOCK AS ON DATE REPORT</h2>
           </div>
           <div className="flex items-center gap-3">
-            <button 
+            <button type="button" 
               onClick={() => exportToExcel(products, 'Stock_Report')}
               className="bg-[#10B981] hover:bg-[#059669] text-white px-3 py-1.5 rounded flex items-center gap-1.5 text-[12px] font-bold transition-colors"
             >
               <Download size={14} /> Export Excel
             </button>
-            <button className="bg-[#64748B] hover:bg-[#475569] text-white px-3 py-1.5 rounded flex items-center gap-1.5 text-[12px] font-bold transition-colors">
+            <button type="button" className="bg-[#64748B] hover:bg-[#475569] text-white px-3 py-1.5 rounded flex items-center gap-1.5 text-[12px] font-bold transition-colors">
               <Activity size={14} /> Live Inventory Valuation
             </button>
           </div>

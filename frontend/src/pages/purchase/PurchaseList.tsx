@@ -82,7 +82,7 @@ const PurchaseList = () => {
             />
           </div>
 
-          <button 
+          <button type="button" 
             onClick={() => navigate('/purchase/new')}
             className="bg-[#3B82F6] hover:bg-[#2563EB] font-bold text-white px-3 py-1 rounded border border-[#2563EB] flex items-center gap-1 transition-colors"
           >
@@ -131,10 +131,10 @@ const PurchaseList = () => {
                     </td>
                     <td className="px-3 py-2.5 text-center">
                       <div className="flex justify-center gap-2">
-                        <button className="text-[#3B82F6] border border-[#3B82F6] rounded p-1 hover:bg-[#3B82F6] hover:text-white transition-colors">
+                        <button type="button" className="text-[#3B82F6] border border-[#3B82F6] rounded p-1 hover:bg-[#3B82F6] hover:text-white transition-colors">
                           <FileText size={14} />
                         </button>
-                        <button 
+                        <button type="button" 
                           onClick={() => handleDelete(purchase.id)}
                           disabled={deleteMutation.isPending}
                           className="text-[#EF4444] border border-[#EF4444] rounded p-1 hover:bg-[#EF4444] hover:text-white transition-colors disabled:opacity-50"

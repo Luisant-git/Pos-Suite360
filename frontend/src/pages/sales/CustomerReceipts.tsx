@@ -130,10 +130,10 @@ const CustomerReceipts = () => {
           <p className="text-[12px] text-gray-500 mt-1">Record customer credit collections and payment receipts</p>
         </div>
         <div className="flex gap-2">
-          <button onClick={() => navigate('/sales')} className="bg-[#EFF6FF] text-[#2563EB] font-bold text-[13px] px-4 py-2 rounded border border-[#BFDBFE] hover:bg-[#DBEAFE] flex items-center gap-1 transition-colors">
+          <button type="button" onClick={() => navigate('/sales')} className="bg-[#EFF6FF] text-[#2563EB] font-bold text-[13px] px-4 py-2 rounded border border-[#BFDBFE] hover:bg-[#DBEAFE] flex items-center gap-1 transition-colors">
             Sales Hub
           </button>
-          <button onClick={() => navigate(-1)} className="bg-[#FEF2F2] text-[#E11D48] font-bold text-[13px] px-4 py-2 rounded border border-[#FECDD3] hover:bg-[#FFE4E6] flex items-center gap-1 transition-colors">
+          <button type="button" onClick={() => navigate(-1)} className="bg-[#FEF2F2] text-[#E11D48] font-bold text-[13px] px-4 py-2 rounded border border-[#FECDD3] hover:bg-[#FFE4E6] flex items-center gap-1 transition-colors">
             <X size={14} /> Close
           </button>
         </div>
@@ -336,7 +336,7 @@ const CustomerReceipts = () => {
                 onChange={(e) => setFilterToDate(e.target.value)}
                 className="w-full px-2 py-1.5 border border-[#CBD5E1] rounded text-[12px] outline-none focus:border-[#3B82F6]"
               />
-              <button className="bg-[#059669] hover:bg-[#047857] text-white px-3 rounded flex items-center justify-center transition-colors">
+              <button type="button" className="bg-[#059669] hover:bg-[#047857] text-white px-3 rounded flex items-center justify-center transition-colors">
                 <Filter size={14} />
               </button>
             </div>

@@ -57,10 +57,10 @@ const SalesReport = () => {
 
   return (
     <div className="bg-[#F8FAFC] min-h-[calc(100vh-100px)] p-4">
-      
-      <ReportTabs />
+      <div className="print:hidden">
+        <ReportTabs />
 
-      {/* Filter Section */}
+        {/* Filter Section */}
       <div className="bg-white border border-[#E2E8F0] shadow-sm rounded-md mb-4 p-4">
         <div className="grid grid-cols-1 md:grid-cols-5 gap-4 items-end mb-4">
           
@@ -133,10 +133,10 @@ const SalesReport = () => {
 
         <div className="flex justify-between items-center pt-2 border-t border-dashed border-[#E2E8F0]">
           <div className="flex items-center gap-3">
-            <button onClick={() => refetch()} className="bg-[#0F172A] hover:bg-[#1E293B] text-white px-4 py-1.5 rounded-md flex items-center gap-2 text-[13px] font-bold transition-colors">
+            <button type="button" onClick={() => refetch()} className="bg-[#0F172A] hover:bg-[#1E293B] text-white px-4 py-1.5 rounded-md flex items-center gap-2 text-[13px] font-bold transition-colors">
               <Search size={14} /> Apply Filter
             </button>
-            <button onClick={() => {
+            <button type="button" onClick={() => {
               setFromDate(new Date(new Date().setDate(1)).toISOString().split('T')[0]);
               setToDate(new Date().toISOString().split('T')[0]);
               setCustomerId('');
@@ -148,12 +148,12 @@ const SalesReport = () => {
             </button>
           </div>
           <div className="flex items-center gap-2">
-            <button onClick={() => {
+            <button type="button" onClick={() => {
               const today = new Date().toISOString().split('T')[0];
               setFromDate(today);
               setToDate(today);
             }} className="text-[#3B82F6] hover:bg-[#EFF6FF] px-3 py-1 rounded text-[12px] font-bold transition-colors">Today</button>
-            <button onClick={() => {
+            <button type="button" onClick={() => {
               setFromDate(new Date(new Date().setDate(1)).toISOString().split('T')[0]);
               setToDate(new Date().toISOString().split('T')[0]);
             }} className="text-[#3B82F6] hover:bg-[#EFF6FF] px-3 py-1 rounded text-[12px] font-bold transition-colors">This Month</button>
@@ -179,13 +179,13 @@ const SalesReport = () => {
                 className="pl-8 pr-3 py-1.5 border border-[#CBD5E1] rounded outline-none text-[12px] w-64 focus:border-[#3B82F6]"
               />
             </div>
-            <button 
+            <button type="button" 
               onClick={() => exportToExcel(sales, `Sales_Report_${fromDate}_to_${toDate}`)}
               className="bg-[#10B981] hover:bg-[#059669] text-white px-3 py-1.5 rounded flex items-center gap-1.5 text-[12px] font-bold transition-colors"
             >
               <Download size={14} /> Export Excel
             </button>
-            <button 
+            <button type="button" 
               onClick={() => navigate('/sales/pos')}
               className="bg-[#1E3A8A] hover:bg-[#172554] text-white px-3 py-1.5 rounded flex items-center gap-1.5 text-[12px] font-bold transition-colors"
             >
@@ -225,7 +225,7 @@ const SalesReport = () => {
                     <td className="px-4 py-3 border-r border-[#E2E8F0] text-center font-bold text-[#3B82F6]">{s.netPayable}</td>
                     <td className="px-4 py-3 text-center">
                       <div className="flex justify-center items-center gap-2">
-                        <button 
+                        <button type="button" 
                           onClick={() => {
                             setSelectedSale({
                               invoiceNo: s.invoiceNo,
@@ -242,7 +242,7 @@ const SalesReport = () => {
                         >
                           <Printer size={12} /> Print
                         </button>
-                        <button 
+                        <button type="button" 
                           onClick={() => {
                             setSelectedSale({
                               invoiceNo: s.invoiceNo,
@@ -267,6 +267,7 @@ const SalesReport = () => {
             </tbody>
           </table>
         </div>
+      </div>
       </div>
 
       <InvoicePrintModal 

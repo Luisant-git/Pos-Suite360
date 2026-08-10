@@ -133,10 +133,10 @@ const PurchaseReport = () => {
 
         <div className="flex justify-between items-center pt-2 border-t border-dashed border-[#E2E8F0]">
           <div className="flex items-center gap-3">
-            <button onClick={() => refetch()} className="bg-[#0F172A] hover:bg-[#1E293B] text-white px-4 py-1.5 rounded-md flex items-center gap-2 text-[13px] font-bold transition-colors">
+            <button type="button" onClick={() => refetch()} className="bg-[#0F172A] hover:bg-[#1E293B] text-white px-4 py-1.5 rounded-md flex items-center gap-2 text-[13px] font-bold transition-colors">
               <Search size={14} /> Apply Filter
             </button>
-            <button onClick={() => {
+            <button type="button" onClick={() => {
               setFromDate(new Date(new Date().setDate(1)).toISOString().split('T')[0]);
               setToDate(new Date().toISOString().split('T')[0]);
               setSupplierId('');
@@ -148,12 +148,12 @@ const PurchaseReport = () => {
             </button>
           </div>
           <div className="flex items-center gap-2">
-            <button onClick={() => {
+            <button type="button" onClick={() => {
               const today = new Date().toISOString().split('T')[0];
               setFromDate(today);
               setToDate(today);
             }} className="text-[#3B82F6] hover:bg-[#EFF6FF] px-3 py-1 rounded text-[12px] font-bold transition-colors">Today</button>
-            <button onClick={() => {
+            <button type="button" onClick={() => {
               setFromDate(new Date(new Date().setDate(1)).toISOString().split('T')[0]);
               setToDate(new Date().toISOString().split('T')[0]);
             }} className="text-[#3B82F6] hover:bg-[#EFF6FF] px-3 py-1 rounded text-[12px] font-bold transition-colors">This Month</button>
@@ -179,13 +179,13 @@ const PurchaseReport = () => {
                 className="pl-8 pr-3 py-1.5 border border-[#CBD5E1] rounded outline-none text-[12px] w-64 focus:border-[#3B82F6]"
               />
             </div>
-            <button 
+            <button type="button" 
               onClick={() => exportToExcel(purchases, `Purchase_Report_${fromDate}_to_${toDate}`)}
               className="bg-[#10B981] hover:bg-[#059669] text-white px-3 py-1.5 rounded flex items-center gap-1.5 text-[12px] font-bold transition-colors"
             >
               <Download size={14} /> Export Excel
             </button>
-            <button 
+            <button type="button" 
               onClick={() => navigate('/purchase/new')}
               className="text-[#64748B] border border-[#CBD5E1] hover:bg-gray-50 px-3 py-1.5 rounded flex items-center gap-1.5 text-[12px] font-bold transition-colors"
             >

@@ -47,49 +47,7 @@ const InvoicePrintModal = ({ isOpen, onClose, sale }: InvoicePrintModalProps) =>
   const grandTotal = sale?.grandTotal || 20.00;
 
   const handlePrint = () => {
-    const printContent = document.getElementById('printable-invoice');
-    if (!printContent) return;
-
-    const iframe = document.createElement('iframe');
-    iframe.style.display = 'none';
-    document.body.appendChild(iframe);
-    
-    const doc = iframe.contentWindow?.document;
-    if (doc) {
-      doc.open();
-      // Get all styles to ensure Tailwind works in the iframe
-      const styles = document.querySelectorAll('style, link[rel="stylesheet"]');
-      let stylesHtml = '';
-      styles.forEach(s => stylesHtml += s.outerHTML);
-      
-      doc.write(`
-        <html>
-          <head>
-            <title>Print Invoice</title>
-            ${stylesHtml}
-          </head>
-          <body class="bg-white text-black p-0 m-0">
-            <div class="w-full max-w-[210mm] mx-auto p-5 font-sans">
-              ${printContent.innerHTML}
-            </div>
-            <script>
-              window.onload = function() {
-                window.focus();
-                window.print();
-              };
-            </script>
-          </body>
-        </html>
-      `);
-      doc.close();
-
-      // Clean up iframe after printing dialogue is closed (or after a delay)
-      setTimeout(() => {
-        if (document.body.contains(iframe)) {
-          document.body.removeChild(iframe);
-        }
-      }, 5000);
-    }
+    window.print();
   };
 
   const handleWhatsApp = () => {
@@ -116,7 +74,7 @@ const InvoicePrintModal = ({ isOpen, onClose, sale }: InvoicePrintModalProps) =>
             <Printer size={16} />
             <span>Print Invoice - {invoiceNo}</span>
           </div>
-          <button onClick={onClose} className="hover:text-red-400 transition-colors">
+          <button type="button" onClick={onClose} className="hover:text-red-400 transition-colors">
             <X size={20} />
           </button>
         </div>
@@ -242,6 +200,7 @@ const InvoicePrintModal = ({ isOpen, onClose, sale }: InvoicePrintModalProps) =>
         {/* Footer Actions - Screen Only */}
         <div className="flex justify-between items-center p-4 bg-gray-50 border-t border-gray-200 rounded-b-md print:hidden">
           <button 
+            type="button"
             onClick={handleWhatsApp}
             className="flex items-center gap-2 bg-[#25D366] hover:bg-[#1DA851] text-white font-bold py-2 px-4 rounded transition-colors shadow-sm"
           >
@@ -251,6 +210,7 @@ const InvoicePrintModal = ({ isOpen, onClose, sale }: InvoicePrintModalProps) =>
           
           <div className="flex gap-2">
             <button 
+              type="button"
               onClick={handlePrint}
               className="flex items-center gap-2 bg-[#1E3A8A] hover:bg-[#1E40AF] text-white font-bold py-2 px-4 rounded transition-colors shadow-sm"
             >
@@ -258,6 +218,7 @@ const InvoicePrintModal = ({ isOpen, onClose, sale }: InvoicePrintModalProps) =>
               Print / Save PDF
             </button>
             <button 
+              type="button"
               onClick={onClose}
               className="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded transition-colors shadow-sm"
             >

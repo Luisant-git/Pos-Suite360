@@ -140,7 +140,7 @@ const MainLayout = () => {
           <Link to="/settings" className="flex-1 py-3 flex justify-center hover:bg-[#111827] font-bold transition-colors text-xl" title="Settings">
             <i className="fa fa-cog"></i>
           </Link>
-          <button onClick={() => { localStorage.removeItem('token'); navigate('/login'); }} className="flex-1 py-3 flex justify-center hover:bg-[#111827] font-bold transition-colors text-xl" title="Logout">
+          <button type="button" onClick={() => { localStorage.removeItem('token'); navigate('/login'); }} className="flex-1 py-3 flex justify-center hover:bg-[#111827] font-bold transition-colors text-xl" title="Logout">
             <i className="fa fa-sign-out"></i>
           </button>
         </div>
@@ -151,7 +151,7 @@ const MainLayout = () => {
         {/* Header - Solid Blue */}
         <header className="h-[50px] bg-[#3B82F6] text-white flex items-center justify-between px-4 z-10 shadow print:hidden">
           <div className="flex items-center gap-4">
-            <button 
+            <button type="button" 
               onClick={() => setIsSidebarOpen(!isSidebarOpen)}
               className="p-2 hover:bg-[#2563EB] font-bold rounded text-white transition-colors"
             >

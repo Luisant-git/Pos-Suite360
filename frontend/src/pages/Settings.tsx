@@ -135,7 +135,7 @@ const Settings = () => {
           </h1>
           <p className="text-[12px] text-[#64748B] mt-1">Manage company details, billing currency, shop address, and account password security</p>
         </div>
-        <button onClick={() => navigate('/')} className="bg-[#E11D48] text-white font-bold text-[13px] px-4 py-2 rounded flex items-center gap-1 transition-colors shadow-sm hover:bg-[#BE123C]">
+        <button type="button" onClick={() => navigate('/')} className="bg-[#E11D48] text-white font-bold text-[13px] px-4 py-2 rounded flex items-center gap-1 transition-colors shadow-sm hover:bg-[#BE123C]">
           <X size={14} /> Close
         </button>
       </div>
@@ -306,7 +306,7 @@ const Settings = () => {
             <p className="text-[12px] text-[#64748B] mb-4">
               Clear all demo items, categories, brands, customers, suppliers, sales, and purchases to start with a fresh clean empty database.
             </p>
-            <button 
+            <button type="button" 
               onClick={() => setShowResetModal(true)}
               className="w-full border border-[#E11D48] text-[#E11D48] hover:bg-[#FFF1F2] py-2.5 rounded font-bold text-[13px] flex justify-center items-center gap-2 transition-colors"
             >
@@ -339,13 +339,13 @@ const Settings = () => {
             />
 
             <div className="flex gap-2">
-              <button 
+              <button type="button" 
                 onClick={() => { setShowResetModal(false); setResetConfirmation(''); }}
                 className="flex-1 bg-[#F1F5F9] text-[#475569] font-bold py-2 rounded text-[13px] hover:bg-[#E2E8F0]"
               >
                 Cancel
               </button>
-              <button 
+              <button type="button" 
                 onClick={handleReset}
                 disabled={resetConfirmation !== 'RESET' || resetDatabaseMutation.isPending}
                 className="flex-1 bg-[#E11D48] text-white font-bold py-2 rounded text-[13px] hover:bg-[#BE123C] disabled:opacity-50"

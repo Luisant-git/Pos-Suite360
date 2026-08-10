@@ -29,6 +29,8 @@ const SupplierPayments = () => {
   const [filterFromDate, setFilterFromDate] = useState('');
   const [filterToDate, setFilterToDate] = useState('');
   const [currentBalance, setCurrentBalance] = useState(0);
+  const [unpaidBills, setUnpaidBills] = useState<any[]>([]);
+  const [showBreakdown, setShowBreakdown] = useState(false);
 
   const { register, handleSubmit, watch, setValue, reset, } = useForm<PaymentFormValues>({
     resolver: zodResolver(paymentSchema) as any,
@@ -70,12 +72,18 @@ const SupplierPayments = () => {
         try {
           const res = await api.get(`/supplier-payments/balance/${selectedSupplierId}`);
           setCurrentBalance(res.data.balance);
+          
+          const billsRes = await api.get(`/supplier-payments/unpaid-bills/${selectedSupplierId}`);
+          setUnpaidBills(billsRes.data);
         } catch (error) {
           console.error(error);
           setCurrentBalance(0);
+          setUnpaidBills([]);
         }
       } else {
         setCurrentBalance(0);
+        setUnpaidBills([]);
+        setShowBreakdown(false);
       }
     };
     fetchBalance();
@@ -170,6 +178,60 @@ const SupplierPayments = () => {
                 ))}
               </select>
             </div>
+
+            {selectedSupplierId > 0 && (
+              <div className="flex flex-col gap-3">
+                <div className="border border-[#CBD5E1] rounded-lg p-3 flex justify-between items-center bg-white">
+                  <div className="text-[13px] font-bold text-[#475569]">
+                    Over All Outstanding Balance: <span className="text-[#E11D48] text-[15px]">RM {currentBalance.toFixed(2)}</span>
+                  </div>
+                  <button 
+                    type="button"
+                    onClick={() => setShowBreakdown(!showBreakdown)}
+                    className="border-2 border-[#E11D48] text-[#E11D48] px-3 py-1.5 rounded font-bold text-[13px] hover:bg-[#FFF1F2] flex items-center gap-2 transition-colors"
+                  >
+                    <FileText size={14} /> Bill-by-Bill Breakdown
+                  </button>
+                </div>
+
+                {showBreakdown && (
+                  <div className="border border-[#E11D48] rounded-lg overflow-hidden bg-white">
+                    <div className="bg-[#E11D48] text-white px-3 py-2 flex justify-between items-center text-[12px] font-bold">
+                      <div className="flex items-center gap-2"><FileText size={14} /> BILL-BY-BILL OUTSTANDING BREAKDOWN</div>
+                      <span className="bg-white text-[#E11D48] px-2 py-0.5 rounded-full text-[10px]">{unpaidBills.length} Bills</span>
+                    </div>
+                    <div className="max-h-[250px] overflow-y-auto">
+                      <table className="w-full text-left text-[12px]">
+                        <thead className="bg-[#F8FAFC] border-b border-[#E2E8F0] sticky top-0">
+                          <tr>
+                            <th className="px-3 py-2 font-bold text-[#334155]">Entry / Inv No</th>
+                            <th className="px-3 py-2 font-bold text-[#334155]">Bill Date</th>
+                            <th className="px-3 py-2 font-bold text-[#334155] text-right">Bill Total</th>
+                            <th className="px-3 py-2 font-bold text-[#334155] text-right">Paid Amount</th>
+                            <th className="px-3 py-2 font-bold text-[#E11D48] text-right">Pending Balance</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {unpaidBills.length > 0 ? unpaidBills.map((bill, idx) => (
+                            <tr key={idx} className="border-b border-[#E2E8F0] hover:bg-[#F8FAFC]">
+                              <td className="px-3 py-2 font-bold text-[#1E293B]">{bill.entryNo}</td>
+                              <td className="px-3 py-2 text-[#475569]">{new Date(bill.date).toISOString().split('T')[0]}</td>
+                              <td className="px-3 py-2 text-right text-[#475569]">RM {bill.total.toFixed(2)}</td>
+                              <td className="px-3 py-2 text-right text-[#10B981]">RM {bill.received.toFixed(2)}</td>
+                              <td className="px-3 py-2 text-right font-bold text-[#E11D48]">RM {bill.pending.toFixed(2)}</td>
+                            </tr>
+                          )) : (
+                            <tr>
+                              <td colSpan={5} className="px-3 py-4 text-center text-[#64748B] italic">No outstanding bills found.</td>
+                            </tr>
+                          )}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
 
             <div className="grid grid-cols-2 gap-4">
               <div>

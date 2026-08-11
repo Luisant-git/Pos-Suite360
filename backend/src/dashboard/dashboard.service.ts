@@ -5,35 +5,40 @@ import { PrismaService } from '../prisma/prisma.service';
 export class DashboardService {
   constructor(private prisma: PrismaService) {}
 
-  async getDashboardSummary(dateStr?: string) {
-    const today = dateStr ? new Date(dateStr) : new Date();
-    if (isNaN(today.getTime())) {
-      today.setTime(Date.now());
+  async getDashboardSummary(startDateStr?: string, endDateStr?: string) {
+    const start = startDateStr ? new Date(startDateStr) : new Date();
+    if (isNaN(start.getTime())) {
+      start.setTime(Date.now());
     }
-    today.setHours(0, 0, 0, 0);
-    const tomorrow = new Date(today);
-    tomorrow.setDate(tomorrow.getDate() + 1);
+    start.setHours(0, 0, 0, 0);
 
-    const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+    const end = endDateStr ? new Date(endDateStr) : new Date(start);
+    if (isNaN(end.getTime())) {
+      end.setTime(start.getTime());
+    }
+    end.setHours(0, 0, 0, 0);
+    end.setDate(end.getDate() + 1); // Exclusive upper bound for the end date
+
+    const firstDayOfMonth = new Date(start.getFullYear(), start.getMonth(), 1);
 
     // Today's Sales
     const salesAggregate = await this.prisma.sale.aggregate({
       _sum: { grandTotal: true },
-      where: { date: { gte: today, lt: tomorrow } },
+      where: { date: { gte: start, lt: end } },
     });
     const salesToday = salesAggregate._sum.grandTotal ? Number(salesAggregate._sum.grandTotal) : 0;
 
     // Today's Purchases
     const purchasesAggregate = await this.prisma.purchase.aggregate({
       _sum: { grandTotal: true },
-      where: { date: { gte: today, lt: tomorrow } },
+      where: { date: { gte: start, lt: end } },
     });
     const purchasesToday = purchasesAggregate._sum.grandTotal ? Number(purchasesAggregate._sum.grandTotal) : 0;
 
     // Today's Expenses
     const expensesAggregate = await this.prisma.expense.aggregate({
       _sum: { amount: true },
-      where: { date: { gte: today, lt: tomorrow } },
+      where: { date: { gte: start, lt: end } },
     });
     const expensesToday = expensesAggregate._sum.amount ? Number(expensesAggregate._sum.amount) : 0;
 
@@ -48,7 +53,7 @@ export class DashboardService {
 
     // Today's Bills
     const billsToday = await this.prisma.sale.count({
-      where: { date: { gte: today, lt: tomorrow } },
+      where: { date: { gte: start, lt: end } },
     });
 
     // Low Stock Products Details

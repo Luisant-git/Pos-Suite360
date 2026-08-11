@@ -20,7 +20,7 @@ const Login = () => {
       if (response.data && response.data.access_token) {
         localStorage.setItem('token', response.data.access_token);
         localStorage.setItem('user', JSON.stringify(response.data.user));
-        navigate('/dashboard');
+        navigate('/quick-start');
       }
     } catch (err: any) {
       setError(err.response?.data?.message || 'Failed to login. Please check your credentials.');

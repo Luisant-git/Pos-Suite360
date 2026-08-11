@@ -61,6 +61,22 @@ const MainLayout = () => {
               <i className="fa fa-dashboard text-xl w-8 text-center flex-shrink-0"></i>
               <span className={`font-bold transition-opacity duration-200 ${isSidebarOpen ? 'opacity-100' : 'opacity-0'}`}>Dashboard</span>
             </NavLink>
+            {/*
+            <NavLink 
+              to="/quick-start" 
+              className={({ isActive }) => 
+                `flex items-center gap-3 px-5 py-3 transition-colors border-r-4 whitespace-nowrap ${
+                  isActive 
+                    ? 'bg-[#1F2937] border-[#1ABB9C] text-white' 
+                    : 'border-transparent hover:bg-[#1F2937] font-bold hover:text-white'
+                }`
+              }
+              title={!isSidebarOpen ? "Quick Start" : undefined}
+            >
+              <i className="fa fa-bolt text-xl w-8 text-center flex-shrink-0"></i>
+              <span className={`font-bold transition-opacity duration-200 ${isSidebarOpen ? 'opacity-100' : 'opacity-0'}`}>Quick Start</span>
+            </NavLink>
+            */}
 
             {/* Masters */}
             <div className={`px-4 pt-4 py-2 transition-opacity duration-200 ${isSidebarOpen ? 'opacity-100' : 'opacity-0'}`}>
@@ -181,6 +197,12 @@ const MainLayout = () => {
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" /></svg>
             </button>
+            <Link 
+              to="/quick-start"
+              className="flex items-center gap-2 bg-[#1E3A8A] hover:bg-[#1e40af] text-white px-4 py-1.5 rounded-lg font-bold transition-all shadow-sm border border-[#1e40af] text-[13px]"
+            >
+              <i className="fa fa-bolt"></i> Quick Start
+            </Link>
           </div>
           
           <div className="flex items-center gap-4 text-sm">

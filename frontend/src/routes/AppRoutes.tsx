@@ -3,6 +3,7 @@ import AuthLayout from '../layouts/AuthLayout';
 import MainLayout from '../layouts/MainLayout';
 import Login from '../pages/auth/Login';
 import Dashboard from '../pages/dashboard/Dashboard';
+import QuickStart from '../pages/QuickStart';
 
 // Master
 import Products from '../pages/master/Products';
@@ -60,8 +61,9 @@ const AppRoutes = () => {
       </Route>
       
       <Route element={<MainLayout />}>
-        <Route path="/" element={<Navigate to="/dashboard" replace />} />
+        <Route path="/" element={<Navigate to="/quick-start" replace />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/quick-start" element={<QuickStart />} />
         
         {/* Master Routes */}
         <Route path="/master/products" element={<Products />} />
@@ -113,7 +115,7 @@ const AppRoutes = () => {
         <Route path="/settings" element={<Settings />} />
       </Route>
       
-      <Route path="*" element={<Navigate to="/dashboard" replace />} />
+      <Route path="*" element={<Navigate to="/quick-start" replace />} />
     </Routes>
   );
 };

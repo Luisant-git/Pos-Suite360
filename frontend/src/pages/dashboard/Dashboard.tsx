@@ -1,11 +1,17 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   IndianRupee,
   ShoppingCart,
   TrendingDown,
   Package,
   AlertTriangle,
-  Receipt
+  Receipt,
+  RotateCcw,
+  PlusCircle,
+  FileText,
+  CreditCard,
+  Settings
 } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import api from '../../api';
@@ -25,16 +31,18 @@ const StatCard = ({ title, value, icon: Icon, colorClass, desc }: any) => (
 );
 
 const Dashboard = () => {
+  const navigate = useNavigate();
   const { formatCurrency } = useSettings();
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [filterDate, setFilterDate] = useState(new Date().toISOString().split('T')[0]);
+  const [filterStartDate, setFilterStartDate] = useState(new Date().toISOString().split('T')[0]);
+  const [filterEndDate, setFilterEndDate] = useState(new Date().toISOString().split('T')[0]);
 
   useEffect(() => {
     const fetchDashboard = async () => {
       try {
         setLoading(true);
-        const response = await api.get(`/dashboard/summary?date=${filterDate}`);
+        const response = await api.get(`/dashboard/summary?startDate=${filterStartDate}&endDate=${filterEndDate}`);
         setData(response.data);
       } catch (error) {
         console.error("Error fetching dashboard data", error);
@@ -43,7 +51,7 @@ const Dashboard = () => {
       }
     };
     fetchDashboard();
-  }, [filterDate]);
+  }, [filterStartDate, filterEndDate]);
 
   if (loading || !data) {
     return (
@@ -60,14 +68,36 @@ const Dashboard = () => {
     <div className="bg-[#F7F7F7] min-h-[calc(100vh-100px)]">
       <div className="flex justify-between items-center mb-4 pt-2">
         <h1 className="text-[18px] font-bold text-[#1F2937]">Overview</h1>
-        <div className="flex items-center gap-2 bg-white px-3 py-1.5 border border-[#E6E9ED] rounded-lg shadow-sm">
-          <label className="text-[12px] font-bold text-[#6B7280]">Date:</label>
-          <input 
-            type="date" 
-            value={filterDate} 
-            onChange={(e) => setFilterDate(e.target.value)}
-            className="text-[13px] font-bold text-[#1F2937] outline-none bg-transparent"
-          />
+        <div className="flex items-center gap-4 bg-white px-3 py-1.5 border border-[#E6E9ED] rounded-lg shadow-sm">
+          <div className="flex items-center gap-2 border-r border-[#E6E9ED] pr-4">
+            <label className="text-[12px] font-bold text-[#6B7280]">From:</label>
+            <input 
+              type="date" 
+              value={filterStartDate} 
+              onChange={(e) => setFilterStartDate(e.target.value)}
+              className="text-[13px] font-bold text-[#1F2937] outline-none bg-transparent"
+            />
+          </div>
+          <div className="flex items-center gap-2 pl-2 border-r border-[#E6E9ED] pr-4">
+            <label className="text-[12px] font-bold text-[#6B7280]">To:</label>
+            <input 
+              type="date" 
+              value={filterEndDate} 
+              onChange={(e) => setFilterEndDate(e.target.value)}
+              className="text-[13px] font-bold text-[#1F2937] outline-none bg-transparent"
+            />
+          </div>
+          <button 
+            onClick={() => {
+              const today = new Date().toISOString().split('T')[0];
+              setFilterStartDate(today);
+              setFilterEndDate(today);
+            }}
+            className="flex items-center gap-1 text-[12px] font-bold text-[#6B7280] hover:text-[#3B82F6] transition-colors pl-1"
+            title="Reset to Today"
+          >
+            <RotateCcw size={14} /> Reset
+          </button>
         </div>
       </div>
       {/* Top Tiles */}

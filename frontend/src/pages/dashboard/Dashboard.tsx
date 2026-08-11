@@ -5,7 +5,8 @@ import {
   Package,
   AlertTriangle,
   Receipt,
-  RotateCcw
+  RotateCcw,
+  IndianRupee
 } from 'lucide-react';
 import api from '../../api';
 import { useSettings } from '../../contexts/SettingsContext';

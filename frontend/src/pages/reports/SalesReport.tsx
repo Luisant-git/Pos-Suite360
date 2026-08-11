@@ -227,15 +227,7 @@ const SalesReport = () => {
                       <div className="flex justify-center items-center gap-2">
                         <button type="button" 
                           onClick={() => {
-                            setSelectedSale({
-                              invoiceNo: s.invoiceNo,
-                              date: s.date,
-                              customer: { name: s.customerName },
-                              grandTotal: parseFloat(s.netPayable.replace(/[^0-9.-]+/g, "")),
-                              items: [
-                                { product: { code: 'PTEST100', name: 'Test Multi Filter Product' }, quantity: 1, unit: { name: 'Nos' }, rate: parseFloat(s.netPayable.replace(/[^0-9.-]+/g, "")), amount: parseFloat(s.netPayable.replace(/[^0-9.-]+/g, "")) }
-                              ]
-                            });
+                            setSelectedSale({ id: s.id });
                             setIsPrintModalOpen(true);
                           }}
                           className="bg-[#3B82F6] hover:bg-[#2563EB] text-white px-2 py-1 rounded-full flex items-center gap-1 font-bold text-[11px] transition-colors"
@@ -244,15 +236,7 @@ const SalesReport = () => {
                         </button>
                         <button type="button" 
                           onClick={() => {
-                            setSelectedSale({
-                              invoiceNo: s.invoiceNo,
-                              date: s.date,
-                              customer: { name: s.customerName },
-                              grandTotal: parseFloat(s.netPayable.replace(/[^0-9.-]+/g, "")),
-                              items: [
-                                { product: { code: 'PTEST100', name: 'Test Multi Filter Product' }, quantity: 1, unit: { name: 'Nos' }, rate: parseFloat(s.netPayable.replace(/[^0-9.-]+/g, "")), amount: parseFloat(s.netPayable.replace(/[^0-9.-]+/g, "")) }
-                              ]
-                            });
+                            setSelectedSale({ id: s.id });
                             setIsPrintModalOpen(true);
                           }}
                           className="bg-[#25D366] hover:bg-[#1EBE55] text-white px-2 py-1 rounded-full flex items-center gap-1 font-bold text-[11px] transition-colors"

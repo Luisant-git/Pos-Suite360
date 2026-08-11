@@ -30,7 +30,7 @@ const ReportTabs = () => {
   const activeTab = tabs.find(tab => location.pathname === tab.path) || tabs[0]; // fallback to first if not found
 
   return (
-    <div className="mb-4">
+    <div className="mb-2">
       <div className="inline-flex items-center gap-2 px-4 py-2 rounded-md text-[14px] font-bold bg-[#0F172A] text-white shadow-sm border border-[#0F172A]">
         {activeTab.icon}
         <span className="tracking-wide">{activeTab.name}</span>

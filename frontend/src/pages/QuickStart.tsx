@@ -6,7 +6,6 @@ import {
   Package,
   Receipt,
   RotateCcw,
-  Settings,
   Database,
   Tag,
   List,
@@ -14,17 +13,9 @@ import {
   Users,
   Scale,
   CreditCard,
-  Tags,
-  UserCog,
   ListOrdered,
-  History,
-  Boxes,
-  ClipboardList,
-  Sliders,
   BarChart2,
   FileText,
-  Star,
-  Calendar,
   ArrowLeft
 } from 'lucide-react';
 

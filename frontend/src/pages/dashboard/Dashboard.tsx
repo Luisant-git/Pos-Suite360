@@ -1,19 +1,12 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import {
-  IndianRupee,
   ShoppingCart,
   TrendingDown,
   Package,
   AlertTriangle,
   Receipt,
-  RotateCcw,
-  PlusCircle,
-  FileText,
-  CreditCard,
-  Settings
+  RotateCcw
 } from 'lucide-react';
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import api from '../../api';
 import { useSettings } from '../../contexts/SettingsContext';
 
@@ -31,7 +24,6 @@ const StatCard = ({ title, value, icon: Icon, colorClass, desc }: any) => (
 );
 
 const Dashboard = () => {
-  const navigate = useNavigate();
   const { formatCurrency } = useSettings();
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);

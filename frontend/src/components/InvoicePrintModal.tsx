@@ -5,20 +5,20 @@ import api from '../services/api';
 
 // Basic number to words converter (for Malaysian Ringgit / general use)
 const numberToWords = (num: number): string => {
-  if (num === 0) return "ZERO";
+  if (!num || num === 0) return "ZERO";
   const a = ["", "ONE ", "TWO ", "THREE ", "FOUR ", "FIVE ", "SIX ", "SEVEN ", "EIGHT ", "NINE ", "TEN ", "ELEVEN ", "TWELVE ", "THIRTEEN ", "FOURTEEN ", "FIFTEEN ", "SIXTEEN ", "SEVENTEEN ", "EIGHTEEN ", "NINETEEN "];
-  const b = ["", "", "TWENTY", "THIRTY", "FORTY", "FIFTY", "SIXTY", "SEVENTY", "EIGHTY", "NINETY"];
+  const b = ["", "", "TWENTY ", "THIRTY ", "FORTY ", "FIFTY ", "SIXTY ", "SEVENTY ", "EIGHTY ", "NINETY "];
 
   const convertWhole = (n: number): string => {
     if (n < 20) return a[n];
-    if (n < 100) return b[Math.floor(n / 10)] + (n % 10 !== 0 ? " " + a[n % 10] : "");
+    if (n < 100) return b[Math.floor(n / 10)] + (n % 10 !== 0 ? a[n % 10] : "");
     if (n < 1000) return a[Math.floor(n / 100)] + "HUNDRED " + (n % 100 !== 0 ? convertWhole(n % 100) : "");
     if (n < 1000000) return convertWhole(Math.floor(n / 1000)) + "THOUSAND " + (n % 1000 !== 0 ? convertWhole(n % 1000) : "");
     return n.toString(); // Fallback for very large numbers
   };
 
-  const wholePart = Math.floor(num);
-  const cents = Math.round((num - wholePart) * 100);
+  const wholePart = Math.floor(Number(num));
+  const cents = Math.round((Number(num) - wholePart) * 100);
   
   let res = convertWhole(wholePart);
   if (cents > 0) {

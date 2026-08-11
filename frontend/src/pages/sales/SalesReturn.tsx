@@ -301,9 +301,9 @@ const SalesReturn = () => {
 
           {/* Bottom Actions */}
           <div className="p-4 bg-gray-50 flex justify-end">
-             <button onClick={handleSave} disabled={saveMutation.isPending} className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-6 rounded shadow-md flex items-center gap-2 disabled:opacity-50">
+             {/* <button onClick={handleSave} disabled={saveMutation.isPending} className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-6 rounded shadow-md flex items-center gap-2 disabled:opacity-50">
                 <Save size={18} /> {saveMutation.isPending ? 'SAVING...' : 'SAVE SALES RETURN (F10)'}
-             </button>
+             </button> */}
           </div>
           </div>
         </div>

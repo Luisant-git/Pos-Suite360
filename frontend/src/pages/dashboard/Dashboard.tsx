@@ -7,7 +7,7 @@ import {
   AlertTriangle,
   Receipt
 } from 'lucide-react';
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts';
 import api from '../../api';
 import { useSettings } from '../../contexts/SettingsContext';
 
@@ -109,6 +109,7 @@ const Dashboard = () => {
             <h2 className="text-[15px] font-bold text-[#1F2937]">Sales Overview <small className="font-normal">Current Month</small></h2>
           </div>
           <div className="p-4 h-[350px] bg-white">
+            {/* 
             {data.chartData && data.chartData.length > 0 ? (
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart
@@ -130,7 +131,36 @@ const Dashboard = () => {
               </ResponsiveContainer>
             ) : (
                <div className="w-full h-full flex items-center justify-center text-gray-500 font-bold">No sales data this month</div>
-            )}
+            )} 
+            */}
+
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie
+                  data={[
+                    { name: 'Sales', value: data?.salesToday || 0, color: '#10B981' },
+                    { name: 'Purchases', value: data?.purchasesToday || 0, color: '#3B82F6' },
+                    { name: 'Expenses', value: data?.expensesToday || 0, color: '#EF4444' }
+                  ].filter(item => item.value > 0)}
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={80}
+                  outerRadius={120}
+                  paddingAngle={5}
+                  dataKey="value"
+                >
+                  {[
+                    { name: 'Sales', value: data?.salesToday || 0, color: '#10B981' },
+                    { name: 'Purchases', value: data?.purchasesToday || 0, color: '#3B82F6' },
+                    { name: 'Expenses', value: data?.expensesToday || 0, color: '#EF4444' }
+                  ].filter(item => item.value > 0).map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.color} />
+                  ))}
+                </Pie>
+                <Tooltip formatter={(value: any) => formatCurrency(Number(value))} />
+                <Legend verticalAlign="bottom" height={36} />
+              </PieChart>
+            </ResponsiveContainer>
           </div>
         </div>
 

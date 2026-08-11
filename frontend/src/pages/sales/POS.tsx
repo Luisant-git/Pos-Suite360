@@ -25,29 +25,27 @@ const WhatsAppIcon = ({ size = 16, className = "" }: { size?: number, className?
   </svg>
 );
 
-const toWords = (num: number) => {
-  const a = ['','ONE ','TWO ','THREE ','FOUR ', 'FIVE ','SIX ','SEVEN ','EIGHT ','NINE ','TEN ','ELEVEN ','TWELVE ','THIRTEEN ','FOURTEEN ','FIFTEEN ','SIXTEEN ','SEVENTEEN ','EIGHTEEN ','NINETEEN '];
-  const b = ['', '', 'TWENTY','THIRTY','FORTY','FIFTY', 'SIXTY','SEVENTY','EIGHTY','NINETY'];
-  const n = ('000000000' + num).substr(-9).match(/^(\d{2})(\d{1})(\d{2})(\d{1})(\d{2})$/);
-  if (!n) return '';
-  let str = '';
-  str += (Number(n[1]) != 0) ? (a[Number(n[1])] || b[n[1][0] as any] + ' ' + a[n[1][1] as any]) + 'MILLION ' : '';
-  str += (Number(n[2]) != 0) ? (a[Number(n[2])] || b[n[2][0] as any] + ' ' + a[n[2][1] as any]) + 'HUNDRED ' : '';
-  str += (Number(n[3]) != 0) ? (a[Number(n[3])] || b[n[3][0] as any] + ' ' + a[n[3][1] as any]) + 'THOUSAND ' : '';
-  str += (Number(n[4]) != 0) ? (a[Number(n[4])] || b[n[4][0] as any] + ' ' + a[n[4][1] as any]) + 'HUNDRED ' : '';
-  str += (Number(n[5]) != 0) ? ((str != '') ? 'AND ' : '') + (a[Number(n[5])] || b[n[5][0] as any] + ' ' + a[n[5][1] as any]) : '';
-  return str.trim();
-}
-
 const numberToWords = (num: number): string => {
-  if (!num || num === 0) return 'ZERO';
-  const parts = Number(num).toFixed(2).split('.');
-  const whole = toWords(Number(parts[0]));
-  const cents = Number(parts[1]);
+  if (!num || num === 0) return "ZERO";
+  const a = ["", "ONE ", "TWO ", "THREE ", "FOUR ", "FIVE ", "SIX ", "SEVEN ", "EIGHT ", "NINE ", "TEN ", "ELEVEN ", "TWELVE ", "THIRTEEN ", "FOURTEEN ", "FIFTEEN ", "SIXTEEN ", "SEVENTEEN ", "EIGHTEEN ", "NINETEEN "];
+  const b = ["", "", "TWENTY ", "THIRTY ", "FORTY ", "FIFTY ", "SIXTY ", "SEVENTY ", "EIGHTY ", "NINETY "];
+
+  const convertWhole = (n: number): string => {
+    if (n < 20) return a[n];
+    if (n < 100) return b[Math.floor(n / 10)] + (n % 10 !== 0 ? a[n % 10] : "");
+    if (n < 1000) return a[Math.floor(n / 100)] + "HUNDRED " + (n % 100 !== 0 ? convertWhole(n % 100) : "");
+    if (n < 1000000) return convertWhole(Math.floor(n / 1000)) + "THOUSAND " + (n % 1000 !== 0 ? convertWhole(n % 1000) : "");
+    return n.toString(); // Fallback for very large numbers
+  };
+
+  const wholePart = Math.floor(Number(num));
+  const cents = Math.round((Number(num) - wholePart) * 100);
+  
+  let res = convertWhole(wholePart);
   if (cents > 0) {
-    return whole + ' AND CENTS ' + toWords(cents).replace('AND ', '');
+    res += `AND CENTS ${convertWhole(cents)}`;
   }
-  return whole;
+  return res.trim();
 };
 
 const saleItemSchema = z.object({
@@ -59,6 +57,9 @@ const saleItemSchema = z.object({
   discPercent: z.coerce.number().min(0).max(100),
   discAmt: z.coerce.number().min(0),
   total: z.coerce.number(),
+}).refine(data => data.quantity <= data.stock, {
+  message: "Qty > Stock",
+  path: ["quantity"]
 });
 
 const saleSchema = z.object({
@@ -243,6 +244,11 @@ const POS = () => {
     createMutation.mutate(payload as any);
   };
 
+  const onError = (errors: any) => {
+    toast.error('Validation failed. Please check quantity vs stock and other fields.');
+    console.error(errors);
+  };
+
   const addCustomerMutation = useMutation({
     mutationFn: (data: any) => api.post('/customers', data),
     onSuccess: (res) => {
@@ -360,7 +366,7 @@ const POS = () => {
         <div className="flex gap-2">
           <button 
             type="button"
-            onClick={handleSubmit(onSubmit as any)}
+            onClick={handleSubmit(onSubmit as any, onError)}
             className="bg-[#10B981] hover:bg-[#059669] text-white px-4 py-1.5 rounded flex items-center gap-2 font-bold text-[13px] transition-colors"
           >
             <Printer size={16} /> SAVE & PRINT (F10)
@@ -382,7 +388,7 @@ const POS = () => {
         </button>
       </div>
 
-      <form className="flex flex-col flex-1 overflow-hidden print:hidden" onSubmit={handleSubmit(onSubmit as any)}>
+      <form className="flex flex-col flex-1 overflow-hidden print:hidden" onSubmit={handleSubmit(onSubmit as any, onError)}>
         
         {/* Header Section */}
         <div className="bg-white p-4 border-b border-[#E5E7EB] shrink-0">
@@ -515,12 +521,12 @@ const POS = () => {
                     />
                   </td>
                   <td className="px-2 py-1 border-r border-[#E5E7EB] text-center">
-                    <span className="bg-[#EF4444] text-white px-2 py-0.5 rounded-full text-[11px] font-bold">
+                    <span className={`px-2 py-0.5 rounded-full text-[11px] font-bold text-white ${watch(`items.${index}.stock`) > 0 ? 'bg-[#059669]' : 'bg-[#EF4444]'}`}>
                       {watch(`items.${index}.stock`)}
                     </span>
                   </td>
                   <td className="px-2 py-1 border-r border-[#E5E7EB]">
-                    <input {...register(`items.${index}.quantity`)} type="number" min="1" className="w-full px-2 py-1 border border-[#D1D5DB] rounded text-[13px] outline-none focus:border-[#3B82F6] text-center" />
+                    <input {...register(`items.${index}.quantity`)} type="number" min="1" className={`w-full px-2 py-1 border rounded text-[13px] outline-none text-center ${watch(`items.${index}.quantity`) > watch(`items.${index}.stock`) ? 'border-red-500 focus:border-red-500' : 'border-[#D1D5DB] focus:border-[#3B82F6]'}`} />
                   </td>
                   <td className="px-2 py-1 border-r border-[#E5E7EB]">
                     <input {...register(`items.${index}.rate`)} type="number" step="0.01" className="w-full px-2 py-1 border border-[#D1D5DB] rounded text-[13px] outline-none focus:border-[#3B82F6] text-right" />
@@ -663,7 +669,7 @@ const POS = () => {
                 type="button"
                 disabled={createMutation.isPending}
                 className="bg-[#4B5563] text-white text-[11px] font-bold px-3 py-1.5 rounded-sm flex items-center gap-1 cursor-pointer hover:bg-[#374151] disabled:opacity-50 disabled:cursor-not-allowed" 
-                onClick={handleSubmit(onSubmit as any)}
+                onClick={handleSubmit(onSubmit as any, onError)}
               >
                 <span className="opacity-70 border-r border-[#9CA3AF] pr-1 mr-1">F10</span> 
                 {createMutation.isPending ? 'Saving...' : 'Save & Print'}

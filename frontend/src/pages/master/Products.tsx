@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Edit, Trash2, CheckCircle, Package, Grid, Maximize, Minimize } from 'lucide-react';
 import { useForm } from 'react-hook-form';
@@ -9,7 +9,7 @@ import api from '../../services/api';
 const productSchema = z.object({
   code: z.string().min(1, 'Product Code is required'),
   name: z.string().min(1, 'Product Name is required'),
-  categoryId: z.string().min(1, 'Category is required'),
+  categoryId: z.string().optional(),
   brandId: z.string().optional(),
   unitId: z.string().min(1, 'Unit is required'),
   supplierId: z.string().optional(),
@@ -62,6 +62,28 @@ const Products = () => {
     queryFn: async () => (await api.get('/products')).data 
   });
 
+  const { data: nextCodeData } = useQuery({
+    queryKey: ['nextProductCode'],
+    queryFn: async () => (await api.get('/products/next-code')).data
+  });
+
+  useEffect(() => {
+    if (nextCodeData?.code && !editingId) {
+      setValue('code', nextCodeData.code);
+    }
+  }, [nextCodeData, editingId, setValue]);
+
+  const handleAutoCode = async () => {
+    try {
+      const res = await api.get('/products/next-code');
+      if (res.data && res.data.code) {
+        setValue('code', res.data.code);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   const filteredProducts = products.filter((p: any) => {
     if (filterCategory && p.categoryId.toString() !== filterCategory) return false;
     if (filterBrand && p.brandId?.toString() !== filterBrand) return false;
@@ -86,6 +108,7 @@ const Products = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['products'] });
+      queryClient.invalidateQueries({ queryKey: ['nextProductCode'] });
       reset();
       setEditingId(null);
     }
@@ -127,7 +150,7 @@ const Products = () => {
             <Package size={18} className="text-white" />
             <h2 className="font-bold text-[14px]">PRODUCT MASTER</h2>
           </div>
-          <button type="button" className="bg-[#1E3A8A] text-white text-[11px] px-3 py-1 font-bold rounded">
+          <button type="button" onClick={handleAutoCode} className="bg-[#1E3A8A] text-white text-[11px] px-3 py-1 font-bold rounded">
             Auto Code
           </button>
         </div>
@@ -145,7 +168,7 @@ const Products = () => {
               {errors.code && <span className="text-red-500 text-xs mt-1 block">{errors.code.message}</span>}
             </div>
             <div>
-              <label className="block text-[12px] font-bold text-[#1F2937] mb-1">Unit</label>
+              <label className="block text-[12px] font-bold text-[#1F2937] mb-1">Unit *</label>
               <select 
                 {...register('unitId')}
                 className="w-full px-3 py-1.5 border border-[#ccc] rounded shadow-inner focus:border-[#3B82F6] outline-none text-[13px] bg-white"
@@ -170,7 +193,7 @@ const Products = () => {
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-[12px] font-bold text-[#1F2937] mb-1">Category</label>
+              <label className="block text-[11px] font-bold text-gray-700 mb-1">Category</label>
               <select 
                 {...register('categoryId')}
                 className="w-full px-3 py-1.5 border border-[#ccc] rounded shadow-inner focus:border-[#3B82F6] outline-none text-[13px] bg-white"

@@ -10,10 +10,30 @@ export class SalesService {
   async create(createSaleDto: CreateSaleDto, userId: number) {
     // Execute in a transaction to guarantee data integrity between sale and stock ledger
     return this.prisma.$transaction(async (tx) => {
+      
+      // 0. Auto-generate the correct invoice number safely inside the transaction
+      const settings = await tx.settings.findUnique({ where: { id: 1 } });
+      const prefix = settings?.invoicePrefix || 'INV-';
+      
+      const lastSale = await tx.sale.findFirst({
+        orderBy: { invoiceNo: 'desc' },
+        select: { invoiceNo: true },
+      });
+
+      let nextNumber = 1;
+      if (lastSale && lastSale.invoiceNo.startsWith(prefix)) {
+        const remainingStr = lastSale.invoiceNo.substring(prefix.length);
+        const match = remainingStr.match(/^(\d+)/);
+        if (match && !isNaN(parseInt(match[1], 10))) {
+          nextNumber = parseInt(match[1], 10) + 1;
+        }
+      }
+      const finalInvoiceNo = `${prefix}${String(nextNumber).padStart(5, '0')}`;
+
       // 1. Create Sale and SaleItems
       const sale = await tx.sale.create({
         data: {
-          invoiceNo: createSaleDto.invoiceNo,
+          invoiceNo: finalInvoiceNo,
           date: new Date(createSaleDto.date),
           customerId: createSaleDto.customerId,
           userId: userId,
@@ -122,7 +142,7 @@ export class SalesService {
     const prefix = settings?.invoicePrefix || 'INV-';
 
     const lastSale = await this.prisma.sale.findFirst({
-      orderBy: { id: 'desc' },
+      orderBy: { invoiceNo: 'desc' },
       select: { invoiceNo: true },
     });
 

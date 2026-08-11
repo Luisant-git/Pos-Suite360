@@ -9,7 +9,7 @@ import api from '../../services/api';
 const customerSchema = z.object({
   name: z.string().min(1, 'Customer Name is required'),
   contactPerson: z.string().optional(),
-  phone: z.string().optional(),
+  phone: z.string().min(1, 'Mobile Number is required'),
   email: z.string().email('Invalid email').optional().or(z.literal('')),
   address: z.string().optional(), // Billing Address
   shippingAddress: z.string().optional(),
@@ -124,12 +124,13 @@ const Customers = () => {
               />
             </div>
             <div>
-              <label className="block text-[12px] text-[#1F2937] mb-1">Mobile Number</label>
+              <label className="block text-[12px] font-bold text-[#1F2937] mb-1">Mobile Number *</label>
               <input 
                 {...register('phone')}
                 type="text" 
                 className="w-full px-3 py-1.5 border border-[#ccc] rounded shadow-inner focus:border-[#3B82F6] outline-none text-[13px]"
               />
+              {errors.phone && <span className="text-red-500 text-xs mt-1 block">{errors.phone.message}</span>}
             </div>
           </div>
 

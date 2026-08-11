@@ -17,6 +17,11 @@ export class ProductsController {
     return this.productsService.findAll(query);
   }
 
+  @Get('next-code')
+  getNextCode() {
+    return this.productsService.getNextCode();
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.productsService.findOne(+id);

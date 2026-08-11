@@ -9,8 +9,7 @@ export class CreateCustomerDto {
   contactPerson?: string;
 
   @IsString()
-  @IsOptional()
-  phone?: string;
+  phone: string;
 
   @IsEmail()
   @IsOptional()

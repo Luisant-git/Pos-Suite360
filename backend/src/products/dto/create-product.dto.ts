@@ -12,7 +12,8 @@ export class CreateProductDto {
   barcode?: string;
 
   @IsInt()
-  categoryId: number;
+  @IsOptional()
+  categoryId?: number;
 
   @IsInt()
   @IsOptional()
@@ -45,6 +46,7 @@ export class CreateProductDto {
   @IsOptional()
   @Min(0)
   minStock?: number;
+
   @IsInt()
   @IsOptional()
   supplierId?: number;

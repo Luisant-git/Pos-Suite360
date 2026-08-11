@@ -13,6 +13,21 @@ export class ProductsService {
     });
   }
 
+  async getNextCode() {
+    const lastProduct = await this.prisma.product.findFirst({
+      orderBy: { id: 'desc' },
+      select: { code: true }
+    });
+    let nextNumber = 1;
+    if (lastProduct && lastProduct.code.startsWith('PROD-')) {
+      const numPart = parseInt(lastProduct.code.replace('PROD-', ''), 10);
+      if (!isNaN(numPart)) {
+        nextNumber = numPart + 1;
+      }
+    }
+    return { code: `PROD-${nextNumber.toString().padStart(4, '0')}` };
+  }
+
   findAll(query?: any) {
     const where: any = {};
     if (query?.categoryId) {

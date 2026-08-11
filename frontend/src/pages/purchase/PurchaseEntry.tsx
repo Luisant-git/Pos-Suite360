@@ -340,19 +340,17 @@ const PurchaseEntry = () => {
                 <tr key={field.id} className="border-b border-[#E5E7EB] hover:bg-[#F9FAFB]">
                   <td className="px-2 py-1 text-center text-[13px] border-r border-[#E5E7EB]">{index + 1}</td>
                   <td className="px-2 py-1 border-r border-[#E5E7EB]">
-                    <select
-                      {...register(`items.${index}.productId`)}
-                      onChange={(e) => {
-                        register(`items.${index}.productId`).onChange(e);
-                        handleProductChange(index, e.target.value);
+                    <SearchableSelect
+                      value={watch(`items.${index}.productId`)}
+                      onChange={(val) => {
+                        setValue(`items.${index}.productId`, Number(val));
+                        handleProductChange(index, String(val));
                       }}
-                      className="w-full px-2 py-1 border border-[#D1D5DB] rounded text-[13px] outline-none focus:border-[#3B82F6] bg-white"
-                    >
-                      <option value="0">Type product name / code...</option>
-                      {products.map((p: any) => (
-                        <option key={p.id} value={p.id}>{p.code} - {p.name}</option>
-                      ))}
-                    </select>
+                      options={[
+                        { label: 'Type product name / code...', value: 0 },
+                        ...products.map((p: any) => ({ label: `${p.code} - ${p.name}`, value: p.id }))
+                      ]}
+                    />
                   </td>
                   <td className="px-2 py-1 border-r border-[#E5E7EB]">
                     <input {...register(`items.${index}.quantity`)} type="number" min="1" className="w-full px-2 py-1 border border-[#D1D5DB] rounded text-[13px] outline-none focus:border-[#3B82F6] text-center" />

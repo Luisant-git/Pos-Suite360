@@ -95,6 +95,10 @@ const MainLayout = () => {
               <i className="fa fa-credit-card text-xl w-8 text-center flex-shrink-0"></i>
               <span className={`font-bold transition-opacity duration-200 ${isSidebarOpen ? 'opacity-100' : 'opacity-0'}`}>Payment Modes</span>
             </NavLink>
+            <NavLink to="/expenses/new" title={!isSidebarOpen ? "Expenses" : undefined} className={({ isActive }) => `flex items-center gap-3 px-5 py-3 transition-colors border-r-4 whitespace-nowrap ${isActive ? 'bg-[#1F2937] border-[#1ABB9C] text-white' : 'border-transparent hover:bg-[#1F2937] font-bold hover:text-white'}`}>
+              <i className="fa fa-money text-xl w-8 text-center flex-shrink-0"></i>
+              <span className={`font-bold transition-opacity duration-200 ${isSidebarOpen ? 'opacity-100' : 'opacity-0'}`}>Expenses</span>
+            </NavLink>
 
             {/* Sales & Purchase */}
             <div className={`px-4 pt-4 py-2 transition-opacity duration-200 ${isSidebarOpen ? 'opacity-100' : 'opacity-0'}`}>
@@ -104,6 +108,10 @@ const MainLayout = () => {
               <i className="fa fa-truck text-xl w-8 text-center flex-shrink-0"></i>
               <span className={`font-bold transition-opacity duration-200 ${isSidebarOpen ? 'opacity-100' : 'opacity-0'}`}>Purchase Entry</span>
             </NavLink>
+            <NavLink to="/purchase/return" title={!isSidebarOpen ? "Purchase Return" : undefined} className={({ isActive }) => `flex items-center gap-3 px-5 py-3 transition-colors border-r-4 whitespace-nowrap ${isActive ? 'bg-[#1F2937] border-[#1ABB9C] text-white' : 'border-transparent hover:bg-[#1F2937] font-bold hover:text-white'}`}>
+              <i className="fa fa-undo text-xl w-8 text-center flex-shrink-0"></i>
+              <span className={`font-bold transition-opacity duration-200 ${isSidebarOpen ? 'opacity-100' : 'opacity-0'}`}>Purchase Return</span>
+            </NavLink>
             <NavLink to="/purchase/payments" title={!isSidebarOpen ? "Supplier Payments" : undefined} className={({ isActive }) => `flex items-center gap-3 px-5 py-3 transition-colors border-r-4 whitespace-nowrap ${isActive ? 'bg-[#1F2937] border-[#1ABB9C] text-white' : 'border-transparent hover:bg-[#1F2937] font-bold hover:text-white'}`}>
               <i className="fa fa-credit-card text-xl w-8 text-center flex-shrink-0"></i>
               <span className={`font-bold transition-opacity duration-200 ${isSidebarOpen ? 'opacity-100' : 'opacity-0'}`}>Supplier Payments</span>
@@ -111,6 +119,10 @@ const MainLayout = () => {
             <NavLink to="/sales/pos" title={!isSidebarOpen ? "Sales Entry" : undefined} className={({ isActive }) => `flex items-center gap-3 px-5 py-3 transition-colors border-r-4 whitespace-nowrap ${isActive ? 'bg-[#1F2937] border-[#1ABB9C] text-white' : 'border-transparent hover:bg-[#1F2937] font-bold hover:text-white'}`}>
               <i className="fa fa-shopping-cart text-xl w-8 text-center flex-shrink-0"></i>
               <span className={`font-bold transition-opacity duration-200 ${isSidebarOpen ? 'opacity-100' : 'opacity-0'}`}>Sales Entry</span>
+            </NavLink>
+            <NavLink to="/sales/return" title={!isSidebarOpen ? "Sales Return" : undefined} className={({ isActive }) => `flex items-center gap-3 px-5 py-3 transition-colors border-r-4 whitespace-nowrap ${isActive ? 'bg-[#1F2937] border-[#1ABB9C] text-white' : 'border-transparent hover:bg-[#1F2937] font-bold hover:text-white'}`}>
+              <i className="fa fa-reply text-xl w-8 text-center flex-shrink-0"></i>
+              <span className={`font-bold transition-opacity duration-200 ${isSidebarOpen ? 'opacity-100' : 'opacity-0'}`}>Sales Return</span>
             </NavLink>
             <NavLink to="/sales/receipts" title={!isSidebarOpen ? "Customer Receipts" : undefined} className={({ isActive }) => `flex items-center gap-3 px-5 py-3 transition-colors border-r-4 whitespace-nowrap ${isActive ? 'bg-[#1F2937] border-[#1ABB9C] text-white' : 'border-transparent hover:bg-[#1F2937] font-bold hover:text-white'}`}>
               <i className="fa fa-money text-xl w-8 text-center flex-shrink-0"></i>
@@ -125,13 +137,25 @@ const MainLayout = () => {
               <i className="fa fa-file-text-o text-xl w-8 text-center flex-shrink-0"></i>
               <span className={`font-bold transition-opacity duration-200 ${isSidebarOpen ? 'opacity-100' : 'opacity-0'}`}>Purchase Report</span>
             </NavLink>
+            <NavLink to="/reports/purchase-return" title={!isSidebarOpen ? "Purchase Return Report" : undefined} className={({ isActive }) => `flex items-center gap-3 px-5 py-3 transition-colors border-r-4 whitespace-nowrap ${isActive ? 'bg-[#1F2937] border-[#1ABB9C] text-white' : 'border-transparent hover:bg-[#1F2937] font-bold hover:text-white'}`}>
+              <i className="fa fa-mail-reply text-xl w-8 text-center flex-shrink-0 text-[#F59E0B]"></i>
+              <span className={`font-bold transition-opacity duration-200 ${isSidebarOpen ? 'opacity-100' : 'opacity-0'}`}>Purchase Return Report</span>
+            </NavLink>
             <NavLink to="/reports/sales" title={!isSidebarOpen ? "Sales Report" : undefined} className={({ isActive }) => `flex items-center gap-3 px-5 py-3 transition-colors border-r-4 whitespace-nowrap ${isActive ? 'bg-[#1F2937] border-[#1ABB9C] text-white' : 'border-transparent hover:bg-[#1F2937] font-bold hover:text-white'}`}>
               <i className="fa fa-line-chart text-xl w-8 text-center flex-shrink-0"></i>
               <span className={`font-bold transition-opacity duration-200 ${isSidebarOpen ? 'opacity-100' : 'opacity-0'}`}>Sales Report</span>
             </NavLink>
+            <NavLink to="/reports/sales-return" title={!isSidebarOpen ? "Sales Return Report" : undefined} className={({ isActive }) => `flex items-center gap-3 px-5 py-3 transition-colors border-r-4 whitespace-nowrap ${isActive ? 'bg-[#1F2937] border-[#1ABB9C] text-white' : 'border-transparent hover:bg-[#1F2937] font-bold hover:text-white'}`}>
+              <i className="fa fa-mail-reply text-xl w-8 text-center flex-shrink-0 text-[#EF4444]"></i>
+              <span className={`font-bold transition-opacity duration-200 ${isSidebarOpen ? 'opacity-100' : 'opacity-0'}`}>Sales Return Report</span>
+            </NavLink>
             <NavLink to="/reports/stock" title={!isSidebarOpen ? "Stock As On Date" : undefined} className={({ isActive }) => `flex items-center gap-3 px-5 py-3 transition-colors border-r-4 whitespace-nowrap ${isActive ? 'bg-[#1F2937] border-[#1ABB9C] text-white' : 'border-transparent hover:bg-[#1F2937] font-bold hover:text-white'}`}>
               <i className="fa fa-pie-chart text-xl w-8 text-center flex-shrink-0"></i>
               <span className={`font-bold transition-opacity duration-200 ${isSidebarOpen ? 'opacity-100' : 'opacity-0'}`}>Stock As On Date</span>
+            </NavLink>
+            <NavLink to="/reports/profit-ledger" title={!isSidebarOpen ? "Profit / Ledger" : undefined} className={({ isActive }) => `flex items-center gap-3 px-5 py-3 transition-colors border-r-4 whitespace-nowrap ${isActive ? 'bg-[#1F2937] border-[#1ABB9C] text-white' : 'border-transparent hover:bg-[#1F2937] font-bold hover:text-white'}`}>
+              <i className="fa fa-line-chart text-xl w-8 text-center flex-shrink-0"></i>
+              <span className={`font-bold transition-opacity duration-200 ${isSidebarOpen ? 'opacity-100' : 'opacity-0'}`}>Profit / Ledger</span>
             </NavLink>
           </nav>
         </div>

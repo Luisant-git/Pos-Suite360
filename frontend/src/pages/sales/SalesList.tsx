@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Plus, FileText, Trash2 } from 'lucide-react';
+import { Plus, Eye, FileText, Printer } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../services/api';
 import InvoicePrintModal from '../../components/InvoicePrintModal';
 import { useSettings } from '../../contexts/SettingsContext';
+import ViewSalesModal from './ViewSalesModal';
 
 const SalesList = () => {
   const { formatCurrency } = useSettings();
@@ -12,6 +13,7 @@ const SalesList = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedSale, setSelectedSale] = useState<any>(null);
   const [isPrintModalOpen, setIsPrintModalOpen] = useState(false);
+  const [viewSaleId, setViewSaleId] = useState<number | null>(null);
 
   // Fetch Sales from API
   const { data: sales = [], isLoading } = useQuery({
@@ -140,18 +142,17 @@ const SalesList = () => {
                             setSelectedSale(sale);
                             setIsPrintModalOpen(true);
                           }}
-                          className="text-[#3B82F6] border border-[#3B82F6] rounded p-1 hover:bg-[#3B82F6] hover:text-white transition-colors"
-                          title="Print / View Invoice"
+                          className="text-[#F59E0B] border border-[#F59E0B] rounded p-1 hover:bg-[#F59E0B] hover:text-white transition-colors"
+                          title="Print Invoice"
                         >
-                          <FileText size={14} />
+                          <Printer size={14} />
                         </button>
                         <button type="button" 
-                          onClick={() => handleDelete(sale.id)}
-                          disabled={deleteMutation.isPending}
-                          className="text-[#EF4444] border border-[#EF4444] rounded p-1 hover:bg-[#EF4444] hover:text-white transition-colors disabled:opacity-50"
-                          title="Delete Invoice"
+                          onClick={() => setViewSaleId(sale.id)}
+                          className="text-[#3B82F6] border border-[#3B82F6] rounded p-1 hover:bg-[#3B82F6] hover:text-white transition-colors"
+                          title="View Invoice Details"
                         >
-                          <Trash2 size={14} />
+                          <Eye size={14} />
                         </button>
                       </div>
                     </td>
@@ -164,6 +165,7 @@ const SalesList = () => {
       </div>
       </div>
 
+      {/* Visual Modal for Printing */}
       <InvoicePrintModal 
         isOpen={isPrintModalOpen} 
         onClose={() => {
@@ -172,6 +174,14 @@ const SalesList = () => {
         }} 
         sale={selectedSale} 
       />
+
+      {/* View Details Modal */}
+      {viewSaleId && (
+        <ViewSalesModal 
+          saleId={viewSaleId}
+          onClose={() => setViewSaleId(null)}
+        />
+      )}
     </div>
   );
 };

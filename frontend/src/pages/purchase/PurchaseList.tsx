@@ -1,14 +1,16 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Plus, FileText, Trash2 } from 'lucide-react';
+import { Plus, Eye } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../services/api';
 import { useSettings } from '../../contexts/SettingsContext';
+import ViewPurchaseModal from './ViewPurchaseModal';
 
 const PurchaseList = () => {
   const { formatCurrency } = useSettings();
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
+  const [viewId, setViewId] = useState<number | null>(null);
 
   // Fetch Purchases
   const { data: purchases = [], isLoading } = useQuery({
@@ -20,22 +22,6 @@ const PurchaseList = () => {
   });
 
   const queryClient = useQueryClient();
-
-  const deleteMutation = useMutation({
-    mutationFn: (id: number) => api.delete(`/purchases/${id}`),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['purchases'] });
-    },
-    onError: () => {
-      alert('Failed to delete purchase.');
-    }
-  });
-
-  const handleDelete = (id: number) => {
-    if (window.confirm('Are you sure you want to delete this purchase? This will revert the stock and ledger entries.')) {
-      deleteMutation.mutate(id);
-    }
-  };
 
   return (
     <div className="bg-white min-h-[calc(100vh-100px)] p-6 shadow-sm border border-[#E6E9ED]">
@@ -95,7 +81,6 @@ const PurchaseList = () => {
       {/* Table */}
       <div className="bg-white border border-[#E6E9ED] shadow-sm rounded-sm overflow-hidden">
         <div className="bg-[#EBF5FF] border-b border-[#3B82F6] px-4 py-3 flex items-center gap-2">
-          <FileText size={16} className="text-[#1E3A8A]" />
           <h2 className="font-bold text-[14px] text-[#1E3A8A]">PURCHASE INVOICES LIST</h2>
         </div>
         <div className="overflow-x-auto p-4">
@@ -131,16 +116,12 @@ const PurchaseList = () => {
                     </td>
                     <td className="px-3 py-2.5 text-center">
                       <div className="flex justify-center gap-2">
-                        <button type="button" className="text-[#3B82F6] border border-[#3B82F6] rounded p-1 hover:bg-[#3B82F6] hover:text-white transition-colors">
-                          <FileText size={14} />
-                        </button>
                         <button type="button" 
-                          onClick={() => handleDelete(purchase.id)}
-                          disabled={deleteMutation.isPending}
-                          className="text-[#EF4444] border border-[#EF4444] rounded p-1 hover:bg-[#EF4444] hover:text-white transition-colors disabled:opacity-50"
-                          title="Delete Invoice"
+                          onClick={() => setViewId(purchase.id)}
+                          className="text-[#3B82F6] border border-[#3B82F6] rounded p-1 hover:bg-[#3B82F6] hover:text-white transition-colors"
+                          title="View Invoice"
                         >
-                          <Trash2 size={14} />
+                          <Eye size={14} />
                         </button>
                       </div>
                     </td>
@@ -151,6 +132,10 @@ const PurchaseList = () => {
           </table>
         </div>
       </div>
+
+      {viewId && (
+        <ViewPurchaseModal purchaseId={viewId} onClose={() => setViewId(null)} />
+      )}
     </div>
   );
 };

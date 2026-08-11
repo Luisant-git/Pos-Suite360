@@ -20,6 +20,7 @@ import PurchaseList from '../pages/purchase/PurchaseList';
 import PurchaseEntry from '../pages/purchase/PurchaseEntry';
 import PurchaseView from '../pages/purchase/PurchaseView';
 import SupplierPayments from '../pages/purchase/SupplierPayments';
+import PurchaseReturn from '../pages/purchase/PurchaseReturn';
 
 // Sales
 import SalesList from '../pages/sales/SalesList';
@@ -27,6 +28,7 @@ import POS from '../pages/sales/POS';
 import SalesHistory from '../pages/sales/SalesHistory';
 import SalesView from '../pages/sales/SalesView';
 import CustomerReceipts from '../pages/sales/CustomerReceipts';
+import SalesReturn from '../pages/sales/SalesReturn';
 
 // Inventory
 import Stock from '../pages/inventory/Stock';
@@ -39,10 +41,13 @@ import ExpenseEntry from '../pages/expenses/ExpenseEntry';
 
 // Reports
 import SalesReport from '../pages/reports/SalesReport';
+import SalesReturnReport from '../pages/reports/SalesReturnReport';
 import PurchaseReport from '../pages/reports/PurchaseReport';
+import PurchaseReturnReport from '../pages/reports/PurchaseReturnReport';
 import StockReport from '../pages/reports/StockReport';
 import StockLedgerReport from '../pages/reports/StockLedgerReport';
 import ExpenseReport from '../pages/reports/ExpenseReport';
+import ProfitLossReport from '../pages/reports/ProfitLossReport';
 
 // Settings
 import Settings from '../pages/Settings';
@@ -73,12 +78,14 @@ const AppRoutes = () => {
         <Route path="/purchase" element={<PurchaseList />} />
         <Route path="/purchase/new" element={<PurchaseEntry />} />
         <Route path="/purchase/payments" element={<SupplierPayments />} />
+        <Route path="/purchase/return" element={<PurchaseReturn />} />
         <Route path="/purchase/:id" element={<PurchaseView />} />
 
         {/* Sales Routes */}
         <Route path="/sales" element={<SalesList />} />
         <Route path="/sales/pos" element={<POS />} />
         <Route path="/sales/receipts" element={<CustomerReceipts />} />
+        <Route path="/sales/return" element={<SalesReturn />} />
         <Route path="/sales/history" element={<SalesHistory />} />
         <Route path="/sales/:id" element={<SalesView />} />
 
@@ -94,10 +101,13 @@ const AppRoutes = () => {
 
         {/* Report Routes */}
         <Route path="/reports/sales" element={<SalesReport />} />
+        <Route path="/reports/sales-return" element={<SalesReturnReport />} />
         <Route path="/reports/purchase" element={<PurchaseReport />} />
+        <Route path="/reports/purchase-return" element={<PurchaseReturnReport />} />
         <Route path="/reports/stock" element={<StockReport />} />
         <Route path="/reports/stock-ledger" element={<StockLedgerReport />} />
         <Route path="/reports/expenses" element={<ExpenseReport />} />
+        <Route path="/reports/profit-ledger" element={<ProfitLossReport />} />
 
         {/* Settings */}
         <Route path="/settings" element={<Settings />} />

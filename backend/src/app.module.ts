@@ -18,9 +18,37 @@ import { SalesModule } from './sales/sales.module';
 import { SupplierPaymentsModule } from './supplier-payments/supplier-payments.module';
 import { CustomerReceiptsModule } from './customer-receipts/customer-receipts.module';
 import { SettingsModule } from './settings/settings.module';
+import { PurchaseReturnsModule } from './purchase-returns/purchase-returns.module';
+import { SalesReturnsModule } from './sales-returns/sales-returns.module';
+import { ExpensesModule } from './expenses/expenses.module';
+import { WhatsappModule } from './whatsapp/whatsapp.module';
+import { ReportsModule } from './reports/reports.module';
 
 @Module({
-  imports: [ProductsModule, CategoriesModule, BrandsModule, SuppliersModule, CustomersModule, UnitsModule, PaymentModesModule, ExpenseCategoriesModule, PrismaModule, UsersModule, AuthModule, DashboardModule, PurchasesModule, SalesModule, SupplierPaymentsModule, CustomerReceiptsModule, SettingsModule],
+  imports: [
+    ProductsModule, 
+    CategoriesModule, 
+    BrandsModule, 
+    SuppliersModule, 
+    CustomersModule, 
+    UnitsModule, 
+    PaymentModesModule, 
+    ExpenseCategoriesModule, 
+    PrismaModule, 
+    UsersModule, 
+    AuthModule, 
+    DashboardModule, 
+    PurchasesModule, 
+    SalesModule, 
+    SupplierPaymentsModule, 
+    CustomerReceiptsModule, 
+    SettingsModule,
+    PurchaseReturnsModule,
+    SalesReturnsModule,
+    ExpensesModule,
+    WhatsappModule,
+    ReportsModule
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

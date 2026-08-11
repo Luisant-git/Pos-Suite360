@@ -48,21 +48,19 @@ export class DashboardService {
       where: { date: { gte: today, lt: tomorrow } },
     });
 
-    // Top Products
-    const topProductsRaw: any[] = await this.prisma.$queryRaw`
-      SELECT p."name", SUM(si."quantity") as salescount, SUM(si."amount") as amount
-      FROM "SaleItem" si
-      JOIN "Product" p ON si."productId" = p.id
-      JOIN "Sale" s ON si."saleId" = s.id
-      WHERE s."date" >= ${today} AND s."date" < ${tomorrow}
-      GROUP BY p.id, p."name"
-      ORDER BY amount DESC
-      LIMIT 5
+    // Low Stock Products Details
+    const lowStockProductsRaw: any[] = await this.prisma.$queryRaw`
+      SELECT id, name, "currentStock", "minStock" 
+      FROM "Product" 
+      WHERE "currentStock" <= "minStock" 
+      ORDER BY "currentStock" ASC 
+      LIMIT 10
     `;
-    const topProducts = topProductsRaw.map((p) => ({
+    const lowStockProducts = lowStockProductsRaw.map((p) => ({
+      id: Number(p.id),
       name: p.name,
-      salesCount: Number(p.salescount),
-      amount: Number(p.amount),
+      currentStock: Number(p.currentStock),
+      minStock: Number(p.minStock),
     }));
 
     // Monthly Chart Data (group by date)
@@ -88,7 +86,7 @@ export class DashboardService {
       productsCount,
       lowStockCount,
       billsToday,
-      topProducts,
+      lowStockProducts,
       chartData,
     };
   }

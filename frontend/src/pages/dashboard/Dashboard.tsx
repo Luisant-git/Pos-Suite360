@@ -134,15 +134,15 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Top Products */}
+        {/* Low Stock Products */}
         <div className="bg-white border border-[#E6E9ED] shadow-sm">
           <div className="border-b border-[#E6E9ED] px-4 py-3 flex justify-between items-center bg-white">
-            <h2 className="text-[15px] font-bold text-[#1F2937]">Top Products</h2>
+            <h2 className="text-[15px] font-bold text-[#1F2937]">Low Stock Products</h2>
           </div>
           <div className="p-0 h-[350px] overflow-y-auto custom-scrollbar">
-            {data.topProducts && data.topProducts.length > 0 ? (
+            {data.lowStockProducts && data.lowStockProducts.length > 0 ? (
               <ul className="divide-y divide-[#E6E9ED]">
-                {data.topProducts.map((product: any, idx: number) => (
+                {data.lowStockProducts.map((product: any, idx: number) => (
                   <li key={idx} className="p-4 flex items-center justify-between hover:bg-[#E5E7EB] font-bold text-[13px] transition-colors">
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 bg-[#E6E9ED] rounded flex items-center justify-center text-[#1F2937]">
@@ -150,17 +150,17 @@ const Dashboard = () => {
                       </div>
                       <div>
                         <p className="font-bold text-[#1F2937]">{product.name}</p>
-                        <p className="text-[12px] text-[#adb2b5]">{product.salesCount} sold today</p>
+                        <p className="text-[12px] text-[#adb2b5]">Min Stock: {product.minStock}</p>
                       </div>
                     </div>
-                    <div className="font-bold text-[#26B99A]">
-                      {formatCurrency(product.amount)}
+                    <div className="font-bold text-[#EF4444]">
+                      {product.currentStock} in stock
                     </div>
                   </li>
                 ))}
               </ul>
             ) : (
-              <div className="h-full flex items-center justify-center text-gray-500 font-bold p-6 text-center">No top products today</div>
+              <div className="h-full flex items-center justify-center text-gray-500 font-bold p-6 text-center">No low stock products</div>
             )}
           </div>
         </div>

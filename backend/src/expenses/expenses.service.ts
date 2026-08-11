@@ -24,7 +24,10 @@ export class ExpensesService {
         category: true,
         paymentMode: true,
       },
-      orderBy: { date: 'desc' },
+      orderBy: [
+        { date: 'desc' },
+        { id: 'desc' }
+      ],
     });
   }
 

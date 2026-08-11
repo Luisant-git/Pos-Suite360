@@ -36,7 +36,10 @@ export class SupplierPaymentsService {
 
   async findAll() {
     return this.prisma.supplierPayment.findMany({
-      orderBy: { date: 'desc' },
+      orderBy: [
+        { date: 'desc' },
+        { id: 'desc' }
+      ],
       include: {
         supplier: true,
         paymentMode: true,

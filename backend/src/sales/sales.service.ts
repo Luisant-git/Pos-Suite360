@@ -111,7 +111,10 @@ export class SalesService {
         customer: true,
         paymentMode: true,
       },
-      orderBy: { date: 'desc' },
+      orderBy: [
+        { date: 'desc' },
+        { id: 'desc' }
+      ],
     });
   }
 

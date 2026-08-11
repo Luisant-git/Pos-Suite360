@@ -92,7 +92,10 @@ export class PurchasesService {
         supplier: true,
         paymentMode: true,
       },
-      orderBy: { date: 'desc' },
+      orderBy: [
+        { date: 'desc' },
+        { id: 'desc' }
+      ],
     });
   }
 

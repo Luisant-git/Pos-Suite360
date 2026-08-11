@@ -35,7 +35,10 @@ export class CustomerReceiptsService {
 
   async findAll() {
     return this.prisma.customerReceipt.findMany({
-      orderBy: { date: 'desc' },
+      orderBy: [
+        { date: 'desc' },
+        { id: 'desc' }
+      ],
       include: {
         customer: true,
         paymentMode: true,

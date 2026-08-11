@@ -16,6 +16,7 @@ const storeSettingsSchema = z.object({
   currencySymbol: z.string().min(1, 'Currency symbol is required'),
   currencyPosition: z.string(),
   invoicePrefix: z.string().min(1, 'Prefix is required'),
+  invoiceNotes: z.string().optional(),
 });
 
 const passwordSchema = z.object({
@@ -63,6 +64,7 @@ const Settings = () => {
         currencySymbol: settings.currencySymbol || 'RM',
         currencyPosition: settings.currencyPosition || 'before',
         invoicePrefix: settings.invoicePrefix || 'INV-',
+        invoiceNotes: settings.invoiceNotes || '',
       });
     }
   }, [settings, resetStoreForm]);
@@ -223,6 +225,16 @@ const Settings = () => {
                   />
                   <p className="text-[11px] text-[#64748B] mt-1">Generated sales bills will use this prefix (e.g. <span className="text-[#2563EB] font-bold">{settings?.invoicePrefix || 'INV-'}788839</span>)</p>
                 </div>
+                <div className="mt-4">
+                  <label className="block text-[12px] font-bold text-[#334155] mb-1">Invoice Footer Notes (Terms & Conditions)</label>
+                  <textarea
+                    {...registerStore('invoiceNotes')}
+                    rows={4}
+                    placeholder="Enter notes to appear at the bottom of the printed invoice..."
+                    className="w-full px-3 py-2 border border-[#CBD5E1] rounded text-[13px] outline-none focus:border-[#3B82F6] resize-none"
+                  />
+                  <p className="text-[11px] text-[#64748B] mt-1">These notes will be printed at the bottom of all sales receipts. Supports multiple lines.</p>
+                </div>
               </div>
 
               <div className="flex justify-end mt-4">
@@ -241,7 +253,8 @@ const Settings = () => {
         {/* Right Column - Security & Reset */}
         <div className="flex flex-col gap-6">
           
-          {/* Password Management */}
+          {/* Password Management & Reset Database are temporarily disabled as requested */}
+          {/*
           <form onSubmit={handleSubmitPassword(onPasswordSubmit as any)} className="bg-white border border-[#E2E8F0] shadow-sm rounded-lg overflow-hidden">
             <div className="bg-[#1E293B] text-white px-4 py-3 flex items-center gap-2 text-[13px] font-bold">
               <span className="text-[#38BDF8]"><Shield size={16} /></span>
@@ -298,7 +311,6 @@ const Settings = () => {
             </div>
           </form>
 
-          {/* Database Reset Zone */}
           <div className="bg-white border border-[#E2E8F0] shadow-sm rounded-lg p-5">
             <h2 className="text-[14px] font-bold text-[#E11D48] flex items-center gap-2 mb-2">
               <AlertTriangle size={16} /> Database Reset Zone
@@ -313,6 +325,7 @@ const Settings = () => {
               <AlertTriangle size={14} /> Empty / Reset Database
             </button>
           </div>
+          */}
 
         </div>
       </div>

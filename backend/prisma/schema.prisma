@@ -19,6 +19,7 @@ model User {
   role      Role     @relation(fields: [roleId], references: [id])
   
   sales            Sale[]
+  salesReturns     SalesReturn[]
   supplierPayments SupplierPayment[]
   customerReceipts CustomerReceipt[]
   createdAt        DateTime @default(now())
@@ -89,6 +90,7 @@ model Supplier {
   ifscCode           String?
   bankBranch         String?
   purchases          Purchase[]
+  purchaseReturns    PurchaseReturn[]
   products           Product[]
   payments           SupplierPayment[]
   
@@ -100,7 +102,7 @@ model Customer {
   id                 Int      @id @default(autoincrement())
   name               String
   contactPerson      String?
-  phone              String?
+  phone              String
   email              String?
   address            String?  // Billing Address
   shippingAddress    String?
@@ -109,6 +111,7 @@ model Customer {
   creditLimit        Decimal  @default(0)
   creditDays         Int      @default(30)
   sales              Sale[]
+  salesReturns       SalesReturn[]
   receipts           CustomerReceipt[]
   
   createdAt          DateTime @default(now())
@@ -148,8 +151,8 @@ model Product {
   code           String   @unique
   barcode        String?  @unique
   
-  categoryId     Int
-  category       Category @relation(fields: [categoryId], references: [id])
+  categoryId     Int?
+  category       Category? @relation(fields: [categoryId], references: [id])
   
   brandId        Int?
   brand          Brand?   @relation(fields: [brandId], references: [id])
@@ -170,9 +173,11 @@ model Product {
   
   currentStock   Int      @default(0) // Usually computed, but caching it for quick access is common in POS
   
-  purchaseItems  PurchaseItem[]
-  saleItems      SaleItem[]
-  stockLedger    StockTransaction[]
+  purchaseItems       PurchaseItem[]
+  purchaseReturnItems PurchaseReturnItem[]
+  saleItems           SaleItem[]
+  salesReturnItems    SalesReturnItem[]
+  stockLedger         StockTransaction[]
   
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
@@ -199,6 +204,7 @@ model Purchase {
   paymentMode   PaymentMode @relation(fields: [paymentModeId], references: [id])
   
   items         PurchaseItem[]
+  purchaseReturns PurchaseReturn[]
   
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
@@ -216,6 +222,39 @@ model PurchaseItem {
   rate       Decimal
   tax        Decimal  @default(0)
   amount     Decimal
+}
+
+model PurchaseReturn {
+  id            Int      @id @default(autoincrement())
+  returnNo      String   @unique
+  date          DateTime @default(now())
+  
+  purchaseId    Int?
+  purchase      Purchase? @relation(fields: [purchaseId], references: [id])
+  
+  supplierId    Int
+  supplier      Supplier @relation(fields: [supplierId], references: [id])
+  
+  totalAmount   Decimal  @default(0)
+  remarks       String?
+  
+  items         PurchaseReturnItem[]
+  
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model PurchaseReturnItem {
+  id               Int      @id @default(autoincrement())
+  purchaseReturnId Int
+  purchaseReturn   PurchaseReturn @relation(fields: [purchaseReturnId], references: [id])
+  
+  productId        Int
+  product          Product  @relation(fields: [productId], references: [id])
+  
+  returnQty        Int
+  rate             Decimal
+  amount           Decimal
 }
 
 // ------------------------------------------------------
@@ -242,6 +281,7 @@ model Sale {
   paymentMode   PaymentMode @relation(fields: [paymentModeId], references: [id])
   
   items         SaleItem[]
+  salesReturns  SalesReturn[]
   
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
@@ -260,6 +300,42 @@ model SaleItem {
   discount   Decimal  @default(0)
   tax        Decimal  @default(0)
   amount     Decimal
+}
+
+model SalesReturn {
+  id            Int      @id @default(autoincrement())
+  returnNo      String   @unique
+  date          DateTime @default(now())
+  
+  saleId        Int?
+  sale          Sale?    @relation(fields: [saleId], references: [id])
+  
+  customerId    Int
+  customer      Customer @relation(fields: [customerId], references: [id])
+  
+  userId        Int
+  user          User     @relation(fields: [userId], references: [id])
+  
+  totalAmount   Decimal  @default(0)
+  remarks       String?
+  
+  items         SalesReturnItem[]
+  
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model SalesReturnItem {
+  id            Int      @id @default(autoincrement())
+  salesReturnId Int
+  salesReturn   SalesReturn @relation(fields: [salesReturnId], references: [id])
+  
+  productId     Int
+  product       Product  @relation(fields: [productId], references: [id])
+  
+  returnQty     Int
+  rate          Decimal
+  amount        Decimal
 }
 
 // ------------------------------------------------------
@@ -377,6 +453,7 @@ model Settings {
   currencySymbol   String   @default("RM")
   currencyPosition String   @default("before")
   invoicePrefix    String   @default("INV-")
+  invoiceNotes     String?
 
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt

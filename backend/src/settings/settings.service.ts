@@ -36,6 +36,7 @@ export class SettingsService {
         currencySymbol: data.currencySymbol,
         currencyPosition: data.currencyPosition,
         invoicePrefix: data.invoicePrefix,
+        invoiceNotes: data.invoiceNotes,
       },
       create: {
         id: 1,
@@ -46,6 +47,7 @@ export class SettingsService {
         currencySymbol: data.currencySymbol || 'RM',
         currencyPosition: data.currencyPosition || 'before',
         invoicePrefix: data.invoicePrefix || 'INV-',
+        invoiceNotes: data.invoiceNotes,
       },
     });
   }

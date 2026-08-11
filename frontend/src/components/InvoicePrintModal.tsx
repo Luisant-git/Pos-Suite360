@@ -1,6 +1,7 @@
-import { X, Printer } from 'lucide-react';
+import { X, Printer, Loader2 } from 'lucide-react';
 import { useSettings } from '../contexts/SettingsContext';
-
+import { useQuery } from '@tanstack/react-query';
+import api from '../services/api';
 
 // Basic number to words converter (for Malaysian Ringgit / general use)
 const numberToWords = (num: number): string => {
@@ -30,21 +31,39 @@ interface InvoicePrintModalProps {
   isOpen: boolean;
   onClose: () => void;
   sale: any;
+  hiddenRenderer?: boolean;
 }
 
-const InvoicePrintModal = ({ isOpen, onClose, sale }: InvoicePrintModalProps) => {
+const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer = false }: InvoicePrintModalProps) => {
   const { settings } = useSettings();
+
+  // Fetch full sale data if items are missing (e.g. when opened from SalesList)
+  const { data: fullSale, isLoading } = useQuery({
+    queryKey: ['sales', initialSale?.id],
+    queryFn: async () => (await api.get(`/sales/${initialSale.id}`)).data,
+    enabled: isOpen && !!initialSale?.id && !initialSale?.items,
+  });
+
+  const sale = fullSale || initialSale;
 
   if (!isOpen) return null;
 
+  if (isLoading && !hiddenRenderer) {
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
+        <div className="bg-white p-6 rounded-md shadow-lg font-bold text-blue-900 flex items-center gap-3">
+          <Loader2 className="animate-spin" size={20} /> Loading invoice data...
+        </div>
+      </div>
+    );
+  }
+
   // Fallback data if sale is not fully populated yet
-  const invoiceNo = sale?.invoiceNo || 'INV-00123';
-  const date = sale?.date ? new Date(sale.date).toISOString().split('T')[0] : new Date().toISOString().split('T')[0];
+  const invoiceNo = sale?.invoiceNo || '';
+  const date = sale?.date ? new Date(sale.date).toISOString().split('T')[0] : '';
   const customerName = sale?.customer?.name || 'CASH A/C\nCounter Sale';
-  const items = sale?.items?.length > 0 ? sale.items : [
-    { product: { code: 'PTEST100', name: 'Test Multi Filter Product' }, quantity: 1, unit: { name: 'Nos' }, rate: 20.00, amount: 20.00 }
-  ];
-  const grandTotal = sale?.grandTotal || 20.00;
+  const items = sale?.items || [];
+  const grandTotal = sale?.grandTotal || 0;
 
   const handlePrint = () => {
     window.print();
@@ -63,10 +82,102 @@ const InvoicePrintModal = ({ isOpen, onClose, sale }: InvoicePrintModalProps) =>
     window.open(url, '_blank');
   };
 
+  if (hiddenRenderer) {
+    return (
+      <div id="hidden-printable-invoice" className="fixed top-0 left-0 bg-white text-black font-sans text-[12px] w-[800px] flex flex-col p-8 h-[250mm] box-border" style={{ zIndex: -9999 }}>
+        <div className="text-center mb-4">
+          <h2 className="text-2xl font-bold uppercase">NASA FRESH MART <span className="text-sm font-normal">(001634825-A)</span></h2>
+          <p>NO 8G, JLN 3/2 PANDAN JAYA, 55100 KUALA LUMPUR.</p>
+          <p>Tel : 019-300 1451</p>
+        </div>
+        
+        <div className="border-t border-b border-black py-2 mb-4 text-center font-bold text-lg uppercase tracking-wider">
+          INVOICE
+        </div>
+        
+        <div className="flex justify-between mb-6">
+          {/* Left Column */}
+          <div className="w-1/2 pr-4">
+             <div className="flex">
+               <span className="w-16 font-bold">Bill To:</span>
+               <div>
+                 <p className="font-bold">{sale?.customer?.id ? `CUST-${sale.customer.id}` : ''}</p>
+                 <p className="font-bold">{customerName}</p>
+                 <p>{sale?.customer?.address || ''}</p>
+               </div>
+             </div>
+             <div className="mt-4 flex gap-4">
+               <span className="font-bold">TEL: {sale?.customer?.phone || ''}</span>
+               <span className="font-bold">FAX: </span>
+             </div>
+             <p className="font-bold">Attn:</p>
+          </div>
+          
+          {/* Right Column */}
+          <div className="w-1/2 pl-12">
+             <div className="grid grid-cols-[100px_10px_1fr] gap-y-1">
+               <span className="font-bold">NO.</span><span className="font-bold">:</span><span className="font-bold">{invoiceNo}</span>
+               <span className="font-bold">DATE</span><span className="font-bold">:</span><span className="font-bold">{date}</span>
+               <span className="font-bold">YOUR P/O NO.</span><span className="font-bold">:</span><span></span>
+               <span className="font-bold">SALESMAN</span><span className="font-bold">:</span><span></span>
+               <span className="font-bold">TERMS</span><span className="font-bold">:</span><span className="font-bold">C.O.D.</span>
+               <span className="font-bold">PAGE</span><span className="font-bold">:</span><span className="font-bold">1 of 1</span>
+             </div>
+          </div>
+        </div>
+        
+        <table className="w-full text-left border-y border-black mb-8">
+          <thead>
+            <tr className="border-b border-black text-xs uppercase">
+              <th className="py-2 w-[15%] font-bold">Code</th>
+              <th className="py-2 w-[40%] font-bold">Description</th>
+              <th className="py-2 w-[10%] text-right font-bold">Qty</th>
+              <th className="py-2 w-[10%] text-center font-bold">UOM</th>
+              <th className="py-2 w-[10%] text-right font-bold">U.Price</th>
+              <th className="py-2 w-[15%] text-right font-bold">Amount</th>
+            </tr>
+          </thead>
+          <tbody className="align-top">
+            {items.map((item: any, idx: number) => (
+              <tr key={idx}>
+                <td className="py-1 font-medium">{item.product?.code || ''}</td>
+                <td className="py-1 font-medium">{item.product?.name || ''}</td>
+                <td className="py-1 text-right font-medium">{item.quantity}</td>
+                <td className="py-1 text-center font-medium">{item.unit?.name || item.unit || 'Nos'}</td>
+                <td className="py-1 text-right font-medium">{Number(item.rate || 0).toFixed(2)}</td>
+                <td className="py-1 text-right font-medium">{Number(item.amount || item.total || 0).toFixed(2)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        
+        <div className="mt-auto">
+          <p className="uppercase mb-4">RINGGIT MALAYSIA {numberToWords(grandTotal)} ONLY</p>
+          
+          <div className="flex justify-between items-start border-t border-black pt-2">
+            <div className="w-2/3 text-[10px] whitespace-pre-line pr-4">
+              {settings?.invoiceNotes || ''}
+            </div>
+            <div className="w-1/3 flex justify-between font-bold text-sm">
+              <span>TOTAL : RM</span>
+              <span className="border-b-2 border-black border-double min-w-[100px] text-right">{Number(grandTotal).toFixed(2)}</span>
+            </div>
+          </div>
+          
+          <div className="flex justify-end mt-16">
+            <div className="text-center w-64 border-t border-black pt-1">
+              Authorised Signature
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 print:bg-white print:relative print:z-auto print:inset-auto overflow-hidden">
       {/* Container - Fixed width for consistent print layout */}
-      <div className="bg-white w-[210mm] h-[97vh] flex flex-col rounded-md shadow-2xl relative print:w-full print:shadow-none print:h-auto print:overflow-visible">
+      <div className="bg-white w-[210mm] h-[97vh] flex flex-col rounded-md shadow-2xl relative print:w-full print:shadow-none print:h-[245mm] print:overflow-hidden">
         
         {/* Header - Screen Only */}
         <div className="flex justify-between items-center bg-[#111827] text-white p-3 rounded-t-md print:hidden">
@@ -80,119 +191,90 @@ const InvoicePrintModal = ({ isOpen, onClose, sale }: InvoicePrintModalProps) =>
         </div>
 
         {/* Printable Area */}
-        <div id="printable-invoice" className="flex-1 overflow-hidden p-5 font-sans text-black print:p-0 bg-white">
-          {/* Company Header */}
-          <div className="text-center mb-3">
-            <h1 className="text-2xl font-black mb-0.5 tracking-wide">NSA FRESH MART</h1>
-            <p className="text-xs font-medium">NO: 80G, JLN 3/2 PANDAN JAYA, 55100 KUALA LUMPUR.</p>
-            <p className="text-xs font-medium">Tel : 019-300 1451</p>
+        <div id="printable-invoice" className="flex-1 overflow-hidden flex flex-col p-8 font-sans text-black print:p-0 bg-white print:h-full">
+          <div className="text-center mb-4">
+            <h2 className="text-2xl font-bold uppercase">NASA FRESH MART <span className="text-sm font-normal">(001634825-A)</span></h2>
+            <p>NO 8G, JLN 3/2 PANDAN JAYA, 55100 KUALA LUMPUR.</p>
+            <p>Tel : 019-300 1451</p>
           </div>
-
-          {/* Invoice Statement Title */}
-          <div className="border-t border-b border-black py-1 text-center mb-3">
-            <h2 className="text-sm font-bold tracking-widest">INVOICE STATEMENT</h2>
+          
+          <div className="border-t border-b border-black py-2 mb-4 text-center font-bold text-lg uppercase tracking-wider">
+            INVOICE
           </div>
-
-          {/* Details Section */}
-          <div className="flex justify-between mb-4 text-xs">
+          
+          <div className="flex justify-between mb-6 text-xs">
+            {/* Left Column */}
             <div className="w-1/2 pr-4">
-              <div className="flex">
-                <span className="font-bold w-16">Bill To:</span>
-                <div className="font-bold whitespace-pre-line">
-                  {customerName}
-                </div>
-              </div>
-              <div className="mt-2 flex flex-col gap-0.5">
-                <div className="flex">
-                  <span className="font-bold w-16">TEL: -</span>
-                  <span className="font-bold">FAX:</span>
-                </div>
-                <div className="flex">
-                  <span className="font-bold w-16">Attn:</span>
-                </div>
-              </div>
+               <div className="flex">
+                 <span className="w-16 font-bold">Bill To:</span>
+                 <div>
+                   <p className="font-bold">{sale?.customer?.id ? `CUST-${sale.customer.id}` : ''}</p>
+                   <p className="font-bold">{customerName}</p>
+                   <p>{sale?.customer?.address || ''}</p>
+                 </div>
+               </div>
+               <div className="mt-4 flex gap-4">
+                 <span className="font-bold">TEL: {sale?.customer?.phone || ''}</span>
+                 <span className="font-bold">FAX: </span>
+               </div>
+               <p className="font-bold">Attn:</p>
             </div>
-
-            <div className="w-1/2 pl-4 max-w-[280px]">
-              <div className="flex justify-between">
-                <span className="font-bold">NO.</span>
-                <span className="font-bold">: {invoiceNo}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="font-bold">DATE</span>
-                <span className="font-bold">: {date}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="font-bold">YOUR P/O NO.</span>
-                <span className="font-bold">: </span>
-              </div>
-              <div className="flex justify-between">
-                <span className="font-bold">SALESMAN</span>
-                <span className="font-bold">: </span>
-              </div>
-              <div className="flex justify-between">
-                <span className="font-bold">TERMS</span>
-                <span className="font-bold">: C.O.D.</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="font-bold">PAGE</span>
-                <span className="font-bold">: 1 of 1</span>
-              </div>
+            
+            {/* Right Column */}
+            <div className="w-1/2 pl-12 text-xs">
+               <div className="grid grid-cols-[100px_10px_1fr] gap-y-1">
+                 <span className="font-bold">NO.</span><span className="font-bold">:</span><span className="font-bold">{invoiceNo}</span>
+                 <span className="font-bold">DATE</span><span className="font-bold">:</span><span className="font-bold">{date}</span>
+                 <span className="font-bold">YOUR P/O NO.</span><span className="font-bold">:</span><span></span>
+                 <span className="font-bold">SALESMAN</span><span className="font-bold">:</span><span></span>
+                 <span className="font-bold">TERMS</span><span className="font-bold">:</span><span className="font-bold">C.O.D.</span>
+                 <span className="font-bold">PAGE</span><span className="font-bold">:</span><span className="font-bold">1 of 1</span>
+               </div>
             </div>
           </div>
-
-          {/* Table */}
-          <table className="w-full text-xs mb-3 border-b border-black block">
+          
+          <table className="w-full text-left border-y border-black mb-8 text-xs">
             <thead>
-              <tr className="border-t border-b border-black">
-                <th className="py-1.5 text-left font-bold w-1/5">CODE</th>
-                <th className="py-1.5 text-left font-bold w-2/5">DESCRIPTION</th>
-                <th className="py-1.5 text-right font-bold w-[10%]">QTY</th>
-                <th className="py-1.5 text-center font-bold w-[10%]">UOM</th>
-                <th className="py-1.5 text-right font-bold w-[10%]">U.PRICE</th>
-                <th className="py-1.5 text-right font-bold w-[10%]">AMOUNT</th>
+              <tr className="border-b border-black uppercase">
+                <th className="py-2 w-[15%] font-bold">Code</th>
+                <th className="py-2 w-[40%] font-bold">Description</th>
+                <th className="py-2 w-[10%] text-right font-bold">Qty</th>
+                <th className="py-2 w-[10%] text-center font-bold">UOM</th>
+                <th className="py-2 w-[10%] text-right font-bold">U.Price</th>
+                <th className="py-2 w-[15%] text-right font-bold">Amount</th>
               </tr>
             </thead>
-            <tbody className="block pt-1">
-              {items.map((item: any, index: number) => (
-                <tr key={index}>
-                  <td className="py-1 align-top font-medium">{item.product?.code || '-'}</td>
-                  <td className="py-1 align-top font-medium">{item.product?.name}</td>
-                  <td className="py-1 align-top text-right font-medium">{Number(item.quantity).toFixed(1)}</td>
-                  <td className="py-1 align-top text-center font-medium">{item.unit?.name || 'Nos'}</td>
-                  <td className="py-1 align-top text-right font-medium">{Number(item.rate).toFixed(2)}</td>
-                  <td className="py-1 align-top text-right font-medium">{Number(item.amount).toFixed(2)}</td>
+            <tbody className="align-top">
+              {items.map((item: any, idx: number) => (
+                <tr key={idx}>
+                  <td className="py-1 font-medium">{item.product?.code || ''}</td>
+                  <td className="py-1 font-medium">{item.product?.name || ''}</td>
+                  <td className="py-1 text-right font-medium">{item.quantity}</td>
+                  <td className="py-1 text-center font-medium">{item.unit?.name || item.unit || 'Nos'}</td>
+                  <td className="py-1 text-right font-medium">{Number(item.rate || 0).toFixed(2)}</td>
+                  <td className="py-1 text-right font-medium">{Number(item.amount || item.total || 0).toFixed(2)}</td>
                 </tr>
               ))}
             </tbody>
           </table>
-
-          {/* Totals Section */}
-          <div className="flex justify-between items-end mb-6">
-            <div className="w-1/2 pt-2">
-              <p className="font-bold text-xs">{settings?.currencySymbol || 'RM'} {numberToWords(Number(grandTotal))} ONLY</p>
-            </div>
-            <div className="w-1/2 flex justify-end">
-              <div className="border-t-2 border-b-[3px] border-double border-black pt-1.5 pb-1 px-2 flex items-center gap-4 min-w-[200px] justify-between">
-                <span className="font-bold text-base">TOTAL : {settings?.currencySymbol || 'RM'}</span>
-                <span className="font-bold text-lg">{Number(grandTotal).toFixed(2)}</span>
+          
+          <div className="mt-auto">
+            <p className="uppercase mb-4">RINGGIT MALAYSIA {numberToWords(grandTotal)} ONLY</p>
+            
+            <div className="flex justify-between items-start border-t border-black pt-2">
+              <div className="w-2/3 text-[10px] whitespace-pre-line pr-4">
+                {settings?.invoiceNotes || ''}
+              </div>
+              <div className="w-1/3 flex justify-between font-bold text-sm">
+                <span>TOTAL : RM</span>
+                <span className="border-b-2 border-black border-double min-w-[100px] text-right">{Number(grandTotal).toFixed(2)}</span>
               </div>
             </div>
-          </div>
-
-          {/* Footer Notes & Signature */}
-          <div className="flex justify-between items-end text-[10px] mt-auto">
-            <div className="w-[60%]">
-              <p className="font-medium leading-relaxed">
-                <span className="font-bold">Notes: </span> 
-                1. All cheques should be crossed and made payable to<br/>
-                <span className="ml-10 font-bold">NSA FRESH MART</span><br/>
-                <span className="ml-4">2. Goods sold are neither returnable nor refundable. Otherwise a</span><br/>
-                <span className="ml-7">cancellation fee of 20% on purchase price will be imposed.</span>
-              </p>
-            </div>
-            <div className="w-[30%] text-center border-t border-black pt-1">
-              <p className="font-bold">Authorised Signature</p>
+            
+            <div className="flex justify-end mt-8">
+              <div className="text-center w-64 border-t border-black pt-1">
+                Authorised Signature
+              </div>
             </div>
           </div>
         </div>

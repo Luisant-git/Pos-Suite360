@@ -32,6 +32,32 @@ async function main() {
     },
   });
 
+  const expenseCategories = [
+    'Electricity Bill',
+    'Shop Rent',
+    'Tea & Refreshments',
+    'Internet / Phone',
+    'Maintenance & Repairs',
+    'Miscellaneous'
+  ];
+
+  for (const name of expenseCategories) {
+    await prisma.expenseCategory.upsert({
+      where: { name },
+      update: {},
+      create: { name },
+    });
+  }
+
+  const paymentModes = ['Cash', 'Bank Transfer', 'UPI'];
+  for (const name of paymentModes) {
+    await prisma.paymentMode.upsert({
+      where: { name },
+      update: {},
+      create: { name },
+    });
+  }
+
   console.log('Seeding complete!', admin.username);
 }
 

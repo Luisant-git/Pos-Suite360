@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Save, X, Briefcase, PlusSquare } from 'lucide-react';
+import { X, Briefcase, PlusSquare } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '../../services/api';

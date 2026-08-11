@@ -10,6 +10,7 @@ interface Settings {
   currencySymbol: string;
   currencyPosition: string;
   invoicePrefix: string;
+  invoiceNotes?: string;
 }
 
 interface SettingsContextType {

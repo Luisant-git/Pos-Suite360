@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Plus, Trash2, Save, X, Printer, RefreshCw, List, UserPlus, Phone } from 'lucide-react';
+import { Plus, Trash2, Save, X, Printer, RefreshCw, List, UserPlus } from 'lucide-react';
 import { useSettings } from '../../contexts/SettingsContext';
 import toast from 'react-hot-toast';
 import api from '../../services/api';
@@ -283,15 +283,18 @@ const POS = () => {
     const opt = {
       margin:       0.5,
       filename:     `Invoice_${watch('invoiceNo')}.pdf`,
-      image:        { type: 'jpeg', quality: 0.98 },
+      image:        { type: 'jpeg' as const, quality: 0.98 },
       html2canvas:  { scale: 2 },
-      jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
+      jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' as const }
     };
+
+    let originalParent: ParentNode | null = null;
+    let nextSibling: ChildNode | null = null;
 
     try {
       // Temporarily move to body so html2canvas doesn't get clipped by overflow-hidden containers
-      const originalParent = element.parentNode;
-      const nextSibling = element.nextSibling;
+      originalParent = element.parentNode;
+      nextSibling = element.nextSibling;
       document.body.appendChild(element);
 
       // Remove hidden temporarily and force flex layout for PDF generation

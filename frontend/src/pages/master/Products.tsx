@@ -95,9 +95,9 @@ const Products = () => {
     mutationFn: async (data: ProductFormValues) => {
       const payload = {
         ...data,
-        categoryId: parseInt(data.categoryId),
+        categoryId: parseInt(data.categoryId || '0'),
         brandId: data.brandId ? parseInt(data.brandId) : undefined,
-        unitId: parseInt(data.unitId),
+        unitId: parseInt(data.unitId || '0'),
         supplierId: data.supplierId ? parseInt(data.supplierId) : undefined,
       };
       

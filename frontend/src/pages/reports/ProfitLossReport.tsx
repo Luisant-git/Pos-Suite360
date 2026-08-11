@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts';
-import { Download, Printer, Filter } from 'lucide-react';
+import { Download, Printer, Filter, PieChart as PieChartIcon } from 'lucide-react';
 import { format, startOfMonth, startOfYear } from 'date-fns';
 import { useSettings } from '../../contexts/SettingsContext';
 import api from '../../services/api';
@@ -127,7 +127,7 @@ const ProfitLossReport = () => {
         <div className="flex items-center gap-4 flex-wrap">
           <div className="flex items-center gap-2">
             <span className="text-[12px] font-bold text-gray-700 uppercase tracking-wide flex items-center gap-1">
-              <PieChart size={14} /> P&L Statement Period:
+              <PieChartIcon size={14} /> P&L Statement Period:
             </span>
             <span className="text-[12px] text-gray-500">From:</span>
             <input 
@@ -302,7 +302,7 @@ const ProfitLossReport = () => {
           
           <div className="bg-white p-3 rounded shadow-sm border border-gray-200 flex-1 flex flex-col min-h-0">
             <h3 className="text-[12px] font-bold text-[#1E3A8A] uppercase mb-2 flex items-center gap-1 shrink-0">
-              <PieChart size={14} /> Revenue vs Cost Breakdown
+              <PieChartIcon size={14} /> Revenue vs Cost Breakdown
             </h3>
             <div className="flex-1 w-full relative min-h-0">
               <ResponsiveContainer width="100%" height="100%">
@@ -333,7 +333,7 @@ const ProfitLossReport = () => {
                         <Cell key={`cell-${index}`} fill={entry.color} />
                       ))}
                     </Pie>
-                    <Tooltip formatter={(value: number) => formatCurrency(value)} />
+                    <Tooltip formatter={(value: any) => formatCurrency(value)} />
                     <Legend verticalAlign="bottom" height={24} iconSize={10} wrapperStyle={{ fontSize: '11px' }} />
                   </PieChart>
                 )}

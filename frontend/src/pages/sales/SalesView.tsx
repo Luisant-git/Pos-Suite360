@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { ArrowLeft, Printer, Download, FileText, CheckCircle2 } from 'lucide-react';
+import { ArrowLeft, Printer, FileText, CheckCircle2 } from 'lucide-react';
 import api from '../../services/api';
 import { useSettings } from '../../contexts/SettingsContext';
 import { useState } from 'react';
@@ -51,9 +51,9 @@ const SalesView = () => {
         const opt = {
           margin: 0.5,
           filename: `Invoice_${sale.invoiceNo}.pdf`,
-          image: { type: 'jpeg', quality: 0.98 },
+          image:        { type: 'jpeg' as const, quality: 0.98 },
           html2canvas: { scale: 2 },
-          jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+          jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' as const }
         };
         
         const pdfBase64 = await html2pdf().set(opt).from(element).output('datauristring');
@@ -63,21 +63,6 @@ const SalesView = () => {
     });
   };
 
-  const handlePdfDownload = async () => {
-    toast.loading('Generating PDF...', { id: 'pdf-toast' });
-    const pdfBase64 = await processHiddenPdf();
-    if (pdfBase64) {
-      const link = document.createElement("a");
-      link.setAttribute("href", pdfBase64);
-      link.setAttribute("download", `Invoice_${sale.invoiceNo}.pdf`);
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      toast.success('PDF generated successfully!', { id: 'pdf-toast' });
-    } else {
-      toast.error('Failed to generate PDF.', { id: 'pdf-toast' });
-    }
-  };
 
   const handleWhatsAppSend = async () => {
     const phone = sale?.customer?.phone;

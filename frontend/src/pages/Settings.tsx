@@ -3,7 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Store, Shield, AlertTriangle, Save, X, Settings as SettingsIcon } from 'lucide-react';
+import { Store, Save, X, Settings as SettingsIcon, AlertTriangle } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
@@ -19,17 +19,7 @@ const storeSettingsSchema = z.object({
   invoiceNotes: z.string().optional(),
 });
 
-const passwordSchema = z.object({
-  currentPassword: z.string().min(1, 'Current password is required'),
-  newPassword: z.string().min(6, 'Password must be at least 6 characters'),
-  confirmPassword: z.string().min(1, 'Please confirm password'),
-}).refine((data) => data.newPassword === data.confirmPassword, {
-  message: "Passwords don't match",
-  path: ["confirmPassword"],
-});
-
 type StoreSettingsValues = z.infer<typeof storeSettingsSchema>;
-type PasswordValues = z.infer<typeof passwordSchema>;
 
 const Settings = () => {
   const queryClient = useQueryClient();
@@ -48,10 +38,6 @@ const Settings = () => {
 
   const { register: registerStore, handleSubmit: handleSubmitStore, reset: resetStoreForm, formState: { errors: storeErrors } } = useForm<StoreSettingsValues>({
     resolver: zodResolver(storeSettingsSchema) as any,
-  });
-
-  const { register: registerPassword, handleSubmit: handleSubmitPassword, reset: resetPasswordForm, formState: { errors: passwordErrors } } = useForm<PasswordValues>({
-    resolver: zodResolver(passwordSchema) as any,
   });
 
   useEffect(() => {
@@ -78,19 +64,6 @@ const Settings = () => {
     onError: () => toast.error('Failed to update settings')
   });
 
-  const updatePasswordMutation = useMutation({
-    mutationFn: (data: PasswordValues) => api.post('/auth/change-password', data),
-    onSuccess: (res) => {
-      if (res.data.error) {
-        toast.error(res.data.error);
-      } else {
-        toast.success('Password updated successfully');
-        resetPasswordForm();
-      }
-    },
-    onError: () => toast.error('Failed to update password')
-  });
-
   const resetDatabaseMutation = useMutation({
     mutationFn: () => api.post('/settings/reset-database'),
     onSuccess: () => {
@@ -111,10 +84,6 @@ const Settings = () => {
 
   const onStoreSubmit = (data: StoreSettingsValues) => {
     updateSettingsMutation.mutate(data);
-  };
-
-  const onPasswordSubmit = (data: PasswordValues) => {
-    updatePasswordMutation.mutate(data);
   };
 
   const handleReset = () => {

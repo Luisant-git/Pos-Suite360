@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { X, Printer, Download, FileText, CheckCircle2 } from 'lucide-react';
+import { X, Printer, FileText, CheckCircle2 } from 'lucide-react';
 import api from '../../services/api';
 import { useSettings } from '../../contexts/SettingsContext';
 import { useState } from 'react';
@@ -48,9 +48,9 @@ export default function ViewSalesModal({ saleId, onClose }: Props) {
         const opt = {
           margin: 0.5,
           filename: `Invoice_${sale?.invoiceNo}.pdf`,
-          image: { type: 'jpeg', quality: 0.98 },
+          image:        { type: 'jpeg' as const, quality: 0.98 },
           html2canvas: { scale: 2 },
-          jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+          jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' as const }
         };
         const pdfBase64 = await html2pdf().set(opt).from(element).output('datauristring');
         setIsProcessingPdf(false);

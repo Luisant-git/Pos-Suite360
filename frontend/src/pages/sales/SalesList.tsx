@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { Plus, Eye, FileText, Printer } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../services/api';
@@ -23,24 +23,6 @@ const SalesList = () => {
       return data;
     },
   });
-
-  const queryClient = useQueryClient();
-
-  const deleteMutation = useMutation({
-    mutationFn: (id: number) => api.delete(`/sales/${id}`),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['sales'] });
-    },
-    onError: () => {
-      alert('Failed to delete sale.');
-    }
-  });
-
-  const handleDelete = (id: number) => {
-    if (window.confirm('Are you sure you want to delete this sale? This will revert the stock and ledger entries.')) {
-      deleteMutation.mutate(id);
-    }
-  };
 
   return (
     <div className="bg-white min-h-[calc(100vh-100px)] p-6 shadow-sm border border-[#E6E9ED]">

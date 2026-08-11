@@ -5,8 +5,11 @@ import { PrismaService } from '../prisma/prisma.service';
 export class DashboardService {
   constructor(private prisma: PrismaService) {}
 
-  async getDashboardSummary() {
-    const today = new Date();
+  async getDashboardSummary(dateStr?: string) {
+    const today = dateStr ? new Date(dateStr) : new Date();
+    if (isNaN(today.getTime())) {
+      today.setTime(Date.now());
+    }
     today.setHours(0, 0, 0, 0);
     const tomorrow = new Date(today);
     tomorrow.setDate(tomorrow.getDate() + 1);

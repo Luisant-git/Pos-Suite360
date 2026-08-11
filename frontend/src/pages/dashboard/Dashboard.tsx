@@ -7,7 +7,7 @@ import {
   AlertTriangle,
   Receipt
 } from 'lucide-react';
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import api from '../../api';
 import { useSettings } from '../../contexts/SettingsContext';
 
@@ -28,11 +28,13 @@ const Dashboard = () => {
   const { formatCurrency } = useSettings();
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [filterDate, setFilterDate] = useState(new Date().toISOString().split('T')[0]);
 
   useEffect(() => {
     const fetchDashboard = async () => {
       try {
-        const response = await api.get('/dashboard/summary');
+        setLoading(true);
+        const response = await api.get(`/dashboard/summary?date=${filterDate}`);
         setData(response.data);
       } catch (error) {
         console.error("Error fetching dashboard data", error);
@@ -41,7 +43,7 @@ const Dashboard = () => {
       }
     };
     fetchDashboard();
-  }, []);
+  }, [filterDate]);
 
   if (loading || !data) {
     return (
@@ -56,6 +58,18 @@ const Dashboard = () => {
 
   return (
     <div className="bg-[#F7F7F7] min-h-[calc(100vh-100px)]">
+      <div className="flex justify-between items-center mb-4 pt-2">
+        <h1 className="text-[18px] font-bold text-[#1F2937]">Overview</h1>
+        <div className="flex items-center gap-2 bg-white px-3 py-1.5 border border-[#E6E9ED] rounded-lg shadow-sm">
+          <label className="text-[12px] font-bold text-[#6B7280]">Date:</label>
+          <input 
+            type="date" 
+            value={filterDate} 
+            onChange={(e) => setFilterDate(e.target.value)}
+            className="text-[13px] font-bold text-[#1F2937] outline-none bg-transparent"
+          />
+        </div>
+      </div>
       {/* Top Tiles */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
         <StatCard
@@ -103,13 +117,12 @@ const Dashboard = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Sales Overview */}
+        {/* Sales Overview
         <div className="lg:col-span-2 bg-white border border-[#E6E9ED] shadow-sm">
           <div className="border-b border-[#E6E9ED] px-4 py-3 flex justify-between items-center bg-white">
             <h2 className="text-[15px] font-bold text-[#1F2937]">Sales Overview <small className="font-normal">Current Month</small></h2>
           </div>
           <div className="p-4 h-[350px] bg-white">
-            {/* 
             {data.chartData && data.chartData.length > 0 ? (
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart
@@ -131,38 +144,10 @@ const Dashboard = () => {
               </ResponsiveContainer>
             ) : (
                <div className="w-full h-full flex items-center justify-center text-gray-500 font-bold">No sales data this month</div>
-            )} 
-            */}
-
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie
-                  data={[
-                    { name: 'Sales', value: data?.salesToday || 0, color: '#10B981' },
-                    { name: 'Purchases', value: data?.purchasesToday || 0, color: '#3B82F6' },
-                    { name: 'Expenses', value: data?.expensesToday || 0, color: '#EF4444' }
-                  ].filter(item => item.value > 0)}
-                  cx="50%"
-                  cy="50%"
-                  innerRadius={80}
-                  outerRadius={120}
-                  paddingAngle={5}
-                  dataKey="value"
-                >
-                  {[
-                    { name: 'Sales', value: data?.salesToday || 0, color: '#10B981' },
-                    { name: 'Purchases', value: data?.purchasesToday || 0, color: '#3B82F6' },
-                    { name: 'Expenses', value: data?.expensesToday || 0, color: '#EF4444' }
-                  ].filter(item => item.value > 0).map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
-                  ))}
-                </Pie>
-                <Tooltip formatter={(value: any) => formatCurrency(Number(value))} />
-                <Legend verticalAlign="bottom" height={36} />
-              </PieChart>
-            </ResponsiveContainer>
+            )}
           </div>
         </div>
+        */}
 
         {/* Low Stock Products */}
         <div className="bg-white border border-[#E6E9ED] shadow-sm">

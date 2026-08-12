@@ -24,8 +24,15 @@ import { ExpensesModule } from './expenses/expenses.module';
 import { WhatsappModule } from './whatsapp/whatsapp.module';
 import { ReportsModule } from './reports/reports.module';
 
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
+
 @Module({
   imports: [
+    ServeStaticModule.forRoot({
+      rootPath: join(process.cwd(), 'uploads'),
+      serveRoot: '/uploads/',
+    }),
     ProductsModule, 
     CategoriesModule, 
     BrandsModule, 

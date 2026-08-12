@@ -4,7 +4,7 @@ import { AppModule } from './app.module';
 import { json, urlencoded } from 'express';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, { bodyParser: false });
   app.enableCors(); // Allow frontend to communicate with backend
   
   // Increase payload limit to 50mb to allow for large Base64 PDF attachments

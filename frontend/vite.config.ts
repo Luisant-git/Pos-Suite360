@@ -9,3 +9,5 @@ export default defineConfig({
     react()
   ],
 })
+
+// Trigger Vite restart

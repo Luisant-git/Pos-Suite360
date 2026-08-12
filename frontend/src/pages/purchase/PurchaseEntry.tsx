@@ -75,6 +75,7 @@ const PurchaseEntry = () => {
   // Fetch Masters & Next Entry No
   const { data: suppliers = [] } = useQuery({ queryKey: ['suppliers'], queryFn: async () => (await api.get('/suppliers')).data });
   const { data: products = [] } = useQuery({ queryKey: ['products'], queryFn: async () => (await api.get('/products')).data });
+  const { data: paymentModes = [] } = useQuery({ queryKey: ['paymentModes'], queryFn: async () => (await api.get('/payment-modes')).data });
   const { data: nextEntryData } = useQuery({ queryKey: ['nextEntryNo'], queryFn: async () => (await api.get('/purchases/next-entry-no')).data });
 
   // Update default entry no
@@ -313,8 +314,9 @@ const PurchaseEntry = () => {
                 className="w-full px-2 py-1.5 border border-[#D1D5DB] rounded text-[13px] outline-none focus:border-[#3B82F6] bg-white"
               >
                 <option value="0">Select Payment Mode...</option>
-                <option value="2">Credit</option>
-                <option value="1">Cash</option>
+                {paymentModes.map((pm: any) => (
+                  <option key={pm.id} value={pm.id}>{pm.name}</option>
+                ))}
               </select>
             </div>
 

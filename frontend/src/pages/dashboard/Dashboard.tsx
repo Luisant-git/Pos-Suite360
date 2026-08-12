@@ -57,6 +57,11 @@ const Dashboard = () => {
     );
   }
 
+  const todayStr = new Date().toISOString().split('T')[0];
+  const isToday = filterStartDate === todayStr && filterEndDate === todayStr;
+  const prefix = isToday ? "Today's" : "Filtered";
+  const descPrefix = isToday ? "Today's" : "Period";
+
   return (
     <div className="bg-[#F7F7F7] min-h-[calc(100vh-100px)]">
       <div className="flex justify-between items-center mb-4 pt-2">
@@ -96,21 +101,21 @@ const Dashboard = () => {
       {/* Top Tiles */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
         <StatCard
-          title="Today's Sales"
+          title={`${prefix} Sales`}
           value={formatCurrency(data.salesToday)}
-          desc="Today's total sales"
+          desc={`${descPrefix} total sales`}
           icon={IndianRupee}
           colorClass="bg-[#26B99A]"
         />
         <StatCard
-          title="Today's Purchases"
+          title={`${prefix} Purchases`}
           value={formatCurrency(data.purchasesToday)}
-          desc="Today's total purchases"
+          desc={`${descPrefix} total purchases`}
           icon={ShoppingCart}
           colorClass="bg-[#3B82F6]"
         />
         <StatCard
-          title="Today's Expenses"
+          title={`${prefix} Expenses`}
           value={formatCurrency(data.expensesToday)}
           desc="Operational costs"
           icon={TrendingDown}
@@ -131,9 +136,9 @@ const Dashboard = () => {
           colorClass="bg-[#F39C12]"
         />
         <StatCard
-          title="Today's Bills"
+          title={`${prefix} Bills`}
           value={data.billsToday.toLocaleString()}
-          desc="Completed today"
+          desc={`Completed ${isToday ? 'today' : 'in period'}`}
           icon={Receipt}
           colorClass="bg-[#34495E]"
         />

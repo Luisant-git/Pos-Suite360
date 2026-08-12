@@ -202,8 +202,8 @@ const SupplierPayments = () => {
                       <div className="flex items-center gap-2"><FileText size={14} /> BILL-BY-BILL OUTSTANDING BREAKDOWN</div>
                       <span className="bg-white text-[#E11D48] px-2 py-0.5 rounded-full text-[10px]">{unpaidBills.length} Bills</span>
                     </div>
-                    <div className="max-h-[250px] overflow-y-auto">
-                      <table className="w-full text-left text-[12px]">
+                    <div className="max-h-[250px] overflow-y-auto overflow-x-auto">
+                      <table className="w-full text-left text-[12px] whitespace-nowrap">
                         <thead className="bg-[#F8FAFC] border-b border-[#E2E8F0] sticky top-0">
                           <tr>
                             <th className="px-3 py-2 font-bold text-[#334155]">Entry / Inv No</th>

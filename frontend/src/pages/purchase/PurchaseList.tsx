@@ -90,7 +90,7 @@ const PurchaseList = () => {
                 <th className="px-3 py-2.5 border-r border-[#444] relative">Invoice No</th>
                 <th className="px-3 py-2.5 border-r border-[#444] relative">Supplier</th>
                 <th className="px-3 py-2.5 border-r border-[#444] relative text-right">Total Amount (₹)</th>
-                <th className="px-3 py-2.5 border-r border-[#444] relative text-center">Payment</th>
+                <th className="px-3 py-2.5 border-r border-[#444] relative text-center">Payment Mode</th>
                 <th className="px-3 py-2.5 text-center w-32">Actions</th>
               </tr>
             </thead>
@@ -111,7 +111,13 @@ const PurchaseList = () => {
                     <td className="px-3 py-2.5 border-r border-[#E5E7EB] text-[#333] font-medium">{purchase.supplier?.name || 'Unknown Supplier'}</td>
                     <td className="px-3 py-2.5 border-r border-[#E5E7EB] text-[#333] font-bold text-right">{formatCurrency(purchase.grandTotal)}</td>
                     <td className="px-3 py-2.5 border-r border-[#E5E7EB] text-center">
-                      <span className="bg-[#22C55E] text-white px-2 py-0.5 rounded text-[11px] font-bold tracking-wide">PAID</span>
+                      <span className={`px-2 py-0.5 rounded text-[11px] font-bold tracking-wide ${
+                        purchase.paymentMode?.name === 'Cash' ? 'bg-[#06B6D4] text-white' : 
+                        purchase.paymentMode?.name === 'Credit' ? 'bg-[#22C55E] text-white' :
+                        'bg-[#22C55E] text-white'
+                      }`}>
+                        {purchase.paymentMode?.name?.toUpperCase() || 'PAID'}
+                      </span>
                     </td>
                     <td className="px-3 py-2.5 text-center">
                       <div className="flex justify-center gap-2">

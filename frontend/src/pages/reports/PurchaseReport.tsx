@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Search, FileText, Download, Calendar, FileDigit, Truck, CreditCard, RotateCcw, Plus, Receipt } from 'lucide-react';
+import { Search, FileText, Download, Calendar, FileDigit, Truck, CreditCard, RotateCcw, Plus, Eye } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useSettings } from '../../contexts/SettingsContext';
 import api from '../../services/api';
@@ -241,7 +241,7 @@ const PurchaseReport = () => {
                         className="text-[#3B82F6] border border-[#3B82F6] rounded p-1 hover:bg-[#3B82F6] hover:text-white transition-colors"
                         title="View Invoice"
                       >
-                        <Receipt size={14} />
+                        <Eye size={14} />
                       </button>
                     </td>
                   </tr>

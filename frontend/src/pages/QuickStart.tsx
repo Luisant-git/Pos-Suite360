@@ -22,7 +22,7 @@ import {
 
 const menuData = [
   {
-    title: 'Master',
+    title: 'Master HUB',
     icon: Database,
     color: 'text-purple-500',
     hoverBorder: 'hover:border-purple-500',
@@ -39,28 +39,27 @@ const menuData = [
     ]
   },
   {
-    title: 'Purchase',
+    title: 'Purchase HUB',
     icon: ShoppingCart,
     color: 'text-emerald-500',
     hoverBorder: 'hover:border-emerald-500',
     items: [
-      { name: 'Purchase List', path: '/purchase', icon: ListOrdered },
       { name: 'Purchase Entry', path: '/purchase/new', icon: ShoppingCart },
-      { name: 'Supplier Payments', path: '/purchase/payments', icon: CreditCard },
+      { name: 'Purchase List', path: '/purchase', icon: ListOrdered },
       { name: 'Purchase Return', path: '/purchase/return', icon: RotateCcw },
+      { name: 'Supplier Payments', path: '/purchase/payments', icon: CreditCard },
     ]
   },
   {
-    title: 'Sales',
+    title: 'Sales HUB',
     icon: Receipt,
     color: 'text-blue-500',
     hoverBorder: 'hover:border-blue-500',
     items: [
-      { name: 'Sales List', path: '/sales', icon: ListOrdered },
       { name: 'Sales Entry (POS)', path: '/sales/pos', icon: Receipt },
-      // { name: 'Sales History', path: '/sales/history', icon: History },
-      { name: 'Customer Receipts', path: '/sales/receipts', icon: CreditCard },
+      { name: 'Sales List', path: '/sales', icon: ListOrdered },
       { name: 'Sales Return', path: '/sales/return', icon: RotateCcw },
+      { name: 'Customer Receipts', path: '/sales/receipts', icon: CreditCard },
     ]
   },
   /*
@@ -87,7 +86,7 @@ const menuData = [
     ]
   },
   {
-    title: 'Reports',
+    title: 'Reports HUB',
     icon: BarChart2,
     color: 'text-teal-500',
     hoverBorder: 'hover:border-teal-500',

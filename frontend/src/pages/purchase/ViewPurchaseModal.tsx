@@ -40,6 +40,7 @@ export default function ViewPurchaseModal({ purchaseId, onClose }: Props) {
               <p className="font-bold text-[#1E3A8A] text-[15px]">{purchase.supplier?.name}</p>
               {purchase.supplier?.phone && <p className="text-[13px] text-gray-600">{purchase.supplier.phone}</p>}
               {purchase.supplier?.email && <p className="text-[13px] text-gray-600">{purchase.supplier.email}</p>}
+              {purchase.supplier?.address && <p className="text-[13px] text-gray-600 mt-1 whitespace-pre-wrap">{purchase.supplier.address}</p>}
             </div>
             <div className="text-right">
               <p className="text-[12px] text-gray-500 uppercase tracking-wider font-bold mb-1">Invoice Info</p>

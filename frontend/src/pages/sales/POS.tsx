@@ -172,7 +172,8 @@ const POS = () => {
       if (watchRateType === 'Wholesale Rate') {
         setValue(`items.${index}.rate`, product.wholesaleRate || 0);
       } else {
-        setValue(`items.${index}.rate`, product.sellingRate || 0);
+        // User requested to fetch Purchase Rate automatically here
+        setValue(`items.${index}.rate`, product.purchaseRate || 0);
       }
     }
   };

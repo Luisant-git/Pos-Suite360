@@ -8,7 +8,10 @@ export class DashboardController {
   constructor(private readonly dashboardService: DashboardService) {}
 
   @Get('summary')
-  async getSummary(@Query('date') date?: string) {
-    return this.dashboardService.getDashboardSummary(date);
+  async getSummary(
+    @Query('startDate') startDate?: string,
+    @Query('endDate') endDate?: string,
+  ) {
+    return this.dashboardService.getDashboardSummary(startDate, endDate);
   }
 }

@@ -40,7 +40,7 @@ const CustomerReceipts = () => {
       receiptNo: 'Generating...',
       date: new Date().toISOString().split('T')[0],
       customerId: 0,
-      amount: 0,
+      amount: '' as any,
       paymentModeId: 0,
       reference: '',
       remarks: '',
@@ -242,6 +242,7 @@ const CustomerReceipts = () => {
                   {...register('amount')}
                   type="number"
                   step="0.01"
+                  placeholder="0.00"
                   className="w-full px-3 py-2 border border-[#CBD5E1] rounded text-[15px] font-bold outline-none focus:border-[#3B82F6]"
                 />
               </div>

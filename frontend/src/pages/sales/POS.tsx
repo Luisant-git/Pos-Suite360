@@ -97,11 +97,11 @@ const POS = () => {
       customerId: 0,
       rateType: 'Wholesale Rate',
       paymentModeId: 0,
-      items: [{ productId: 0, quantity: 1, stock: 0, rate: 0, unit: 'Nos', discPercent: 0, discAmt: 0, total: 0 }],
+      items: [{ productId: 0, quantity: '' as any, stock: 0, rate: '' as any, unit: 'Nos', discPercent: '' as any, discAmt: '' as any, total: 0 }],
       grossAmount: 0,
-      totalDiscountPercent: 0,
-      totalDiscount: 0,
-      roundOff: 0,
+      totalDiscountPercent: '' as any,
+      totalDiscount: '' as any,
+      roundOff: '' as any,
       netAmount: 0
     }
   });
@@ -468,7 +468,7 @@ const POS = () => {
           <div className="flex justify-end gap-2 p-2">
             <button 
               type="button"
-              onClick={() => append({ productId: 0, quantity: 1, stock: 0, rate: 0, unit: 'Nos', discPercent: 0, discAmt: 0, total: 0 })}
+              onClick={() => append({ productId: 0, quantity: '' as any, stock: 0, rate: '' as any, unit: 'Nos', discPercent: '' as any, discAmt: '' as any, total: 0 })}
               className="border border-[#1E3A8A] text-[#1E3A8A] hover:bg-[#1E3A8A] hover:text-white px-3 py-1 rounded flex items-center gap-1 text-[12px] transition-colors font-bold"
             >
               <Plus size={14} /> Add Row
@@ -526,26 +526,26 @@ const POS = () => {
                     </span>
                   </td>
                   <td className="px-2 py-1 border-r border-[#E5E7EB]">
-                    <input {...register(`items.${index}.quantity`)} type="number" min="1" className={`w-full px-2 py-1 border rounded text-[13px] outline-none text-center ${watch(`items.${index}.quantity`) > watch(`items.${index}.stock`) ? 'border-red-500 focus:border-red-500' : 'border-[#D1D5DB] focus:border-[#3B82F6]'}`} />
+                    <input {...register(`items.${index}.quantity`)} type="number" min="1" placeholder="1" className={`w-full px-2 py-1 border rounded text-[13px] outline-none text-center ${watch(`items.${index}.quantity`) > watch(`items.${index}.stock`) ? 'border-red-500 focus:border-red-500' : 'border-[#D1D5DB] focus:border-[#3B82F6]'}`} />
                   </td>
                   <td className="px-2 py-1 border-r border-[#E5E7EB]">
-                    <input {...register(`items.${index}.rate`)} type="number" step="0.01" className="w-full px-2 py-1 border border-[#D1D5DB] rounded text-[13px] outline-none focus:border-[#3B82F6] text-right" />
+                    <input {...register(`items.${index}.rate`)} type="number" step="0.01" placeholder="0.00" className="w-full px-2 py-1 border border-[#D1D5DB] rounded text-[13px] outline-none focus:border-[#3B82F6] text-right" />
                   </td>
                   <td className="px-2 py-1 border-r border-[#E5E7EB]">
                     <input {...register(`items.${index}.unit`)} type="text" readOnly className="w-full px-1 py-1 bg-transparent text-[13px] outline-none text-center" />
                   </td>
                   <td className="px-2 py-1 border-r border-[#E5E7EB]">
-                    <input {...register(`items.${index}.discPercent`)} type="number" step="0.01" className="w-full px-2 py-1 border border-[#D1D5DB] rounded text-[13px] outline-none focus:border-[#3B82F6] text-right" />
+                    <input {...register(`items.${index}.discPercent`)} type="number" step="0.01" placeholder="0" className="w-full px-2 py-1 border border-[#D1D5DB] rounded text-[13px] outline-none focus:border-[#3B82F6] text-right" />
                   </td>
                   <td className="px-2 py-1 border-r border-[#E5E7EB]">
-                    <input {...register(`items.${index}.discAmt`)} type="number" step="0.01" className="w-full px-2 py-1 border border-[#D1D5DB] rounded text-[13px] outline-none focus:border-[#3B82F6] text-right" />
+                    <input {...register(`items.${index}.discAmt`)} type="number" step="0.01" placeholder="0.00" className="w-full px-2 py-1 border border-[#D1D5DB] rounded text-[13px] outline-none focus:border-[#3B82F6] text-right" />
                   </td>
                   <td className="px-2 py-1 border-r border-[#E5E7EB]">
                     <input {...register(`items.${index}.total`)} type="number" readOnly className="w-full px-2 py-1 bg-transparent text-[13px] outline-none text-right font-bold" />
                   </td>
                   <td className="px-2 py-1 text-center">
                     <div className="flex justify-center gap-2">
-                      <button type="button" onClick={() => append({ productId: 0, quantity: 1, stock: 0, rate: 0, unit: 'Nos', discPercent: 0, discAmt: 0, total: 0 })} className="text-[#059669] hover:text-[#047857]">
+                      <button type="button" onClick={() => append({ productId: 0, quantity: '' as any, stock: 0, rate: '' as any, unit: 'Nos', discPercent: '' as any, discAmt: '' as any, total: 0 })} className="text-[#059669] hover:text-[#047857]">
                         <Plus size={14} />
                       </button>
                       <button type="button" onClick={() => remove(index)} disabled={fields.length === 1} className="text-[#EF4444] hover:text-[#DC2626] disabled:opacity-30">
@@ -610,6 +610,7 @@ const POS = () => {
                           setValue('totalDiscount', Number(amount.toFixed(2)));
                         }}
                         className="w-full pl-2 pr-6 py-2 border border-[#D1D5DB] rounded text-[14px] outline-none focus:border-[#3B82F6] text-right font-medium"
+                        placeholder="0"
                       />
                       <span className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-[13px] pointer-events-none">%</span>
                     </div>
@@ -631,6 +632,7 @@ const POS = () => {
                           }
                         }}
                         className="w-full pl-8 pr-3 py-2 border border-[#D1D5DB] rounded text-[14px] outline-none focus:border-[#3B82F6] text-right font-medium"
+                        placeholder="0.00"
                       />
                     </div>
                   </div>
@@ -642,6 +644,7 @@ const POS = () => {
                     {...register('roundOff')}
                     type="number"
                     step="0.01"
+                    placeholder="0.00"
                     className="w-full px-3 py-2 border border-[#D1D5DB] rounded text-[14px] outline-none focus:border-[#3B82F6] text-right font-medium"
                   />
                 </div>

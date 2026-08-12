@@ -56,11 +56,11 @@ const PurchaseEntry = () => {
       supplierId: 0,
       date: new Date().toISOString().split('T')[0],
       paymentModeId: 0,
-      items: [{ productId: 0, quantity: 1, unit: 'Nos', pRate: 0, wRate: 0, sRate: 0, mrp: 0, discPercent: 0, discAmt: 0, total: 0 }],
+      items: [{ productId: 0, quantity: '' as any, unit: 'Nos', pRate: '' as any, wRate: '' as any, sRate: '' as any, mrp: '' as any, discPercent: '' as any, discAmt: '' as any, total: 0 }],
       totalAmount: 0,
-      totalDiscountPercent: 0,
-      totalDiscount: 0,
-      roundOff: 0,
+      totalDiscountPercent: '' as any,
+      totalDiscount: '' as any,
+      roundOff: '' as any,
       netAmount: 0
     }
   });
@@ -291,9 +291,8 @@ const PurchaseEntry = () => {
                 className="w-full px-2 py-1.5 border border-[#D1D5DB] rounded text-[13px] outline-none focus:border-[#3B82F6] bg-white"
               >
                 <option value="0">Select Payment Mode...</option>
-                {paymentModes.map((m: any) => (
-                  <option key={m.id} value={m.id}>{m.name}</option>
-                ))}
+                <option value="4">Credit</option>
+                <option value="3">Cash</option>
               </select>
             </div>
 
@@ -305,7 +304,7 @@ const PurchaseEntry = () => {
           <div className="flex justify-end gap-2 mb-2">
             <button 
               type="button"
-              onClick={() => append({ productId: 0, quantity: 1, unit: 'Nos', pRate: 0, wRate: 0, sRate: 0, mrp: 0, discPercent: 0, discAmt: 0, total: 0 })}
+              onClick={() => append({ productId: 0, quantity: '' as any, unit: 'Nos', pRate: '' as any, wRate: '' as any, sRate: '' as any, mrp: '' as any, discPercent: '' as any, discAmt: '' as any, total: 0 })}
               className="border border-[#0B355B] text-[#0B355B] hover:bg-[#0B355B] hover:text-white px-3 py-1 rounded flex items-center gap-1 text-[12px] transition-colors font-bold"
             >
               <PlusCircle size={14} /> Add Row
@@ -353,35 +352,35 @@ const PurchaseEntry = () => {
                     />
                   </td>
                   <td className="px-2 py-1 border-r border-[#E5E7EB]">
-                    <input {...register(`items.${index}.quantity`)} type="number" min="1" className="w-full px-2 py-1 border border-[#D1D5DB] rounded text-[13px] outline-none focus:border-[#3B82F6] text-center" />
+                    <input {...register(`items.${index}.quantity`)} type="number" min="1" placeholder="1" className="w-full px-2 py-1 border border-[#D1D5DB] rounded text-[13px] outline-none focus:border-[#3B82F6] text-center" />
                   </td>
                   <td className="px-2 py-1 border-r border-[#E5E7EB]">
                     <input {...register(`items.${index}.unit`)} type="text" readOnly className="w-full px-1 py-1 bg-transparent text-[13px] outline-none text-center" />
                   </td>
                   <td className="px-2 py-1 border-r border-[#E5E7EB]">
-                    <input {...register(`items.${index}.pRate`)} type="number" step="0.01" className="w-full px-2 py-1 border border-[#D1D5DB] rounded text-[13px] outline-none focus:border-[#3B82F6] text-right" />
+                    <input {...register(`items.${index}.pRate`)} type="number" step="0.01" placeholder="0.00" className="w-full px-2 py-1 border border-[#D1D5DB] rounded text-[13px] outline-none focus:border-[#3B82F6] text-right" />
                   </td>
                   <td className="px-2 py-1 border-r border-[#E5E7EB]">
-                    <input {...register(`items.${index}.wRate`)} type="number" step="0.01" className="w-full px-2 py-1 border border-[#D1D5DB] rounded text-[13px] outline-none focus:border-[#3B82F6] text-right" />
+                    <input {...register(`items.${index}.wRate`)} type="number" step="0.01" placeholder="0.00" className="w-full px-2 py-1 border border-[#D1D5DB] rounded text-[13px] outline-none focus:border-[#3B82F6] text-right" />
                   </td>
                   <td className="px-2 py-1 border-r border-[#E5E7EB]">
-                    <input {...register(`items.${index}.sRate`)} type="number" step="0.01" className="w-full px-2 py-1 border border-[#D1D5DB] rounded text-[13px] outline-none focus:border-[#3B82F6] text-right" />
+                    <input {...register(`items.${index}.sRate`)} type="number" step="0.01" placeholder="0.00" className="w-full px-2 py-1 border border-[#D1D5DB] rounded text-[13px] outline-none focus:border-[#3B82F6] text-right" />
                   </td>
                   <td className="px-2 py-1 border-r border-[#E5E7EB]">
-                    <input {...register(`items.${index}.mrp`)} type="number" step="0.01" className="w-full px-2 py-1 border border-[#D1D5DB] rounded text-[13px] outline-none focus:border-[#3B82F6] text-right" />
+                    <input {...register(`items.${index}.mrp`)} type="number" step="0.01" placeholder="0.00" className="w-full px-2 py-1 border border-[#D1D5DB] rounded text-[13px] outline-none focus:border-[#3B82F6] text-right" />
                   </td>
                   <td className="px-2 py-1 border-r border-[#E5E7EB]">
-                    <input {...register(`items.${index}.discPercent`)} type="number" step="0.01" className="w-full px-2 py-1 border border-[#D1D5DB] rounded text-[13px] outline-none focus:border-[#3B82F6] text-right" />
+                    <input {...register(`items.${index}.discPercent`)} type="number" step="0.01" placeholder="0" className="w-full px-2 py-1 border border-[#D1D5DB] rounded text-[13px] outline-none focus:border-[#3B82F6] text-right" />
                   </td>
                   <td className="px-2 py-1 border-r border-[#E5E7EB]">
-                    <input {...register(`items.${index}.discAmt`)} type="number" step="0.01" className="w-full px-2 py-1 border border-[#D1D5DB] rounded text-[13px] outline-none focus:border-[#3B82F6] text-right" />
+                    <input {...register(`items.${index}.discAmt`)} type="number" step="0.01" placeholder="0.00" className="w-full px-2 py-1 border border-[#D1D5DB] rounded text-[13px] outline-none focus:border-[#3B82F6] text-right" />
                   </td>
                   <td className="px-2 py-1 border-r border-[#E5E7EB]">
                     <input {...register(`items.${index}.total`)} type="number" readOnly className="w-full px-2 py-1 bg-transparent text-[13px] outline-none text-right font-bold" />
                   </td>
                   <td className="px-2 py-1 text-center">
                     <div className="flex justify-center gap-2">
-                      <button type="button" onClick={() => append({ productId: 0, quantity: 1, unit: 'Nos', pRate: 0, wRate: 0, sRate: 0, mrp: 0, discPercent: 0, discAmt: 0, total: 0 })} className="text-[#059669] hover:text-[#047857]">
+                      <button type="button" onClick={() => append({ productId: 0, quantity: '' as any, unit: 'Nos', pRate: '' as any, wRate: '' as any, sRate: '' as any, mrp: '' as any, discPercent: '' as any, discAmt: '' as any, total: 0 })} className="text-[#059669] hover:text-[#047857]">
                         <Plus size={14} />
                       </button>
                       <button type="button" onClick={() => remove(index)} disabled={fields.length === 1} className="text-[#EF4444] hover:text-[#DC2626] disabled:opacity-30">
@@ -424,6 +423,7 @@ const PurchaseEntry = () => {
                       setValue('totalDiscount', Number(amount.toFixed(2)));
                     }}
                     className="w-full pl-2 pr-6 py-2 border border-[#D1D5DB] rounded text-[14px] outline-none focus:border-[#3B82F6] text-right font-medium"
+                    placeholder="0"
                   />
                   <span className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-[13px] pointer-events-none">%</span>
                 </div>
@@ -444,6 +444,7 @@ const PurchaseEntry = () => {
                       }
                     }}
                     className="w-full pl-8 pr-3 py-2 border border-[#D1D5DB] rounded text-[14px] outline-none focus:border-[#3B82F6] text-right font-medium"
+                    placeholder="0.00"
                   />
                 </div>
               </div>
@@ -455,6 +456,7 @@ const PurchaseEntry = () => {
                 {...register('roundOff')}
                 type="number"
                 step="0.01"
+                placeholder="0.00"
                 className="w-full px-3 py-2 border border-[#D1D5DB] rounded text-[14px] outline-none focus:border-[#3B82F6] text-right font-medium"
               />
             </div>

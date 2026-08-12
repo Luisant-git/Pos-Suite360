@@ -13,12 +13,12 @@ const productSchema = z.object({
   brandId: z.string().optional(),
   unitId: z.string().min(1, 'Unit is required'),
   supplierId: z.string().optional(),
-  currentStock: z.number().min(0).default(0), // Opening Stock
-  purchaseRate: z.number().min(0).default(0),
-  wholesaleRate: z.number().min(0).default(0),
-  sellingRate: z.number().min(0).default(0), // Sale Rate (Retail)
-  minStock: z.number().min(0).default(0),    // Min Qty (Alert)
-  reorderLevel: z.number().min(0).default(0),
+  currentStock: z.coerce.number().min(0).default(0), // Opening Stock
+  purchaseRate: z.coerce.number().min(0).default(0),
+  wholesaleRate: z.coerce.number().min(0).default(0),
+  sellingRate: z.coerce.number().min(0).default(0), // Sale Rate (Retail)
+  minStock: z.coerce.number().min(0).default(0),    // Min Qty (Alert)
+  reorderLevel: z.coerce.number().min(0).default(0),
 });
 
 type ProductFormValues = z.infer<typeof productSchema>;
@@ -41,12 +41,12 @@ const Products = () => {
       brandId: '',
       unitId: '',
       supplierId: '',
-      currentStock: 0,
-      purchaseRate: 0,
-      wholesaleRate: 0,
-      sellingRate: 0,
-      minStock: 0,
-      reorderLevel: 0,
+      currentStock: '' as any,
+      purchaseRate: '' as any,
+      wholesaleRate: '' as any,
+      sellingRate: '' as any,
+      minStock: '' as any,
+      reorderLevel: '' as any,
     }
   });
 
@@ -95,7 +95,7 @@ const Products = () => {
     mutationFn: async (data: ProductFormValues) => {
       const payload = {
         ...data,
-        categoryId: parseInt(data.categoryId || '0'),
+        categoryId: data.categoryId ? parseInt(data.categoryId) : undefined,
         brandId: data.brandId ? parseInt(data.brandId) : undefined,
         unitId: parseInt(data.unitId || '0'),
         supplierId: data.supplierId ? parseInt(data.supplierId) : undefined,
@@ -162,8 +162,9 @@ const Products = () => {
               <input 
                 {...register('code')}
                 type="text" 
+                readOnly
                 placeholder="Code"
-                className="w-full px-3 py-1.5 border border-[#ccc] rounded shadow-inner focus:border-[#3B82F6] outline-none text-[13px]"
+                className="w-full px-3 py-1.5 border border-[#ccc] rounded shadow-inner focus:border-[#3B82F6] outline-none text-[13px] bg-gray-100"
               />
               {errors.code && <span className="text-red-500 text-xs mt-1 block">{errors.code.message}</span>}
             </div>
@@ -231,32 +232,36 @@ const Products = () => {
             <div>
               <label className="block text-[12px] text-[#1F2937] mb-1">Opening Stock</label>
               <input 
-                {...register('currentStock', { valueAsNumber: true })}
+                {...register('currentStock')}
                 type="number" 
+                placeholder="0"
                 className="w-full px-3 py-1.5 border border-[#ccc] rounded shadow-inner focus:border-[#3B82F6] outline-none text-[13px] text-right"
               />
             </div>
             <div>
               <label className="block text-[12px] text-[#1F2937] mb-1">Pur Rate</label>
               <input 
-                {...register('purchaseRate', { valueAsNumber: true })}
+                {...register('purchaseRate')}
                 type="number" 
+                placeholder="0"
                 className="w-full px-3 py-1.5 border border-[#ccc] rounded shadow-inner focus:border-[#3B82F6] outline-none text-[13px] text-right"
               />
             </div>
             <div>
               <label className="block text-[12px] font-bold text-[#16A34A] mb-1">Wholesale Rate *</label>
               <input 
-                {...register('wholesaleRate', { valueAsNumber: true })}
+                {...register('wholesaleRate')}
                 type="number" 
+                placeholder="0"
                 className="w-full px-3 py-1.5 border border-[#ccc] rounded shadow-inner focus:border-[#3B82F6] outline-none text-[13px] text-right"
               />
             </div>
             <div>
               <label className="block text-[12px] font-bold text-[#3B82F6] mb-1">Sale Rate (Retail) *</label>
               <input 
-                {...register('sellingRate', { valueAsNumber: true })}
+                {...register('sellingRate')}
                 type="number" 
+                placeholder="0"
                 className="w-full px-3 py-1.5 border border-[#ccc] rounded shadow-inner focus:border-[#3B82F6] outline-none text-[13px] text-right"
               />
             </div>
@@ -268,16 +273,18 @@ const Products = () => {
             <div>
               <label className="block text-[12px] text-[#1F2937] mb-1">Min Qty (Alert)</label>
               <input 
-                {...register('minStock', { valueAsNumber: true })}
+                {...register('minStock')}
                 type="number" 
+                placeholder="0"
                 className="w-full px-3 py-1.5 border border-[#ccc] rounded shadow-inner focus:border-[#3B82F6] outline-none text-[13px] text-right"
               />
             </div>
             <div>
               <label className="block text-[12px] text-[#1F2937] mb-1">Reorder Level</label>
               <input 
-                {...register('reorderLevel', { valueAsNumber: true })}
+                {...register('reorderLevel')}
                 type="number" 
+                placeholder="0"
                 className="w-full px-3 py-1.5 border border-[#ccc] rounded shadow-inner focus:border-[#3B82F6] outline-none text-[13px] text-right"
               />
             </div>

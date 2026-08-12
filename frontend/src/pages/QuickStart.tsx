@@ -16,7 +16,8 @@ import {
   ListOrdered,
   BarChart2,
   FileText,
-  ArrowLeft
+  ArrowLeft,
+  Tags
 } from 'lucide-react';
 
 const menuData = [
@@ -33,7 +34,7 @@ const menuData = [
       { name: 'Customers', path: '/master/customers', icon: Users },
       { name: 'Units', path: '/master/units', icon: Scale },
       { name: 'Payment Modes', path: '/master/payment-modes', icon: CreditCard },
-      // { name: 'Expense Categories', path: '/master/expense-categories', icon: Tags },
+      { name: 'Expense Categories', path: '/master/expense-categories', icon: Tags },
       // { name: 'Users', path: '/master/users', icon: UserCog },
     ]
   },
@@ -81,7 +82,7 @@ const menuData = [
     color: 'text-red-500',
     hoverBorder: 'hover:border-red-500',
     items: [
-      { name: 'Expense List', path: '/expenses', icon: ListOrdered },
+      // { name: 'Expense List', path: '/expenses', icon: ListOrdered },
       { name: 'Expense Entry', path: '/expenses/new', icon: TrendingDown },
     ]
   },

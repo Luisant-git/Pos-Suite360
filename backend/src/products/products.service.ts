@@ -19,13 +19,13 @@ export class ProductsService {
       select: { code: true }
     });
     let nextNumber = 1;
-    if (lastProduct && lastProduct.code.startsWith('PROD-')) {
-      const numPart = parseInt(lastProduct.code.replace('PROD-', ''), 10);
-      if (!isNaN(numPart)) {
-        nextNumber = numPart + 1;
+    if (lastProduct && lastProduct.code) {
+      const match = lastProduct.code.match(/\d+$/);
+      if (match) {
+        nextNumber = parseInt(match[0], 10) + 1;
       }
     }
-    return { code: `PROD-${nextNumber.toString().padStart(4, '0')}` };
+    return { code: `P${nextNumber.toString().padStart(6, '0')}` };
   }
 
   findAll(query?: any) {

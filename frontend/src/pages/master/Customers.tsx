@@ -13,10 +13,10 @@ const customerSchema = z.object({
   email: z.string().email('Invalid email').optional().or(z.literal('')),
   address: z.string().optional(), // Billing Address
   shippingAddress: z.string().optional(),
-  openingBalance: z.number().default(0),
+  openingBalance: z.coerce.number().default(0),
   openingBalanceType: z.string().default('Dr'),
-  creditLimit: z.number().default(0),
-  creditDays: z.number().default(30),
+  creditLimit: z.coerce.number().default(0),
+  creditDays: z.coerce.number().default(30),
 });
 
 type CustomerFormValues = z.infer<typeof customerSchema>;
@@ -36,10 +36,10 @@ const Customers = () => {
       email: '',
       address: '',
       shippingAddress: '',
-      openingBalance: 0,
+      openingBalance: '' as any,
       openingBalanceType: 'Dr',
-      creditLimit: 0,
-      creditDays: 30,
+      creditLimit: '' as any,
+      creditDays: '' as any,
     }
   });
 
@@ -167,8 +167,9 @@ const Customers = () => {
               <div>
                 <label className="block text-[12px] text-[#1F2937] mb-1">Opening Bal</label>
                 <input 
-                  {...register('openingBalance', { valueAsNumber: true })}
+                  {...register('openingBalance')}
                   type="number" 
+                  placeholder="0"
                   className="w-full px-3 py-1.5 border border-[#ccc] rounded shadow-inner focus:border-[#3B82F6] outline-none text-[13px] text-right"
                 />
               </div>
@@ -187,16 +188,18 @@ const Customers = () => {
               <div>
                 <label className="block text-[12px] text-[#1F2937] mb-1">Credit Limit</label>
                 <input 
-                  {...register('creditLimit', { valueAsNumber: true })}
+                  {...register('creditLimit')}
                   type="number" 
+                  placeholder="0"
                   className="w-full px-3 py-1.5 border border-[#ccc] rounded shadow-inner focus:border-[#3B82F6] outline-none text-[13px] text-right"
                 />
               </div>
               <div>
                 <label className="block text-[12px] text-[#1F2937] mb-1">Credit Days</label>
                 <input 
-                  {...register('creditDays', { valueAsNumber: true })}
+                  {...register('creditDays')}
                   type="number" 
+                  placeholder="30"
                   className="w-full px-3 py-1.5 border border-[#ccc] rounded shadow-inner focus:border-[#3B82F6] outline-none text-[13px] text-right"
                 />
               </div>

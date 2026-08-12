@@ -12,7 +12,7 @@ const supplierSchema = z.object({
   phone: z.string().min(1, 'Mobile No is required'),
   email: z.string().email('Invalid email').optional().or(z.literal('')),
   address: z.string().optional(),
-  openingBalance: z.number().default(0),
+  openingBalance: z.coerce.number().default(0),
   openingBalanceType: z.string().default('Cr'),
   accountNo: z.string().optional(),
   ifscCode: z.string().optional(),
@@ -35,7 +35,7 @@ const Suppliers = () => {
       phone: '',
       email: '',
       address: '',
-      openingBalance: 0,
+      openingBalance: '' as any,
       openingBalanceType: 'Cr',
       accountNo: '',
       ifscCode: '',
@@ -157,8 +157,9 @@ const Suppliers = () => {
             <div>
               <label className="block text-[12px] text-[#1F2937] mb-1">Opening Bal</label>
               <input 
-                {...register('openingBalance', { valueAsNumber: true })}
+                {...register('openingBalance')}
                 type="number" 
+                placeholder="0"
                 className="w-full px-3 py-1.5 border border-[#ccc] rounded shadow-inner focus:border-[#3B82F6] outline-none text-[13px] text-right"
               />
             </div>

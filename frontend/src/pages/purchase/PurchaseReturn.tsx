@@ -69,11 +69,11 @@ const PurchaseReturn = () => {
   }, [purchaseDetails]);
 
   const handleReturnQtyChange = (index: number, val: string) => {
-    const qty = parseInt(val) || 0;
+    const qty = val === '' ? '' : parseInt(val) || 0;
     const newItems = [...returnItems];
     // prevent returning more than purchased
-    if (qty > newItems[index].quantity) return;
-    newItems[index].returnQty = qty >= 0 ? qty : 0;
+    if (typeof qty === 'number' && qty > newItems[index].quantity) return;
+    newItems[index].returnQty = typeof qty === 'number' ? (qty >= 0 ? qty : 0) : '';
     setReturnItems(newItems);
   };
 
@@ -259,7 +259,8 @@ const PurchaseReturn = () => {
                           type="number" 
                           min="0" 
                           max={item.quantity}
-                          value={item.returnQty || ''} 
+                          value={item.returnQty === '' ? '' : item.returnQty || ''}
+                          placeholder="0" 
                           onChange={(e) => handleReturnQtyChange(index, e.target.value)} 
                           className="w-full border border-red-300 bg-red-50 rounded px-2 py-1 text-sm text-center text-red-600 font-bold focus:outline-none focus:ring-1 focus:ring-red-400" 
                         />

@@ -111,6 +111,15 @@ const MainLayout = () => {
               <i className="fa fa-credit-card text-xl w-8 text-center flex-shrink-0"></i>
               <span className={`font-bold transition-opacity duration-200 ${isSidebarOpen ? 'opacity-100' : 'opacity-0'}`}>Payment Modes</span>
             </NavLink>
+            <NavLink to="/master/expense-categories" title={!isSidebarOpen ? "Expense Categories" : undefined} className={({ isActive }) => `flex items-center gap-3 px-5 py-3 transition-colors border-r-4 whitespace-nowrap ${isActive ? 'bg-[#1F2937] border-[#1ABB9C] text-white' : 'border-transparent hover:bg-[#1F2937] font-bold hover:text-white'}`}>
+              <i className="fa fa-list-alt text-xl w-8 text-center flex-shrink-0"></i>
+              <span className={`font-bold transition-opacity duration-200 ${isSidebarOpen ? 'opacity-100' : 'opacity-0'}`}>Expense Categories</span>
+            </NavLink>
+
+            {/* Daily Expenses Management */}
+            <div className={`px-4 pt-4 py-2 transition-opacity duration-200 ${isSidebarOpen ? 'opacity-100' : 'opacity-0'}`}>
+              <h3 className="text-xs uppercase text-[#E7E7E7] font-bold whitespace-nowrap">Daily Expenses</h3>
+            </div>
             <NavLink to="/expenses/new" title={!isSidebarOpen ? "Expenses" : undefined} className={({ isActive }) => `flex items-center gap-3 px-5 py-3 transition-colors border-r-4 whitespace-nowrap ${isActive ? 'bg-[#1F2937] border-[#1ABB9C] text-white' : 'border-transparent hover:bg-[#1F2937] font-bold hover:text-white'}`}>
               <i className="fa fa-money text-xl w-8 text-center flex-shrink-0"></i>
               <span className={`font-bold transition-opacity duration-200 ${isSidebarOpen ? 'opacity-100' : 'opacity-0'}`}>Expenses</span>

@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { List, Plus, Trash2, CheckCircle, PlusCircle, X } from 'lucide-react';
+import { List, Plus, Trash2, CheckCircle, PlusCircle, X, RotateCcw } from 'lucide-react';
 import toast from 'react-hot-toast';
 import api from '../../services/api';
 import { useSettings } from '../../contexts/SettingsContext';
@@ -26,6 +26,7 @@ const purchaseItemSchema = z.object({
 const purchaseSchema = z.object({
   supplierId: z.coerce.number().min(1, 'Supplier is required').or(z.literal(0)),
   invoiceNo: z.string(),
+  invoiceDate: z.string().optional(),
   entryNo: z.string(),
   date: z.string(),
   paymentModeId: z.coerce.number().min(1, 'Payment Mode is required').or(z.literal(0)),
@@ -53,6 +54,7 @@ const PurchaseEntry = () => {
     defaultValues: {
       entryNo: 'Generating...',
       invoiceNo: '',
+      invoiceDate: new Date().toISOString().split('T')[0],
       supplierId: 0,
       date: new Date().toISOString().split('T')[0],
       paymentModeId: 0,
@@ -101,10 +103,7 @@ const PurchaseEntry = () => {
       const discPercent = Number(item.discPercent) || 0;
       
       let discAmt = Number(item.discAmt) || 0;
-      if (discPercent > 0 && discAmt === 0) { // Naive calculation for demo
-        discAmt = (pRate * q * discPercent) / 100;
-        setValue(`items.${index}.discAmt`, Number(discAmt.toFixed(2)));
-      }
+
 
       const total = (q * pRate) - discAmt;
       
@@ -167,7 +166,9 @@ const PurchaseEntry = () => {
 
     const payload = {
       ...data,
+      supplierInvoiceNo: data.invoiceNo,
       invoiceNo: data.entryNo,
+      invoiceDate: data.invoiceDate ? new Date(data.invoiceDate).toISOString() : null,
       subtotal: data.totalAmount,
       discount: data.totalDiscount,
       tax: 0,
@@ -202,6 +203,23 @@ const PurchaseEntry = () => {
   const handleQuickAddSupplier = () => {
     if (!newSupplier.name) return;
     addSupplierMutation.mutate(newSupplier);
+  };
+
+  const handleClear = () => {
+    reset({
+      entryNo: nextEntryData?.entryNo || 'Generating...',
+      invoiceNo: '',
+      invoiceDate: new Date().toISOString().split('T')[0],
+      supplierId: 0,
+      date: new Date().toISOString().split('T')[0],
+      paymentModeId: 0,
+      items: [{ productId: 0, quantity: '' as any, unit: 'Nos', pRate: '' as any, wRate: '' as any, sRate: '' as any, mrp: '' as any, discPercent: '' as any, discAmt: '' as any, total: 0 }],
+      totalAmount: 0,
+      totalDiscountPercent: '' as any,
+      totalDiscount: '' as any,
+      roundOff: '' as any,
+      netAmount: 0
+    });
   };
 
   return (
@@ -244,7 +262,7 @@ const PurchaseEntry = () => {
             </div>
             
             <div className="flex-1 max-w-[250px]">
-              <label className="block text-[11px] text-[#4B5563] mb-1">Vendor Invoice No</label>
+              <label className="block text-[11px] font-bold text-[#1F2937] mb-1">Supplier Invoice number</label>
               <input
                 {...register('invoiceNo')}
                 type="text"
@@ -276,7 +294,16 @@ const PurchaseEntry = () => {
             </div>
 
             <div className="flex-1 max-w-[200px]">
-              <label className="block text-[11px] text-[#4B5563] mb-1">Entry Date</label>
+              <label className="block text-[11px] font-bold text-[#1F2937] mb-1">Invoice date</label>
+              <input
+                {...register('invoiceDate')}
+                type="date"
+                className="w-full px-2 py-1.5 border border-[#D1D5DB] rounded text-[13px] outline-none focus:border-[#3B82F6]"
+              />
+            </div>
+
+            <div className="flex-1 max-w-[200px]">
+              <label className="block text-[11px] font-bold text-[#1F2937] mb-1">Entry Date</label>
               <input
                 {...register('date')}
                 type="date"
@@ -285,7 +312,7 @@ const PurchaseEntry = () => {
             </div>
 
             <div className="flex-1 max-w-[200px]">
-              <label className="block text-[11px] text-[#4B5563] mb-1">Mode</label>
+              <label className="block text-[11px] font-bold text-[#1F2937] mb-1">Mode</label>
               <select
                 {...register('paymentModeId')}
                 className="w-full px-2 py-1.5 border border-[#D1D5DB] rounded text-[13px] outline-none focus:border-[#3B82F6] bg-white"
@@ -308,6 +335,13 @@ const PurchaseEntry = () => {
               className="border border-[#0B355B] text-[#0B355B] hover:bg-[#0B355B] hover:text-white px-3 py-1 rounded flex items-center gap-1 text-[12px] transition-colors font-bold"
             >
               <PlusCircle size={14} /> Add Row
+            </button>
+            <button 
+              type="button"
+              onClick={handleClear}
+              className="border border-[#EF4444] text-[#EF4444] hover:bg-[#EF4444] hover:text-white px-3 py-1 rounded flex items-center gap-1 text-[12px] transition-colors font-bold"
+            >
+              <RotateCcw size={14} /> Clear
             </button>
             <button 
               type="button"
@@ -370,10 +404,39 @@ const PurchaseEntry = () => {
                     <input {...register(`items.${index}.mrp`)} type="number" step="0.01" placeholder="0.00" className="w-full px-2 py-1 border border-[#D1D5DB] rounded text-[13px] outline-none focus:border-[#3B82F6] text-right" />
                   </td>
                   <td className="px-2 py-1 border-r border-[#E5E7EB]">
-                    <input {...register(`items.${index}.discPercent`)} type="number" step="0.01" placeholder="0" className="w-full px-2 py-1 border border-[#D1D5DB] rounded text-[13px] outline-none focus:border-[#3B82F6] text-right" />
+                    <input 
+                      {...register(`items.${index}.discPercent`)} 
+                      type="number" step="0.01" placeholder="0" 
+                      onChange={(e) => {
+                        register(`items.${index}.discPercent`).onChange(e);
+                        const pct = Number(e.target.value) || 0;
+                        const rate = Number(watch(`items.${index}.pRate`)) || 0;
+                        const q = Number(watch(`items.${index}.quantity`)) || 0;
+                        const amt = (rate * q * pct) / 100;
+                        setValue(`items.${index}.discAmt`, Number(amt.toFixed(2)));
+                      }}
+                      className="w-full px-2 py-1 border border-[#D1D5DB] rounded text-[13px] outline-none focus:border-[#3B82F6] text-right" 
+                    />
                   </td>
                   <td className="px-2 py-1 border-r border-[#E5E7EB]">
-                    <input {...register(`items.${index}.discAmt`)} type="number" step="0.01" placeholder="0.00" className="w-full px-2 py-1 border border-[#D1D5DB] rounded text-[13px] outline-none focus:border-[#3B82F6] text-right" />
+                    <input 
+                      {...register(`items.${index}.discAmt`)} 
+                      type="number" step="0.01" placeholder="0.00" 
+                      onChange={(e) => {
+                        register(`items.${index}.discAmt`).onChange(e);
+                        const amt = Number(e.target.value) || 0;
+                        const rate = Number(watch(`items.${index}.pRate`)) || 0;
+                        const q = Number(watch(`items.${index}.quantity`)) || 0;
+                        const totalGross = rate * q;
+                        if (totalGross > 0) {
+                          const pct = (amt / totalGross) * 100;
+                          setValue(`items.${index}.discPercent`, Number(pct.toFixed(2)));
+                        } else {
+                          setValue(`items.${index}.discPercent`, 0);
+                        }
+                      }}
+                      className="w-full px-2 py-1 border border-[#D1D5DB] rounded text-[13px] outline-none focus:border-[#3B82F6] text-right" 
+                    />
                   </td>
                   <td className="px-2 py-1 border-r border-[#E5E7EB]">
                     <input {...register(`items.${index}.total`)} type="number" readOnly className="w-full px-2 py-1 bg-transparent text-[13px] outline-none text-right font-bold" />

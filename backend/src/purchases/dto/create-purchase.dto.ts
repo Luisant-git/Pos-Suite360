@@ -26,6 +26,14 @@ export class CreatePurchaseDto {
   @IsDateString()
   date: string;
 
+  @IsDateString()
+  @IsOptional()
+  invoiceDate?: string;
+
+  @IsString()
+  @IsOptional()
+  supplierInvoiceNo?: string;
+
   @IsNumber()
   supplierId: number;
 

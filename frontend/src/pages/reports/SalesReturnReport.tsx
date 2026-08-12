@@ -1,5 +1,6 @@
+import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { CornerDownLeft, Package } from 'lucide-react';
+import { CornerDownLeft, Package, Search, Filter } from 'lucide-react';
 import api from '../../services/api';
 import ReportTabs from '../../components/ReportTabs';
 import { useSettings } from '../../contexts/SettingsContext';
@@ -13,6 +14,28 @@ const SalesReturnReport = () => {
       const { data } = await api.get('/sales-returns');
       return data;
     },
+  });
+
+  const [search, setSearch] = useState('');
+  const [filterFromDate, setFilterFromDate] = useState('');
+  const [filterToDate, setFilterToDate] = useState('');
+
+  const filteredReturns = returns.filter((ret: any) => {
+    let match = true;
+    if (search) {
+      const q = search.toLowerCase();
+      const customerMatch = ret.customer?.name?.toLowerCase().includes(q) || false;
+      const returnNoMatch = ret.returnNo?.toLowerCase().includes(q) || false;
+      const invoiceNoMatch = ret.sale?.invoiceNo?.toLowerCase().includes(q) || false;
+      if (!customerMatch && !returnNoMatch && !invoiceNoMatch) match = false;
+    }
+    if (filterFromDate) {
+      if (new Date(ret.date) < new Date(filterFromDate)) match = false;
+    }
+    if (filterToDate) {
+      if (new Date(ret.date) > new Date(filterToDate)) match = false;
+    }
+    return match;
   });
 
   return (
@@ -29,6 +52,41 @@ const SalesReturnReport = () => {
             </div>
             <div className="bg-[#EF4444] text-white font-bold text-[11px] px-3 py-1 rounded-sm shadow-sm">
               {returns.length} Returns
+            </div>
+          </div>
+
+          {/* Filters */}
+          <div className="bg-white p-3 border-b border-[#E6E9ED] grid grid-cols-1 md:grid-cols-4 gap-3">
+            <div className="relative col-span-1 md:col-span-2">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <Search size={14} className="text-gray-400" />
+              </div>
+              <input
+                type="text"
+                placeholder="Search by return no, invoice no, or customer name..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="w-full pl-9 pr-3 py-2 border border-gray-200 rounded text-[13px] outline-none focus:border-[#EF4444]"
+              />
+            </div>
+            <div>
+              <input
+                type="date"
+                value={filterFromDate}
+                onChange={(e) => setFilterFromDate(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-200 rounded text-[13px] outline-none focus:border-[#EF4444]"
+              />
+            </div>
+            <div className="flex gap-2">
+              <input
+                type="date"
+                value={filterToDate}
+                onChange={(e) => setFilterToDate(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-200 rounded text-[13px] outline-none focus:border-[#EF4444]"
+              />
+              <button className="bg-[#EF4444] text-white px-3 rounded flex items-center justify-center hover:bg-red-600 transition-colors">
+                <Filter size={14} />
+              </button>
             </div>
           </div>
 
@@ -51,12 +109,12 @@ const SalesReturnReport = () => {
                   <tr>
                     <td colSpan={7} className="px-4 py-8 text-center text-gray-500 font-medium">Loading report data...</td>
                   </tr>
-                ) : returns.length === 0 ? (
+                ) : filteredReturns.length === 0 ? (
                   <tr>
-                    <td colSpan={7} className="px-4 py-8 text-center text-gray-500 font-medium">No sales returns found.</td>
+                    <td colSpan={7} className="px-4 py-8 text-center text-gray-500 font-medium">No sales returns found matching your filters.</td>
                   </tr>
                 ) : (
-                  returns.map((ret: any, index: number) => (
+                  filteredReturns.map((ret: any, index: number) => (
                     <tr key={ret.id} className={`border-b border-gray-100 ${index % 2 === 0 ? 'bg-white' : 'bg-[#FAFAFA]'}`}>
                       <td className="px-4 py-3 border-r border-gray-100 font-bold text-[#EF4444]">{ret.returnNo}</td>
                       <td className="px-4 py-3 border-r border-gray-100 font-medium text-gray-700">

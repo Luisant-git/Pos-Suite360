@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Search, FileText, Download, Calendar, FileDigit, Truck, CreditCard, RotateCcw, Plus } from 'lucide-react';
+import { Search, FileText, Download, Calendar, FileDigit, Truck, CreditCard, RotateCcw, Plus, Receipt } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useSettings } from '../../contexts/SettingsContext';
 import api from '../../services/api';
 import ReportTabs from '../../components/ReportTabs';
 import { exportToExcel } from '../../utils/exportExcel';
+import ViewPurchaseModal from '../purchase/ViewPurchaseModal';
 
 const PurchaseReport = () => {
   const navigate = useNavigate();
@@ -16,6 +17,7 @@ const PurchaseReport = () => {
   const [invoiceNo, setInvoiceNo] = useState('');
   const [paymentMode, setPaymentMode] = useState('');
   const [quickSearch, setQuickSearch] = useState('');
+  const [viewId, setViewId] = useState<number | null>(null);
 
   // Fetch Master Data for filters
   const { data: suppliers = [] } = useQuery({ 
@@ -205,7 +207,8 @@ const PurchaseReport = () => {
                 <th className="px-4 py-3 border-r border-[#1E293B]">Mode</th>
                 <th className="px-4 py-3 border-r border-[#1E293B] text-right">Total Amount</th>
                 <th className="px-4 py-3 border-r border-[#1E293B] text-right">Tax Amount</th>
-                <th className="px-4 py-3 text-right">Net Amount</th>
+                <th className="px-4 py-3 border-r border-[#1E293B] text-right">Net Amount</th>
+                <th className="px-4 py-3 text-center">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -231,7 +234,16 @@ const PurchaseReport = () => {
                     </td>
                     <td className="px-4 py-3 border-r border-[#E2E8F0] text-right text-[#475569]">{p.totalAmount}</td>
                     <td className="px-4 py-3 border-r border-[#E2E8F0] text-right text-[#475569]">{p.taxAmount}</td>
-                    <td className="px-4 py-3 text-right font-bold text-[#10B981]">{p.netAmount}</td>
+                    <td className="px-4 py-3 border-r border-[#E2E8F0] text-right font-bold text-[#10B981]">{p.netAmount}</td>
+                    <td className="px-4 py-3 text-center">
+                      <button type="button" 
+                        onClick={() => setViewId(p.id)}
+                        className="text-[#3B82F6] border border-[#3B82F6] rounded p-1 hover:bg-[#3B82F6] hover:text-white transition-colors"
+                        title="View Invoice"
+                      >
+                        <Receipt size={14} />
+                      </button>
+                    </td>
                   </tr>
                 ))
               )}
@@ -239,6 +251,10 @@ const PurchaseReport = () => {
           </table>
         </div>
       </div>
+
+      {viewId && (
+        <ViewPurchaseModal purchaseId={viewId} onClose={() => setViewId(null)} />
+      )}
     </div>
   );
 };

@@ -39,6 +39,7 @@ const SalesReturnReport = () => {
                 <tr className="bg-[#0F172A] text-white font-bold">
                   <th className="px-4 py-3 border-r border-[#1E293B]">Return No</th>
                   <th className="px-4 py-3 border-r border-[#1E293B]">Return Date</th>
+                  <th className="px-4 py-3 border-r border-[#1E293B]">Invoice No</th>
                   <th className="px-4 py-3 border-r border-[#1E293B]">Customer Name</th>
                   <th className="px-4 py-3 border-r border-[#1E293B]">Returned Products (Qty)</th>
                   <th className="px-4 py-3 border-r border-[#1E293B]">Remarks</th>
@@ -48,11 +49,11 @@ const SalesReturnReport = () => {
               <tbody>
                 {isLoading ? (
                   <tr>
-                    <td colSpan={6} className="px-4 py-8 text-center text-gray-500 font-medium">Loading report data...</td>
+                    <td colSpan={7} className="px-4 py-8 text-center text-gray-500 font-medium">Loading report data...</td>
                   </tr>
                 ) : returns.length === 0 ? (
                   <tr>
-                    <td colSpan={6} className="px-4 py-8 text-center text-gray-500 font-medium">No sales returns found.</td>
+                    <td colSpan={7} className="px-4 py-8 text-center text-gray-500 font-medium">No sales returns found.</td>
                   </tr>
                 ) : (
                   returns.map((ret: any, index: number) => (
@@ -60,6 +61,9 @@ const SalesReturnReport = () => {
                       <td className="px-4 py-3 border-r border-gray-100 font-bold text-[#EF4444]">{ret.returnNo}</td>
                       <td className="px-4 py-3 border-r border-gray-100 font-medium text-gray-700">
                         {new Date(ret.date).toISOString().split('T')[0]}
+                      </td>
+                      <td className="px-4 py-3 border-r border-gray-100 font-bold text-gray-800">
+                        {ret.sale?.invoiceNo || '-'}
                       </td>
                       <td className="px-4 py-3 border-r border-gray-100 font-bold text-gray-800">
                         {ret.customer?.name || 'Unknown Customer'}

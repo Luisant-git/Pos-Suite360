@@ -284,13 +284,10 @@ const PurchaseEntry = () => {
                   ]}
                 />
               </div>
-              <div className="flex justify-between mt-1">
+              <div className="flex mt-1">
                 <button type="button" onClick={() => setIsSupplierModalOpen(true)} className="bg-[#059669] hover:bg-[#047857] text-white px-2 py-1 rounded transition-colors flex items-center gap-1 text-[11px] font-bold">
                   <Plus size={12} /> Add Supplier
                 </button>
-                <span className="text-[11px] text-[#6B7280]">
-                  {selectedSupplier ? `${selectedSupplier.address || 'No address'}` : 'Supplier address'}
-                </span>
               </div>
             </div>
 

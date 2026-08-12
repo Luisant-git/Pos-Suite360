@@ -211,22 +211,36 @@ const SupplierPayments = () => {
                             <th className="px-3 py-2 font-bold text-[#334155] text-right">Bill Total</th>
                             <th className="px-3 py-2 font-bold text-[#334155] text-right">Paid Amount</th>
                             <th className="px-3 py-2 font-bold text-[#E11D48] text-right">Pending Balance</th>
+                            <th className="px-3 py-2 font-bold text-[#3B82F6] text-right">Paying Now</th>
+                            <th className="px-3 py-2 font-bold text-[#10B981] text-right">Balance After</th>
                           </tr>
                         </thead>
                         <tbody>
-                          {unpaidBills.length > 0 ? unpaidBills.map((bill, idx) => (
-                            <tr key={idx} className="border-b border-[#E2E8F0] hover:bg-[#F8FAFC]">
-                              <td className="px-3 py-2 font-bold text-[#1E293B]">{bill.entryNo}</td>
-                              <td className="px-3 py-2 text-[#475569]">{new Date(bill.date).toISOString().split('T')[0]}</td>
-                              <td className="px-3 py-2 text-right text-[#475569]">{formatCurrency(bill.total)}</td>
-                              <td className="px-3 py-2 text-right text-[#10B981]">{formatCurrency(bill.received)}</td>
-                              <td className="px-3 py-2 text-right font-bold text-[#E11D48]">{formatCurrency(bill.pending)}</td>
-                            </tr>
-                          )) : (
-                            <tr>
-                              <td colSpan={5} className="px-3 py-4 text-center text-[#64748B] italic">No outstanding bills found.</td>
-                            </tr>
-                          )}
+                          {(() => {
+                            let remainingForBills = amountToPay;
+                            return unpaidBills.length > 0 ? unpaidBills.map((bill, idx) => {
+                              const currentPending = bill.pending;
+                              const payingNow = Math.min(currentPending, remainingForBills);
+                              remainingForBills = Math.max(0, remainingForBills - payingNow);
+                              const balanceAfter = currentPending - payingNow;
+                              
+                              return (
+                                <tr key={idx} className="border-b border-[#E2E8F0] hover:bg-[#F8FAFC]">
+                                  <td className="px-3 py-2 font-bold text-[#1E293B]">{bill.entryNo}</td>
+                                  <td className="px-3 py-2 text-[#475569]">{new Date(bill.date).toISOString().split('T')[0]}</td>
+                                  <td className="px-3 py-2 text-right text-[#475569]">{formatCurrency(bill.total)}</td>
+                                  <td className="px-3 py-2 text-right text-[#10B981]">{formatCurrency(bill.received)}</td>
+                                  <td className="px-3 py-2 text-right font-bold text-[#E11D48]">{formatCurrency(bill.pending)}</td>
+                                  <td className="px-3 py-2 text-right font-bold text-[#3B82F6]">{formatCurrency(payingNow)}</td>
+                                  <td className="px-3 py-2 text-right font-bold text-[#10B981]">{formatCurrency(balanceAfter)}</td>
+                                </tr>
+                              );
+                            }) : (
+                              <tr>
+                                <td colSpan={7} className="px-3 py-4 text-center text-[#64748B] italic">No outstanding bills found.</td>
+                              </tr>
+                            );
+                          })()}
                         </tbody>
                       </table>
                     </div>

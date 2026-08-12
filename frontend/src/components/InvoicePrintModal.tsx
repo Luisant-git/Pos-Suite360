@@ -86,9 +86,9 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
     return (
       <div id="hidden-printable-invoice" className="fixed top-0 left-0 bg-white text-black font-sans text-[12px] w-[800px] flex flex-col p-8 h-[250mm] box-border" style={{ zIndex: -9999 }}>
         <div className="text-center mb-4">
-          <h2 className="text-2xl font-bold uppercase">NASA FRESH MART <span className="text-sm font-normal">(001634825-A)</span></h2>
-          <p>NO 8G, JLN 3/2 PANDAN JAYA, 55100 KUALA LUMPUR.</p>
-          <p>Tel : 019-300 1451</p>
+          <h2 className="text-2xl font-bold uppercase">{settings?.shopName || 'MY SHOP'}</h2>
+          {settings?.shopAddress && <p className="whitespace-pre-line">{settings.shopAddress}</p>}
+          {settings?.phone && <p>Tel : {settings.phone}</p>}
         </div>
         
         <div className="border-t border-b border-black py-2 mb-4 text-center font-bold text-lg uppercase tracking-wider">
@@ -118,9 +118,11 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
              <div className="grid grid-cols-[100px_10px_1fr] gap-y-1">
                <span className="font-bold">NO.</span><span className="font-bold">:</span><span className="font-bold">{invoiceNo}</span>
                <span className="font-bold">DATE</span><span className="font-bold">:</span><span className="font-bold">{date}</span>
-               <span className="font-bold">YOUR P/O NO.</span><span className="font-bold">:</span><span></span>
+               {/* <span className="font-bold">YOUR P/O NO.</span><span className="font-bold">:</span><span></span> */}
                <span className="font-bold">SALESMAN</span><span className="font-bold">:</span><span></span>
-               <span className="font-bold">TERMS</span><span className="font-bold">:</span><span className="font-bold">C.O.D.</span>
+               {/* <span className="font-bold">TERMS</span><span className="font-bold">:</span><span className="font-bold">C.O.D.</span> */}
+               <span className="font-bold">PAY TYPE</span><span className="font-bold">:</span><span>{sale?.paymentMode?.name || 'Cash'}</span>
+               <span className="font-bold">PENDING AMT</span><span className="font-bold">:</span><span className="font-bold">{Number(sale?.customer?.openingBalance || 0).toFixed(2)}</span>
                <span className="font-bold">PAGE</span><span className="font-bold">:</span><span className="font-bold">1 of 1</span>
              </div>
           </div>
@@ -155,9 +157,10 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
           <p className="uppercase mb-4">RINGGIT MALAYSIA {numberToWords(grandTotal)} ONLY</p>
           
           <div className="flex justify-between items-start border-t border-black pt-2">
-            <div className="w-2/3 text-[10px] whitespace-pre-line pr-4">
-              {settings?.invoiceNotes || ''}
-            </div>
+            <div 
+              className="w-2/3 text-[10px] text-black pr-4 html-content"
+              dangerouslySetInnerHTML={{ __html: settings?.invoiceNotes || '' }}
+            />
             <div className="w-1/3 flex justify-between font-bold text-sm">
               <span>TOTAL : RM</span>
               <span className="border-b-2 border-black border-double min-w-[100px] text-right">{Number(grandTotal).toFixed(2)}</span>
@@ -165,7 +168,14 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
           </div>
           
           <div className="flex justify-end mt-16">
-            <div className="text-center w-64 border-t border-black pt-1">
+            <div className="text-center w-64 border-t border-black pt-1 relative">
+              {settings?.signatureImage && (
+                <img 
+                  src={settings.signatureImage} 
+                  alt="Authorised Signature" 
+                  className="absolute bottom-6 left-1/2 -translate-x-1/2 h-16 object-contain"
+                />
+              )}
               Authorised Signature
             </div>
           </div>
@@ -193,9 +203,9 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
         {/* Printable Area */}
         <div id="printable-invoice" className="flex-1 overflow-hidden flex flex-col p-8 font-sans text-black print:p-0 bg-white print:h-full">
           <div className="text-center mb-4">
-            <h2 className="text-2xl font-bold uppercase">NASA FRESH MART <span className="text-sm font-normal">(001634825-A)</span></h2>
-            <p>NO 8G, JLN 3/2 PANDAN JAYA, 55100 KUALA LUMPUR.</p>
-            <p>Tel : 019-300 1451</p>
+            <h2 className="text-2xl font-bold uppercase">{settings?.shopName || 'MY SHOP'}</h2>
+            {settings?.shopAddress && <p className="whitespace-pre-line">{settings.shopAddress}</p>}
+            {settings?.phone && <p>Tel : {settings.phone}</p>}
           </div>
           
           <div className="border-t border-b border-black py-2 mb-4 text-center font-bold text-lg uppercase tracking-wider">
@@ -225,9 +235,11 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
                <div className="grid grid-cols-[100px_10px_1fr] gap-y-1">
                  <span className="font-bold">NO.</span><span className="font-bold">:</span><span className="font-bold">{invoiceNo}</span>
                  <span className="font-bold">DATE</span><span className="font-bold">:</span><span className="font-bold">{date}</span>
-                 <span className="font-bold">YOUR P/O NO.</span><span className="font-bold">:</span><span></span>
+                 {/* <span className="font-bold">YOUR P/O NO.</span><span className="font-bold">:</span><span></span> */}
                  <span className="font-bold">SALESMAN</span><span className="font-bold">:</span><span></span>
-                 <span className="font-bold">TERMS</span><span className="font-bold">:</span><span className="font-bold">C.O.D.</span>
+                 {/* <span className="font-bold">TERMS</span><span className="font-bold">:</span><span className="font-bold">C.O.D.</span> */}
+                 <span className="font-bold">PAY TYPE</span><span className="font-bold">:</span><span>{sale?.paymentMode?.name || 'Cash'}</span>
+                 <span className="font-bold">PENDING AMT</span><span className="font-bold">:</span><span className="font-bold">{Number(sale?.customer?.openingBalance || 0).toFixed(2)}</span>
                  <span className="font-bold">PAGE</span><span className="font-bold">:</span><span className="font-bold">1 of 1</span>
                </div>
             </div>
@@ -262,9 +274,10 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
             <p className="uppercase mb-4">RINGGIT MALAYSIA {numberToWords(grandTotal)} ONLY</p>
             
             <div className="flex justify-between items-start border-t border-black pt-2">
-              <div className="w-2/3 text-[10px] whitespace-pre-line pr-4">
-                {settings?.invoiceNotes || ''}
-              </div>
+              <div 
+                className="w-2/3 text-[10px] text-black pr-4 html-content"
+                dangerouslySetInnerHTML={{ __html: settings?.invoiceNotes || '' }}
+              />
               <div className="w-1/3 flex justify-between font-bold text-sm">
                 <span>TOTAL : RM</span>
                 <span className="border-b-2 border-black border-double min-w-[100px] text-right">{Number(grandTotal).toFixed(2)}</span>
@@ -272,7 +285,14 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
             </div>
             
             <div className="flex justify-end mt-8">
-              <div className="text-center w-64 border-t border-black pt-1">
+              <div className="text-center w-64 border-t border-black pt-1 relative">
+                {settings?.signatureImage && (
+                  <img 
+                    src={settings.signatureImage} 
+                    alt="Authorised Signature" 
+                    className="absolute bottom-6 left-1/2 -translate-x-1/2 h-16 object-contain"
+                  />
+                )}
                 Authorised Signature
               </div>
             </div>

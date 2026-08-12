@@ -143,10 +143,7 @@ const POS = () => {
       const discPercent = Number(item.discPercent) || 0;
       
       let discAmt = Number(item.discAmt) || 0;
-      if (discPercent > 0 && discAmt === 0) {
-        discAmt = (rate * q * discPercent) / 100;
-        setValue(`items.${index}.discAmt`, Number(discAmt.toFixed(2)));
-      }
+
 
       const total = (q * rate) - discAmt;
       
@@ -435,7 +432,7 @@ const POS = () => {
               </div>
             </div>
 
-            <div className="flex-1 max-w-[250px]">
+            {/* <div className="flex-1 max-w-[250px]">
               <label className="block text-[11px] font-bold text-[#059669] mb-1">Rate Type *</label>
               <select
                 {...register('rateType')}
@@ -445,7 +442,7 @@ const POS = () => {
                 <option value="Retail Rate">Retail Rate</option>
                 <option value="MRP">MRP</option>
               </select>
-            </div>
+            </div> */}
 
             <div className="flex-1 max-w-[200px]">
               <label className="block text-[11px] font-bold text-[#1F2937] mb-1">Payment Mode</label>
@@ -526,19 +523,48 @@ const POS = () => {
                     </span>
                   </td>
                   <td className="px-2 py-1 border-r border-[#E5E7EB]">
-                    <input {...register(`items.${index}.quantity`)} type="number" min="1" placeholder="1" className={`w-full px-2 py-1 border rounded text-[13px] outline-none text-center ${watch(`items.${index}.quantity`) > watch(`items.${index}.stock`) ? 'border-red-500 focus:border-red-500' : 'border-[#D1D5DB] focus:border-[#3B82F6]'}`} />
+                    <input {...register(`items.${index}.quantity`)} type="number" min="1" placeholder="1" className={`w-full px-2 py-1 border rounded text-[13px] outline-none text-center ${watch(`items.${index}.quantity`) > watch(`items.${index}.stock`) ? 'border-red-500 focus:border-red-500 bg-red-100 text-red-700 font-bold' : 'border-[#D1D5DB] focus:border-[#3B82F6]'}`} />
                   </td>
                   <td className="px-2 py-1 border-r border-[#E5E7EB]">
-                    <input {...register(`items.${index}.rate`)} type="number" step="0.01" placeholder="0.00" className="w-full px-2 py-1 border border-[#D1D5DB] rounded text-[13px] outline-none focus:border-[#3B82F6] text-right" />
+                    <input {...register(`items.${index}.rate`)} type="number" step="0.01" placeholder="0.00" readOnly className="w-full px-2 py-1 border border-[#BFDBFE] bg-[#EFF6FF] text-[#1D4ED8] font-bold rounded text-[13px] outline-none text-right" />
                   </td>
                   <td className="px-2 py-1 border-r border-[#E5E7EB]">
                     <input {...register(`items.${index}.unit`)} type="text" readOnly className="w-full px-1 py-1 bg-transparent text-[13px] outline-none text-center" />
                   </td>
                   <td className="px-2 py-1 border-r border-[#E5E7EB]">
-                    <input {...register(`items.${index}.discPercent`)} type="number" step="0.01" placeholder="0" className="w-full px-2 py-1 border border-[#D1D5DB] rounded text-[13px] outline-none focus:border-[#3B82F6] text-right" />
+                    <input 
+                      {...register(`items.${index}.discPercent`)} 
+                      type="number" step="0.01" placeholder="0" 
+                      onChange={(e) => {
+                        register(`items.${index}.discPercent`).onChange(e);
+                        const pct = Number(e.target.value) || 0;
+                        const rate = Number(watch(`items.${index}.rate`)) || 0;
+                        const q = Number(watch(`items.${index}.quantity`)) || 0;
+                        const amt = (rate * q * pct) / 100;
+                        setValue(`items.${index}.discAmt`, Number(amt.toFixed(2)));
+                      }}
+                      className="w-full px-2 py-1 border border-[#D1D5DB] rounded text-[13px] outline-none focus:border-[#3B82F6] text-right" 
+                    />
                   </td>
                   <td className="px-2 py-1 border-r border-[#E5E7EB]">
-                    <input {...register(`items.${index}.discAmt`)} type="number" step="0.01" placeholder="0.00" className="w-full px-2 py-1 border border-[#D1D5DB] rounded text-[13px] outline-none focus:border-[#3B82F6] text-right" />
+                    <input 
+                      {...register(`items.${index}.discAmt`)} 
+                      type="number" step="0.01" placeholder="0.00" 
+                      onChange={(e) => {
+                        register(`items.${index}.discAmt`).onChange(e);
+                        const amt = Number(e.target.value) || 0;
+                        const rate = Number(watch(`items.${index}.rate`)) || 0;
+                        const q = Number(watch(`items.${index}.quantity`)) || 0;
+                        const totalGross = rate * q;
+                        if (totalGross > 0) {
+                          const pct = (amt / totalGross) * 100;
+                          setValue(`items.${index}.discPercent`, Number(pct.toFixed(2)));
+                        } else {
+                          setValue(`items.${index}.discPercent`, 0);
+                        }
+                      }}
+                      className="w-full px-2 py-1 border border-[#D1D5DB] rounded text-[13px] outline-none focus:border-[#3B82F6] text-right" 
+                    />
                   </td>
                   <td className="px-2 py-1 border-r border-[#E5E7EB]">
                     <input {...register(`items.${index}.total`)} type="number" readOnly className="w-full px-2 py-1 bg-transparent text-[13px] outline-none text-right font-bold" />
@@ -751,9 +777,9 @@ const POS = () => {
       {/* Printable Receipt */}
       <div id="printable-receipt" className="hidden print:flex flex-col bg-white text-black font-sans text-[12px] w-full max-w-[800px] mx-auto p-8 print:h-[250mm] box-border">
         <div className="text-center mb-4">
-          <h2 className="text-2xl font-bold uppercase">NASA FRESH MART <span className="text-sm font-normal">(001634825-A)</span></h2>
-          <p>NO 8G, JLN 3/2 PANDAN JAYA, 55100 KUALA LUMPUR.</p>
-          <p>Tel : 019-300 1451</p>
+          <h2 className="text-2xl font-bold uppercase">{settings?.shopName || 'MY SHOP'}</h2>
+          {settings?.shopAddress && <p className="whitespace-pre-line">{settings.shopAddress}</p>}
+          {settings?.phone && <p>Tel : {settings.phone}</p>}
         </div>
         
         <div className="border-t border-b border-black py-2 mb-4 text-center font-bold text-lg uppercase tracking-wider">
@@ -783,9 +809,11 @@ const POS = () => {
              <div className="grid grid-cols-[100px_10px_1fr] gap-y-1">
                <span className="font-bold">NO.</span><span>:</span><span>{watch('invoiceNo')}</span>
                <span>DATE</span><span>:</span><span>{watch('date')}</span>
-               <span>YOUR P/O NO.</span><span>:</span><span></span>
+               {/* <span>YOUR P/O NO.</span><span>:</span><span></span> */}
                <span>SALESMAN</span><span>:</span><span></span>
-               <span>TERMS</span><span>:</span><span>C.O.D.</span>
+               {/* <span>TERMS</span><span>:</span><span>C.O.D.</span> */}
+               <span>PAY TYPE</span><span>:</span><span>{paymentModes.find((p: any) => p.id === Number(watch('paymentModeId')))?.name || ''}</span>
+               <span>PENDING AMT</span><span>:</span><span>{Number(selectedCustomer?.openingBalance || 0).toFixed(2)}</span>
                <span>PAGE</span><span>:</span><span>1 of 1</span>
              </div>
           </div>
@@ -823,9 +851,10 @@ const POS = () => {
           <p className="uppercase mb-4">RINGGIT MALAYSIA {numberToWords(watch('netAmount'))} ONLY</p>
           
           <div className="flex justify-between items-start border-t border-black pt-2">
-            <div className="w-2/3 text-[10px] whitespace-pre-line pr-4">
-              {settings?.invoiceNotes || ''}
-            </div>
+            <div 
+              className="w-2/3 text-[10px] text-black pr-4 html-content"
+              dangerouslySetInnerHTML={{ __html: settings?.invoiceNotes || '' }}
+            />
             <div className="w-1/3 flex justify-between font-bold text-sm">
               <span>TOTAL : RM</span>
               <span className="border-b-2 border-black border-double min-w-[100px] text-right">{Number(watch('netAmount') || 0).toFixed(2)}</span>
@@ -833,7 +862,14 @@ const POS = () => {
           </div>
           
           <div className="flex justify-end mt-8">
-            <div className="text-center w-64 border-t border-black pt-1">
+            <div className="text-center w-64 border-t border-black pt-1 relative">
+              {settings?.signatureImage && (
+                <img 
+                  src={settings.signatureImage} 
+                  alt="Authorised Signature" 
+                  className="absolute bottom-6 left-1/2 -translate-x-1/2 h-16 object-contain"
+                />
+              )}
               Authorised Signature
             </div>
           </div>

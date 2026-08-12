@@ -17,6 +17,18 @@ class PurchaseItemDto {
 
   @IsNumber()
   amount: number;
+
+  @IsNumber()
+  @IsOptional()
+  wRate?: number;
+
+  @IsNumber()
+  @IsOptional()
+  sRate?: number;
+
+  @IsNumber()
+  @IsOptional()
+  mrp?: number;
 }
 
 export class CreatePurchaseDto {

@@ -175,6 +175,9 @@ const PurchaseEntry = () => {
         productId: item.productId,
         quantity: item.quantity,
         rate: item.pRate,
+        wRate: item.wRate,
+        sRate: item.sRate,
+        mrp: item.mrp,
         tax: 0,
         amount: item.total,
       }))

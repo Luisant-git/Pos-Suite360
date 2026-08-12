@@ -34,13 +34,33 @@ export class PurchasesService {
         include: { items: true },
       });
 
-      // 2. Update stock and ledger for each item
+      // 2. Update stock, rates, and ledger for each item
       for (const item of createPurchaseDto.items) {
-        // Increment current stock
+        // Fetch current product to compare rates
+        const currentProduct = await tx.product.findUnique({ where: { id: item.productId } });
+        if (!currentProduct) {
+          throw new BadRequestException(`Product not found: ${item.productId}`);
+        }
+
+        let newPurchaseRate = Number(currentProduct.purchaseRate);
+        let newWholesaleRate = Number(currentProduct.wholesaleRate);
+        let newSellingRate = Number(currentProduct.sellingRate);
+        let newMrp = Number(currentProduct.mrp);
+
+        if (item.rate && item.rate > newPurchaseRate) newPurchaseRate = item.rate;
+        if (item.wRate && item.wRate > newWholesaleRate) newWholesaleRate = item.wRate;
+        if (item.sRate && item.sRate > newSellingRate) newSellingRate = item.sRate;
+        if (item.mrp && item.mrp > newMrp) newMrp = item.mrp;
+
+        // Increment current stock and update rates
         const updatedProduct = await tx.product.update({
           where: { id: item.productId },
           data: {
             currentStock: { increment: item.quantity },
+            purchaseRate: newPurchaseRate,
+            wholesaleRate: newWholesaleRate,
+            sellingRate: newSellingRate,
+            mrp: newMrp,
           },
         });
 

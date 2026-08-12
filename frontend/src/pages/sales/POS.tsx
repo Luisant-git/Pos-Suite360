@@ -162,18 +162,29 @@ const POS = () => {
   }, [JSON.stringify(items), watchTotalDiscount, watchRoundOff, setValue]);
 
   // Product change handler
-  const handleProductChange = (index: number, productId: string) => {
+  const handleProductChange = async (index: number, productId: string) => {
     const product = products.find((p: any) => p.id === Number(productId));
     if (product) {
       setValue(`items.${index}.stock`, product.currentStock || 0);
       setValue(`items.${index}.unit`, product.unit?.shortCode || product.unit?.name || 'Nos');
       
-      // Assign rate based on rate type
-      if (watchRateType === 'Wholesale Rate') {
-        setValue(`items.${index}.rate`, product.wholesaleRate || 0);
-      } else {
-        // User requested to fetch Purchase Rate automatically here
-        setValue(`items.${index}.rate`, product.purchaseRate || 0);
+      try {
+        const response = await api.get(`/purchases/latest-rate/${productId}`);
+        const latestRate = response.data?.rate;
+        
+        // Assign rate based on rate type
+        if (watchRateType === 'Wholesale Rate') {
+          setValue(`items.${index}.rate`, latestRate || product.wholesaleRate || 0);
+        } else {
+          // User requested to fetch Purchase Rate automatically here
+          setValue(`items.${index}.rate`, latestRate || product.purchaseRate || 0);
+        }
+      } catch (e) {
+        if (watchRateType === 'Wholesale Rate') {
+          setValue(`items.${index}.rate`, product.wholesaleRate || 0);
+        } else {
+          setValue(`items.${index}.rate`, product.purchaseRate || 0);
+        }
       }
     }
   };

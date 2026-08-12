@@ -23,6 +23,11 @@ export class PurchasesController {
     return { entryNo: await this.purchasesService.getNextEntryNo() };
   }
 
+  @Get('latest-rate/:productId')
+  async getLatestRate(@Param('productId') productId: string) {
+    return this.purchasesService.getLatestRate(Number(productId));
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.purchasesService.findOne(+id);

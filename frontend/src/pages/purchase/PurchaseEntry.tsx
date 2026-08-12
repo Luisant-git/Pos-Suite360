@@ -118,14 +118,31 @@ const PurchaseEntry = () => {
 
   }, [JSON.stringify(items), watchTotalDiscount, watchRoundOff, setValue]);
 
-  const handleProductChange = (index: number, productId: string) => {
+  const handleProductChange = async (index: number, productId: string) => {
     const product = products.find((p: any) => p.id === Number(productId));
     if (product) {
-      setValue(`items.${index}.pRate`, product.purchaseRate || 0);
-      setValue(`items.${index}.wRate`, product.wholesaleRate || 0);
-      setValue(`items.${index}.sRate`, product.sellingRate || 0);
-      setValue(`items.${index}.mrp`, product.mrp || 0);
       setValue(`items.${index}.unit`, product.unit?.shortCode || product.unit?.name || 'Nos');
+      
+      try {
+        const response = await api.get(`/purchases/latest-rate/${productId}`);
+        const latest = response.data;
+        if (latest) {
+          setValue(`items.${index}.pRate`, latest.rate || product.purchaseRate || 0);
+          setValue(`items.${index}.wRate`, latest.wRate || product.wholesaleRate || 0);
+          setValue(`items.${index}.sRate`, latest.sRate || product.sellingRate || 0);
+          setValue(`items.${index}.mrp`, latest.mrp || product.mrp || 0);
+        } else {
+          setValue(`items.${index}.pRate`, product.purchaseRate || 0);
+          setValue(`items.${index}.wRate`, product.wholesaleRate || 0);
+          setValue(`items.${index}.sRate`, product.sellingRate || 0);
+          setValue(`items.${index}.mrp`, product.mrp || 0);
+        }
+      } catch (e) {
+        setValue(`items.${index}.pRate`, product.purchaseRate || 0);
+        setValue(`items.${index}.wRate`, product.wholesaleRate || 0);
+        setValue(`items.${index}.sRate`, product.sellingRate || 0);
+        setValue(`items.${index}.mrp`, product.mrp || 0);
+      }
     }
   };
 

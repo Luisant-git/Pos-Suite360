@@ -138,6 +138,14 @@ export class PurchasesService {
     });
   }
 
+  async getLatestRate(productId: number) {
+    const latestItem = await this.prisma.purchaseItem.findFirst({
+      where: { productId },
+      orderBy: { id: 'desc' }, // Order by id desc to get the most recent insertion
+    });
+    return latestItem || null;
+  }
+
   async getNextEntryNo() {
     const lastPurchase = await this.prisma.purchase.findFirst({
       orderBy: { id: 'desc' },

@@ -20,11 +20,11 @@ const numberToWords = (num: number): string => {
   const wholePart = Math.floor(Number(num));
   const cents = Math.round((Number(num) - wholePart) * 100);
   
-  let res = convertWhole(wholePart);
+  let res = convertWhole(wholePart) || "";
   if (cents > 0) {
-    res += `AND CENTS ${convertWhole(cents)}`;
+    res += `AND CENTS ${convertWhole(cents) || ""}`;
   }
-  return res.trim();
+  return res ? res.trim() : "";
 };
 
 interface InvoicePrintModalProps {

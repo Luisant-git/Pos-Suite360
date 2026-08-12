@@ -88,10 +88,7 @@ const PurchaseEntry = () => {
   const items = watch('items');
   const watchTotalDiscount = watch('totalDiscount');
   const watchRoundOff = watch('roundOff');
-  const selectedSupplierId = watch('supplierId');
   
-  const selectedSupplier = suppliers.find((s: any) => s.id === Number(selectedSupplierId));
-
   // Calculations
   useEffect(() => {
     let totalAmount = 0;

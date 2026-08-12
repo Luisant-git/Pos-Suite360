@@ -37,6 +37,7 @@ export class SettingsService {
         currencyPosition: data.currencyPosition,
         invoicePrefix: data.invoicePrefix,
         invoiceNotes: data.invoiceNotes,
+        signatureImage: data.signatureImage,
       },
       create: {
         id: 1,
@@ -48,6 +49,7 @@ export class SettingsService {
         currencyPosition: data.currencyPosition || 'before',
         invoicePrefix: data.invoicePrefix || 'INV-',
         invoiceNotes: data.invoiceNotes,
+        signatureImage: data.signatureImage,
       },
     });
   }

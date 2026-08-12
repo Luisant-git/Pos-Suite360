@@ -191,6 +191,8 @@ model Purchase {
   id            Int      @id @default(autoincrement())
   invoiceNo     String   @unique
   date          DateTime @default(now())
+  supplierInvoiceNo String?
+  invoiceDate   DateTime?
   
   supplierId    Int
   supplier      Supplier @relation(fields: [supplierId], references: [id])
@@ -454,6 +456,7 @@ model Settings {
   currencyPosition String   @default("before")
   invoicePrefix    String   @default("INV-")
   invoiceNotes     String?
+  signatureImage   String?
 
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt

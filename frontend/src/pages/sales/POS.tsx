@@ -140,7 +140,6 @@ const POS = () => {
     items.forEach((item, index) => {
       const q = Number(item.quantity) || 0;
       const rate = Number(item.rate) || 0;
-      const discPercent = Number(item.discPercent) || 0;
       
       let discAmt = Number(item.discAmt) || 0;
 

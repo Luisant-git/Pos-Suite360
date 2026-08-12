@@ -221,7 +221,7 @@ const Settings = () => {
                 <div className="border border-[#CBD5E1] rounded overflow-hidden">
                   <Editor
                     value={watchStore('invoiceNotes') || ''}
-                    onChange={(e) => setValueStore('invoiceNotes', e.target.value)}
+                    onChange={(e: any) => setValueStore('invoiceNotes', e.target.value)}
                     containerProps={{ style: { height: '150px', fontSize: '13px', color: 'black', fontWeight: '500' } }}
                   />
                 </div>

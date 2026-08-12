@@ -11,6 +11,7 @@ interface Settings {
   currencyPosition: string;
   invoicePrefix: string;
   invoiceNotes?: string;
+  signatureImage?: string;
 }
 
 interface SettingsContextType {

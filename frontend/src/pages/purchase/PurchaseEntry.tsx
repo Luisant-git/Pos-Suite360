@@ -75,7 +75,6 @@ const PurchaseEntry = () => {
   // Fetch Masters & Next Entry No
   const { data: suppliers = [] } = useQuery({ queryKey: ['suppliers'], queryFn: async () => (await api.get('/suppliers')).data });
   const { data: products = [] } = useQuery({ queryKey: ['products'], queryFn: async () => (await api.get('/products')).data });
-  const { data: paymentModes = [] } = useQuery({ queryKey: ['paymentModes'], queryFn: async () => (await api.get('/payment-modes')).data });
   const { data: nextEntryData } = useQuery({ queryKey: ['nextEntryNo'], queryFn: async () => (await api.get('/purchases/next-entry-no')).data });
 
   // Update default entry no
@@ -100,7 +99,6 @@ const PurchaseEntry = () => {
     items.forEach((item, index) => {
       const q = Number(item.quantity) || 0;
       const pRate = Number(item.pRate) || 0;
-      const discPercent = Number(item.discPercent) || 0;
       
       let discAmt = Number(item.discAmt) || 0;
 

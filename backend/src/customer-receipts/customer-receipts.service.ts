@@ -67,6 +67,13 @@ export class CustomerReceiptsService {
       _sum: { amount: true },
     });
 
+    // Sum of all sales returns
+    const salesReturns = await this.prisma.salesReturn.aggregate({
+      where: { customerId },
+      _sum: { totalAmount: true },
+    });
+    const totalReturns = Number(salesReturns._sum.totalAmount) || 0;
+
     const openingBalance = Number(customer.openingBalance) || 0;
     const isOpeningCredit = customer.openingBalanceType === 'Cr'; // Cr means we owe them
     const isOpeningDebit = customer.openingBalanceType === 'Dr'; // Dr means they owe us
@@ -78,9 +85,9 @@ export class CustomerReceiptsService {
     const totalSales = Number(sales._sum.grandTotal) || 0;
     const totalCollected = Number(receipts._sum.amount) || 0;
 
-    const balance = totalOwed + totalSales - totalCollected;
+    const balance = totalOwed + totalSales - totalCollected - totalReturns;
 
-    return { balance };
+    return { balance, totalReturns };
   }
 
   async generateReceiptNo() {
@@ -114,6 +121,15 @@ export class CustomerReceiptsService {
       _sum: { amount: true },
     });
     let totalCollected = Number(receipts._sum.amount) || 0;
+
+    const salesReturns = await this.prisma.salesReturn.aggregate({
+      where: { customerId },
+      _sum: { totalAmount: true },
+    });
+    const totalReturns = Number(salesReturns._sum.totalAmount) || 0;
+
+    // Both collected payments and returns reduce what the customer owes us
+    totalCollected += totalReturns;
 
     // 2. Fetch Opening Balance & Sales (in chronological order)
     const openingBalance = Number(customer.openingBalance) || 0;
@@ -152,7 +168,6 @@ export class CustomerReceiptsService {
     }
 
     // 3. Apply FIFO
-    const unpaidBills = [];
     for (const bill of bills) {
       if (totalCollected >= bill.total) {
         // Fully paid
@@ -164,15 +179,13 @@ export class CustomerReceiptsService {
         bill.received = totalCollected;
         bill.pending = bill.total - totalCollected;
         totalCollected = 0;
-        unpaidBills.push(bill);
       } else {
         // Completely unpaid
         bill.received = 0;
         bill.pending = bill.total;
-        unpaidBills.push(bill);
       }
     }
 
-    return unpaidBills;
+    return bills;
   }
 }

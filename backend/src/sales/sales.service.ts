@@ -79,7 +79,6 @@ export class SalesService {
           },
         });
       }
-
       return sale;
     });
   }

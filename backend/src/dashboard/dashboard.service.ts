@@ -21,19 +21,84 @@ export class DashboardService {
 
     const firstDayOfMonth = new Date(start.getFullYear(), start.getMonth(), 1);
 
-    // Today's Sales
-    const salesAggregate = await this.prisma.sale.aggregate({
+    // Cash Sales
+    const cashSalesAggregate = await this.prisma.sale.aggregate({
       _sum: { grandTotal: true },
-      where: { date: { gte: start, lt: end } },
+      where: { 
+        date: { gte: start, lt: end },
+        paymentMode: { name: { not: 'Credit' } }
+      },
     });
-    const salesToday = salesAggregate._sum.grandTotal ? Number(salesAggregate._sum.grandTotal) : 0;
+    const cashSalesToday = cashSalesAggregate._sum.grandTotal ? Number(cashSalesAggregate._sum.grandTotal) : 0;
 
-    // Today's Purchases
-    const purchasesAggregate = await this.prisma.purchase.aggregate({
+    // Credit Sales
+    const creditSalesAggregate = await this.prisma.sale.aggregate({
       _sum: { grandTotal: true },
-      where: { date: { gte: start, lt: end } },
+      where: { 
+        date: { gte: start, lt: end },
+        paymentMode: { name: 'Credit' }
+      },
     });
-    const purchasesToday = purchasesAggregate._sum.grandTotal ? Number(purchasesAggregate._sum.grandTotal) : 0;
+    const creditSalesToday = creditSalesAggregate._sum.grandTotal ? Number(creditSalesAggregate._sum.grandTotal) : 0;
+
+    // Cash Purchases
+    const cashPurchasesAggregate = await this.prisma.purchase.aggregate({
+      _sum: { grandTotal: true },
+      where: { 
+        date: { gte: start, lt: end },
+        paymentMode: { name: { not: 'Credit' } }
+      },
+    });
+    const cashPurchasesToday = cashPurchasesAggregate._sum.grandTotal ? Number(cashPurchasesAggregate._sum.grandTotal) : 0;
+
+    // Credit Purchases
+    const creditPurchasesAggregate = await this.prisma.purchase.aggregate({
+      _sum: { grandTotal: true },
+      where: { 
+        date: { gte: start, lt: end },
+        paymentMode: { name: 'Credit' }
+      },
+    });
+    const creditPurchasesToday = creditPurchasesAggregate._sum.grandTotal ? Number(creditPurchasesAggregate._sum.grandTotal) : 0;
+
+    // --- PENDING BALANCES (Across all time) ---
+    // Supplier Payables (What we owe) = Purchases + Opening(Cr - Dr) - Payments - PurchaseReturns
+    const allPurchases = await this.prisma.purchase.aggregate({ _sum: { grandTotal: true } });
+    const allPayments = await this.prisma.supplierPayment.aggregate({ _sum: { amount: true } });
+    const allPurchaseReturns = await this.prisma.purchaseReturn.aggregate({ _sum: { totalAmount: true } });
+    const supplierOpenings = await this.prisma.$queryRaw`
+      SELECT 
+        SUM(CASE WHEN "openingBalanceType" = 'Cr' THEN "openingBalance" ELSE 0 END) as cr_total,
+        SUM(CASE WHEN "openingBalanceType" = 'Dr' THEN "openingBalance" ELSE 0 END) as dr_total
+      FROM "Supplier"
+    ` as any[];
+    
+    const supplierCr = Number(supplierOpenings[0]?.cr_total || 0);
+    const supplierDr = Number(supplierOpenings[0]?.dr_total || 0);
+    const pendingPayables = 
+      (Number(allPurchases._sum.grandTotal) || 0) + 
+      (supplierCr - supplierDr) - 
+      (Number(allPayments._sum.amount) || 0) - 
+      (Number(allPurchaseReturns._sum.totalAmount) || 0);
+
+    // Customer Receivables (What customers owe us) = Sales + Opening(Dr - Cr) - Receipts - SalesReturns
+    const allSales = await this.prisma.sale.aggregate({ _sum: { grandTotal: true } });
+    const allReceipts = await this.prisma.customerReceipt.aggregate({ _sum: { amount: true } });
+    const allSalesReturns = await this.prisma.salesReturn.aggregate({ _sum: { totalAmount: true } });
+    const customerOpenings = await this.prisma.$queryRaw`
+      SELECT 
+        SUM(CASE WHEN "openingBalanceType" = 'Dr' THEN "openingBalance" ELSE 0 END) as dr_total,
+        SUM(CASE WHEN "openingBalanceType" = 'Cr' THEN "openingBalance" ELSE 0 END) as cr_total
+      FROM "Customer"
+    ` as any[];
+    
+    const customerDr = Number(customerOpenings[0]?.dr_total || 0);
+    const customerCr = Number(customerOpenings[0]?.cr_total || 0);
+    const pendingReceivables = 
+      (Number(allSales._sum.grandTotal) || 0) + 
+      (customerDr - customerCr) - 
+      (Number(allReceipts._sum.amount) || 0) - 
+      (Number(allSalesReturns._sum.totalAmount) || 0);
 
     // Today's Expenses
     const expensesAggregate = await this.prisma.expense.aggregate({
@@ -88,8 +153,12 @@ export class DashboardService {
     });
 
     return {
-      salesToday,
-      purchasesToday,
+      cashSalesToday,
+      creditSalesToday,
+      cashPurchasesToday,
+      creditPurchasesToday,
+      pendingPayables,
+      pendingReceivables,
       expensesToday,
       productsCount,
       lowStockCount,

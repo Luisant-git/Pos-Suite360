@@ -3,10 +3,11 @@ import {
   ShoppingCart,
   TrendingDown,
   Package,
-  AlertTriangle,
-  Receipt,
   RotateCcw,
-  IndianRupee
+  CreditCard,
+  Wallet,
+  Landmark,
+  Users
 } from 'lucide-react';
 import api from '../../api';
 import { useSettings } from '../../contexts/SettingsContext';
@@ -14,7 +15,7 @@ import { useSettings } from '../../contexts/SettingsContext';
 const StatCard = ({ title, value, icon: Icon, colorClass, desc }: any) => (
   <div className="bg-white border border-[#E6E9ED] shadow-sm p-4 relative flex items-center justify-between">
     <div>
-      <h3 className="text-3xl font-bold text-gray-500">{value}</h3>
+      <h3 className="text-2xl font-bold text-gray-500">{value}</h3>
       <p className="text-[13px] text-[#1F2937] uppercase font-bold mt-1">{title}</p>
       {desc && <p className="text-[11px] text-[#adb2b5] mt-1">{desc}</p>}
     </div>
@@ -99,48 +100,62 @@ const Dashboard = () => {
         </div>
       </div>
       {/* Top Tiles */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         <StatCard
-          title={`${prefix} Sales`}
-          value={formatCurrency(data.salesToday)}
-          desc={`${descPrefix} total sales`}
-          icon={IndianRupee}
+          title={`${prefix} Cash Sales`}
+          value={formatCurrency(data.cashSalesToday)}
+          desc={`${descPrefix} cash sales`}
+          icon={Wallet}
+          colorClass="bg-[#10B981]"
+        />
+        <StatCard
+          title={`${prefix} Credit Sales`}
+          value={formatCurrency(data.creditSalesToday)}
+          desc={`${descPrefix} credit sales`}
+          icon={CreditCard}
           colorClass="bg-[#26B99A]"
         />
         <StatCard
-          title={`${prefix} Purchases`}
-          value={formatCurrency(data.purchasesToday)}
-          desc={`${descPrefix} total purchases`}
+          title={`${prefix} Cash Purchases`}
+          value={formatCurrency(data.cashPurchasesToday)}
+          desc={`${descPrefix} cash purchases`}
           icon={ShoppingCart}
           colorClass="bg-[#3B82F6]"
+        />
+        <StatCard
+          title={`${prefix} Credit Purchases`}
+          value={formatCurrency(data.creditPurchasesToday)}
+          desc={`${descPrefix} credit purchases`}
+          icon={CreditCard}
+          colorClass="bg-[#2563EB]"
+        />
+        <StatCard
+          title={`Pending Payables`}
+          value={formatCurrency(data.pendingPayables)}
+          desc={`Amount owed to suppliers`}
+          icon={Landmark}
+          colorClass="bg-[#E11D48]"
+        />
+        <StatCard
+          title={`Pending Receivables`}
+          value={formatCurrency(data.pendingReceivables)}
+          desc={`Amount owed by customers`}
+          icon={Users}
+          colorClass="bg-[#F59E0B]"
         />
         <StatCard
           title={`${prefix} Expenses`}
           value={formatCurrency(data.expensesToday)}
           desc="Operational costs"
           icon={TrendingDown}
-          colorClass="bg-[#E11D48]"
+          colorClass="bg-[#9B59B6]"
         />
         <StatCard
           title="Products"
           value={data.productsCount.toLocaleString()}
           desc="Total items"
           icon={Package}
-          colorClass="bg-[#9B59B6]"
-        />
-        <StatCard
-          title="Low Stock"
-          value={data.lowStockCount.toLocaleString()}
-          desc="Items at or below min qty"
-          icon={AlertTriangle}
-          colorClass="bg-[#F39C12]"
-        />
-        <StatCard
-          title={`${prefix} Bills`}
-          value={data.billsToday.toLocaleString()}
-          desc={`Completed ${isToday ? 'today' : 'in period'}`}
-          icon={Receipt}
-          colorClass="bg-[#34495E]"
+          colorClass="bg-[#8E44AD]"
         />
       </div>
 

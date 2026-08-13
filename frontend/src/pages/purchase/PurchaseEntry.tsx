@@ -412,10 +412,10 @@ const PurchaseEntry = () => {
                     <input {...register(`items.${index}.wRate`)} type="number" step="0.01" placeholder="0.00" className="w-full px-2 py-1 border border-[#D1D5DB] rounded text-[13px] outline-none focus:border-[#3B82F6] text-right" />
                   </td>
                   <td className="px-2 py-1 border-r border-[#E5E7EB]">
-                    <input {...register(`items.${index}.sRate`)} type="number" step="0.01" placeholder="0.00" className="w-full px-2 py-1 border border-[#D1D5DB] rounded text-[13px] outline-none focus:border-[#3B82F6] text-right" />
+                    <input {...register(`items.${index}.sRate`)} type="number" step="0.01" placeholder="0.00" readOnly className="w-full px-2 py-1 border border-[#E2E8F0] bg-[#F8FAFC] text-[#64748B] rounded text-[13px] outline-none text-right cursor-not-allowed" />
                   </td>
                   <td className="px-2 py-1 border-r border-[#E5E7EB]">
-                    <input {...register(`items.${index}.mrp`)} type="number" step="0.01" placeholder="0.00" className="w-full px-2 py-1 border border-[#D1D5DB] rounded text-[13px] outline-none focus:border-[#3B82F6] text-right" />
+                    <input {...register(`items.${index}.mrp`)} type="number" step="0.01" placeholder="0.00" readOnly className="w-full px-2 py-1 border border-[#E2E8F0] bg-[#F8FAFC] text-[#64748B] rounded text-[13px] outline-none text-right cursor-not-allowed" />
                   </td>
                   <td className="px-2 py-1 border-r border-[#E5E7EB]">
                     <input 
@@ -527,6 +527,7 @@ const PurchaseEntry = () => {
               </div>
             </div>
 
+            {/*
             <div className="flex-1 flex flex-col gap-1">
               <label className="text-[12px] font-bold text-[#4B5563]">Round Off:</label>
               <input
@@ -537,6 +538,8 @@ const PurchaseEntry = () => {
                 className="w-full px-3 py-2 border border-[#D1D5DB] rounded text-[14px] outline-none focus:border-[#3B82F6] text-right font-medium"
               />
             </div>
+            */}
+
 
             <div className="flex-[2] flex justify-end items-center pt-5">
               <div className="flex items-center gap-4">

@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Plus, Trash2, Save, X, Printer, RefreshCw, List, UserPlus } from 'lucide-react';
+import { Plus, Trash2, Save, X, Printer, RefreshCw, List, UserPlus, AlertTriangle } from 'lucide-react';
 import { useSettings } from '../../contexts/SettingsContext';
 import toast from 'react-hot-toast';
 import api from '../../services/api';
@@ -89,6 +89,8 @@ const POS = () => {
   const [newCustomer, setNewCustomer] = useState({ name: '', phone: '', address: '' });
   const activeTab = 'Amount Details';
   
+  const [showLossWarning, setShowLossWarning] = useState(false);
+  const [pendingPayload, setPendingPayload] = useState<any>(null);
   const { register, control, handleSubmit, watch, setValue, reset } = useForm<SaleFormValues>({
     resolver: zodResolver(saleSchema) as any,
     defaultValues: {
@@ -249,7 +251,26 @@ const POS = () => {
       }))
     };
 
+    const hasLowRate = validItems.some(item => {
+      const p = products.find((prod: any) => prod.id === Number(item.productId));
+      return p && Number(item.rate) > 0 && Number(item.rate) <= Number(p.purchaseRate);
+    });
+
+    if (hasLowRate) {
+      setPendingPayload(payload);
+      setShowLossWarning(true);
+      return;
+    }
+
     createMutation.mutate(payload as any);
+  };
+
+  const confirmLossWarning = () => {
+    setShowLossWarning(false);
+    if (pendingPayload) {
+      createMutation.mutate(pendingPayload);
+      setPendingPayload(null);
+    }
   };
 
   const onError = (errors: any) => {
@@ -537,7 +558,28 @@ const POS = () => {
                     <input {...register(`items.${index}.quantity`)} type="number" min="1" placeholder="1" className={`w-full px-2 py-1 border rounded text-[13px] outline-none text-center ${watch(`items.${index}.quantity`) > watch(`items.${index}.stock`) ? 'border-red-500 focus:border-red-500 bg-red-100 text-red-700 font-bold' : 'border-[#D1D5DB] focus:border-[#3B82F6]'}`} />
                   </td>
                   <td className="px-2 py-1 border-r border-[#E5E7EB]">
-                    <input {...register(`items.${index}.rate`)} type="number" step="0.01" placeholder="0.00" readOnly className="w-full px-2 py-1 border border-[#BFDBFE] bg-[#EFF6FF] text-[#1D4ED8] font-bold rounded text-[13px] outline-none text-right" />
+                    <input 
+                      {...register(`items.${index}.rate`)} 
+                      type="number" step="0.01" placeholder="0.00" 
+                      className={`w-full px-2 py-1 border rounded text-[13px] outline-none text-right font-bold ${(() => {
+                        const pId = watch(`items.${index}.productId`);
+                        const prod = products.find((p: any) => p.id === Number(pId));
+                        const currentRate = Number(watch(`items.${index}.rate`)) || 0;
+                        if (prod && currentRate > 0 && currentRate <= Number(prod.purchaseRate)) {
+                          return 'border-red-500 focus:border-red-500 bg-red-100 text-red-700';
+                        }
+                        return 'border-[#CBD5E1] bg-white focus:border-[#3B82F6] text-[#1E293B]';
+                      })()}`}
+                      onBlur={(e) => {
+                        const enteredRate = Number(e.target.value);
+                        const pId = watch(`items.${index}.productId`);
+                        const product = products.find((p: any) => p.id === Number(pId));
+                        if (product && enteredRate > 0 && enteredRate <= Number(product.purchaseRate)) {
+                          toast.error(`Loss Warning: Selling below purchase rate (${formatCurrency(product.purchaseRate)})!`, { duration: 4000 });
+                        }
+                        register(`items.${index}.rate`).onBlur(e);
+                      }}
+                    />
                   </td>
                   <td className="px-2 py-1 border-r border-[#E5E7EB]">
                     <input {...register(`items.${index}.unit`)} type="text" readOnly className="w-full px-1 py-1 bg-transparent text-[13px] outline-none text-center" />
@@ -675,6 +717,7 @@ const POS = () => {
                   </div>
                 </div>
 
+                {/*
                 <div className="flex-1 flex flex-col gap-1">
                   <label className="text-[12px] font-bold text-[#4B5563]">Round Off:</label>
                   <input
@@ -685,6 +728,7 @@ const POS = () => {
                     className="w-full px-3 py-2 border border-[#D1D5DB] rounded text-[14px] outline-none focus:border-[#3B82F6] text-right font-medium"
                   />
                 </div>
+                */}
                 
                 <div className="flex-1 flex flex-col gap-1">
                   {/* Empty space to balance layout */}
@@ -886,6 +930,38 @@ const POS = () => {
           </div>
         </div>
       </div>
+
+      {/* Loss Warning Modal */}
+      {showLossWarning && (
+        <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-lg shadow-xl w-full max-w-md overflow-hidden">
+            <div className="bg-red-500 p-4 text-white flex items-center gap-3">
+              <AlertTriangle size={24} />
+              <h2 className="text-lg font-bold">Loss Warning!</h2>
+            </div>
+            <div className="p-6">
+              <p className="text-gray-700 font-bold mb-2 text-[15px]">One or more items are being sold at or below their purchase rate.</p>
+              <p className="text-gray-500 text-sm font-medium">Are you absolutely sure you want to proceed with this sale and take a loss?</p>
+            </div>
+            <div className="bg-gray-50 p-4 flex justify-end gap-3 border-t border-gray-200">
+              <button 
+                type="button"
+                onClick={() => { setShowLossWarning(false); setPendingPayload(null); }}
+                className="px-4 py-2 border border-gray-300 bg-white rounded font-bold text-gray-700 hover:bg-gray-100 transition-colors"
+              >
+                No, Cancel
+              </button>
+              <button 
+                type="button"
+                onClick={confirmLossWarning}
+                className="px-4 py-2 bg-red-600 rounded font-bold text-white hover:bg-red-700 transition-colors flex items-center gap-2"
+              >
+                Yes, Proceed Anyway
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   );

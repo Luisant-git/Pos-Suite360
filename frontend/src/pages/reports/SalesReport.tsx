@@ -307,37 +307,37 @@ const SalesReport = () => {
 
           </table>
         </div>
+      </div>
 
-        {/* Bottom Black Bar */}
-        <div className="bg-[#020617] text-white px-4 py-3 flex justify-between items-center rounded-b-md">
-          <div className="flex gap-2">
-            <button 
-              type="button"
-              onClick={() => navigate('/sales/pos')}
-              className="bg-[#2563EB] text-white text-[11px] font-bold px-3 py-1.5 rounded-sm flex items-center gap-1 hover:bg-[#1D4ED8] transition-colors"
-            >
-              <span className="opacity-70 border-r border-[#60A5FA] pr-1 mr-1">F2</span> POS
-            </button>
+      {/* Bottom Black Bar */}
+      <div className="bg-[#020617] text-white px-6 py-3 flex justify-between items-center -mx-4 -mb-4 mt-4 shrink-0">
+        <div className="flex gap-2">
+          <button 
+            type="button"
+            onClick={() => navigate('/sales/pos')}
+            className="bg-[#2563EB] text-white text-[11px] font-bold px-3 py-1.5 rounded-sm flex items-center gap-1 hover:bg-[#1D4ED8] transition-colors"
+          >
+            <span className="opacity-70 border-r border-[#60A5FA] pr-1 mr-1">F2</span> POS
+          </button>
 
-            <button 
-              type="button"
-              onClick={() => navigate('/dashboard')}
-              className="bg-[#0891B2] text-white text-[11px] font-bold px-3 py-1.5 rounded-sm flex items-center gap-1 hover:bg-[#0E7490] transition-colors"
-            >
-              <span className="opacity-70 border-r border-[#67E8F9] pr-1 mr-1">Esc</span> Dashboard
-            </button>
-          </div>
-          
-          <div className="flex items-center gap-4">
-            <span className="text-[16px] font-bold text-white uppercase tracking-wide">TOTAL AMOUNT:</span>
-            <span className="text-[28px] font-bold text-[#38BDF8]">
-              {formatCurrency(totalSalesAmount)}
-            </span>
-          </div>
+          <button 
+            type="button"
+            onClick={() => navigate('/dashboard')}
+            className="bg-[#0891B2] text-white text-[11px] font-bold px-3 py-1.5 rounded-sm flex items-center gap-1 hover:bg-[#0E7490] transition-colors"
+          >
+            <span className="opacity-70 border-r border-[#67E8F9] pr-1 mr-1">Esc</span> Dashboard
+          </button>
+        </div>
+        
+        <div className="flex items-center gap-4">
+          <span className="text-[16px] font-bold text-white uppercase tracking-wide">TOTAL AMOUNT:</span>
+          <span className="text-[28px] font-bold text-[#38BDF8]">
+            {formatCurrency(totalSalesAmount)}
+          </span>
         </div>
       </div>
-      </div>
 
+      </div>
       <InvoicePrintModal 
         isOpen={isPrintModalOpen} 
         onClose={() => {

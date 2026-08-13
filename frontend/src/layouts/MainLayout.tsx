@@ -111,6 +111,10 @@ const MainLayout = () => {
               <i className="fa fa-credit-card text-xl w-8 text-center flex-shrink-0"></i>
               <span className={`font-bold transition-opacity duration-200 ${isSidebarOpen ? 'opacity-100' : 'opacity-0'}`}>Payment Modes</span>
             </NavLink>
+            <NavLink to="/master/payment-types" title={!isSidebarOpen ? "Payment Types" : undefined} className={({ isActive }) => `flex items-center gap-3 px-5 py-3 transition-colors border-r-4 whitespace-nowrap ${isActive ? 'bg-[#1F2937] border-[#1ABB9C] text-white' : 'border-transparent hover:bg-[#1F2937] font-bold hover:text-white'}`}>
+              <i className="fa fa-money text-xl w-8 text-center flex-shrink-0"></i>
+              <span className={`font-bold transition-opacity duration-200 ${isSidebarOpen ? 'opacity-100' : 'opacity-0'}`}>Payment Types</span>
+            </NavLink>
             <NavLink to="/master/expense-categories" title={!isSidebarOpen ? "Expense Categories" : undefined} className={({ isActive }) => `flex items-center gap-3 px-5 py-3 transition-colors border-r-4 whitespace-nowrap ${isActive ? 'bg-[#1F2937] border-[#1ABB9C] text-white' : 'border-transparent hover:bg-[#1F2937] font-bold hover:text-white'}`}>
               <i className="fa fa-list-alt text-xl w-8 text-center flex-shrink-0"></i>
               <span className={`font-bold transition-opacity duration-200 ${isSidebarOpen ? 'opacity-100' : 'opacity-0'}`}>Expense Categories</span>
@@ -227,7 +231,7 @@ const MainLayout = () => {
         </header>
 
         {/* Page Content */}
-        <div className="flex-1 overflow-auto p-4 sm:p-6 relative print:overflow-visible print:p-0">
+        <div className="flex-1 overflow-hidden relative print:overflow-visible print:p-0">
           <Outlet />
         </div>
       </main>

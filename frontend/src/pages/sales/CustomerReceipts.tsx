@@ -33,7 +33,6 @@ const CustomerReceipts = () => {
   const [filterFromDate, setFilterFromDate] = useState('');
   const [filterToDate, setFilterToDate] = useState('');
   const [currentBalance, setCurrentBalance] = useState(0);
-  const [totalSalesReturns, setTotalSalesReturns] = useState(0);
   const [unpaidBills, setUnpaidBills] = useState<any[]>([]);
   const [showBreakdown, setShowBreakdown] = useState(false);
   const [isTableExpanded, setIsTableExpanded] = useState(false);

@@ -58,10 +58,10 @@ const SalesReport = () => {
     },
   });
 
-  const totalSalesAmount = sales.reduce((sum: number, sale: any) => sum + sale.rawTotalAmount, 0);
+  const totalSalesAmount = sales.reduce((sum: number, sale: any) => sum + (Number(sale.rawTotalAmount) || 0), 0);
 
   return (
-    <div className="bg-[#F8FAFC] min-h-[calc(100vh-100px)] p-4">
+    <div className="bg-[#F8FAFC] h-[calc(100vh-100px)] p-4 flex flex-col">
       <div className="print:hidden">
         <ReportTabs />
 
@@ -167,7 +167,7 @@ const SalesReport = () => {
       </div>
 
       {/* Report Table Section */}
-      <div className="bg-white border border-[#E2E8F0] shadow-sm rounded-md overflow-hidden flex flex-col">
+      <div className="bg-white border border-[#E2E8F0] shadow-sm rounded-md overflow-hidden flex flex-col flex-1">
         <div className="bg-[#F8FAFC] border-b border-[#E2E8F0] px-4 py-3 flex justify-between items-center">
           <div className="flex items-center gap-2 text-[#3B82F6]">
             <FileText size={16} />
@@ -304,16 +304,36 @@ const SalesReport = () => {
               ))
             )}
             </tbody>
-            {sales.length > 0 && (
-              <tfoot className="bg-[#0F172A] text-white font-bold">
-                <tr>
-                  <td colSpan={5} className="px-4 py-3 text-right border-r border-[#1E293B]">Grand Total:</td>
-                  <td className="px-4 py-3 text-center border-r border-[#1E293B] text-[#10B981]">{formatCurrency(totalSalesAmount)}</td>
-                  <td className="px-4 py-3"></td>
-                </tr>
-              </tfoot>
-            )}
+
           </table>
+        </div>
+
+        {/* Bottom Black Bar */}
+        <div className="bg-[#020617] text-white px-4 py-3 flex justify-between items-center rounded-b-md">
+          <div className="flex gap-2">
+            <button 
+              type="button"
+              onClick={() => navigate('/sales/pos')}
+              className="bg-[#2563EB] text-white text-[11px] font-bold px-3 py-1.5 rounded-sm flex items-center gap-1 hover:bg-[#1D4ED8] transition-colors"
+            >
+              <span className="opacity-70 border-r border-[#60A5FA] pr-1 mr-1">F2</span> POS
+            </button>
+
+            <button 
+              type="button"
+              onClick={() => navigate('/dashboard')}
+              className="bg-[#0891B2] text-white text-[11px] font-bold px-3 py-1.5 rounded-sm flex items-center gap-1 hover:bg-[#0E7490] transition-colors"
+            >
+              <span className="opacity-70 border-r border-[#67E8F9] pr-1 mr-1">Esc</span> Dashboard
+            </button>
+          </div>
+          
+          <div className="flex items-center gap-4">
+            <span className="text-[16px] font-bold text-white uppercase tracking-wide">TOTAL AMOUNT:</span>
+            <span className="text-[28px] font-bold text-[#38BDF8]">
+              {formatCurrency(totalSalesAmount)}
+            </span>
+          </div>
         </div>
       </div>
       </div>

@@ -115,14 +115,37 @@ const SupplierPayments = () => {
   });
 
   const onSubmit = (data: PaymentFormValues) => {
+    let remainingAmount = Number(data.amount);
+    let cleared = [];
+    
+    // Sort bills by date to clear older ones first (same logic as backend)
+    const sortedBills = [...unpaidBills].filter(b => b.pending > 0).sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+    
+    for (const bill of sortedBills) {
+      if (remainingAmount <= 0) break;
+      const payingNow = Math.min(bill.pending, remainingAmount);
+      remainingAmount -= payingNow;
+      if (payingNow === bill.pending) {
+        cleared.push(bill.entryNo);
+      }
+    }
+
+    if (cleared.length > 0) {
+      const clearedText = `[Cleared: ${cleared.join(', ')}]`;
+      data.remarks = data.remarks ? `${data.remarks} ${clearedText}` : clearedText;
+    }
+
     createMutation.mutate(data);
   };
 
   // Filter history
+  const [filterCleared, setFilterCleared] = useState('');
+  
   const filteredHistory = payments.filter((p: any) => {
     if (filterSupplier && p.supplierId.toString() !== filterSupplier) return false;
     if (filterFromDate && new Date(p.date) < new Date(filterFromDate)) return false;
     if (filterToDate && new Date(p.date) > new Date(filterToDate)) return false;
+    if (filterCleared && !p.remarks?.toLowerCase().includes(filterCleared.toLowerCase())) return false;
     return true;
   });
 
@@ -451,7 +474,7 @@ const SupplierPayments = () => {
             </div>
           </div>
 
-          <div className="p-3 border-b border-[#E2E8F0] grid grid-cols-1 md:grid-cols-3 gap-2">
+          <div className="p-3 border-b border-[#E2E8F0] grid grid-cols-1 md:grid-cols-4 gap-2">
             <select
               value={filterSupplier}
               onChange={(e) => setFilterSupplier(e.target.value)}
@@ -468,16 +491,20 @@ const SupplierPayments = () => {
               onChange={(e) => setFilterFromDate(e.target.value)}
               className="w-full px-2 py-1.5 border border-[#CBD5E1] rounded text-[12px] outline-none focus:border-[#3B82F6]"
             />
+            <input
+              type="date"
+              value={filterToDate}
+              onChange={(e) => setFilterToDate(e.target.value)}
+              className="w-full px-2 py-1.5 border border-[#CBD5E1] rounded text-[12px] outline-none focus:border-[#3B82F6]"
+            />
             <div className="flex gap-2">
               <input
-                type="date"
-                value={filterToDate}
-                onChange={(e) => setFilterToDate(e.target.value)}
+                type="text"
+                placeholder="Cleared bill #..."
+                value={filterCleared}
+                onChange={(e) => setFilterCleared(e.target.value)}
                 className="w-full px-2 py-1.5 border border-[#CBD5E1] rounded text-[12px] outline-none focus:border-[#3B82F6]"
               />
-              <button type="button" className="bg-[#E11D48] hover:bg-[#BE123C] text-white px-3 rounded flex items-center justify-center transition-colors" title="Apply Filter">
-                <Filter size={14} />
-              </button>
               <button 
                 type="button" 
                 onClick={handleExportExcel}
@@ -497,14 +524,15 @@ const SupplierPayments = () => {
                   <th className="px-3 py-2 border-r border-[#334155]">Date</th>
                   <th className="px-3 py-2 border-r border-[#334155]">Supplier</th>
                   <th className="px-3 py-2 border-r border-[#334155]">Mode</th>
+                  <th className="px-3 py-2 border-r border-[#334155]">Remarks (Cleared Bills)</th>
                   <th className="px-3 py-2 text-right">Amount Paid</th>
                 </tr>
               </thead>
               <tbody>
                 {historyLoading ? (
-                  <tr><td colSpan={5} className="text-center p-4 text-gray-500">Loading history...</td></tr>
+                  <tr><td colSpan={6} className="text-center p-4 text-gray-500">Loading history...</td></tr>
                 ) : filteredHistory.length === 0 ? (
-                  <tr><td colSpan={5} className="text-center p-4 text-gray-500">No payment records found.</td></tr>
+                  <tr><td colSpan={6} className="text-center p-4 text-gray-500">No payment records found.</td></tr>
                 ) : (
                   filteredHistory.map((p: any, idx: number) => (
                     <tr key={p.id} className={`border-b border-[#E2E8F0] ${idx % 2 === 0 ? 'bg-white' : 'bg-[#F8FAFC]'}`}>
@@ -518,6 +546,7 @@ const SupplierPayments = () => {
                           {p.paymentMode?.name}
                         </span>
                       </td>
+                      <td className="px-3 py-2 border-r border-[#E2E8F0] text-[11px] text-[#64748B] max-w-[200px] truncate" title={p.remarks}>{p.remarks || '-'}</td>
                       <td className="px-3 py-2 text-right font-bold text-[#E11D48]">{formatCurrency(p.amount)}</td>
                     </tr>
                   ))

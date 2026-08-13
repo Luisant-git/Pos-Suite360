@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Download, FileText, Search, Calendar, FileDigit, Users, CreditCard, RotateCcw, Plus, Minus, Printer, MessageCircle } from 'lucide-react';
+import { Download, FileText, Search, Calendar, FileDigit, Users, CreditCard, RotateCcw, Plus, Printer, MessageCircle, Eye } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useSettings } from '../../contexts/SettingsContext';
 import api from '../../services/api';
 import ReportTabs from '../../components/ReportTabs';
 import { exportToExcel } from '../../utils/exportExcel';
 import InvoicePrintModal from '../../components/InvoicePrintModal';
+import ViewSalesModal from '../sales/ViewSalesModal';
 
 const SalesReport = () => {
   const navigate = useNavigate();
@@ -19,7 +20,8 @@ const SalesReport = () => {
   const [quickSearch, setQuickSearch] = useState('');
   const [selectedSale, setSelectedSale] = useState<any>(null);
   const [isPrintModalOpen, setIsPrintModalOpen] = useState(false);
-  const [expandedRowId, setExpandedRowId] = useState<number | null>(null);
+  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
+  const [selectedViewSaleId, setSelectedViewSaleId] = useState<number | null>(null);
 
   // Fetch Master Data for filters
   const { data: customers = [] } = useQuery({ 
@@ -58,16 +60,24 @@ const SalesReport = () => {
     },
   });
 
-  const totalSalesAmount = sales.reduce((sum: number, sale: any) => sum + (Number(sale.rawTotalAmount) || 0), 0);
+  const filteredSales = quickSearch
+    ? sales.filter((s: any) =>
+        s.invoiceNo.toLowerCase().includes(quickSearch.toLowerCase()) ||
+        s.customerName.toLowerCase().includes(quickSearch.toLowerCase()) ||
+        s.paymentMode.toLowerCase().includes(quickSearch.toLowerCase())
+      )
+    : sales;
+
+  const totalSalesAmount = filteredSales.reduce((sum: number, sale: any) => sum + (Number(sale.rawTotalAmount) || 0), 0);
 
   return (
-    <div className="bg-[#F8FAFC] h-[calc(100vh-100px)] p-4 flex flex-col">
-      <div className="print:hidden">
+    <div className="bg-[#F8FAFC] h-full flex flex-col">
+      <div className="print:hidden flex flex-col flex-1 overflow-hidden p-2">
         <ReportTabs />
 
         {/* Filter Section */}
-      <div className="bg-white border border-[#E2E8F0] shadow-sm rounded-md mb-4 p-4">
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-4 items-end mb-4">
+      <div className="bg-white border border-[#E2E8F0] shadow-sm rounded-md mb-2 p-3">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-3 items-end mb-3">
           
           <div>
             <label className="flex items-center gap-1 text-[12px] text-[#64748B] mb-1 font-bold"><Calendar size={12} /> From Date</label>
@@ -167,7 +177,7 @@ const SalesReport = () => {
       </div>
 
       {/* Report Table Section */}
-      <div className="bg-white border border-[#E2E8F0] shadow-sm rounded-md overflow-hidden flex flex-col flex-1">
+      <div className="bg-white border border-[#E2E8F0] shadow-sm rounded-md overflow-hidden flex flex-col flex-1 min-h-0">
         <div className="bg-[#F8FAFC] border-b border-[#E2E8F0] px-4 py-3 flex justify-between items-center">
           <div className="flex items-center gap-2 text-[#3B82F6]">
             <FileText size={16} />
@@ -185,7 +195,7 @@ const SalesReport = () => {
               />
             </div>
             <button type="button" 
-              onClick={() => exportToExcel(sales, `Sales_Report_${fromDate}_to_${toDate}`)}
+              onClick={() => exportToExcel(filteredSales, `Sales_Report_${fromDate}_to_${toDate}`)}
               className="bg-[#10B981] hover:bg-[#059669] text-white px-3 py-1.5 rounded flex items-center gap-1.5 text-[12px] font-bold transition-colors"
             >
               <Download size={14} /> Export Excel
@@ -203,7 +213,6 @@ const SalesReport = () => {
           <table className="w-full text-left text-[12px] whitespace-nowrap">
             <thead>
               <tr className="bg-[#0F172A] text-white font-bold">
-                <th className="px-4 py-3 border-r border-[#1E293B] w-10"></th>
                 <th className="px-4 py-3 border-r border-[#1E293B]">Invoice No</th>
                 <th className="px-4 py-3 border-r border-[#1E293B] text-center">Date</th>
                 <th className="px-4 py-3 border-r border-[#1E293B]">Customer Name</th>
@@ -214,22 +223,13 @@ const SalesReport = () => {
             </thead>
             <tbody>
               {isLoading ? (
-                <tr><td colSpan={7} className="text-center p-6 text-gray-500">Loading report data...</td></tr>
-              ) : sales.length === 0 ? (
-                <tr><td colSpan={7} className="text-center p-6 text-gray-500">No sales records found.</td></tr>
+                <tr><td colSpan={6} className="text-center p-6 text-gray-500">Loading report data...</td></tr>
+              ) : filteredSales.length === 0 ? (
+                <tr><td colSpan={6} className="text-center p-6 text-gray-500">No sales records found.</td></tr>
               ) : (
-                sales.map((s: any, index: number) => (
+                filteredSales.map((s: any, index: number) => (
                   <React.Fragment key={s.id}>
                     <tr className={`border-b border-[#E2E8F0] ${index % 2 === 0 ? 'bg-white' : 'bg-[#F8FAFC]'} hover:bg-[#EFF6FF]`}>
-                      <td className="px-4 py-3 border-r border-[#E2E8F0] text-center">
-                        <button 
-                          type="button" 
-                          onClick={() => setExpandedRowId(expandedRowId === s.id ? null : s.id)}
-                          className="bg-[#E2E8F0] hover:bg-[#CBD5E1] text-[#334155] p-1 rounded transition-colors"
-                        >
-                          {expandedRowId === s.id ? <Minus size={14} /> : <Plus size={14} />}
-                        </button>
-                      </td>
                     <td className="px-4 py-3 border-r border-[#E2E8F0] font-bold text-[#3B82F6] cursor-pointer hover:underline">{s.invoiceNo}</td>
                     <td className="px-4 py-3 border-r border-[#E2E8F0] text-center text-[#475569]">{s.date}</td>
                     <td className="px-4 py-3 border-r border-[#E2E8F0] font-medium text-[#334155]">{s.customerName}</td>
@@ -241,6 +241,16 @@ const SalesReport = () => {
                     <td className="px-4 py-3 border-r border-[#E2E8F0] text-center font-bold text-[#3B82F6]">{s.netPayable}</td>
                     <td className="px-4 py-3 text-center">
                       <div className="flex justify-center items-center gap-2">
+                        <button type="button" 
+                          onClick={() => {
+                            setSelectedViewSaleId(s.id);
+                            setIsViewModalOpen(true);
+                          }}
+                          className="text-[#3B82F6] border border-[#3B82F6] rounded p-1 hover:bg-[#3B82F6] hover:text-white transition-colors"
+                          title="View Invoice"
+                        >
+                          <Eye size={14} />
+                        </button>
                         <button type="button" 
                           onClick={() => {
                             setSelectedSale({ id: s.id });
@@ -263,44 +273,7 @@ const SalesReport = () => {
                     </td>
                   </tr>
                   
-                  {/* Expanded Row for Items */}
-                  {expandedRowId === s.id && (
-                    <tr className="bg-[#F1F5F9] border-b border-[#E2E8F0]">
-                      <td colSpan={7} className="p-4">
-                        <div className="bg-white border border-[#CBD5E1] rounded-lg overflow-hidden shadow-sm">
-                          <table className="w-full text-[11px] text-left">
-                            <thead className="bg-[#F8FAFC] border-b border-[#CBD5E1]">
-                              <tr>
-                                <th className="px-3 py-2 font-bold text-[#475569]">Item Name</th>
-                                <th className="px-3 py-2 font-bold text-[#475569] text-center">Qty</th>
-                                <th className="px-3 py-2 font-bold text-[#475569] text-right">Rate</th>
-                                <th className="px-3 py-2 font-bold text-[#475569] text-right">Discount</th>
-                                <th className="px-3 py-2 font-bold text-[#475569] text-right">Tax</th>
-                                <th className="px-3 py-2 font-bold text-[#475569] text-right">Total</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {s.items?.length > 0 ? s.items.map((item: any, i: number) => (
-                                <tr key={i} className="border-b border-[#F1F5F9] last:border-0 hover:bg-[#F8FAFC] font-bold">
-                                  <td className="px-3 py-2 text-[#1E293B]">{item.product?.name || 'Unknown Product'}</td>
-                                  <td className="px-3 py-2 text-center text-[#334155]">{item.quantity}</td>
-                                  <td className="px-3 py-2 text-right text-[#334155]">{formatCurrency(item.rate)}</td>
-                                  <td className="px-3 py-2 text-right text-[#EF4444]">{formatCurrency(item.discount)}</td>
-                                  <td className="px-3 py-2 text-right text-[#F59E0B]">{formatCurrency(item.tax)}</td>
-                                  <td className="px-3 py-2 text-right text-[#1E293B]">{formatCurrency(item.amount)}</td>
-                                </tr>
-                              )) : (
-                                <tr>
-                                  <td colSpan={6} className="px-3 py-4 text-center text-gray-500 italic">No items found for this invoice.</td>
-                                </tr>
-                              )}
-                            </tbody>
-                          </table>
-                        </div>
-                      </td>
-                    </tr>
-                  )}
-                </React.Fragment>
+                  </React.Fragment>
               ))
             )}
             </tbody>
@@ -309,18 +282,18 @@ const SalesReport = () => {
         </div>
       </div>
 
-      {/* Bottom Black Bar */}
-      <div className="bg-[#020617] text-white px-6 py-3 flex justify-between items-center -mx-4 -mb-4 mt-4 shrink-0">
+      </div>
+      {/* Bottom Black Bar - always visible, outside scroll area */}
+      <div className="bg-[#020617] text-white px-6 py-3 flex justify-between items-center shrink-0 print:hidden">
         <div className="flex gap-2">
-          <button 
+          <button
             type="button"
             onClick={() => navigate('/sales/pos')}
             className="bg-[#2563EB] text-white text-[11px] font-bold px-3 py-1.5 rounded-sm flex items-center gap-1 hover:bg-[#1D4ED8] transition-colors"
           >
             <span className="opacity-70 border-r border-[#60A5FA] pr-1 mr-1">F2</span> POS
           </button>
-
-          <button 
+          <button
             type="button"
             onClick={() => navigate('/dashboard')}
             className="bg-[#0891B2] text-white text-[11px] font-bold px-3 py-1.5 rounded-sm flex items-center gap-1 hover:bg-[#0E7490] transition-colors"
@@ -328,16 +301,12 @@ const SalesReport = () => {
             <span className="opacity-70 border-r border-[#67E8F9] pr-1 mr-1">Esc</span> Dashboard
           </button>
         </div>
-        
         <div className="flex items-center gap-4">
           <span className="text-[16px] font-bold text-white uppercase tracking-wide">TOTAL AMOUNT:</span>
-          <span className="text-[28px] font-bold text-[#38BDF8]">
-            {formatCurrency(totalSalesAmount)}
-          </span>
+          <span className="text-[28px] font-bold text-[#38BDF8]">{formatCurrency(totalSalesAmount)}</span>
         </div>
       </div>
 
-      </div>
       <InvoicePrintModal 
         isOpen={isPrintModalOpen} 
         onClose={() => {
@@ -346,6 +315,16 @@ const SalesReport = () => {
         }} 
         sale={selectedSale} 
       />
+
+      {isViewModalOpen && selectedViewSaleId && (
+        <ViewSalesModal 
+          saleId={selectedViewSaleId} 
+          onClose={() => {
+            setIsViewModalOpen(false);
+            setSelectedViewSaleId(null);
+          }} 
+        />
+      )}
     </div>
   );
 };

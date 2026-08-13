@@ -78,19 +78,16 @@ const CustomerReceipts = () => {
         try {
           const res = await api.get(`/customer-receipts/balance/${selectedCustomerId}`);
           setCurrentBalance(res.data.balance);
-          setTotalSalesReturns(res.data.totalReturns || 0);
           
           const billsRes = await api.get(`/customer-receipts/unpaid-bills/${selectedCustomerId}`);
           setUnpaidBills(billsRes.data);
         } catch (error) {
           console.error(error);
           setCurrentBalance(0);
-          setTotalSalesReturns(0);
           setUnpaidBills([]);
         }
       } else {
         setCurrentBalance(0);
-        setTotalSalesReturns(0);
         setUnpaidBills([]);
         setShowBreakdown(false);
       }

@@ -7,7 +7,7 @@ import { TransactionType } from '@prisma/client';
 export class PurchasesService {
   constructor(private prisma: PrismaService) {}
 
-  async create(createPurchaseDto: CreatePurchaseDto) {
+  async create(createPurchaseDto: CreatePurchaseDto, userId: number = 1) {
     // Execute in a transaction to guarantee data integrity between purchase and stock ledger
     return this.prisma.$transaction(async (tx) => {
       // 1. Create Purchase and PurchaseItems

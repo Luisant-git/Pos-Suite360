@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, UseGuards, Query, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, UseGuards, Query, Delete, Request } from '@nestjs/common';
 import { PurchasesService } from './purchases.service';
 import { CreatePurchaseDto } from './dto/create-purchase.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
@@ -9,8 +9,9 @@ export class PurchasesController {
   constructor(private readonly purchasesService: PurchasesService) {}
 
   @Post()
-  create(@Body() createPurchaseDto: CreatePurchaseDto) {
-    return this.purchasesService.create(createPurchaseDto);
+  create(@Body() createPurchaseDto: CreatePurchaseDto, @Request() req: any) {
+    const userId = req.user?.userId || 1;
+    return this.purchasesService.create(createPurchaseDto, userId);
   }
 
   @Get()

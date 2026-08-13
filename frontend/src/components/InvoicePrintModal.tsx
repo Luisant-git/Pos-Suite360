@@ -37,11 +37,13 @@ interface InvoicePrintModalProps {
 const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer = false }: InvoicePrintModalProps) => {
   const { settings } = useSettings();
 
-  // Fetch full sale data if items are missing (e.g. when opened from SalesList)
+  // Always fetch full sale data to ensure unit, paymentMode, customer are fully populated
   const { data: fullSale, isLoading } = useQuery({
-    queryKey: ['sales', initialSale?.id],
+    queryKey: ['invoice-print', initialSale?.id],
     queryFn: async () => (await api.get(`/sales/${initialSale.id}`)).data,
-    enabled: isOpen && !!initialSale?.id && !initialSale?.items,
+    enabled: isOpen && !!initialSale?.id,
+    staleTime: 0,
+    gcTime: 0,
   });
 
   const sale = fullSale || initialSale;
@@ -85,10 +87,10 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
   if (hiddenRenderer) {
     return (
       <div id="hidden-printable-invoice" className="fixed top-0 left-0 bg-white text-black font-sans text-[12px] w-[800px] flex flex-col p-8 h-[250mm] box-border" style={{ zIndex: -9999 }}>
-        <div className="text-center mb-4">
-          <h2 className="text-2xl font-bold uppercase">{settings?.shopName || 'MY SHOP'}</h2>
-          {settings?.shopAddress && <p className="whitespace-pre-line">{settings.shopAddress}</p>}
-          {settings?.phone && <p>Tel : {settings.phone}</p>}
+        <div className="text-center mb-4 print:pt-4">
+          <div className="text-xl font-bold uppercase">NASA FRESH MART <span className="text-base font-normal">(001634825-A)</span></div>
+          <p className="mt-1">NO 8G, JLN 3/2 PANDAN JAYA, 55100 KUALA LUMPUR.</p>
+          <p>Tel : 019-300 1451</p>
         </div>
         
         <div className="border-t border-b border-black py-2 mb-4 text-center font-bold text-lg uppercase tracking-wider">
@@ -145,7 +147,7 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
                 <td className="py-1 font-medium">{item.product?.code || ''}</td>
                 <td className="py-1 font-medium">{item.product?.name || ''}</td>
                 <td className="py-1 text-right font-medium">{item.quantity}</td>
-                <td className="py-1 text-center font-medium">{item.unit?.name || item.unit || 'Nos'}</td>
+                <td className="py-1 text-center font-medium">{item.product?.unit?.name || item.product?.unit?.shortCode || 'Nos'}</td>
                 <td className="py-1 text-right font-medium">{Number(item.rate || 0).toFixed(2)}</td>
                 <td className="py-1 text-right font-medium">{Number(item.amount || item.total || 0).toFixed(2)}</td>
               </tr>
@@ -185,9 +187,8 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 print:bg-white print:relative print:z-auto print:inset-auto overflow-hidden">
-      {/* Container - Fixed width for consistent print layout */}
-      <div className="bg-white w-[210mm] h-[97vh] flex flex-col rounded-md shadow-2xl relative print:w-full print:shadow-none print:h-[245mm] print:overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 print:bg-transparent print:block print:inset-auto print:relative">
+      <div className="bg-white w-[210mm] h-[97vh] flex flex-col rounded-md shadow-2xl relative print:w-full print:shadow-none print:h-[257mm]">
         
         {/* Header - Screen Only */}
         <div className="flex justify-between items-center bg-[#111827] text-white p-3 rounded-t-md print:hidden">
@@ -201,11 +202,11 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
         </div>
 
         {/* Printable Area */}
-        <div id="printable-invoice" className="flex-1 overflow-hidden flex flex-col p-8 font-sans text-black print:p-0 bg-white print:h-full">
-          <div className="text-center mb-4">
-            <h2 className="text-2xl font-bold uppercase">{settings?.shopName || 'MY SHOP'}</h2>
-            {settings?.shopAddress && <p className="whitespace-pre-line">{settings.shopAddress}</p>}
-            {settings?.phone && <p>Tel : {settings.phone}</p>}
+        <div id="printable-invoice" className="flex-1 overflow-auto flex flex-col p-8 font-sans text-black print:p-6 bg-white">
+          <div className="text-center mb-4 print:pt-4">
+            <div className="text-xl font-bold uppercase">NASA FRESH MART <span className="text-base font-normal">(001634825-A)</span></div>
+            <p className="mt-1">NO 8G, JLN 3/2 PANDAN JAYA, 55100 KUALA LUMPUR.</p>
+            <p>Tel : 019-300 1451</p>
           </div>
           
           <div className="border-t border-b border-black py-2 mb-4 text-center font-bold text-lg uppercase tracking-wider">
@@ -245,7 +246,7 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
             </div>
           </div>
           
-          <table className="w-full text-left border-y border-black mb-8 text-xs">
+          <table className="w-full text-left border-y border-black mb-4 text-xs">
             <thead>
               <tr className="border-b border-black uppercase">
                 <th className="py-2 w-[15%] font-bold">Code</th>
@@ -262,7 +263,7 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
                   <td className="py-1 font-medium">{item.product?.code || ''}</td>
                   <td className="py-1 font-medium">{item.product?.name || ''}</td>
                   <td className="py-1 text-right font-medium">{item.quantity}</td>
-                  <td className="py-1 text-center font-medium">{item.unit?.name || item.unit || 'Nos'}</td>
+                  <td className="py-1 text-center font-medium">{item.product?.unit?.name || item.product?.unit?.shortCode || 'Nos'}</td>
                   <td className="py-1 text-right font-medium">{Number(item.rate || 0).toFixed(2)}</td>
                   <td className="py-1 text-right font-medium">{Number(item.amount || item.total || 0).toFixed(2)}</td>
                 </tr>
@@ -270,7 +271,9 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
             </tbody>
           </table>
           
-          <div className="mt-auto">
+          <div className="flex-1"></div>
+
+          <div>
             <p className="uppercase mb-4">RINGGIT MALAYSIA {numberToWords(grandTotal)} ONLY</p>
             
             <div className="flex justify-between items-start border-t border-black pt-2">

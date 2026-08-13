@@ -7,7 +7,7 @@ import App from './App.tsx'
 const queryClient = new QueryClient();
 
 // Prevent mouse scroll from changing number input values globally
-document.addEventListener("wheel", function(event) {
+document.addEventListener("wheel", function() {
   if (document.activeElement instanceof HTMLInputElement && document.activeElement.type === "number") {
       document.activeElement.blur();
   }

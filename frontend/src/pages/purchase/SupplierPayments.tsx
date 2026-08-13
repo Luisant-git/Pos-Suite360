@@ -215,22 +215,22 @@ const SupplierPayments = () => {
                     onChange={(val: any) => field.onChange(val?.value || 0)}
                     className="text-[13px] font-medium"
                     styles={{
-                      control: (base) => ({
+                      control: (base: any) => ({
                         ...base,
                         minHeight: '38px',
                         borderColor: '#CBD5E1',
                         borderRadius: '0.25rem',
                       }),
-                      singleValue: (base) => ({
+                      singleValue: (base: any) => ({
                         ...base,
                         color: '#000000', // Dark black as requested
                         fontWeight: 'bold',
                       }),
-                      input: (base) => ({
+                      input: (base: any) => ({
                         ...base,
                         color: '#000000',
                       }),
-                      option: (base, state) => ({
+                      option: (base: any, state: any) => ({
                         ...base,
                         color: state.isSelected ? '#ffffff' : '#000000',
                         backgroundColor: state.isSelected ? '#3B82F6' : base.backgroundColor,

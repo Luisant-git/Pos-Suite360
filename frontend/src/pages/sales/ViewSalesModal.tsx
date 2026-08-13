@@ -201,14 +201,14 @@ export default function ViewSalesModal({ saleId, onClose }: Props) {
                     <span>Subtotal</span>
                     <span className="font-bold">{formatCurrency(sale.subtotal)}</span>
                   </div>
-                  <div className="flex justify-between items-center text-red-500">
+                  <div className="flex justify-between items-center text-red-500 border-b border-gray-100 pb-3">
                     <span>Discount</span>
                     <span className="font-bold">- {formatCurrency(sale.discount)}</span>
                   </div>
-                  <div className="flex justify-between items-center text-gray-600 border-b border-gray-100 pb-3">
+                  {/* <div className="flex justify-between items-center text-gray-600">
                     <span>Tax</span>
                     <span className="font-bold">{formatCurrency(sale.tax || 0)}</span>
-                  </div>
+                  </div> */}
                   <div className="flex justify-between items-center pt-2">
                     <span className="text-[16px] font-black text-gray-900">GRAND TOTAL</span>
                     <span className="text-[20px] font-black text-[#2563EB]">{formatCurrency(sale.grandTotal)}</span>

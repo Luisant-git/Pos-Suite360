@@ -123,14 +123,24 @@ export class SupplierPaymentsService {
     });
     let totalPaid = Number(payments._sum.amount) || 0;
 
-    const purchaseReturns = await this.prisma.purchaseReturn.aggregate({
+    const purchaseReturns = await this.prisma.purchaseReturn.findMany({
       where: { supplierId },
-      _sum: { totalAmount: true },
     });
-    const totalReturns = Number(purchaseReturns._sum.totalAmount) || 0;
+    
+    const mappedReturns: Record<number, number> = {};
+    let unmappedReturns = 0;
+    
+    purchaseReturns.forEach(pr => {
+      const amt = Number(pr.totalAmount) || 0;
+      if (pr.purchaseId) {
+        mappedReturns[pr.purchaseId] = (mappedReturns[pr.purchaseId] || 0) + amt;
+      } else {
+        unmappedReturns += amt;
+      }
+    });
 
-    // Both payments and returns reduce what we owe
-    totalPaid += totalReturns;
+    // Both payments and unmapped returns reduce what we owe globally
+    totalPaid += unmappedReturns;
 
     // 2. Fetch Opening Balance & Purchases (in chronological order)
     const openingBalance = Number(supplier.openingBalance) || 0;
@@ -145,6 +155,7 @@ export class SupplierPaymentsService {
         entryNo: 'Opening Balance',
         date: supplier.createdAt,
         total: openingBalance,
+        returned: 0,
         received: 0,
         pending: openingBalance
       });
@@ -159,31 +170,43 @@ export class SupplierPaymentsService {
     });
 
     for (const purchase of purchases) {
+      const billTotal = Number(purchase.grandTotal) || 0;
+      const returnedAmt = mappedReturns[purchase.id] || 0;
+      
       bills.push({
         entryNo: purchase.invoiceNo,
         date: purchase.date,
-        total: Number(purchase.grandTotal) || 0,
+        total: billTotal,
+        returned: returnedAmt,
         received: 0,
-        pending: Number(purchase.grandTotal) || 0
+        pending: billTotal - returnedAmt
       });
     }
 
     // 3. Apply FIFO
     for (const bill of bills) {
-      if (totalPaid >= bill.total) {
+      const netBillTotal = bill.total - (bill.returned || 0);
+      
+      if (netBillTotal <= 0) {
+         bill.received = 0;
+         bill.pending = 0;
+         continue;
+      }
+
+      if (totalPaid >= netBillTotal) {
         // Fully paid
-        bill.received = bill.total;
+        bill.received = netBillTotal;
         bill.pending = 0;
-        totalPaid -= bill.total;
-      } else if (totalPaid > 0 && totalPaid < bill.total) {
+        totalPaid -= netBillTotal;
+      } else if (totalPaid > 0 && totalPaid < netBillTotal) {
         // Partially paid
         bill.received = totalPaid;
-        bill.pending = bill.total - totalPaid;
+        bill.pending = netBillTotal - totalPaid;
         totalPaid = 0;
       } else {
         // Completely unpaid
         bill.received = 0;
-        bill.pending = bill.total;
+        bill.pending = netBillTotal;
       }
     }
 

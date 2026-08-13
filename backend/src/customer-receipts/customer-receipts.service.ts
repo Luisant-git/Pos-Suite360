@@ -122,14 +122,24 @@ export class CustomerReceiptsService {
     });
     let totalCollected = Number(receipts._sum.amount) || 0;
 
-    const salesReturns = await this.prisma.salesReturn.aggregate({
+    const salesReturns = await this.prisma.salesReturn.findMany({
       where: { customerId },
-      _sum: { totalAmount: true },
     });
-    const totalReturns = Number(salesReturns._sum.totalAmount) || 0;
+    
+    const mappedReturns: Record<number, number> = {};
+    let unmappedReturns = 0;
+    
+    salesReturns.forEach(sr => {
+      const amt = Number(sr.totalAmount) || 0;
+      if (sr.saleId) {
+        mappedReturns[sr.saleId] = (mappedReturns[sr.saleId] || 0) + amt;
+      } else {
+        unmappedReturns += amt;
+      }
+    });
 
-    // Both collected payments and returns reduce what the customer owes us
-    totalCollected += totalReturns;
+    // Both collected payments and unmapped returns reduce what the customer owes us globally
+    totalCollected += unmappedReturns;
 
     // 2. Fetch Opening Balance & Sales (in chronological order)
     const openingBalance = Number(customer.openingBalance) || 0;
@@ -144,6 +154,7 @@ export class CustomerReceiptsService {
         entryNo: 'Opening Balance',
         date: customer.createdAt, // Or a specific OB date if available
         total: openingBalance,
+        returned: 0,
         received: 0,
         pending: openingBalance
       });
@@ -158,31 +169,43 @@ export class CustomerReceiptsService {
     });
 
     for (const sale of sales) {
+      const billTotal = Number(sale.grandTotal) || 0;
+      const returnedAmt = mappedReturns[sale.id] || 0;
+      
       bills.push({
         entryNo: sale.invoiceNo,
         date: sale.date,
-        total: Number(sale.grandTotal) || 0,
+        total: billTotal,
+        returned: returnedAmt,
         received: 0,
-        pending: Number(sale.grandTotal) || 0
+        pending: billTotal - returnedAmt
       });
     }
 
     // 3. Apply FIFO
     for (const bill of bills) {
-      if (totalCollected >= bill.total) {
+      const netBillTotal = bill.total - (bill.returned || 0);
+      
+      if (netBillTotal <= 0) {
+         bill.received = 0;
+         bill.pending = 0;
+         continue;
+      }
+
+      if (totalCollected >= netBillTotal) {
         // Fully paid
-        bill.received = bill.total;
+        bill.received = netBillTotal;
         bill.pending = 0;
-        totalCollected -= bill.total;
-      } else if (totalCollected > 0 && totalCollected < bill.total) {
+        totalCollected -= netBillTotal;
+      } else if (totalCollected > 0 && totalCollected < netBillTotal) {
         // Partially paid
         bill.received = totalCollected;
-        bill.pending = bill.total - totalCollected;
+        bill.pending = netBillTotal - totalCollected;
         totalCollected = 0;
       } else {
         // Completely unpaid
         bill.received = 0;
-        bill.pending = bill.total;
+        bill.pending = netBillTotal;
       }
     }
 

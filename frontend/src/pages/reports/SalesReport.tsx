@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Download, FileText, Search, Calendar, FileDigit, Users, CreditCard, RotateCcw, Plus, Printer, MessageCircle } from 'lucide-react';
+import { Download, FileText, Search, Calendar, FileDigit, Users, CreditCard, RotateCcw, Plus, Minus, Printer, MessageCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useSettings } from '../../contexts/SettingsContext';
 import api from '../../services/api';
@@ -19,6 +19,7 @@ const SalesReport = () => {
   const [quickSearch, setQuickSearch] = useState('');
   const [selectedSale, setSelectedSale] = useState<any>(null);
   const [isPrintModalOpen, setIsPrintModalOpen] = useState(false);
+  const [expandedRowId, setExpandedRowId] = useState<number | null>(null);
 
   // Fetch Master Data for filters
   const { data: customers = [] } = useQuery({ 
@@ -48,12 +49,16 @@ const SalesReport = () => {
         id: s.id,
         invoiceNo: s.invoiceNo,
         date: new Date(s.date).toISOString().split('T')[0],
-        customerName: s.customer?.name || '-',
-        paymentMode: s.paymentMode?.name || '-',
-        netPayable: formatCurrency(s.grandTotal),
+        customerName: s.customer?.name || 'Walk-in',
+        paymentMode: s.paymentMode?.name || 'Cash',
+        netPayable: formatCurrency(s.grandTotal || 0),
+        rawTotalAmount: s.grandTotal || 0,
+        items: s.items || [],
       }));
     },
   });
+
+  const totalSalesAmount = sales.reduce((sum: number, sale: any) => sum + sale.rawTotalAmount, 0);
 
   return (
     <div className="bg-[#F8FAFC] min-h-[calc(100vh-100px)] p-4">
@@ -198,22 +203,33 @@ const SalesReport = () => {
           <table className="w-full text-left text-[12px] whitespace-nowrap">
             <thead>
               <tr className="bg-[#0F172A] text-white font-bold">
+                <th className="px-4 py-3 border-r border-[#1E293B] w-10"></th>
                 <th className="px-4 py-3 border-r border-[#1E293B]">Invoice No</th>
                 <th className="px-4 py-3 border-r border-[#1E293B] text-center">Date</th>
                 <th className="px-4 py-3 border-r border-[#1E293B]">Customer Name</th>
                 <th className="px-4 py-3 border-r border-[#1E293B] text-center">Payment Mode</th>
-                <th className="px-4 py-3 border-r border-[#1E293B] text-center">Net Payable Amount</th>
+                <th className="px-4 py-3 border-r border-[#1E293B] text-center">Total Amount</th>
                 <th className="px-4 py-3 text-center w-40">Action</th>
               </tr>
             </thead>
             <tbody>
               {isLoading ? (
-                <tr><td colSpan={6} className="text-center p-6 text-gray-500">Loading report data...</td></tr>
+                <tr><td colSpan={7} className="text-center p-6 text-gray-500">Loading report data...</td></tr>
               ) : sales.length === 0 ? (
-                <tr><td colSpan={6} className="text-center p-6 text-gray-500">No sales records found.</td></tr>
+                <tr><td colSpan={7} className="text-center p-6 text-gray-500">No sales records found.</td></tr>
               ) : (
                 sales.map((s: any, index: number) => (
-                  <tr key={s.id} className={`border-b border-[#E2E8F0] ${index % 2 === 0 ? 'bg-white' : 'bg-[#F8FAFC]'} hover:bg-[#EFF6FF]`}>
+                  <React.Fragment key={s.id}>
+                    <tr className={`border-b border-[#E2E8F0] ${index % 2 === 0 ? 'bg-white' : 'bg-[#F8FAFC]'} hover:bg-[#EFF6FF]`}>
+                      <td className="px-4 py-3 border-r border-[#E2E8F0] text-center">
+                        <button 
+                          type="button" 
+                          onClick={() => setExpandedRowId(expandedRowId === s.id ? null : s.id)}
+                          className="bg-[#E2E8F0] hover:bg-[#CBD5E1] text-[#334155] p-1 rounded transition-colors"
+                        >
+                          {expandedRowId === s.id ? <Minus size={14} /> : <Plus size={14} />}
+                        </button>
+                      </td>
                     <td className="px-4 py-3 border-r border-[#E2E8F0] font-bold text-[#3B82F6] cursor-pointer hover:underline">{s.invoiceNo}</td>
                     <td className="px-4 py-3 border-r border-[#E2E8F0] text-center text-[#475569]">{s.date}</td>
                     <td className="px-4 py-3 border-r border-[#E2E8F0] font-medium text-[#334155]">{s.customerName}</td>
@@ -246,9 +262,57 @@ const SalesReport = () => {
                       </div>
                     </td>
                   </tr>
-                ))
-              )}
+                  
+                  {/* Expanded Row for Items */}
+                  {expandedRowId === s.id && (
+                    <tr className="bg-[#F1F5F9] border-b border-[#E2E8F0]">
+                      <td colSpan={7} className="p-4">
+                        <div className="bg-white border border-[#CBD5E1] rounded-lg overflow-hidden shadow-sm">
+                          <table className="w-full text-[11px] text-left">
+                            <thead className="bg-[#F8FAFC] border-b border-[#CBD5E1]">
+                              <tr>
+                                <th className="px-3 py-2 font-bold text-[#475569]">Item Name</th>
+                                <th className="px-3 py-2 font-bold text-[#475569] text-center">Qty</th>
+                                <th className="px-3 py-2 font-bold text-[#475569] text-right">Rate</th>
+                                <th className="px-3 py-2 font-bold text-[#475569] text-right">Discount</th>
+                                <th className="px-3 py-2 font-bold text-[#475569] text-right">Tax</th>
+                                <th className="px-3 py-2 font-bold text-[#475569] text-right">Total</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {s.items?.length > 0 ? s.items.map((item: any, i: number) => (
+                                <tr key={i} className="border-b border-[#F1F5F9] last:border-0 hover:bg-[#F8FAFC] font-bold">
+                                  <td className="px-3 py-2 text-[#1E293B]">{item.product?.name || 'Unknown Product'}</td>
+                                  <td className="px-3 py-2 text-center text-[#334155]">{item.quantity}</td>
+                                  <td className="px-3 py-2 text-right text-[#334155]">{formatCurrency(item.rate)}</td>
+                                  <td className="px-3 py-2 text-right text-[#EF4444]">{formatCurrency(item.discount)}</td>
+                                  <td className="px-3 py-2 text-right text-[#F59E0B]">{formatCurrency(item.tax)}</td>
+                                  <td className="px-3 py-2 text-right text-[#1E293B]">{formatCurrency(item.amount)}</td>
+                                </tr>
+                              )) : (
+                                <tr>
+                                  <td colSpan={6} className="px-3 py-4 text-center text-gray-500 italic">No items found for this invoice.</td>
+                                </tr>
+                              )}
+                            </tbody>
+                          </table>
+                        </div>
+                      </td>
+                    </tr>
+                  )}
+                </React.Fragment>
+              ))
+            )}
             </tbody>
+            {sales.length > 0 && (
+              <tfoot className="bg-[#0F172A] text-white font-bold">
+                <tr>
+                  <td colSpan={5} className="px-4 py-3 text-right border-r border-[#1E293B]">Grand Total:</td>
+                  <td className="px-4 py-3 text-center border-r border-[#1E293B] text-[#10B981]">{formatCurrency(totalSalesAmount)}</td>
+                  <td className="px-4 py-3"></td>
+                </tr>
+              </tfoot>
+            )}
           </table>
         </div>
       </div>

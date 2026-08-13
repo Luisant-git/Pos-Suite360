@@ -115,37 +115,14 @@ const SupplierPayments = () => {
   });
 
   const onSubmit = (data: PaymentFormValues) => {
-    let remainingAmount = Number(data.amount);
-    let cleared = [];
-    
-    // Sort bills by date to clear older ones first (same logic as backend)
-    const sortedBills = [...unpaidBills].filter(b => b.pending > 0).sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-    
-    for (const bill of sortedBills) {
-      if (remainingAmount <= 0) break;
-      const payingNow = Math.min(bill.pending, remainingAmount);
-      remainingAmount -= payingNow;
-      if (payingNow === bill.pending) {
-        cleared.push(bill.entryNo);
-      }
-    }
-
-    if (cleared.length > 0) {
-      const clearedText = `[Cleared: ${cleared.join(', ')}]`;
-      data.remarks = data.remarks ? `${data.remarks} ${clearedText}` : clearedText;
-    }
-
     createMutation.mutate(data);
   };
 
   // Filter history
-  const [filterCleared, setFilterCleared] = useState('');
-  
   const filteredHistory = payments.filter((p: any) => {
     if (filterSupplier && p.supplierId.toString() !== filterSupplier) return false;
     if (filterFromDate && new Date(p.date) < new Date(filterFromDate)) return false;
     if (filterToDate && new Date(p.date) > new Date(filterToDate)) return false;
-    if (filterCleared && !p.remarks?.toLowerCase().includes(filterCleared.toLowerCase())) return false;
     return true;
   });
 
@@ -281,33 +258,13 @@ const SupplierPayments = () => {
                   </div>
                   
                   <div className="p-4 flex flex-col gap-3">
-                    <div className="flex justify-between items-center text-[13px]">
-                      <span className="text-[#64748B] font-medium">Total Amount Bal</span>
-                      <div className="flex items-center gap-2">
-                        {(currentBalance + totalPurchaseReturns) < 0 && (
-                           <span className="text-[10px] font-bold bg-[#ECFDF5] text-[#10B981] px-1.5 py-0.5 rounded border border-[#A7F3D0]">ADVANCE</span>
-                        )}
-                        <span className="font-bold text-[#334155]">{formatCurrency(Math.abs(currentBalance + totalPurchaseReturns))}</span>
-                      </div>
-                    </div>
-                    
-                    <div className="flex justify-between items-center text-[13px]">
-                      <span className="text-[#64748B] font-medium">Purchase Return</span>
-                      <span className="font-bold text-[#10B981]">
-                         - {formatCurrency(totalPurchaseReturns)}
-                      </span>
-                    </div>
-
-                    <div className="border-t border-dashed border-[#CBD5E1] my-1"></div>
+                    {/* Removed Total Amount Bal and Purchase Return summaries as per user request */}
                     
                     <div className="flex justify-between items-center">
                       <span className="text-[14px] font-bold text-[#1E293B]">Over All Outstanding Balance</span>
                       <div className="flex items-center gap-2">
-                        {currentBalance < 0 && (
-                          <span className="text-[10px] font-bold bg-[#ECFDF5] text-[#10B981] px-2 py-0.5 rounded-full border border-[#A7F3D0]">SUPPLIER OWES YOU</span>
-                        )}
-                        <span className={`text-[18px] font-bold ${currentBalance < 0 ? 'text-[#10B981]' : 'text-[#E11D48]'}`}>
-                          {formatCurrency(Math.abs(currentBalance))}
+                        <span className="text-[18px] font-bold text-[#E11D48]">
+                          {formatCurrency(currentBalance)}
                         </span>
                       </div>
                     </div>
@@ -340,6 +297,7 @@ const SupplierPayments = () => {
                             <th className="px-3 py-2 font-bold text-[#334155]">Entry / Inv No</th>
                             <th className="px-3 py-2 font-bold text-[#334155]">Bill Date</th>
                             <th className="px-3 py-2 font-bold text-[#334155] text-right">Bill Total</th>
+                            <th className="px-3 py-2 font-bold text-[#10B981] text-right">Pur. Returns</th>
                             <th className="px-3 py-2 font-bold text-[#334155] text-right">Paid Amount</th>
                             <th className="px-3 py-2 font-bold text-[#E11D48] text-right">Pending Balance</th>
                             <th className="px-3 py-2 font-bold text-[#3B82F6] text-right">Paying Now</th>
@@ -362,10 +320,10 @@ const SupplierPayments = () => {
                                 <tr key={idx} className={`border-b border-[#E2E8F0] hover:bg-[#F8FAFC] ${isCleared ? 'bg-[#ECFDF5]' : ''}`}>
                                   <td className="px-3 py-2 font-bold text-[#1E293B]">
                                     {bill.entryNo}
-                                    {isCleared && <span className="ml-2 bg-[#059669] text-white text-[9px] px-1.5 py-0.5 rounded">CLEARED</span>}
                                   </td>
                                   <td className="px-3 py-2 text-[#475569]">{new Date(bill.date).toISOString().split('T')[0]}</td>
                                   <td className="px-3 py-2 text-right text-[#475569]">{formatCurrency(bill.total)}</td>
+                                  <td className="px-3 py-2 text-right text-[#10B981]">{formatCurrency(bill.returned || 0)}</td>
                                   <td className="px-3 py-2 text-right text-[#10B981]">{formatCurrency(bill.received)}</td>
                                   <td className="px-3 py-2 text-right font-bold text-[#E11D48]">{formatCurrency(bill.pending)}</td>
                                   <td className="px-3 py-2 text-right font-bold text-[#3B82F6]">{formatCurrency(payingNow)}</td>
@@ -374,7 +332,7 @@ const SupplierPayments = () => {
                               );
                             }) : (
                               <tr>
-                                <td colSpan={7} className="px-3 py-4 text-center text-[#64748B] italic">No {billFilter.toLowerCase()} bills found.</td>
+                                <td colSpan={8} className="px-3 py-4 text-center text-[#64748B] italic">No {billFilter.toLowerCase()} bills found.</td>
                               </tr>
                             );
                           })()}
@@ -474,7 +432,7 @@ const SupplierPayments = () => {
             </div>
           </div>
 
-          <div className="p-3 border-b border-[#E2E8F0] grid grid-cols-1 md:grid-cols-4 gap-2">
+          <div className="p-3 border-b border-[#E2E8F0] grid grid-cols-1 md:grid-cols-3 gap-2">
             <select
               value={filterSupplier}
               onChange={(e) => setFilterSupplier(e.target.value)}
@@ -491,28 +449,26 @@ const SupplierPayments = () => {
               onChange={(e) => setFilterFromDate(e.target.value)}
               className="w-full px-2 py-1.5 border border-[#CBD5E1] rounded text-[12px] outline-none focus:border-[#3B82F6]"
             />
-            <input
-              type="date"
-              value={filterToDate}
-              onChange={(e) => setFilterToDate(e.target.value)}
-              className="w-full px-2 py-1.5 border border-[#CBD5E1] rounded text-[12px] outline-none focus:border-[#3B82F6]"
-            />
             <div className="flex gap-2">
               <input
-                type="text"
-                placeholder="Cleared bill #..."
-                value={filterCleared}
-                onChange={(e) => setFilterCleared(e.target.value)}
+                type="date"
+                value={filterToDate}
+                onChange={(e) => setFilterToDate(e.target.value)}
                 className="w-full px-2 py-1.5 border border-[#CBD5E1] rounded text-[12px] outline-none focus:border-[#3B82F6]"
               />
-              <button 
-                type="button" 
-                onClick={handleExportExcel}
-                className="bg-[#1D4ED8] hover:bg-[#1E40AF] text-white px-3 rounded flex items-center justify-center transition-colors" 
-                title="Export Excel"
-              >
-                <Download size={14} />
+              <button type="button" className="bg-[#E11D48] hover:bg-[#BE123C] text-white px-3 rounded flex items-center justify-center transition-colors" title="Apply Filter">
+                <Filter size={14} />
               </button>
+              {isTableExpanded && (
+                <button 
+                  type="button" 
+                  onClick={handleExportExcel}
+                  className="bg-[#1D4ED8] hover:bg-[#1E40AF] text-white px-3 rounded flex items-center justify-center transition-colors" 
+                  title="Export Excel"
+                >
+                  <Download size={14} />
+                </button>
+              )}
             </div>
           </div>
 
@@ -524,15 +480,14 @@ const SupplierPayments = () => {
                   <th className="px-3 py-2 border-r border-[#334155]">Date</th>
                   <th className="px-3 py-2 border-r border-[#334155]">Supplier</th>
                   <th className="px-3 py-2 border-r border-[#334155]">Mode</th>
-                  <th className="px-3 py-2 border-r border-[#334155]">Remarks (Cleared Bills)</th>
                   <th className="px-3 py-2 text-right">Amount Paid</th>
                 </tr>
               </thead>
               <tbody>
                 {historyLoading ? (
-                  <tr><td colSpan={6} className="text-center p-4 text-gray-500">Loading history...</td></tr>
+                  <tr><td colSpan={5} className="text-center p-4 text-gray-500">Loading history...</td></tr>
                 ) : filteredHistory.length === 0 ? (
-                  <tr><td colSpan={6} className="text-center p-4 text-gray-500">No payment records found.</td></tr>
+                  <tr><td colSpan={5} className="text-center p-4 text-gray-500">No payment records found.</td></tr>
                 ) : (
                   filteredHistory.map((p: any, idx: number) => (
                     <tr key={p.id} className={`border-b border-[#E2E8F0] ${idx % 2 === 0 ? 'bg-white' : 'bg-[#F8FAFC]'}`}>
@@ -546,7 +501,6 @@ const SupplierPayments = () => {
                           {p.paymentMode?.name}
                         </span>
                       </td>
-                      <td className="px-3 py-2 border-r border-[#E2E8F0] text-[11px] text-[#64748B] max-w-[200px] truncate" title={p.remarks}>{p.remarks || '-'}</td>
                       <td className="px-3 py-2 text-right font-bold text-[#E11D48]">{formatCurrency(p.amount)}</td>
                     </tr>
                   ))

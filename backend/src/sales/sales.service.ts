@@ -110,6 +110,11 @@ export class SalesService {
       include: {
         customer: true,
         paymentMode: true,
+        items: {
+          include: {
+            product: true
+          }
+        }
       },
       orderBy: [
         { date: 'desc' },

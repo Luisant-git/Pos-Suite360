@@ -49,17 +49,38 @@ const numberToWords = (num: number): string => {
 };
 
 const saleItemSchema = z.object({
-  productId: z.coerce.number().min(1, 'Product is required').or(z.literal(0)),
-  quantity: z.coerce.number().min(1, 'Quantity must be > 0'),
+  productId: z.coerce.number().min(0),
+  quantity: z.coerce.number().min(0),
   stock: z.coerce.number(),
   rate: z.coerce.number().min(0),
   unit: z.string().optional(),
   discPercent: z.coerce.number().min(0).max(100),
   discAmt: z.coerce.number().min(0),
   total: z.coerce.number(),
-}).refine(data => data.quantity <= data.stock, {
-  message: "Qty > Stock",
-  path: ["quantity"]
+}).superRefine((data, ctx) => {
+  if (data.productId > 0) {
+    if (data.quantity <= 0) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Quantity must be > 0",
+        path: ["quantity"]
+      });
+    }
+    if (data.rate < 0.01) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Rate is required",
+        path: ["rate"]
+      });
+    }
+    if (data.quantity > data.stock) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Qty > Stock",
+        path: ["quantity"]
+      });
+    }
+  }
 });
 
 const saleSchema = z.object({
@@ -130,7 +151,6 @@ const POS = () => {
   const items = watch('items');
   const watchTotalDiscount = watch('totalDiscount');
   const watchRoundOff = watch('roundOff');
-  const watchRateType = watch('rateType');
   const selectedCustomerId = watch('customerId');
 
   const selectedCustomer = customers.find((c: any) => c.id === Number(selectedCustomerId));
@@ -169,25 +189,8 @@ const POS = () => {
     if (product) {
       setValue(`items.${index}.stock`, product.currentStock || 0);
       setValue(`items.${index}.unit`, product.unit?.shortCode || product.unit?.name || 'Nos');
-      
-      try {
-        const response = await api.get(`/purchases/latest-rate/${productId}`);
-        const latestRate = response.data?.rate;
-        
-        // Assign rate based on rate type
-        if (watchRateType === 'Wholesale Rate') {
-          setValue(`items.${index}.rate`, latestRate || product.wholesaleRate || 0);
-        } else {
-          // User requested to fetch Purchase Rate automatically here
-          setValue(`items.${index}.rate`, latestRate || product.purchaseRate || 0);
-        }
-      } catch (e) {
-        if (watchRateType === 'Wholesale Rate') {
-          setValue(`items.${index}.rate`, product.wholesaleRate || 0);
-        } else {
-          setValue(`items.${index}.rate`, product.purchaseRate || 0);
-        }
-      }
+      // Do not auto-fetch rate; leave empty for manual entry
+      setValue(`items.${index}.rate`, '' as any);
     }
   };
 
@@ -274,7 +277,26 @@ const POS = () => {
   };
 
   const onError = (errors: any) => {
-    toast.error('Validation failed. Please check quantity vs stock and other fields.');
+    let errorMessage = 'Validation failed. Please ensure all items have a Rate and Quantity > 0.';
+    
+    if (errors.items && Array.isArray(errors.items)) {
+      for (const item of errors.items) {
+        if (item?.quantity?.message === 'Qty > Stock') {
+          errorMessage = 'Validation failed: Quantity exceeds available stock.';
+          break;
+        }
+        if (item?.quantity?.message === 'Quantity must be > 0') {
+          errorMessage = 'Validation failed: Quantity must be greater than 0.';
+          break;
+        }
+        if (item?.rate?.message === 'Rate is required') {
+          errorMessage = 'Validation failed: Rate is required for all items.';
+          break;
+        }
+      }
+    }
+    
+    toast.error(errorMessage);
     console.error(errors);
   };
 
@@ -483,9 +505,8 @@ const POS = () => {
                 className="w-full px-2 py-1.5 border border-[#D1D5DB] rounded text-[13px] outline-none focus:border-[#3B82F6] bg-white"
               >
                 <option value="0">Select Payment Mode...</option>
-                {paymentModes.map((m: any) => (
-                  <option key={m.id} value={m.id}>{m.name}</option>
-                ))}
+                <option value="3">Cash</option>
+                <option value="4">Credit</option>
               </select>
             </div>
 
@@ -523,9 +544,9 @@ const POS = () => {
                 <th className="px-2 py-2 text-center text-[12px] font-medium border border-[#334155] w-10">#</th>
                 <th className="px-2 py-2 text-left text-[12px] font-medium border border-[#334155]">Product Code / Name (Searchable Dropdown)</th>
                 <th className="px-2 py-2 text-center text-[12px] font-medium border border-[#334155] w-20">Stock</th>
+                <th className="px-2 py-2 text-center text-[12px] font-medium border border-[#334155] w-20">Unit</th>
                 <th className="px-2 py-2 text-center text-[12px] font-medium border border-[#334155] w-24">Qty</th>
                 <th className="px-2 py-2 text-center text-[12px] font-medium border border-[#334155] w-28">Rate</th>
-                <th className="px-2 py-2 text-center text-[12px] font-medium border border-[#334155] w-20">Unit</th>
                 <th className="px-2 py-2 text-center text-[12px] font-medium border border-[#334155] w-20">Disc %</th>
                 <th className="px-2 py-2 text-center text-[12px] font-medium border border-[#334155] w-24">Disc Amt</th>
                 <th className="px-2 py-2 text-center text-[12px] font-medium border border-[#334155] w-32">Total</th>
@@ -555,6 +576,9 @@ const POS = () => {
                     </span>
                   </td>
                   <td className="px-2 py-1 border-r border-[#E5E7EB]">
+                    <input {...register(`items.${index}.unit`)} type="text" readOnly className="w-full px-1 py-1 bg-transparent text-[13px] outline-none text-center" />
+                  </td>
+                  <td className="px-2 py-1 border-r border-[#E5E7EB]">
                     <input {...register(`items.${index}.quantity`)} type="number" min="1" placeholder="0" className={`w-full px-2 py-1 border rounded text-[13px] outline-none text-center ${watch(`items.${index}.quantity`) > watch(`items.${index}.stock`) ? 'border-red-500 focus:border-red-500 bg-red-100 text-red-700 font-bold' : 'border-[#D1D5DB] focus:border-[#3B82F6]'}`} />
                   </td>
                   <td className="px-2 py-1 border-r border-[#E5E7EB]">
@@ -580,9 +604,6 @@ const POS = () => {
                         register(`items.${index}.rate`).onBlur(e);
                       }}
                     />
-                  </td>
-                  <td className="px-2 py-1 border-r border-[#E5E7EB]">
-                    <input {...register(`items.${index}.unit`)} type="text" readOnly className="w-full px-1 py-1 bg-transparent text-[13px] outline-none text-center" />
                   </td>
                   <td className="px-2 py-1 border-r border-[#E5E7EB]">
                     <input 
@@ -830,11 +851,11 @@ const POS = () => {
       )}
 
       {/* Printable Receipt */}
-      <div id="printable-receipt" className="hidden print:flex flex-col bg-white text-black font-sans text-[12px] w-full max-w-[800px] mx-auto p-8 print:h-[250mm] box-border">
-        <div className="text-center mb-4">
-          <h2 className="text-2xl font-bold uppercase">{settings?.shopName || 'MY SHOP'}</h2>
-          {settings?.shopAddress && <p className="whitespace-pre-line">{settings.shopAddress}</p>}
-          {settings?.phone && <p>Tel : {settings.phone}</p>}
+      <div id="printable-receipt" className="hidden print:flex flex-col bg-white text-black font-sans text-[12px] w-full max-w-[800px] mx-auto p-8 print:h-[257mm] box-border">
+        <div className="text-center mb-4 print:pt-4">
+          <div className="text-xl font-bold uppercase">NASA FRESH MART <span className="text-base font-normal">(001634825-A)</span></div>
+          <p className="mt-1">NO 8G, JLN 3/2 PANDAN JAYA, 55100 KUALA LUMPUR.</p>
+          <p>Tel : 019-300 1451</p>
         </div>
         
         <div className="border-t border-b border-black py-2 mb-4 text-center font-bold text-lg uppercase tracking-wider">
@@ -874,7 +895,7 @@ const POS = () => {
           </div>
         </div>
         
-        <table className="w-full text-left border-y border-black mb-8">
+        <table className="w-full text-left border-y border-black mb-4">
           <thead>
             <tr className="border-b border-black text-xs uppercase">
               <th className="py-2 w-[15%]">Code</th>
@@ -902,7 +923,9 @@ const POS = () => {
           </tbody>
         </table>
         
-        <div className="mt-auto">
+        <div className="flex-1"></div>
+
+        <div>
           <p className="uppercase mb-4">RINGGIT MALAYSIA {numberToWords(watch('netAmount'))} ONLY</p>
           
           <div className="flex justify-between items-start border-t border-black pt-2">

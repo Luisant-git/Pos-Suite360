@@ -132,6 +132,17 @@ model PaymentMode {
   updatedAt   DateTime   @updatedAt
 }
 
+model PaymentType {
+  id          Int        @id @default(autoincrement())
+  name        String     @unique // e.g., Net Banking, Cheque
+  description String?
+  supplierPayments SupplierPayment[]
+  customerReceipts CustomerReceipt[]
+  
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+}
+
 model ExpenseCategory {
   id        Int       @id @default(autoincrement())
   name      String    @unique
@@ -376,8 +387,11 @@ model SupplierPayment {
   
   amount          Decimal
   
-  paymentModeId   Int
-  paymentMode     PaymentMode @relation(fields: [paymentModeId], references: [id])
+  paymentModeId   Int?
+  paymentMode     PaymentMode? @relation(fields: [paymentModeId], references: [id])
+  
+  paymentTypeId   Int?
+  paymentType     PaymentType? @relation(fields: [paymentTypeId], references: [id])
   
   reference       String?
   remarks         String?
@@ -399,8 +413,11 @@ model CustomerReceipt {
   
   amount          Decimal
   
-  paymentModeId   Int
-  paymentMode     PaymentMode @relation(fields: [paymentModeId], references: [id])
+  paymentModeId   Int?
+  paymentMode     PaymentMode? @relation(fields: [paymentModeId], references: [id])
+  
+  paymentTypeId   Int?
+  paymentType     PaymentType? @relation(fields: [paymentTypeId], references: [id])
   
   reference       String?
   remarks         String?

@@ -8,6 +8,7 @@ import { SuppliersModule } from './suppliers/suppliers.module';
 import { CustomersModule } from './customers/customers.module';
 import { UnitsModule } from './units/units.module';
 import { PaymentModesModule } from './payment-modes/payment-modes.module';
+import { PaymentTypesModule } from './payment-types/payment-types.module';
 import { ExpenseCategoriesModule } from './expense-categories/expense-categories.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { UsersModule } from './users/users.module';
@@ -40,6 +41,7 @@ import { join } from 'path';
     CustomersModule, 
     UnitsModule, 
     PaymentModesModule, 
+    PaymentTypesModule,
     ExpenseCategoriesModule, 
     PrismaModule, 
     UsersModule, 

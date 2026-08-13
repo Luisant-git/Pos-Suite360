@@ -7,7 +7,7 @@ export class SupplierPaymentsService {
 
   async create(data: any, userId: number) {
     // Basic validation
-    if (!data.paymentNo || !data.supplierId || !data.amount || !data.paymentModeId) {
+    if (!data.paymentNo || !data.supplierId || !data.amount || !data.paymentTypeId) {
       throw new BadRequestException('Missing required fields');
     }
 
@@ -18,14 +18,14 @@ export class SupplierPaymentsService {
           date: new Date(data.date || new Date()),
           supplierId: Number(data.supplierId),
           amount: Number(data.amount),
-          paymentModeId: Number(data.paymentModeId),
+          paymentTypeId: Number(data.paymentTypeId),
           reference: data.reference,
           remarks: data.remarks,
           userId: userId,
         },
         include: {
           supplier: true,
-          paymentMode: true,
+          paymentType: true,
         },
       });
     } catch (error) {
@@ -42,6 +42,7 @@ export class SupplierPaymentsService {
       ],
       include: {
         supplier: true,
+        paymentType: true,
         paymentMode: true,
       },
     });
@@ -56,9 +57,12 @@ export class SupplierPaymentsService {
       throw new BadRequestException('Supplier not found');
     }
 
-    // Sum of all purchases
+    // Sum of all CREDIT purchases
     const purchases = await this.prisma.purchase.aggregate({
-      where: { supplierId },
+      where: { 
+        supplierId,
+        paymentModeId: 4 // Hardcoded Credit ID
+      },
       _sum: { grandTotal: true },
     });
 
@@ -165,7 +169,10 @@ export class SupplierPaymentsService {
     }
 
     const purchases = await this.prisma.purchase.findMany({
-      where: { supplierId },
+      where: { 
+        supplierId,
+        paymentModeId: 4 // Hardcoded Credit ID
+      },
       orderBy: { date: 'asc' },
     });
 
@@ -185,7 +192,8 @@ export class SupplierPaymentsService {
 
     // 3. Apply FIFO
     for (const bill of bills) {
-      const netBillTotal = bill.total - (bill.returned || 0);
+      const netBillTotal = Number((bill.total - (bill.returned || 0)).toFixed(2));
+      const currentTotalPaid = Number(totalPaid.toFixed(2));
       
       if (netBillTotal <= 0) {
          bill.received = 0;
@@ -193,15 +201,15 @@ export class SupplierPaymentsService {
          continue;
       }
 
-      if (totalPaid >= netBillTotal) {
+      if (currentTotalPaid >= netBillTotal) {
         // Fully paid
         bill.received = netBillTotal;
         bill.pending = 0;
         totalPaid -= netBillTotal;
-      } else if (totalPaid > 0 && totalPaid < netBillTotal) {
+      } else if (currentTotalPaid > 0 && currentTotalPaid < netBillTotal) {
         // Partially paid
-        bill.received = totalPaid;
-        bill.pending = netBillTotal - totalPaid;
+        bill.received = currentTotalPaid;
+        bill.pending = Number((netBillTotal - currentTotalPaid).toFixed(2));
         totalPaid = 0;
       } else {
         // Completely unpaid

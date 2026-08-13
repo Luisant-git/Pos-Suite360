@@ -4,6 +4,7 @@ import { Edit, Trash2, CheckCircle, CreditCard, Grid, Search, Maximize, Minimize
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import toast from 'react-hot-toast';
 import api from '../../services/api';
 
 const paymentModeSchema = z.object({
@@ -50,7 +51,11 @@ const PaymentModes = () => {
 
   const deleteMutation = useMutation({
     mutationFn: (id: number) => api.delete(`/payment-modes/${id}`),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['paymentModes'] })
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['paymentModes'] }),
+    onError: (error: any) => {
+      const message = error.response?.data?.message || 'Failed to delete Payment Mode';
+      toast.error(message);
+    }
   });
 
   const onSubmit = (data: PaymentModeFormValues) => {

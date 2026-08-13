@@ -13,6 +13,7 @@ import Suppliers from '../pages/master/Suppliers';
 import Customers from '../pages/master/Customers';
 import Units from '../pages/master/Units';
 import PaymentModes from '../pages/master/PaymentModes';
+import PaymentTypes from '../pages/master/PaymentTypes';
 import ExpenseCategories from '../pages/master/ExpenseCategories';
 import Users from '../pages/master/Users';
 
@@ -73,6 +74,7 @@ const AppRoutes = () => {
         <Route path="/master/customers" element={<Customers />} />
         <Route path="/master/units" element={<Units />} />
         <Route path="/master/payment-modes" element={<PaymentModes />} />
+        <Route path="/master/payment-types" element={<PaymentTypes />} />
         <Route path="/master/expense-categories" element={<ExpenseCategories />} />
         <Route path="/master/users" element={<Users />} />
 

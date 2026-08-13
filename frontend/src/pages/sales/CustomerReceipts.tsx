@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useForm, Controller } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Save, X, Filter, FileText, Maximize2, Minimize2, Download } from 'lucide-react';
+import { Save, X, Filter, FileText, Maximize2, Minimize2, Download, Printer } from 'lucide-react';
 import toast from 'react-hot-toast';
 import Select from 'react-select';
 import * as XLSX from 'xlsx';
@@ -16,7 +16,7 @@ const receiptSchema = z.object({
   date: z.string(),
   customerId: z.coerce.number().min(1, 'Customer is required'),
   amount: z.coerce.number().min(0.01, 'Amount must be greater than 0'),
-  paymentModeId: z.coerce.number().min(1, 'Payment Mode is required'),
+  paymentTypeId: z.coerce.number().min(1, 'Payment Type is required'),
   reference: z.string().optional(),
   remarks: z.string().optional(),
 });
@@ -38,14 +38,14 @@ const CustomerReceipts = () => {
   const [isTableExpanded, setIsTableExpanded] = useState(false);
   const [billFilter, setBillFilter] = useState<'Unpaid' | 'Cleared' | 'All'>('Unpaid');
 
-  const { register, control, handleSubmit, watch, setValue, reset, } = useForm<ReceiptFormValues>({
+  const { register, control, handleSubmit, watch, setValue, reset, formState: { errors } } = useForm<ReceiptFormValues>({
     resolver: zodResolver(receiptSchema) as any,
     defaultValues: {
       receiptNo: 'Generating...',
       date: new Date().toISOString().split('T')[0],
       customerId: 0,
       amount: '' as any,
-      paymentModeId: 0,
+      paymentTypeId: 0,
       reference: '',
       remarks: '',
     }
@@ -56,7 +56,7 @@ const CustomerReceipts = () => {
 
   // Master Data
   const { data: customers = [] } = useQuery({ queryKey: ['customers'], queryFn: async () => (await api.get('/customers')).data });
-  const { data: paymentModes = [] } = useQuery({ queryKey: ['paymentModes'], queryFn: async () => (await api.get('/payment-modes')).data });
+  const { data: paymentTypes = [] } = useQuery({ queryKey: ['paymentTypes'], queryFn: async () => (await api.get('/payment-types')).data });
   const { data: nextReceiptNoData } = useQuery({ queryKey: ['nextReceiptNo'], queryFn: async () => (await api.get('/customer-receipts/next-receipt-no')).data });
   
   // History Data
@@ -127,7 +127,7 @@ const CustomerReceipts = () => {
       'Receipt No': r.receiptNo,
       'Date': new Date(r.date).toISOString().split('T')[0],
       'Customer': r.customer?.name || 'Unknown',
-      'Payment Mode': r.paymentMode?.name || 'Unknown',
+      'Payment Type': r.paymentType?.name || 'Unknown',
       'Amount Collected': r.amount,
       'Reference': r.reference || '',
       'Remarks': r.remarks || ''
@@ -142,7 +142,7 @@ const CustomerReceipts = () => {
   return (
     <div className="bg-[#F8FAFC] min-h-[calc(100vh-64px)] p-4">
       {/* Header */}
-      <div className="flex justify-between items-center mb-4">
+      <div className="flex justify-between items-center mb-4 print:hidden">
         <div>
           <h1 className="text-xl font-bold text-[#059669] flex items-center gap-2">
             <span className="bg-[#059669] text-white p-1 rounded"><FileText size={16} /></span>
@@ -163,17 +163,17 @@ const CustomerReceipts = () => {
       {/* Dark overlay when expanded */}
       {isTableExpanded && <div className="fixed inset-0 bg-black/60 z-40 transition-opacity" onClick={() => setIsTableExpanded(false)} />}
       
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 print:flex print:flex-col print:w-full print:block">
         {/* Left Side - New Entry Form */}
-        <div className={`bg-white border border-[#E2E8F0] shadow-sm rounded-lg overflow-hidden ${isTableExpanded ? 'hidden' : 'block'}`}>
-          <div className="bg-[#F8FAFC] border-b border-[#E2E8F0] px-4 py-3 flex items-center gap-2">
+        <div className={`bg-white border border-[#E2E8F0] shadow-sm rounded-lg overflow-hidden ${isTableExpanded ? 'hidden' : 'block'} print:border-none print:shadow-none print:w-full`}>
+          <div className="bg-[#F8FAFC] border-b border-[#E2E8F0] px-4 py-3 flex items-center gap-2 print:hidden">
             <FileText size={16} className="text-[#334155]" />
             <h2 className="font-bold text-[13px] text-[#1E293B]">NEW RECEIPT ENTRY</h2>
           </div>
           
           <form onSubmit={handleSubmit(onSubmit as any)} className="p-4 flex flex-col gap-4">
             
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-4 print:hidden">
               <div>
                 <label className="block text-[12px] font-bold text-[#334155] mb-1">Receipt No</label>
                 <input
@@ -192,7 +192,7 @@ const CustomerReceipts = () => {
               </div>
             </div>
 
-            <div>
+            <div className="print:hidden">
               <label className="block text-[12px] font-bold text-[#2563EB] mb-1">Customer Name (Searchable) *</label>
               <Controller
                 name="customerId"
@@ -239,7 +239,7 @@ const CustomerReceipts = () => {
 
             {selectedCustomerId > 0 && (
               <div className="flex flex-col gap-3">
-                <div className="border border-[#CBD5E1] rounded-lg overflow-hidden bg-white shadow-sm">
+                <div className="border border-[#CBD5E1] rounded-lg overflow-hidden bg-white shadow-sm print:hidden">
                   <div className="bg-[#F8FAFC] px-4 py-3 border-b border-[#CBD5E1] flex justify-between items-center">
                     <span className="text-[13px] font-bold text-[#334155] flex items-center gap-2">
                       <FileText size={16} className="text-[#64748B]" /> Outstanding Summary
@@ -268,10 +268,17 @@ const CustomerReceipts = () => {
                 </div>
 
                 {showBreakdown && (
-                  <div className="border border-[#10B981] rounded-lg overflow-hidden bg-white">
-                    <div className="bg-[#10B981] text-white px-3 py-2 flex justify-between items-center text-[12px] font-bold flex-wrap gap-2">
-                      <div className="flex items-center gap-2"><FileText size={14} /> BILL-BY-BILL BREAKDOWN</div>
-                      <div className="flex items-center gap-2">
+                  <div className="border border-[#10B981] rounded-lg overflow-hidden bg-white print:border-none print:shadow-none print:m-0 print:w-full">
+                    
+                    {/* Print Only Header for Context */}
+                    <div className="hidden print:block mb-4 text-black border-b border-black pb-2">
+                      <h2 className="text-xl font-bold uppercase">Customer: {customers.find((c: any) => c.id === selectedCustomerId)?.name}</h2>
+                      <p className="text-sm font-bold">Date: {new Date().toLocaleDateString()}</p>
+                    </div>
+
+                    <div className="bg-[#10B981] text-white px-3 py-2 flex justify-between items-center text-[12px] font-bold flex-wrap gap-2 print:text-black print:bg-white print:border-b print:border-black print:px-0">
+                      <div className="flex items-center gap-2"><FileText size={14} className="print:hidden" /> BILL-BY-BILL BREAKDOWN</div>
+                      <div className="flex items-center gap-2 print:hidden">
                         <select 
                           value={billFilter}
                           onChange={(e: any) => setBillFilter(e.target.value)}
@@ -282,11 +289,19 @@ const CustomerReceipts = () => {
                           <option value="All">All Bills</option>
                         </select>
                         <span className="bg-white text-[#10B981] px-2 py-0.5 rounded-full text-[10px]">
-                          {unpaidBills.filter(b => billFilter === 'All' ? true : billFilter === 'Cleared' ? b.pending === 0 : b.pending > 0).length} Bills
+                          {unpaidBills.filter(b => billFilter === 'All' ? true : billFilter === 'Cleared' ? b.pending < 0.01 : b.pending >= 0.01).length} Bills
                         </span>
+                        <button 
+                          type="button" 
+                          onClick={() => window.print()}
+                          className="bg-white text-[#10B981] hover:bg-gray-100 p-1 rounded transition-colors"
+                          title="Print Breakdown"
+                        >
+                          <Printer size={14} />
+                        </button>
                       </div>
                     </div>
-                    <div className="max-h-[250px] overflow-y-auto overflow-x-auto">
+                    <div className="max-h-[250px] overflow-y-auto overflow-x-auto print:max-h-none print:overflow-visible">
                       <table className="w-full text-left text-[12px] whitespace-nowrap">
                         <thead className="bg-[#F8FAFC] border-b border-[#E2E8F0] sticky top-0">
                           <tr>
@@ -296,14 +311,14 @@ const CustomerReceipts = () => {
                             <th className="px-3 py-2 font-bold text-[#E11D48] text-right">Sales Returns</th>
                             <th className="px-3 py-2 font-bold text-[#334155] text-right">Received Amount</th>
                             <th className="px-3 py-2 font-bold text-[#059669] text-right">Pending Balance</th>
-                            <th className="px-3 py-2 font-bold text-[#3B82F6] text-right">Paying Now</th>
-                            <th className="px-3 py-2 font-bold text-[#059669] text-right">Balance After</th>
+                            <th className="px-3 py-2 font-bold text-[#3B82F6] text-right print:hidden">Paying Now</th>
+                            <th className="px-3 py-2 font-bold text-[#059669] text-right print:hidden">Balance After</th>
                           </tr>
                         </thead>
                         <tbody>
                           {(() => {
                             let remainingForBills = amountCollected;
-                            const displayedBills = unpaidBills.filter(b => billFilter === 'All' ? true : billFilter === 'Cleared' ? b.pending === 0 : b.pending > 0);
+                            const displayedBills = unpaidBills.filter(b => billFilter === 'All' ? true : billFilter === 'Cleared' ? b.pending < 0.01 : b.pending >= 0.01);
                             
                             return displayedBills.length > 0 ? displayedBills.map((bill, idx) => {
                               const currentPending = bill.pending;
@@ -322,8 +337,8 @@ const CustomerReceipts = () => {
                                   <td className="px-3 py-2 text-right text-[#E11D48]">{formatCurrency(bill.returned || 0)}</td>
                                   <td className="px-3 py-2 text-right text-[#10B981]">{formatCurrency(bill.received)}</td>
                                   <td className="px-3 py-2 text-right font-bold text-[#059669]">{formatCurrency(bill.pending)}</td>
-                                  <td className="px-3 py-2 text-right font-bold text-[#3B82F6]">{formatCurrency(payingNow)}</td>
-                                  <td className="px-3 py-2 text-right font-bold text-[#059669]">{formatCurrency(balanceAfter)}</td>
+                                  <td className="px-3 py-2 text-right font-bold text-[#3B82F6] print:hidden">{formatCurrency(payingNow)}</td>
+                                  <td className="px-3 py-2 text-right font-bold text-[#059669] print:hidden">{formatCurrency(balanceAfter)}</td>
                                 </tr>
                               );
                             }) : (
@@ -340,7 +355,7 @@ const CustomerReceipts = () => {
               </div>
             )}
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-4 print:hidden">
               <div>
                 <label className="block text-[12px] font-bold text-[#059669] mb-1">Amount Collected Now *</label>
                 <input
@@ -359,18 +374,19 @@ const CustomerReceipts = () => {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-4 print:hidden">
               <div>
-                <label className="block text-[12px] font-bold text-[#334155] mb-1">Payment Mode *</label>
+                <label className="block text-[12px] font-bold text-[#334155] mb-1">PAYMENT TYPE *</label>
                 <select
-                  {...register('paymentModeId')}
-                  className="w-full px-3 py-2 border border-[#CBD5E1] rounded text-[13px] outline-none focus:border-[#3B82F6]"
+                  {...register('paymentTypeId')}
+                  className="w-full px-3 py-2 border border-[#CBD5E1] rounded shadow-sm focus:border-[#059669] outline-none text-[13px] bg-white"
                 >
-                  <option value={0}>Select Mode</option>
-                  {paymentModes.map((pm: any) => (
-                    <option key={pm.id} value={pm.id}>{pm.name}</option>
+                  <option value={0}>Select Type</option>
+                  {paymentTypes.map((pt: any) => (
+                    <option key={pt.id} value={pt.id}>{pt.name}</option>
                   ))}
                 </select>
+                {errors.paymentTypeId && <span className="text-red-500 text-[11px] mt-1 block">{errors.paymentTypeId.message}</span>}
               </div>
               <div>
                 <label className="block text-[12px] font-bold text-[#334155] mb-1">Reference / Cheque No (Optional for Cash)</label>
@@ -383,7 +399,7 @@ const CustomerReceipts = () => {
               </div>
             </div>
 
-            <div>
+            <div className="print:hidden">
               <label className="block text-[12px] font-bold text-[#334155] mb-1">Remarks (Optional)</label>
               <input
                 {...register('remarks')}
@@ -393,7 +409,7 @@ const CustomerReceipts = () => {
               />
             </div>
 
-            <div className="flex justify-end mt-2">
+            <div className="flex justify-end mt-2 print:hidden">
               <button 
                 type="submit" 
                 disabled={createMutation.isPending}
@@ -407,7 +423,7 @@ const CustomerReceipts = () => {
         </div>
 
         {/* Right Side - History Table */}
-        <div className={`bg-white border border-[#E2E8F0] shadow-sm flex flex-col ${isTableExpanded ? 'fixed inset-4 lg:inset-8 z-50 rounded-xl shadow-2xl' : 'rounded-lg overflow-hidden lg:col-span-1'}`}>
+        <div className={`bg-white border border-[#E2E8F0] shadow-sm flex flex-col ${isTableExpanded ? 'fixed inset-4 lg:inset-8 z-50 rounded-xl shadow-2xl' : 'rounded-lg overflow-hidden lg:col-span-1'} print:hidden`}>
           <div className="bg-[#F8FAFC] border-b border-[#E2E8F0] px-4 py-3 flex justify-between items-center">
             <div className="flex items-center gap-2">
               <FileText size={16} className="text-[#334155]" />
@@ -475,7 +491,7 @@ const CustomerReceipts = () => {
                   <th className="px-3 py-2 border-r border-[#334155]">Receipt No</th>
                   <th className="px-3 py-2 border-r border-[#334155]">Date</th>
                   <th className="px-3 py-2 border-r border-[#334155]">Customer</th>
-                  <th className="px-3 py-2 border-r border-[#334155]">Mode</th>
+                  <th className="px-3 py-2 border-r border-[#444]">Payment Type</th>
                   <th className="px-3 py-2 text-right">Amount Paid</th>
                 </tr>
               </thead>
@@ -490,13 +506,7 @@ const CustomerReceipts = () => {
                       <td className="px-3 py-2 border-r border-[#E2E8F0] font-bold text-[#059669]">{r.receiptNo}</td>
                       <td className="px-3 py-2 border-r border-[#E2E8F0] text-[#64748B]">{new Date(r.date).toISOString().split('T')[0]}</td>
                       <td className="px-3 py-2 border-r border-[#E2E8F0] font-medium text-[#334155]">{r.customer?.name}</td>
-                      <td className="px-3 py-2 border-r border-[#E2E8F0]">
-                        <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                          r.paymentMode?.name?.includes('Return') ? 'bg-[#F59E0B] text-white' : 'bg-[#64748B] text-white'
-                        }`}>
-                          {r.paymentMode?.name}
-                        </span>
-                      </td>
+                      <td className="px-3 py-3 border-r border-[#E5E7EB] text-[#475569]">{r.paymentType?.name || r.paymentMode?.name || '-'}</td>
                       <td className="px-3 py-2 text-right font-bold text-[#059669]">{formatCurrency(r.amount)}</td>
                     </tr>
                   ))

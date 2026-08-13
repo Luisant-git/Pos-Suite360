@@ -11,8 +11,8 @@ import { useSettings } from '../../contexts/SettingsContext';
 import SearchableSelect from '../../components/SearchableSelect';
 
 const purchaseItemSchema = z.object({
-  productId: z.coerce.number().min(1, 'Product is required').or(z.literal(0)),
-  quantity: z.coerce.number().min(1, 'Quantity must be > 0'),
+  productId: z.coerce.number().min(0),
+  quantity: z.coerce.number().min(0),
   unit: z.string().optional(),
   pRate: z.coerce.number().min(0),
   wRate: z.coerce.number().min(0),
@@ -21,6 +21,23 @@ const purchaseItemSchema = z.object({
   discPercent: z.coerce.number().min(0).max(100),
   discAmt: z.coerce.number().min(0),
   total: z.coerce.number(),
+}).superRefine((data, ctx) => {
+  if (data.productId > 0) {
+    if (data.quantity <= 0) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Quantity must be > 0",
+        path: ["quantity"]
+      });
+    }
+    if (data.pRate < 0.01) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Purchase Rate is required",
+        path: ["pRate"]
+      });
+    }
+  }
 });
 
 const purchaseSchema = z.object({
@@ -75,7 +92,6 @@ const PurchaseEntry = () => {
   // Fetch Masters & Next Entry No
   const { data: suppliers = [] } = useQuery({ queryKey: ['suppliers'], queryFn: async () => (await api.get('/suppliers')).data });
   const { data: products = [] } = useQuery({ queryKey: ['products'], queryFn: async () => (await api.get('/products')).data });
-  const { data: paymentModes = [] } = useQuery({ queryKey: ['paymentModes'], queryFn: async () => (await api.get('/payment-modes')).data });
   const { data: nextEntryData } = useQuery({ queryKey: ['nextEntryNo'], queryFn: async () => (await api.get('/purchases/next-entry-no')).data });
 
   // Update default entry no
@@ -238,6 +254,11 @@ const PurchaseEntry = () => {
     });
   };
 
+  const onError = (errors: any) => {
+    toast.error('Validation failed. Please fill all required fields correctly.');
+    console.error(errors);
+  };
+
   return (
     <div className="absolute inset-0 bg-[#F3F4F6] flex flex-col font-sans overflow-hidden z-10">
       
@@ -246,7 +267,7 @@ const PurchaseEntry = () => {
         <div className="flex gap-2">
           <button 
             type="button"
-            onClick={handleSubmit(onSubmit as any)}
+            onClick={handleSubmit(onSubmit as any, onError)}
             className="bg-[#059669] hover:bg-[#047857] text-white px-4 py-1.5 rounded flex items-center gap-2 font-bold text-[13px] transition-colors"
           >
             <CheckCircle size={16} /> SAVE PURCHASE
@@ -261,7 +282,7 @@ const PurchaseEntry = () => {
         </button>
       </div>
 
-      <form className="flex flex-col flex-1 overflow-hidden" onSubmit={handleSubmit(onSubmit as any)}>
+      <form className="flex flex-col flex-1 overflow-hidden" onSubmit={handleSubmit(onSubmit as any, onError)}>
         
         {/* Header Section */}
         <div className="bg-white p-4 border-b border-[#E5E7EB] shrink-0">
@@ -331,9 +352,8 @@ const PurchaseEntry = () => {
                 className="w-full px-2 py-1.5 border border-[#D1D5DB] rounded text-[13px] outline-none focus:border-[#3B82F6] bg-white"
               >
                 <option value="0">Select Payment Mode...</option>
-                {paymentModes.map((pm: any) => (
-                  <option key={pm.id} value={pm.id}>{pm.name}</option>
-                ))}
+                <option value="3">Cash</option>
+                <option value="4">Credit</option>
               </select>
             </div>
 

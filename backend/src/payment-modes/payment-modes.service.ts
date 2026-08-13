@@ -1,4 +1,5 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, BadRequestException } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import { CreatePaymentModeDto } from './dto/create-payment-mode.dto';
 import { UpdatePaymentModeDto } from './dto/update-payment-mode.dto';
 import { PrismaService } from '../prisma/prisma.service';
@@ -32,9 +33,16 @@ export class PaymentModesService {
     });
   }
 
-  remove(id: number) {
-    return this.prisma.paymentMode.delete({
-      where: { id },
-    });
+  async remove(id: number) {
+    try {
+      return await this.prisma.paymentMode.delete({
+        where: { id },
+      });
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2003') {
+        throw new BadRequestException('Cannot delete Payment Mode because it is already used in transactions (e.g. Sales, Purchases, Receipts).');
+      }
+      throw error;
+    }
   }
 }

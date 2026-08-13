@@ -57,4 +57,8 @@
 .html-content, .html-content * { color: #000000 !important; font-weight: 700 !important; }
 .print\:text-black { color: #000000 !important; }
 
-@media print { * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color: #000000 !important; } }
+@media print {
+  * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+  @page { margin: 10mm; size: A4 portrait; }
+  .print\:hidden { display: none !important; }
+}

@@ -25,7 +25,7 @@ const SalesList = () => {
   });
 
   return (
-    <div className="bg-white min-h-[calc(100vh-100px)] p-6 shadow-sm border border-[#E6E9ED]">
+    <div className="bg-white min-h-[calc(100vh-100px)] print:min-h-0 p-6 print:p-0 shadow-sm print:shadow-none border border-[#E6E9ED] print:border-none">
       <div className="print:hidden">
       {/* Header & Breadcrumbs */}
       <div className="flex justify-between items-center mb-6 pb-4 border-b border-[#E6E9ED]">

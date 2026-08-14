@@ -19,15 +19,16 @@ import { useSettings } from '../../contexts/SettingsContext';
 
 const StatCard = ({ title, value, icon: Icon, colorClass, desc }: any) => {
   const strValue = String(value);
-  let valueSizeClass = "text-2xl sm:text-3xl"; // Normal size
+  let valueSizeClass = "text-2xl sm:text-3xl lg:text-3xl"; // Normal size
 
-  // Shrink across all screen sizes if the value is unusually long to prevent overlapping the icon
-  if (strValue.length > 14) {
-    valueSizeClass = "text-sm sm:text-base tracking-tighter";
-  } else if (strValue.length > 11) {
-    valueSizeClass = "text-base sm:text-lg tracking-tight";
-  } else if (strValue.length > 8) {
-    valueSizeClass = "text-xl sm:text-2xl";
+  // Scale down heavily on mobile where space is tight.
+  // On desktop (lg), only scale down if the number is gigantic.
+  if (strValue.length > 15) {
+    valueSizeClass = "text-sm sm:text-base lg:text-xl tracking-tighter";
+  } else if (strValue.length > 12) {
+    valueSizeClass = "text-base sm:text-lg lg:text-2xl tracking-tight";
+  } else if (strValue.length > 9) {
+    valueSizeClass = "text-xl sm:text-2xl lg:text-3xl";
   }
 
   return (

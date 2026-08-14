@@ -427,7 +427,7 @@ const MainLayout = () => {
       {/* Main Content Area */}
       <main className="flex-1 flex flex-col min-w-0 overflow-y-auto relative bg-[#F3F5F8] print:overflow-visible print:bg-white custom-scrollbar">
         <div className="max-w-full mx-auto w-full h-full flex flex-col p-2 sm:p-4 lg:p-8">
-          <Outlet />
+          <Outlet context={{ desktopLayout }} />
         </div>
       </main>
       </div>

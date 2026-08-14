@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useOutletContext } from 'react-router-dom';
 import {
   ShoppingCart,
   TrendingDown,
@@ -17,18 +17,26 @@ import {
 import api from '../../services/api';
 import { useSettings } from '../../contexts/SettingsContext';
 
-const StatCard = ({ title, value, icon: Icon, colorClass, desc }: any) => {
+const StatCard = ({ title, value, icon: Icon, colorClass, desc, layout = 'topbar' }: any) => {
   const strValue = String(value);
-  let valueSizeClass = "text-2xl sm:text-3xl lg:text-3xl"; // Normal size
+  let valueSizeClass = "text-2xl sm:text-3xl"; // Normal size
 
-  // Scale down heavily on mobile where space is tight.
-  // On desktop (lg), only scale down if the number is gigantic.
-  if (strValue.length > 15) {
-    valueSizeClass = "text-sm sm:text-base lg:text-xl tracking-tighter";
-  } else if (strValue.length > 12) {
-    valueSizeClass = "text-base sm:text-lg lg:text-2xl tracking-tight";
-  } else if (strValue.length > 9) {
-    valueSizeClass = "text-xl sm:text-2xl lg:text-3xl";
+  if (layout === 'sidebar') {
+    // Shrink slightly for sidebar layout because cards are narrower
+    if (strValue.length > 14) {
+      valueSizeClass = "text-base sm:text-lg tracking-tighter";
+    } else if (strValue.length > 11) {
+      valueSizeClass = "text-lg sm:text-xl tracking-tight";
+    } else if (strValue.length > 9) {
+      valueSizeClass = "text-xl sm:text-2xl tracking-tight";
+    }
+  } else {
+    // Topbar layout has plenty of space, only shrink if gigantic
+    if (strValue.length > 15) {
+      valueSizeClass = "text-base sm:text-lg lg:text-xl tracking-tighter";
+    } else if (strValue.length > 12) {
+      valueSizeClass = "text-lg sm:text-xl lg:text-2xl tracking-tight";
+    }
   }
 
   return (
@@ -58,6 +66,7 @@ const QuickAction = ({ title, icon: Icon, to, colorClass, desc }: any) => (
 );
 
 const Dashboard = () => {
+  const { desktopLayout } = useOutletContext<any>() || { desktopLayout: 'topbar' };
   const { formatCurrency } = useSettings();
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -188,56 +197,56 @@ const Dashboard = () => {
       
       {/* Top Tiles */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8">
-        <StatCard
+        <StatCard layout={desktopLayout}
           title={`${prefix} Cash Sales`}
           value={formatCurrency(data.cashSalesToday)}
           desc={`${descPrefix} cash sales`}
           icon={Wallet}
           colorClass="bg-gradient-to-br from-emerald-400 to-emerald-600"
         />
-        <StatCard
+        <StatCard layout={desktopLayout}
           title={`${prefix} Credit Sales`}
           value={formatCurrency(data.creditSalesToday)}
           desc={`${descPrefix} credit sales`}
           icon={CreditCard}
           colorClass="bg-gradient-to-br from-teal-400 to-teal-600"
         />
-        <StatCard
+        <StatCard layout={desktopLayout}
           title={`${prefix} Cash Purchases`}
           value={formatCurrency(data.cashPurchasesToday)}
           desc={`${descPrefix} cash purchases`}
           icon={ShoppingCart}
           colorClass="bg-gradient-to-br from-blue-400 to-blue-600"
         />
-        <StatCard
+        <StatCard layout={desktopLayout}
           title={`${prefix} Credit Purchases`}
           value={formatCurrency(data.creditPurchasesToday)}
           desc={`${descPrefix} credit purchases`}
           icon={CreditCard}
           colorClass="bg-gradient-to-br from-indigo-400 to-indigo-600"
         />
-        <StatCard
+        <StatCard layout={desktopLayout}
           title={`Pending Payables`}
           value={formatCurrency(data.pendingPayables)}
           desc={`Amount owed to suppliers`}
           icon={Landmark}
           colorClass="bg-gradient-to-br from-rose-400 to-rose-600"
         />
-        <StatCard
+        <StatCard layout={desktopLayout}
           title={`Pending Receivables`}
           value={formatCurrency(data.pendingReceivables)}
           desc={`Amount owed by customers`}
           icon={Users}
           colorClass="bg-gradient-to-br from-amber-400 to-amber-600"
         />
-        <StatCard
+        <StatCard layout={desktopLayout}
           title={`${prefix} Expenses`}
           value={formatCurrency(data.expensesToday)}
           desc="Operational costs"
           icon={TrendingDown}
           colorClass="bg-gradient-to-br from-purple-400 to-purple-600"
         />
-        <StatCard
+        <StatCard layout={desktopLayout}
           title="Products"
           value={data.productsCount.toLocaleString()}
           desc="Total items"

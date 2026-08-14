@@ -17,18 +17,32 @@ import {
 import api from '../../services/api';
 import { useSettings } from '../../contexts/SettingsContext';
 
-const StatCard = ({ title, value, icon: Icon, colorClass, desc }: any) => (
-  <div className="bg-white border border-[#E6E9ED] shadow-sm p-4 sm:p-5 relative flex items-center justify-between hover:shadow-md transition-shadow gap-3">
-    <div className="min-w-0 flex-1">
-      <h3 className="text-xl sm:text-2xl lg:text-3xl font-semibold text-gray-500 break-words" style={{ wordBreak: 'break-word' }}>{value}</h3>
-      <p className="text-[12px] sm:text-[13px] text-[#1F2937] font-semibold mt-1 uppercase tracking-wide leading-tight">{title}</p>
-      {desc && <p className="text-[11px] sm:text-[12px] text-gray-400 font-medium mt-1 truncate">{desc}</p>}
+const StatCard = ({ title, value, icon: Icon, colorClass, desc }: any) => {
+  const strValue = String(value);
+  let valueSizeClass = "text-2xl sm:text-3xl"; // Normal size
+
+  // Shrink across all screen sizes if the value is unusually long to prevent overlapping the icon
+  if (strValue.length > 14) {
+    valueSizeClass = "text-sm sm:text-base tracking-tighter";
+  } else if (strValue.length > 11) {
+    valueSizeClass = "text-base sm:text-lg tracking-tight";
+  } else if (strValue.length > 8) {
+    valueSizeClass = "text-xl sm:text-2xl";
+  }
+
+  return (
+    <div className="bg-white border border-[#E6E9ED] shadow-sm p-4 sm:p-5 relative flex items-center justify-between hover:shadow-md transition-shadow gap-3">
+      <div className="min-w-0 flex-1">
+        <h3 className={`${valueSizeClass} font-semibold text-gray-500 whitespace-nowrap`}>{value}</h3>
+        <p className="text-[12px] sm:text-[13px] text-[#1F2937] font-semibold mt-1 uppercase tracking-wide leading-tight">{title}</p>
+        {desc && <p className="text-[11px] sm:text-[12px] text-gray-400 font-medium mt-1 truncate">{desc}</p>}
+      </div>
+      <div className={`p-3 sm:p-4 ${colorClass} text-white flex-shrink-0 flex items-center justify-center shadow-inner rounded-xl`}>
+        <Icon className="w-6 h-6 sm:w-8 sm:h-8" />
+      </div>
     </div>
-    <div className={`p-3 sm:p-4 ${colorClass} text-white flex-shrink-0 flex items-center justify-center shadow-inner rounded-xl`}>
-      <Icon className="w-6 h-6 sm:w-8 sm:h-8" />
-    </div>
-  </div>
-);
+  );
+};
 
 const QuickAction = ({ title, icon: Icon, to, colorClass, desc }: any) => (
   <Link to={to} className={`group bg-white border border-gray-200 shadow-sm p-6 rounded-xl flex flex-col items-center justify-center gap-3 hover:shadow-lg transition-all transform hover:-translate-y-1 ${colorClass}`}>

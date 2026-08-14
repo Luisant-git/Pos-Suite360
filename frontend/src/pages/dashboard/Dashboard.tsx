@@ -11,7 +11,6 @@ import {
   Users,
   MonitorPlay,
   Truck,
-  FileText,
   BarChart3,
   Zap
 } from 'lucide-react';

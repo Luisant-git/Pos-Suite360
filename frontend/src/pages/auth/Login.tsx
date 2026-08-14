@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { User, Lock, ArrowRight, Zap } from 'lucide-react';
+import { User, Lock, ArrowRight } from 'lucide-react';
 import api from '../../services/api'; // updated import path just in case
 
 const Login = () => {

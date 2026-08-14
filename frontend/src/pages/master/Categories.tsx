@@ -125,16 +125,14 @@ const Categories = () => {
       {/* Right Column: List */}
       <div className={`${isFullTable ? 'lg:col-span-3' : 'lg:col-span-2'} bg-white border border-[#E6E9ED] shadow-sm rounded-sm overflow-hidden flex flex-col`}>
         <div className="bg-[#f9f9f9] border-b border-[#E6E9ED] px-4 py-3 flex flex-col md:flex-row justify-between items-start md:items-center gap-3 md:gap-0">
-          <div className="flex items-center justify-between w-full md:w-auto text-[#1F2937]">
-            <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 text-[#1F2937]">
             <Grid size={16} className="text-[#3B82F6]" />
             <h2 className="font-bold text-[14px]">CATEGORY LIST</h2>
           </div>
-            <div className="bg-gray-500 text-white text-[11px] font-bold px-2 py-0.5 rounded-xl">
+          <div className="flex flex-wrap items-center justify-between md:justify-end gap-3 w-full md:w-auto">
+            <div className="bg-gray-500 text-white text-[11px] font-bold px-2 py-1 rounded-xl">
               {categories.length} Categories
             </div>
-          </div>
-          <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
             <button type="button" 
               onClick={() => setIsFullTable(!isFullTable)}
               className="text-[#3B82F6] hover:bg-[#EFF6FF] px-2 py-1 rounded text-[12px] font-bold flex items-center gap-1 transition-colors border border-[#3B82F6]"

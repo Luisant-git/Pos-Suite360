@@ -18,14 +18,14 @@ import api from '../../services/api';
 import { useSettings } from '../../contexts/SettingsContext';
 
 const StatCard = ({ title, value, icon: Icon, colorClass, desc }: any) => (
-  <div className="bg-white border border-[#E6E9ED] shadow-sm p-5 relative flex items-center justify-between hover:shadow-md transition-shadow">
-    <div>
-      <h3 className="text-3xl font-semibold text-gray-500">{value}</h3>
-      <p className="text-[14px] text-[#1F2937] font-semibold mt-1 uppercase tracking-wide">{title}</p>
-      {desc && <p className="text-[12px] text-gray-400 font-medium mt-1">{desc}</p>}
+  <div className="bg-white border border-[#E6E9ED] shadow-sm p-4 sm:p-5 relative flex items-center justify-between hover:shadow-md transition-shadow gap-3">
+    <div className="min-w-0 flex-1">
+      <h3 className="text-xl sm:text-2xl lg:text-3xl font-semibold text-gray-500 break-words" style={{ wordBreak: 'break-word' }}>{value}</h3>
+      <p className="text-[12px] sm:text-[13px] text-[#1F2937] font-semibold mt-1 uppercase tracking-wide leading-tight">{title}</p>
+      {desc && <p className="text-[11px] sm:text-[12px] text-gray-400 font-medium mt-1 truncate">{desc}</p>}
     </div>
-    <div className={`p-4 ${colorClass} text-white flex-shrink-0 flex items-center justify-center shadow-inner`}>
-      <Icon className="w-8 h-8" />
+    <div className={`p-3 sm:p-4 ${colorClass} text-white flex-shrink-0 flex items-center justify-center shadow-inner rounded-xl`}>
+      <Icon className="w-6 h-6 sm:w-8 sm:h-8" />
     </div>
   </div>
 );
@@ -136,41 +136,43 @@ const Dashboard = () => {
 
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
         <h1 className="text-[20px] font-semibold text-gray-800">Financial Overview</h1>
-        <div className="flex flex-wrap items-center gap-3 bg-white px-4 py-2 border border-gray-200 rounded-xl shadow-sm">
-          <div className="flex items-center gap-2 border-r border-gray-200 pr-4">
-            <label className="text-[13px] font-semibold text-gray-500">From:</label>
+        <div className="flex flex-col sm:flex-row sm:items-center gap-3 bg-white px-4 py-3 sm:py-2 border border-gray-200 rounded-xl shadow-sm w-full sm:w-auto">
+          <div className="flex items-center justify-between sm:justify-start gap-2 sm:border-r border-gray-200 sm:pr-4">
+            <label className="text-[13px] font-semibold text-gray-500 w-10 sm:w-auto">From:</label>
             <input 
               type="date" 
               value={filterStartDate} 
               onChange={(e) => setFilterStartDate(e.target.value)}
-              className="text-[14px] font-semibold text-gray-800 outline-none bg-transparent cursor-pointer"
+              className="text-[14px] font-semibold text-gray-800 outline-none bg-transparent cursor-pointer flex-1 text-right sm:text-left"
             />
           </div>
-          <div className="flex items-center gap-2 sm:pl-2 sm:border-r border-gray-200 pr-4">
-            <label className="text-[13px] font-semibold text-gray-500">To:</label>
+          <div className="flex items-center justify-between sm:justify-start gap-2 sm:pl-2 sm:border-r border-gray-200 sm:pr-4">
+            <label className="text-[13px] font-semibold text-gray-500 w-10 sm:w-auto">To:</label>
             <input 
               type="date" 
               value={filterEndDate} 
               onChange={(e) => setFilterEndDate(e.target.value)}
-              className="text-[14px] font-semibold text-gray-800 outline-none bg-transparent cursor-pointer"
+              className="text-[14px] font-semibold text-gray-800 outline-none bg-transparent cursor-pointer flex-1 text-right sm:text-left"
             />
           </div>
-          <button 
-            onClick={() => {
-              const today = new Date().toISOString().split('T')[0];
-              setFilterStartDate(today);
-              setFilterEndDate(today);
-            }}
-            className="flex items-center gap-1.5 text-[13px] font-semibold text-gray-500 hover:text-blue-600 transition-colors sm:pl-2"
-            title="Reset to Today"
-          >
-            <RotateCcw size={16} /> Reset
-          </button>
+          <div className="flex justify-end w-full sm:w-auto sm:block mt-1 sm:mt-0 border-t border-gray-100 pt-2 sm:border-t-0 sm:pt-0">
+            <button 
+              onClick={() => {
+                const today = new Date().toISOString().split('T')[0];
+                setFilterStartDate(today);
+                setFilterEndDate(today);
+              }}
+              className="flex items-center gap-1.5 text-[13px] font-semibold text-gray-500 hover:text-blue-600 transition-colors sm:pl-2"
+              title="Reset to Today"
+            >
+              <RotateCcw size={16} /> Reset
+            </button>
+          </div>
         </div>
       </div>
       
       {/* Top Tiles */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8">
         <StatCard
           title={`${prefix} Cash Sales`}
           value={formatCurrency(data.cashSalesToday)}

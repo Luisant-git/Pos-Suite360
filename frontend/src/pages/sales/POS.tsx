@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Plus, Trash2, Save, X, Printer, RefreshCw, List, UserPlus, AlertTriangle } from 'lucide-react';
+import { Plus, Trash2, Save, X, Printer, RefreshCw, List, UserPlus, AlertTriangle, FileText } from 'lucide-react';
 import { useSettings } from '../../contexts/SettingsContext';
 import toast from 'react-hot-toast';
 import api from '../../services/api';
@@ -535,7 +535,14 @@ const POS = () => {
               onClick={() => navigate('/sales')}
               className="border border-[#1E3A8A] text-[#1E3A8A] hover:bg-[#1E3A8A] hover:text-white px-3 py-1 rounded flex items-center gap-1 text-[12px] transition-colors font-bold"
             >
-              <List size={14} /> Sales Report
+              <List size={14} /> Sales List
+            </button>
+            <button 
+              type="button"
+              onClick={() => navigate('/reports/sales')}
+              className="border border-[#1E3A8A] text-[#1E3A8A] hover:bg-[#1E3A8A] hover:text-white px-3 py-1 rounded flex items-center gap-1 text-[12px] transition-colors font-bold"
+            >
+              <FileText size={14} /> Sales Report
             </button>
           </div>
           <table className="w-full border-collapse">

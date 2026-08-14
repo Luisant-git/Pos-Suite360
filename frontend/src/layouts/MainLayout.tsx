@@ -1,9 +1,49 @@
 import { useState, useEffect } from 'react';
-import { Outlet, NavLink, Link, useNavigate } from 'react-router-dom';
+import { Outlet, NavLink, Link, useNavigate, useLocation } from 'react-router-dom';
+import { ChevronDown, LogOut, Settings as SettingsIcon, Zap, ArrowLeft } from 'lucide-react';
+
+const NavItem = ({ title, icon, to }: { title: string, icon: string, to: string }) => (
+  <NavLink 
+    to={to} 
+    className={({ isActive }) => `flex items-center gap-2 px-4 py-3 text-sm font-bold transition-colors ${isActive ? 'bg-[#1E3A8A] text-white border-b-2 border-white' : 'text-[#E0E7FF] hover:bg-[#1E40AF] hover:text-white border-b-2 border-transparent'}`}
+  >
+    <i className={`fa ${icon}`}></i>
+    <span>{title}</span>
+  </NavLink>
+);
+
+const NavDropdown = ({ title, icon, children, isActive }: { title: string, icon: string, children: React.ReactNode, isActive?: boolean }) => {
+  return (
+    <div className="relative group h-full flex items-center">
+      <button className={`flex items-center gap-2 px-4 py-3 h-full text-sm font-bold transition-colors ${isActive ? 'bg-[#1E3A8A] text-white border-b-2 border-white' : 'text-[#E0E7FF] hover:bg-[#1E40AF] hover:text-white border-b-2 border-transparent'}`}>
+        <i className={`fa ${icon}`}></i>
+        <span>{title}</span>
+        <ChevronDown size={14} className="ml-1 opacity-70" />
+      </button>
+      <div className="absolute left-0 top-full mt-0 w-64 bg-white border border-gray-200 shadow-2xl rounded-b-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 overflow-hidden transform origin-top group-hover:scale-100 scale-95">
+        <div className="py-2">
+          {children}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const DropdownItem = ({ to, icon, title, isDanger = false, isWarning = false }: { to: string, icon: string, title: string, isDanger?: boolean, isWarning?: boolean }) => (
+  <NavLink
+    to={to}
+    className={({ isActive }) => `flex items-center gap-3 px-4 py-2.5 text-sm font-medium transition-colors ${isActive ? 'bg-blue-50 text-blue-700 border-l-4 border-blue-600' : 'text-gray-700 hover:bg-gray-50 hover:text-blue-600 border-l-4 border-transparent'}`}
+  >
+    <div className={`w-6 flex justify-center ${isDanger ? 'text-red-500' : isWarning ? 'text-amber-500' : 'text-gray-400'}`}>
+      <i className={`fa ${icon} text-base`}></i>
+    </div>
+    <span>{title}</span>
+  </NavLink>
+);
 
 const MainLayout = () => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const navigate = useNavigate();
+  const location = useLocation();
   const [user, setUser] = useState({ name: 'Pro X Admin' });
   const [currentDate, setCurrentDate] = useState(new Date());
 
@@ -21,217 +61,154 @@ const MainLayout = () => {
 
   const formattedDate = `${currentDate.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })} ${currentDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true })}`;
 
+  const isMasterActive = location.pathname.startsWith('/master');
+  const isSalesActive = location.pathname.startsWith('/sales');
+  const isPurchaseActive = location.pathname.startsWith('/purchase');
+  const isReportsActive = location.pathname.startsWith('/reports');
+
+  const showBackButton = location.pathname !== '/dashboard' && location.pathname !== '/quick-start' && location.pathname !== '/';
+
   return (
-    <div className="flex h-screen bg-[#F7F7F7] overflow-hidden font-sans text-[13px] print:h-auto print:overflow-visible print:bg-white">
-      {/* Sidebar - Classic Dark Charcoal */}
-      <aside className={`bg-[#111827] text-[#E7E7E7] flex flex-col transition-all duration-300 z-20 overflow-hidden print:hidden ${isSidebarOpen ? 'w-64' : 'w-20'}`}>
-        <div className="h-[50px] min-h-[50px] flex items-center justify-center bg-[#3B82F6] text-white">
-          <span className="text-lg font-bold tracking-wide whitespace-nowrap">
-            {isSidebarOpen ? 'POS Suite 360' : 'POS'}
-          </span>
-        </div>
-        
-        <div className="flex-1 overflow-y-auto overflow-x-hidden py-2 custom-scrollbar">
-          {/* User Info in Sidebar */}
-          <div className="flex items-center px-4 py-4 border-b border-[#111827]/50 mb-2">
-            <div className="w-10 h-10 rounded-full bg-slate-300 flex items-center justify-center text-slate-600 font-bold mr-3 flex-shrink-0 ml-1">
-              {user?.name?.charAt(0).toUpperCase() || 'U'}
-            </div>
-            <div className={`whitespace-nowrap transition-opacity duration-200 ${isSidebarOpen ? 'opacity-100' : 'opacity-0'}`}>
-              <p className="text-[#E7E7E7] text-sm">Welcome,</p>
-              <p className="text-white font-medium">{user?.name || 'User'}</p>
-            </div>
+    <div className="flex flex-col h-screen bg-[#F3F5F8] overflow-hidden font-sans text-[13px] print:h-auto print:overflow-visible print:bg-white">
+      {/* Top Navigation Bar - Premium Blue */}
+      <header className="bg-gradient-to-r from-[#1E40AF] to-[#2563EB] text-white shadow-lg z-30 print:hidden flex-shrink-0 border-b border-blue-800">
+        <div className="flex items-center justify-between px-4 h-[60px]">
+          {/* Logo & Main Nav */}
+          <div className="flex items-center h-full">
+            <Link to="/dashboard" className="flex items-center gap-2 sm:gap-3 mr-2 sm:mr-6 group">
+              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-white rounded-xl flex items-center justify-center shadow-md group-hover:shadow-lg transition-all transform group-hover:-translate-y-0.5 shrink-0">
+                <span className="text-[#2563EB] font-black text-sm sm:text-lg tracking-tighter">P<span className="text-amber-500">O</span>S</span>
+              </div>
+              <div className="hidden sm:block">
+                <span className="text-base sm:text-lg font-black tracking-wider whitespace-nowrap leading-tight">SUITE 360</span>
+              </div>
+            </Link>
+
+            {/* Universal Back Button */}
+            {showBackButton && (
+              <button 
+                onClick={() => navigate(-1)}
+                className="flex items-center gap-1.5 px-3 py-1.5 mr-2 sm:mr-6 bg-white/10 hover:bg-white/20 border border-white/10 rounded-lg transition-all font-bold text-[12px] sm:text-[13px] text-white shadow-sm shrink-0"
+                title="Go Back"
+              >
+                <ArrowLeft size={16} /> <span className="hidden sm:inline">Back</span>
+              </button>
+            )}
+
+            <nav className="hidden lg:flex h-full items-center">
+              <NavItem to="/dashboard" icon="fa-dashboard" title="Dashboard" />
+              
+              <NavDropdown title="Sales" icon="fa-shopping-cart" isActive={isSalesActive}>
+                <DropdownItem to="/sales/pos" icon="fa-th-large" title="Sales Entry (POS)" />
+                <DropdownItem to="/sales/return" icon="fa-reply" title="Sales Return" isDanger />
+                <div className="h-px bg-gray-100 my-1 mx-4"></div>
+                <DropdownItem to="/sales/receipts" icon="fa-money" title="Customer Receipts" />
+              </NavDropdown>
+
+              <NavDropdown title="Purchases" icon="fa-truck" isActive={isPurchaseActive}>
+                <DropdownItem to="/purchase/new" icon="fa-shopping-basket" title="Purchase Entry" />
+                <DropdownItem to="/purchase/return" icon="fa-undo" title="Purchase Return" isWarning />
+                <div className="h-px bg-gray-100 my-1 mx-4"></div>
+                <DropdownItem to="/purchase/payments" icon="fa-credit-card" title="Supplier Payments" />
+              </NavDropdown>
+
+              <NavItem to="/expenses/new" icon="fa-calculator" title="Expenses" />
+
+              <NavDropdown title="Master" icon="fa-database" isActive={isMasterActive}>
+                <div className="px-4 py-1.5 text-[11px] font-bold text-gray-400 uppercase tracking-wider">Inventory</div>
+                <DropdownItem to="/master/products" icon="fa-cubes" title="Products" />
+                <DropdownItem to="/master/brands" icon="fa-tags" title="Brands" />
+                <DropdownItem to="/master/categories" icon="fa-sitemap" title="Categories" />
+                <DropdownItem to="/master/units" icon="fa-balance-scale" title="Units" />
+                
+                <div className="h-px bg-gray-100 my-1 mx-4"></div>
+                <div className="px-4 py-1.5 text-[11px] font-bold text-gray-400 uppercase tracking-wider">People</div>
+                <DropdownItem to="/master/suppliers" icon="fa-building-o" title="Suppliers" />
+                <DropdownItem to="/master/customers" icon="fa-users" title="Customers" />
+                
+                <div className="h-px bg-gray-100 my-1 mx-4"></div>
+                <div className="px-4 py-1.5 text-[11px] font-bold text-gray-400 uppercase tracking-wider">Settings</div>
+                <DropdownItem to="/master/payment-modes" icon="fa-credit-card-alt" title="Payment Modes" />
+                <DropdownItem to="/master/payment-types" icon="fa-money" title="Payment Types" />
+                <DropdownItem to="/master/expense-categories" icon="fa-list-alt" title="Expense Categories" />
+              </NavDropdown>
+
+              <NavDropdown title="Reports" icon="fa-pie-chart" isActive={isReportsActive}>
+                <div className="px-4 py-1.5 text-[11px] font-bold text-gray-400 uppercase tracking-wider">Sales & Purchase</div>
+                <DropdownItem to="/reports/sales" icon="fa-line-chart" title="Sales Report" />
+                <DropdownItem to="/reports/sales-return" icon="fa-mail-reply" title="Sales Return Report" isDanger />
+                <DropdownItem to="/reports/purchase" icon="fa-file-text-o" title="Purchase Report" />
+                <DropdownItem to="/reports/purchase-return" icon="fa-mail-reply" title="Purchase Return Report" isWarning />
+                
+                <div className="h-px bg-gray-100 my-1 mx-4"></div>
+                <div className="px-4 py-1.5 text-[11px] font-bold text-gray-400 uppercase tracking-wider">Financial</div>
+                <DropdownItem to="/reports/stock" icon="fa-cubes" title="Stock As On Date" />
+                <DropdownItem to="/reports/profit-ledger" icon="fa-bar-chart" title="Profit / Ledger" />
+              </NavDropdown>
+            </nav>
           </div>
 
-          <nav className="space-y-0 pb-8">
-            <div className={`px-4 py-2 transition-opacity duration-200 ${isSidebarOpen ? 'opacity-100' : 'opacity-0'}`}>
-              <h3 className="text-xs uppercase text-[#E7E7E7] font-bold whitespace-nowrap">General</h3>
-            </div>
-            <NavLink 
-              to="/dashboard" 
-              className={({ isActive }) => 
-                `flex items-center gap-3 px-5 py-3 transition-colors border-r-4 whitespace-nowrap ${
-                  isActive 
-                    ? 'bg-[#1F2937] border-[#1ABB9C] text-white' 
-                    : 'border-transparent hover:bg-[#1F2937] font-bold hover:text-white'
-                }`
-              }
-              title={!isSidebarOpen ? "Dashboard" : undefined}
-            >
-              <i className="fa fa-dashboard text-xl w-8 text-center flex-shrink-0"></i>
-              <span className={`font-bold transition-opacity duration-200 ${isSidebarOpen ? 'opacity-100' : 'opacity-0'}`}>Dashboard</span>
-            </NavLink>
-            {/*
-            <NavLink 
-              to="/quick-start" 
-              className={({ isActive }) => 
-                `flex items-center gap-3 px-5 py-3 transition-colors border-r-4 whitespace-nowrap ${
-                  isActive 
-                    ? 'bg-[#1F2937] border-[#1ABB9C] text-white' 
-                    : 'border-transparent hover:bg-[#1F2937] font-bold hover:text-white'
-                }`
-              }
-              title={!isSidebarOpen ? "Quick Start" : undefined}
-            >
-              <i className="fa fa-bolt text-xl w-8 text-center flex-shrink-0"></i>
-              <span className={`font-bold transition-opacity duration-200 ${isSidebarOpen ? 'opacity-100' : 'opacity-0'}`}>Quick Start</span>
-            </NavLink>
-            */}
-
-            {/* Masters */}
-            <div className={`px-4 pt-4 py-2 transition-opacity duration-200 ${isSidebarOpen ? 'opacity-100' : 'opacity-0'}`}>
-              <h3 className="text-xs uppercase text-[#E7E7E7] font-bold whitespace-nowrap">Master</h3>
-            </div>
-            
-            <NavLink to="/master/products" title={!isSidebarOpen ? "Products" : undefined} className={({ isActive }) => `flex items-center gap-3 px-5 py-3 transition-colors border-r-4 whitespace-nowrap ${isActive ? 'bg-[#1F2937] border-[#1ABB9C] text-white' : 'border-transparent hover:bg-[#1F2937] font-bold hover:text-white'}`}>
-              <i className="fa fa-cubes text-xl w-8 text-center flex-shrink-0"></i>
-              <span className={`font-bold transition-opacity duration-200 ${isSidebarOpen ? 'opacity-100' : 'opacity-0'}`}>Products</span>
-            </NavLink>
-            <NavLink to="/master/brands" title={!isSidebarOpen ? "Brands" : undefined} className={({ isActive }) => `flex items-center gap-3 px-5 py-3 transition-colors border-r-4 whitespace-nowrap ${isActive ? 'bg-[#1F2937] border-[#1ABB9C] text-white' : 'border-transparent hover:bg-[#1F2937] font-bold hover:text-white'}`}>
-              <i className="fa fa-tags text-xl w-8 text-center flex-shrink-0"></i>
-              <span className={`font-bold transition-opacity duration-200 ${isSidebarOpen ? 'opacity-100' : 'opacity-0'}`}>Brands</span>
-            </NavLink>
-            <NavLink to="/master/categories" title={!isSidebarOpen ? "Categories" : undefined} className={({ isActive }) => `flex items-center gap-3 px-5 py-3 transition-colors border-r-4 whitespace-nowrap ${isActive ? 'bg-[#1F2937] border-[#1ABB9C] text-white' : 'border-transparent hover:bg-[#1F2937] font-bold hover:text-white'}`}>
-              <i className="fa fa-sitemap text-xl w-8 text-center flex-shrink-0"></i>
-              <span className={`font-bold transition-opacity duration-200 ${isSidebarOpen ? 'opacity-100' : 'opacity-0'}`}>Categories</span>
-            </NavLink>
-            <NavLink to="/master/suppliers" title={!isSidebarOpen ? "Suppliers" : undefined} className={({ isActive }) => `flex items-center gap-3 px-5 py-3 transition-colors border-r-4 whitespace-nowrap ${isActive ? 'bg-[#1F2937] border-[#1ABB9C] text-white' : 'border-transparent hover:bg-[#1F2937] font-bold hover:text-white'}`}>
-              <i className="fa fa-building-o text-xl w-8 text-center flex-shrink-0"></i>
-              <span className={`font-bold transition-opacity duration-200 ${isSidebarOpen ? 'opacity-100' : 'opacity-0'}`}>Suppliers</span>
-            </NavLink>
-            <NavLink to="/master/customers" title={!isSidebarOpen ? "Customers" : undefined} className={({ isActive }) => `flex items-center gap-3 px-5 py-3 transition-colors border-r-4 whitespace-nowrap ${isActive ? 'bg-[#1F2937] border-[#1ABB9C] text-white' : 'border-transparent hover:bg-[#1F2937] font-bold hover:text-white'}`}>
-              <i className="fa fa-users text-xl w-8 text-center flex-shrink-0"></i>
-              <span className={`font-bold transition-opacity duration-200 ${isSidebarOpen ? 'opacity-100' : 'opacity-0'}`}>Customers</span>
-            </NavLink>
-            <NavLink to="/master/units" title={!isSidebarOpen ? "Units" : undefined} className={({ isActive }) => `flex items-center gap-3 px-5 py-3 transition-colors border-r-4 whitespace-nowrap ${isActive ? 'bg-[#1F2937] border-[#1ABB9C] text-white' : 'border-transparent hover:bg-[#1F2937] font-bold hover:text-white'}`}>
-              <i className="fa fa-balance-scale text-xl w-8 text-center flex-shrink-0"></i>
-              <span className={`font-bold transition-opacity duration-200 ${isSidebarOpen ? 'opacity-100' : 'opacity-0'}`}>Units</span>
-            </NavLink>
-            <NavLink to="/master/payment-modes" title={!isSidebarOpen ? "Payment Modes" : undefined} className={({ isActive }) => `flex items-center gap-3 px-5 py-3 transition-colors border-r-4 whitespace-nowrap ${isActive ? 'bg-[#1F2937] border-[#1ABB9C] text-white' : 'border-transparent hover:bg-[#1F2937] font-bold hover:text-white'}`}>
-              <i className="fa fa-credit-card text-xl w-8 text-center flex-shrink-0"></i>
-              <span className={`font-bold transition-opacity duration-200 ${isSidebarOpen ? 'opacity-100' : 'opacity-0'}`}>Payment Modes</span>
-            </NavLink>
-            <NavLink to="/master/payment-types" title={!isSidebarOpen ? "Payment Types" : undefined} className={({ isActive }) => `flex items-center gap-3 px-5 py-3 transition-colors border-r-4 whitespace-nowrap ${isActive ? 'bg-[#1F2937] border-[#1ABB9C] text-white' : 'border-transparent hover:bg-[#1F2937] font-bold hover:text-white'}`}>
-              <i className="fa fa-money text-xl w-8 text-center flex-shrink-0"></i>
-              <span className={`font-bold transition-opacity duration-200 ${isSidebarOpen ? 'opacity-100' : 'opacity-0'}`}>Payment Types</span>
-            </NavLink>
-            <NavLink to="/master/expense-categories" title={!isSidebarOpen ? "Expense Categories" : undefined} className={({ isActive }) => `flex items-center gap-3 px-5 py-3 transition-colors border-r-4 whitespace-nowrap ${isActive ? 'bg-[#1F2937] border-[#1ABB9C] text-white' : 'border-transparent hover:bg-[#1F2937] font-bold hover:text-white'}`}>
-              <i className="fa fa-list-alt text-xl w-8 text-center flex-shrink-0"></i>
-              <span className={`font-bold transition-opacity duration-200 ${isSidebarOpen ? 'opacity-100' : 'opacity-0'}`}>Expense Categories</span>
-            </NavLink>
-
-            {/* Daily Expenses Management */}
-            <div className={`px-4 pt-4 py-2 transition-opacity duration-200 ${isSidebarOpen ? 'opacity-100' : 'opacity-0'}`}>
-              <h3 className="text-xs uppercase text-[#E7E7E7] font-bold whitespace-nowrap">Daily Expenses</h3>
-            </div>
-            <NavLink to="/expenses/new" title={!isSidebarOpen ? "Expenses" : undefined} className={({ isActive }) => `flex items-center gap-3 px-5 py-3 transition-colors border-r-4 whitespace-nowrap ${isActive ? 'bg-[#1F2937] border-[#1ABB9C] text-white' : 'border-transparent hover:bg-[#1F2937] font-bold hover:text-white'}`}>
-              <i className="fa fa-money text-xl w-8 text-center flex-shrink-0"></i>
-              <span className={`font-bold transition-opacity duration-200 ${isSidebarOpen ? 'opacity-100' : 'opacity-0'}`}>Expenses</span>
-            </NavLink>
-
-            {/* Sales & Purchase */}
-            <div className={`px-4 pt-4 py-2 transition-opacity duration-200 ${isSidebarOpen ? 'opacity-100' : 'opacity-0'}`}>
-              <h3 className="text-xs uppercase text-[#E7E7E7] font-bold whitespace-nowrap">Transactions</h3>
-            </div>
-            <NavLink to="/purchase/new" title={!isSidebarOpen ? "Purchase Entry" : undefined} className={({ isActive }) => `flex items-center gap-3 px-5 py-3 transition-colors border-r-4 whitespace-nowrap ${isActive ? 'bg-[#1F2937] border-[#1ABB9C] text-white' : 'border-transparent hover:bg-[#1F2937] font-bold hover:text-white'}`}>
-              <i className="fa fa-truck text-xl w-8 text-center flex-shrink-0"></i>
-              <span className={`font-bold transition-opacity duration-200 ${isSidebarOpen ? 'opacity-100' : 'opacity-0'}`}>Purchase Entry</span>
-            </NavLink>
-            <NavLink to="/purchase/return" title={!isSidebarOpen ? "Purchase Return" : undefined} className={({ isActive }) => `flex items-center gap-3 px-5 py-3 transition-colors border-r-4 whitespace-nowrap ${isActive ? 'bg-[#1F2937] border-[#1ABB9C] text-white' : 'border-transparent hover:bg-[#1F2937] font-bold hover:text-white'}`}>
-              <i className="fa fa-undo text-xl w-8 text-center flex-shrink-0"></i>
-              <span className={`font-bold transition-opacity duration-200 ${isSidebarOpen ? 'opacity-100' : 'opacity-0'}`}>Purchase Return</span>
-            </NavLink>
-            <NavLink to="/purchase/payments" title={!isSidebarOpen ? "Supplier Payments" : undefined} className={({ isActive }) => `flex items-center gap-3 px-5 py-3 transition-colors border-r-4 whitespace-nowrap ${isActive ? 'bg-[#1F2937] border-[#1ABB9C] text-white' : 'border-transparent hover:bg-[#1F2937] font-bold hover:text-white'}`}>
-              <i className="fa fa-credit-card text-xl w-8 text-center flex-shrink-0"></i>
-              <span className={`font-bold transition-opacity duration-200 ${isSidebarOpen ? 'opacity-100' : 'opacity-0'}`}>Supplier Payments</span>
-            </NavLink>
-            <NavLink to="/sales/pos" title={!isSidebarOpen ? "Sales Entry" : undefined} className={({ isActive }) => `flex items-center gap-3 px-5 py-3 transition-colors border-r-4 whitespace-nowrap ${isActive ? 'bg-[#1F2937] border-[#1ABB9C] text-white' : 'border-transparent hover:bg-[#1F2937] font-bold hover:text-white'}`}>
-              <i className="fa fa-shopping-cart text-xl w-8 text-center flex-shrink-0"></i>
-              <span className={`font-bold transition-opacity duration-200 ${isSidebarOpen ? 'opacity-100' : 'opacity-0'}`}>Sales Entry</span>
-            </NavLink>
-            <NavLink to="/sales/return" title={!isSidebarOpen ? "Sales Return" : undefined} className={({ isActive }) => `flex items-center gap-3 px-5 py-3 transition-colors border-r-4 whitespace-nowrap ${isActive ? 'bg-[#1F2937] border-[#1ABB9C] text-white' : 'border-transparent hover:bg-[#1F2937] font-bold hover:text-white'}`}>
-              <i className="fa fa-reply text-xl w-8 text-center flex-shrink-0"></i>
-              <span className={`font-bold transition-opacity duration-200 ${isSidebarOpen ? 'opacity-100' : 'opacity-0'}`}>Sales Return</span>
-            </NavLink>
-            <NavLink to="/sales/receipts" title={!isSidebarOpen ? "Customer Receipts" : undefined} className={({ isActive }) => `flex items-center gap-3 px-5 py-3 transition-colors border-r-4 whitespace-nowrap ${isActive ? 'bg-[#1F2937] border-[#1ABB9C] text-white' : 'border-transparent hover:bg-[#1F2937] font-bold hover:text-white'}`}>
-              <i className="fa fa-money text-xl w-8 text-center flex-shrink-0"></i>
-              <span className={`font-bold transition-opacity duration-200 ${isSidebarOpen ? 'opacity-100' : 'opacity-0'}`}>Customer Receipts</span>
-            </NavLink>
-
-            {/* Reports */}
-            <div className={`px-4 pt-4 py-2 transition-opacity duration-200 ${isSidebarOpen ? 'opacity-100' : 'opacity-0'}`}>
-              <h3 className="text-xs uppercase text-[#E7E7E7] font-bold whitespace-nowrap">Reports</h3>
-            </div>
-            <NavLink to="/reports/purchase" title={!isSidebarOpen ? "Purchase Report" : undefined} className={({ isActive }) => `flex items-center gap-3 px-5 py-3 transition-colors border-r-4 whitespace-nowrap ${isActive ? 'bg-[#1F2937] border-[#1ABB9C] text-white' : 'border-transparent hover:bg-[#1F2937] font-bold hover:text-white'}`}>
-              <i className="fa fa-file-text-o text-xl w-8 text-center flex-shrink-0"></i>
-              <span className={`font-bold transition-opacity duration-200 ${isSidebarOpen ? 'opacity-100' : 'opacity-0'}`}>Purchase Report</span>
-            </NavLink>
-            <NavLink to="/reports/purchase-return" title={!isSidebarOpen ? "Purchase Return Report" : undefined} className={({ isActive }) => `flex items-center gap-3 px-5 py-3 transition-colors border-r-4 whitespace-nowrap ${isActive ? 'bg-[#1F2937] border-[#1ABB9C] text-white' : 'border-transparent hover:bg-[#1F2937] font-bold hover:text-white'}`}>
-              <i className="fa fa-mail-reply text-xl w-8 text-center flex-shrink-0 text-[#F59E0B]"></i>
-              <span className={`font-bold transition-opacity duration-200 ${isSidebarOpen ? 'opacity-100' : 'opacity-0'}`}>Purchase Return Report</span>
-            </NavLink>
-            <NavLink to="/reports/sales" title={!isSidebarOpen ? "Sales Report" : undefined} className={({ isActive }) => `flex items-center gap-3 px-5 py-3 transition-colors border-r-4 whitespace-nowrap ${isActive ? 'bg-[#1F2937] border-[#1ABB9C] text-white' : 'border-transparent hover:bg-[#1F2937] font-bold hover:text-white'}`}>
-              <i className="fa fa-line-chart text-xl w-8 text-center flex-shrink-0"></i>
-              <span className={`font-bold transition-opacity duration-200 ${isSidebarOpen ? 'opacity-100' : 'opacity-0'}`}>Sales Report</span>
-            </NavLink>
-            <NavLink to="/reports/sales-return" title={!isSidebarOpen ? "Sales Return Report" : undefined} className={({ isActive }) => `flex items-center gap-3 px-5 py-3 transition-colors border-r-4 whitespace-nowrap ${isActive ? 'bg-[#1F2937] border-[#1ABB9C] text-white' : 'border-transparent hover:bg-[#1F2937] font-bold hover:text-white'}`}>
-              <i className="fa fa-mail-reply text-xl w-8 text-center flex-shrink-0 text-[#EF4444]"></i>
-              <span className={`font-bold transition-opacity duration-200 ${isSidebarOpen ? 'opacity-100' : 'opacity-0'}`}>Sales Return Report</span>
-            </NavLink>
-            <NavLink to="/reports/stock" title={!isSidebarOpen ? "Stock As On Date" : undefined} className={({ isActive }) => `flex items-center gap-3 px-5 py-3 transition-colors border-r-4 whitespace-nowrap ${isActive ? 'bg-[#1F2937] border-[#1ABB9C] text-white' : 'border-transparent hover:bg-[#1F2937] font-bold hover:text-white'}`}>
-              <i className="fa fa-pie-chart text-xl w-8 text-center flex-shrink-0"></i>
-              <span className={`font-bold transition-opacity duration-200 ${isSidebarOpen ? 'opacity-100' : 'opacity-0'}`}>Stock As On Date</span>
-            </NavLink>
-            <NavLink to="/reports/profit-ledger" title={!isSidebarOpen ? "Profit / Ledger" : undefined} className={({ isActive }) => `flex items-center gap-3 px-5 py-3 transition-colors border-r-4 whitespace-nowrap ${isActive ? 'bg-[#1F2937] border-[#1ABB9C] text-white' : 'border-transparent hover:bg-[#1F2937] font-bold hover:text-white'}`}>
-              <i className="fa fa-line-chart text-xl w-8 text-center flex-shrink-0"></i>
-              <span className={`font-bold transition-opacity duration-200 ${isSidebarOpen ? 'opacity-100' : 'opacity-0'}`}>Profit / Ledger</span>
-            </NavLink>
-          </nav>
-        </div>
-        
-        <div className="flex bg-[#1F2937] text-[#E7E7E7]">
-          <Link to="/settings" className="flex-1 py-3 flex justify-center hover:bg-[#111827] font-bold transition-colors text-xl" title="Settings">
-            <i className="fa fa-cog"></i>
-          </Link>
-          <button type="button" onClick={() => { localStorage.removeItem('token'); navigate('/login'); }} className="flex-1 py-3 flex justify-center hover:bg-[#111827] font-bold transition-colors text-xl" title="Logout">
-            <i className="fa fa-sign-out"></i>
-          </button>
-        </div>
-      </aside>
-
-      {/* Main Content */}
-      <main className="flex-1 flex flex-col min-w-0 overflow-hidden relative bg-[#F7F7F7] print:overflow-visible print:bg-white">
-        {/* Header - Solid Blue */}
-        <header className="h-[50px] bg-[#3B82F6] text-white flex items-center justify-between px-4 z-10 shadow print:hidden">
-          <div className="flex items-center gap-4">
-            <button type="button" 
-              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-              className="p-2 hover:bg-[#2563EB] font-bold rounded text-white transition-colors"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" /></svg>
-            </button>
+          {/* Right side Tools */}
+          <div className="flex items-center gap-4 h-full">
             <Link 
               to="/quick-start"
-              className="flex items-center gap-2 bg-[#1E3A8A] hover:bg-[#1e40af] text-white px-4 py-1.5 rounded-lg font-bold transition-all shadow-sm border border-[#1e40af] text-[13px]"
+              className="hidden xl:flex items-center gap-2 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-white px-5 py-2 rounded-full font-bold transition-all shadow-lg shadow-orange-500/40 text-[13px] transform hover:-translate-y-0.5 shrink-0"
             >
-              <i className="fa fa-bolt"></i> Quick Start
+              <Zap size={16} fill="currentColor" /> Quick Start
             </Link>
-          </div>
-          
-          <div className="flex items-center gap-4 text-sm">
-            <span className="hidden sm:inline-block font-medium">{formattedDate}</span>
-            <div className="flex items-center gap-2 cursor-pointer hover:bg-[#2563EB] font-bold py-1 px-3 rounded transition-colors h-[40px]">
-              <div className="w-7 h-7 bg-slate-200 text-[#3B82F6] rounded-full flex items-center justify-center font-bold">
-                {user?.name?.charAt(0).toUpperCase() || 'U'}
+            
+            {!showBackButton && (
+              <div className="hidden 2xl:flex items-center text-sm font-medium text-blue-50 bg-[#1E3A8A]/50 px-4 py-1.5 rounded-full border border-blue-400/30 backdrop-blur-sm shadow-inner shrink-0">
+                <i className="fa fa-clock-o mr-2 text-blue-300"></i>
+                {formattedDate}
               </div>
-              <span className="font-bold">{user?.name || 'User'}</span>
-              <i className="fa fa-angle-down ml-1 opacity-70"></i>
+            )}
+
+            {!showBackButton && <div className="h-8 w-px bg-blue-400/30 mx-2 hidden md:block"></div>}
+
+            <div className="relative group h-full flex items-center shrink-0">
+              <button className="flex items-center gap-3 hover:bg-[#1E3A8A] px-3 py-2 rounded-xl transition-all duration-200">
+                <div className="w-8 h-8 bg-white text-[#2563EB] rounded-full flex items-center justify-center font-black text-sm shadow-md ring-2 ring-blue-400/50">
+                  {user?.name?.charAt(0).toUpperCase() || 'U'}
+                </div>
+                <div className="hidden sm:flex flex-col items-start text-left">
+                  <span className="font-bold text-sm leading-tight">{user?.name || 'User'}</span>
+                  <span className="text-[10px] text-blue-200 font-medium">Admin</span>
+                </div>
+                <ChevronDown size={16} className="opacity-70 group-hover:rotate-180 transition-transform duration-300" />
+              </button>
+              
+              <div className="absolute right-0 top-[90%] mt-2 w-56 bg-white border border-gray-100 shadow-2xl rounded-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 overflow-hidden transform origin-top-right group-hover:scale-100 scale-95">
+                <div className="p-4 bg-gray-50 border-b border-gray-100">
+                  <p className="text-base font-black text-gray-800">{user?.name || 'User'}</p>
+                  <p className="text-xs font-bold text-blue-600 uppercase tracking-wide mt-1">Administrator</p>
+                </div>
+                <div className="py-2 px-2">
+                  <Link to="/settings" className="flex items-center gap-3 px-3 py-2.5 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 rounded-lg transition-colors font-bold">
+                    <div className="w-8 h-8 rounded-md bg-gray-100 flex items-center justify-center text-gray-500">
+                      <SettingsIcon size={16} />
+                    </div>
+                    Settings
+                  </Link>
+                  <button 
+                    onClick={() => { localStorage.removeItem('token'); navigate('/login'); }}
+                    className="w-full flex items-center gap-3 px-3 py-2.5 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors font-bold mt-1"
+                  >
+                    <div className="w-8 h-8 rounded-md bg-red-100 flex items-center justify-center text-red-500">
+                      <LogOut size={16} />
+                    </div>
+                    Logout
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
-        </header>
+        </div>
+      </header>
 
-        {/* Page Content */}
-        <div className="flex-1 overflow-hidden relative print:overflow-visible print:p-0">
+      {/* Main Content Area */}
+      <main className="flex-1 flex flex-col min-w-0 overflow-y-auto relative bg-[#F3F5F8] print:overflow-visible print:bg-white custom-scrollbar">
+        <div className="max-w-full mx-auto w-full h-full flex flex-col p-4 sm:p-6 lg:p-8">
           <Outlet />
         </div>
       </main>

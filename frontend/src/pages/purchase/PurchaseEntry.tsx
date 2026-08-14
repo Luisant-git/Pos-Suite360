@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { List, Plus, Trash2, CheckCircle, PlusCircle, X, RotateCcw } from 'lucide-react';
+import { List, Plus, Trash2, CheckCircle, PlusCircle, X, RotateCcw, FileText } from 'lucide-react';
 import toast from 'react-hot-toast';
 import api from '../../services/api';
 import { useSettings } from '../../contexts/SettingsContext';
@@ -382,7 +382,14 @@ const PurchaseEntry = () => {
               onClick={() => navigate('/purchase')}
               className="border border-[#0B355B] text-[#0B355B] hover:bg-[#0B355B] hover:text-white px-3 py-1 rounded flex items-center gap-1 text-[12px] transition-colors font-bold"
             >
-              <List size={14} /> Purchase Report
+              <List size={14} /> Purchase List
+            </button>
+            <button 
+              type="button"
+              onClick={() => navigate('/reports/purchase')}
+              className="border border-[#0B355B] text-[#0B355B] hover:bg-[#0B355B] hover:text-white px-3 py-1 rounded flex items-center gap-1 text-[12px] transition-colors font-bold"
+            >
+              <FileText size={14} /> Purchase Report
             </button>
           </div>
           <table className="w-full border-collapse border border-[#E5E7EB]">

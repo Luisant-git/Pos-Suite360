@@ -62,7 +62,7 @@ const AppRoutes = () => {
       </Route>
       
       <Route element={<MainLayout />}>
-        <Route path="/" element={<Navigate to="/quick-start" replace />} />
+        <Route path="/" element={<Navigate to="/dashboard" replace />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/quick-start" element={<QuickStart />} />
         
@@ -117,7 +117,7 @@ const AppRoutes = () => {
         <Route path="/settings" element={<Settings />} />
       </Route>
       
-      <Route path="*" element={<Navigate to="/quick-start" replace />} />
+      <Route path="*" element={<Navigate to="/dashboard" replace />} />
     </Routes>
   );
 };

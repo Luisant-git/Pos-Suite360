@@ -466,8 +466,8 @@ const POS = () => {
 
             <div className="w-full lg:flex-[2]">
               <label className="block text-[11px] font-bold text-[#1F2937] mb-1">Customer Name (Searchable Dropdown) *</label>
-              <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                <div className="flex-1">
+              <div className="flex flex-col gap-1">
+                <div className="flex-1 w-full">
                   <SearchableSelect
                     value={watch('customerId')}
                     onChange={(val) => setValue('customerId', Number(val))}
@@ -477,17 +477,14 @@ const POS = () => {
                     ]}
                   />
                 </div>
-                <button type="button" onClick={() => setIsCustomerModalOpen(true)} className="bg-[#059669] hover:bg-[#047857] text-white px-3 py-2 sm:py-1 rounded transition-colors flex justify-center items-center gap-1 text-[11px] font-bold whitespace-nowrap">
-                  <PlusCircle size={14} /> New Cust
-                </button>
-              </div>
-              <div className="flex justify-between mt-1 hidden sm:flex">
-                <button type="button" onClick={() => setIsCustomerModalOpen(true)} className="bg-[#059669] hover:bg-[#047857] text-white px-2 py-1 rounded transition-colors flex items-center gap-1 text-[11px] font-bold">
-                  <UserPlus size={12} /> Add Customer
-                </button>
-                <span className="text-[11px] text-[#6B7280]">
-                  {selectedCustomer ? `${selectedCustomer.address || 'Counter Sale'}` : 'Counter Sale'}
-                </span>
+                <div className="flex justify-between items-center mt-1">
+                  <button type="button" onClick={() => setIsCustomerModalOpen(true)} className="bg-[#059669] hover:bg-[#047857] text-white px-2 py-1 rounded transition-colors flex items-center gap-1 text-[11px] font-bold">
+                    <UserPlus size={12} /> Add Customer
+                  </button>
+                  <span className="text-[11px] text-[#6B7280] text-right flex-1 ml-2">
+                    {selectedCustomer ? `${selectedCustomer.address || 'Counter Sale'}` : 'Counter Sale'}
+                  </span>
+                </div>
               </div>
             </div>
 

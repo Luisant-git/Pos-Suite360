@@ -259,6 +259,9 @@ const PurchaseEntry = () => {
     console.error(errors);
   };
 
+  const selectedSupplierId = watch('supplierId');
+  const selectedSupplier = suppliers.find((s: any) => s.id === Number(selectedSupplierId));
+
   return (
     <div className="absolute inset-0 bg-[#F3F4F6] flex flex-col font-sans overflow-hidden z-10">
       
@@ -310,8 +313,8 @@ const PurchaseEntry = () => {
 
             <div className="w-full lg:flex-[2]">
               <label className="block text-[11px] font-bold text-[#1F2937] mb-1">Supplier Name (Searchable Dropdown) *</label>
-              <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                <div className="flex-1">
+              <div className="flex flex-col gap-1">
+                <div className="flex-1 w-full">
                 <SearchableSelect
                   value={watch('supplierId')}
                   onChange={(val) => setValue('supplierId', Number(val))}
@@ -321,9 +324,14 @@ const PurchaseEntry = () => {
                   ]}
                 />
                 </div>
-                <button type="button" onClick={() => setIsSupplierModalOpen(true)} className="bg-[#059669] hover:bg-[#047857] text-white px-3 py-2 sm:py-1 rounded transition-colors flex justify-center items-center gap-1 text-[11px] font-bold whitespace-nowrap">
-                  <Plus size={12} /> Add Supp
-                </button>
+                <div className="flex justify-between items-center mt-1">
+                  <button type="button" onClick={() => setIsSupplierModalOpen(true)} className="bg-[#059669] hover:bg-[#047857] text-white px-2 py-1 rounded transition-colors flex items-center gap-1 text-[11px] font-bold">
+                    <Plus size={12} /> Add Supplier
+                  </button>
+                  <span className="text-[11px] text-[#6B7280] text-right flex-1 ml-2">
+                    {selectedSupplier ? `${selectedSupplier.address || 'Standard Vendor'}` : 'Standard Vendor'}
+                  </span>
+                </div>
               </div>
             </div>
 

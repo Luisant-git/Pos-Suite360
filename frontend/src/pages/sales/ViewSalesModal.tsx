@@ -160,7 +160,7 @@ export default function ViewSalesModal({ saleId, onClose }: Props) {
                   <h3 className="font-bold text-[14px] text-gray-800">ITEMIZED BILLING</h3>
                 </div>
                 <div className="overflow-x-auto p-4">
-                  <table className="w-full text-left text-[13px]">
+                  <table className="w-full text-left text-[13px] whitespace-nowrap">
                     <thead>
                       <tr className="border-b-2 border-gray-200 text-gray-500">
                         <th className="py-2 px-2 font-bold">Code</th>

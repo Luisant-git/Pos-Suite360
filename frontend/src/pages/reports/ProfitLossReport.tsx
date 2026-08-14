@@ -117,42 +117,46 @@ const ProfitLossReport = () => {
     `px-2 py-0.5 text-[11px] rounded transition-colors shadow-sm font-bold ${activePreset === preset ? 'bg-[#1F2937] text-white shadow-md' : 'text-gray-700 hover:bg-white bg-transparent'}`;
 
   return (
-    <div className="bg-[#F8FAFC] absolute inset-0 p-3 md:p-4 flex flex-col overflow-hidden print:relative print:h-auto print:bg-white print:p-0 print:block">
+    <div className="bg-[#F8FAFC] absolute inset-0 p-3 md:p-4 flex flex-col overflow-y-auto lg:overflow-hidden print:relative print:h-auto print:bg-white print:p-0 print:block">
       <div className="print:hidden shrink-0">
         <ReportTabs />
       </div>
 
       {/* Toolbar */}
-      <div className="bg-white p-2 rounded shadow-sm border border-gray-200 flex flex-wrap justify-between items-center gap-2 mb-2 shrink-0 print:hidden">
-        <div className="flex items-center gap-4 flex-wrap">
-          <div className="flex items-center gap-2">
-            <span className="text-[12px] font-bold text-gray-700 uppercase tracking-wide flex items-center gap-1">
+      <div className="bg-white p-2 md:p-3 rounded shadow-sm border border-gray-200 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-3 mb-2 shrink-0 print:hidden">
+        <div className="flex flex-col xl:flex-row items-start xl:items-center gap-3 xl:gap-4 w-full lg:w-auto">
+          <div className="flex flex-wrap items-center gap-2 w-full lg:w-auto">
+            <span className="text-[12px] font-bold text-gray-700 uppercase tracking-wide flex items-center gap-1 w-full sm:w-auto mb-1 sm:mb-0">
               <PieChartIcon size={14} /> P&L Statement Period:
             </span>
-            <span className="text-[12px] text-gray-500">From:</span>
-            <input 
-              type="date" 
-              value={fromDate}
-              onChange={(e) => handleCustomDateChange(true, e.target.value)}
-              className="border border-gray-300 rounded px-2 py-0.5 text-[12px] font-bold"
-            />
-            <span className="text-[12px] text-gray-500">To:</span>
-            <input 
-              type="date" 
-              value={toDate}
-              onChange={(e) => handleCustomDateChange(false, e.target.value)}
-              className="border border-gray-300 rounded px-2 py-0.5 text-[12px] font-bold"
-            />
+            <div className="flex items-center gap-2">
+              <span className="text-[12px] text-gray-500">From:</span>
+              <input 
+                type="date" 
+                value={fromDate}
+                onChange={(e) => handleCustomDateChange(true, e.target.value)}
+                className="border border-gray-300 rounded px-2 py-0.5 text-[12px] font-bold w-full"
+              />
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-[12px] text-gray-500">To:</span>
+              <input 
+                type="date" 
+                value={toDate}
+                onChange={(e) => handleCustomDateChange(false, e.target.value)}
+                className="border border-gray-300 rounded px-2 py-0.5 text-[12px] font-bold w-full"
+              />
+            </div>
             <button 
               onClick={() => refetch()}
-              className="bg-[#2563EB] hover:bg-[#1D4ED8] text-white px-3 py-1 rounded flex items-center gap-1 font-bold text-[12px] transition-colors shadow-sm ml-2"
+              className="bg-[#2563EB] hover:bg-[#1D4ED8] text-white px-3 py-1 rounded flex items-center justify-center gap-1 font-bold text-[12px] transition-colors shadow-sm w-full sm:w-auto mt-2 sm:mt-0"
             >
               <Filter size={14} /> Calculate
             </button>
           </div>
 
           {/* Quick Presets */}
-          <div className="flex bg-gray-100 p-1 rounded border border-gray-200 gap-1 items-center">
+          <div className="flex flex-wrap bg-gray-100 p-1 rounded border border-gray-200 gap-1 items-center w-full lg:w-auto">
             <button onClick={() => handleDatePreset('today')} className={presetBtnClass('today')}>Today</button>
             <button onClick={() => handleDatePreset('month')} className={presetBtnClass('month')}>This Month</button>
             <button onClick={() => handleDatePreset('year')} className={presetBtnClass('year')}>This Year</button>
@@ -160,7 +164,7 @@ const ProfitLossReport = () => {
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2 w-full lg:w-auto justify-start lg:justify-end mt-2 lg:mt-0">
           <button 
             onClick={exportToCsv}
             className="bg-white border border-gray-300 hover:bg-gray-50 text-green-700 px-2 py-1 rounded flex items-center gap-1 font-bold text-[12px] transition-colors shadow-sm"
@@ -177,7 +181,7 @@ const ProfitLossReport = () => {
         {/* Left Side: Ledger */}
         <div className="lg:col-span-8 bg-white rounded shadow-sm border border-gray-200 flex flex-col min-h-0 print:border-none print:shadow-none print:h-auto">
           {/* Header */}
-          <div className="bg-[#1F2937] text-white px-4 py-2 flex justify-between items-center shrink-0">
+          <div className="bg-[#1F2937] text-white px-4 py-2 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-0 shrink-0">
             <div>
               <h2 className="text-[15px] font-bold text-[#FBBF24] tracking-wide m-0 leading-tight">POS SUITE 360</h2>
               <p className="text-[10px] uppercase tracking-wider opacity-80 m-0 leading-tight">Statement of Profit and Loss (P&L Ledger)</p>
@@ -285,9 +289,9 @@ const ProfitLossReport = () => {
           </div>
           
           {/* Footer - Net Profit */}
-          <div className={`${isLoss ? 'bg-[#EF4444]' : 'bg-[#10B981]'} text-white px-4 py-2 flex justify-between items-center shrink-0`}>
+          <div className={`${isLoss ? 'bg-[#EF4444]' : 'bg-[#10B981]'} text-white px-4 py-3 sm:py-2 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-0 shrink-0`}>
             <div>
-              <h3 className="text-[18px] font-bold tracking-wider m-0 leading-tight">NET {isLoss ? 'LOSS' : 'PROFIT'} FOR PERIOD</h3>
+              <h3 className="text-[15px] sm:text-[18px] font-bold tracking-wider m-0 leading-tight">NET {isLoss ? 'LOSS' : 'PROFIT'} FOR PERIOD</h3>
               <p className="text-[10px] opacity-90 m-0 leading-tight mt-0.5">Gross Profit less Operating Expenses</p>
             </div>
             <div className="flex flex-col items-end leading-tight">
@@ -351,7 +355,7 @@ const ProfitLossReport = () => {
                Key Financial Ratios
             </h3>
             
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
               <div className="bg-gray-50 border border-gray-200 rounded p-2 text-center">
                 <p className="text-[10px] font-bold text-gray-500 mb-0.5">Gross Margin</p>
                 <p className={`text-[18px] font-bold leading-none ${grossProfitMargin < 0 ? 'text-red-500' : 'text-green-600'}`}>

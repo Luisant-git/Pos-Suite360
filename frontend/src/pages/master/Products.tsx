@@ -156,7 +156,7 @@ const Products = () => {
         </div>
         
         <form onSubmit={handleSubmit(onSubmit as any)} className="p-4 flex flex-col gap-3">
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <div>
               <label className="block text-[12px] font-bold text-[#1F2937] mb-1">Product Code *</label>
               <input 
@@ -192,7 +192,7 @@ const Products = () => {
             {errors.name && <span className="text-red-500 text-xs mt-1 block">{errors.name.message}</span>}
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <div>
               <label className="block text-[11px] font-bold text-gray-700 mb-1">Category</label>
               <select 
@@ -228,7 +228,7 @@ const Products = () => {
 
           <h3 className="font-bold text-[13px] text-gray-500 mt-2 uppercase">Pricing Matrix</h3>
           
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <div>
               <label className="block text-[12px] text-[#1F2937] mb-1">Opening Stock</label>
               <input 
@@ -269,7 +269,7 @@ const Products = () => {
 
           <h3 className="font-bold text-[13px] text-red-500 mt-2 uppercase">Stock Alerts & Thresholds</h3>
           
-          <div className="grid grid-cols-2 gap-3 mb-2">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-2">
             <div>
               <label className="block text-[12px] text-[#1F2937] mb-1">Min Qty (Alert)</label>
               <input 
@@ -314,12 +314,17 @@ const Products = () => {
 
       {/* Right Column: List */}
       <div className={`${isFullTable ? 'xl:col-span-3' : 'xl:col-span-2'} bg-white border border-[#E6E9ED] shadow-sm rounded-sm overflow-hidden flex flex-col`}>
-        <div className="bg-[#E5E7EB] border-b border-[#E6E9ED] px-4 py-3 flex justify-between items-center">
-          <div className="flex items-center gap-2 text-[#1F2937]">
+        <div className="bg-[#E5E7EB] border-b border-[#E6E9ED] px-4 py-3 flex flex-col md:flex-row justify-between items-start md:items-center gap-3 md:gap-0">
+          <div className="flex items-center justify-between w-full md:w-auto text-[#1F2937]">
+            <div className="flex items-center gap-2">
             <Grid size={16} className="text-[#3B82F6]" />
             <h2 className="font-bold text-[14px]">MASTER PRODUCT LIST BY CATEGORY & BRAND</h2>
           </div>
-          <div className="flex items-center gap-3">
+            <div className="bg-gray-500 text-white text-[11px] font-bold px-2 py-0.5 rounded-xl">
+              {filteredProducts.length} Products
+            </div>
+          </div>
+          <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
             <button type="button" 
               onClick={() => setIsFullTable(!isFullTable)}
               className="text-[#3B82F6] hover:bg-white px-2 py-1 rounded text-[12px] font-bold flex items-center gap-1 transition-colors border border-[#3B82F6]"
@@ -327,9 +332,7 @@ const Products = () => {
               {isFullTable ? <Minimize size={14} /> : <Maximize size={14} />}
               {isFullTable ? 'Show Form' : 'View Full Table'}
             </button>
-            <div className="bg-gray-500 text-white text-[11px] font-bold px-2 py-0.5 rounded-xl">
-              {filteredProducts.length} Products
-            </div>
+            
           </div>
         </div>
         
@@ -377,8 +380,8 @@ const Products = () => {
           </div>
         </div>
 
-        <div className="flex-1 overflow-auto">
-          <table className="w-full text-left text-[12px] whitespace-nowrap">
+        <div className="flex-1 overflow-auto overflow-x-auto">
+          <table className="w-full text-left text-[12px] whitespace-nowrap min-w-[800px]">
             <thead>
               <tr className="bg-[#2A2A2A] text-white font-bold">
                 <th className="px-3 py-2 border-r border-[#444] text-center w-8">#</th>
@@ -401,22 +404,22 @@ const Products = () => {
               ) : (
                 filteredProducts.map((product: any, index: number) => (
                   <tr key={product.id} className={`border-b border-[#E5E7EB] ${index % 2 === 0 ? 'bg-white' : 'bg-[#F9F9F9]'} hover:bg-blue-50`}>
-                    <td className="px-3 py-2.5 border-r border-[#E5E7EB] text-center font-bold text-gray-700">{index + 1}</td>
-                    <td className="px-3 py-2.5 border-r border-[#E5E7EB] font-bold text-[#3B82F6]">{product.code}</td>
-                    <td className="px-3 py-2.5 border-r border-[#E5E7EB] font-bold text-[#1F2937]">{product.name}</td>
-                    <td className="px-3 py-2.5 border-r border-[#E5E7EB]">
+                    <td data-label="#" className="px-3 py-2.5 border-r border-[#E5E7EB] text-center font-bold text-gray-700">{index + 1}</td>
+                    <td data-label="Code" className="px-3 py-2.5 border-r border-[#E5E7EB] font-bold text-[#3B82F6]">{product.code}</td>
+                    <td data-label="Product Description" className="px-3 py-2.5 border-r border-[#E5E7EB] font-bold text-[#1F2937]">{product.name}</td>
+                    <td data-label="Category" className="px-3 py-2.5 border-r border-[#E5E7EB]">
                       <span className="text-[10px] font-bold text-[#16A34A] uppercase bg-[#DCFCE7] px-2 py-0.5 rounded">{product.category?.name || '-'}</span>
                     </td>
-                    <td className="px-3 py-2.5 border-r border-[#E5E7EB]">
+                    <td data-label="Brand" className="px-3 py-2.5 border-r border-[#E5E7EB]">
                       <span className="text-[10px] font-bold text-[#D97706] uppercase bg-[#FEF3C7] px-2 py-0.5 rounded">{product.brand?.name || '-'}</span>
                     </td>
-                    <td className="px-3 py-2.5 border-r border-[#E5E7EB] text-center font-bold">
+                    <td data-label="Stock" className="px-3 py-2.5 border-r border-[#E5E7EB] text-center font-bold">
                       {product.currentStock} {product.unit?.name}
                     </td>
-                    <td className="px-3 py-2.5 border-r border-[#E5E7EB] text-right text-gray-600 font-medium">RM {Number(product.purchaseRate).toFixed(2)}</td>
-                    <td className="px-3 py-2.5 border-r border-[#E5E7EB] text-right font-bold text-[#16A34A]">RM {Number(product.wholesaleRate).toFixed(2)}</td>
-                    <td className="px-3 py-2.5 border-r border-[#E5E7EB] text-right font-bold text-[#3B82F6]">RM {Number(product.sellingRate).toFixed(2)}</td>
-                    <td className="px-3 py-2.5 text-center">
+                    <td data-label="Pur Rate" className="px-3 py-2.5 border-r border-[#E5E7EB] text-right text-gray-600 font-medium">RM {Number(product.purchaseRate).toFixed(2)}</td>
+                    <td data-label="Wholesale" className="px-3 py-2.5 border-r border-[#E5E7EB] text-right font-bold text-[#16A34A]">RM {Number(product.wholesaleRate).toFixed(2)}</td>
+                    <td data-label="Sale Rate" className="px-3 py-2.5 border-r border-[#E5E7EB] text-right font-bold text-[#3B82F6]">RM {Number(product.sellingRate).toFixed(2)}</td>
+                    <td data-label="Actions" className="px-3 py-2.5 text-center">
                       <div className="flex justify-center gap-2">
                         <button type="button" 
                           onClick={() => handleEdit(product)}

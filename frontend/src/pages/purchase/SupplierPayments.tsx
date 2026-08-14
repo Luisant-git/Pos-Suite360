@@ -142,19 +142,19 @@ const SupplierPayments = () => {
   return (
     <div className="bg-[#F8FAFC] min-h-[calc(100vh-64px)] p-4">
       {/* Header */}
-      <div className="flex justify-between items-center mb-4 print:hidden">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 md:gap-0 mb-4 print:hidden">
         <div>
-          <h1 className="text-xl font-bold text-[#E11D48] flex items-center gap-2">
+          <h1 className="text-[16px] md:text-xl font-bold text-[#E11D48] flex items-center gap-2">
             <span className="bg-[#E11D48] text-white p-1 rounded"><FileText size={16} /></span>
             SUPPLIER PAYMENTS & PAYOUTS
           </h1>
           <p className="text-[12px] text-gray-500 mt-1">Record vendor credit payouts and supplier payments</p>
         </div>
-        <div className="flex gap-2">
-          <button type="button" onClick={() => navigate('/purchase')} className="bg-[#EFF6FF] text-[#2563EB] font-bold text-[13px] px-4 py-2 rounded border border-[#BFDBFE] hover:bg-[#DBEAFE] flex items-center gap-1 transition-colors">
+        <div className="flex flex-wrap gap-2 w-full md:w-auto">
+          <button type="button" onClick={() => navigate('/purchase')} className="bg-[#EFF6FF] text-[#2563EB] font-bold text-[13px] px-4 py-2 rounded border border-[#BFDBFE] hover:bg-[#DBEAFE] flex items-center gap-1 transition-colors flex-1 md:flex-none justify-center">
             Purchase Hub
           </button>
-          <button type="button" onClick={() => navigate(-1)} className="bg-[#FEF2F2] text-[#E11D48] font-bold text-[13px] px-4 py-2 rounded border border-[#FECDD3] hover:bg-[#FFE4E6] flex items-center gap-1 transition-colors">
+          <button type="button" onClick={() => navigate(-1)} className="bg-[#FEF2F2] text-[#E11D48] font-bold text-[13px] px-4 py-2 rounded border border-[#FECDD3] hover:bg-[#FFE4E6] flex items-center gap-1 transition-colors flex-1 md:flex-none justify-center">
             <X size={14} /> Close
           </button>
         </div>
@@ -173,7 +173,7 @@ const SupplierPayments = () => {
           
           <form onSubmit={handleSubmit(onSubmit as any)} className="p-4 flex flex-col gap-4">
             
-            <div className="grid grid-cols-2 gap-4 print:hidden">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 print:hidden">
               <div>
                 <label className="block text-[12px] font-bold text-[#334155] mb-1">Payment No</label>
                 <input
@@ -355,7 +355,7 @@ const SupplierPayments = () => {
               </div>
             )}
 
-            <div className="grid grid-cols-2 gap-4 print:hidden">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 print:hidden">
               <div>
                 <label className="block text-[12px] font-bold text-[#E11D48] mb-1">Amount Pay Now *</label>
                 <input
@@ -374,7 +374,7 @@ const SupplierPayments = () => {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4 print:hidden">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 print:hidden">
               <div>
                 <label className="block text-[12px] font-bold text-[#334155] mb-1">PAYMENT TYPE *</label>
                 <select
@@ -413,9 +413,9 @@ const SupplierPayments = () => {
               <button 
                 type="submit" 
                 disabled={createMutation.isPending}
-                className="bg-[#E11D48] hover:bg-[#BE123C] text-white px-6 py-2.5 rounded font-bold text-[14px] flex items-center gap-2 transition-colors disabled:opacity-50"
+                className="bg-[#E11D48] hover:bg-[#BE123C] text-white px-4 py-2 rounded font-bold text-[12px] md:text-[14px] flex items-center justify-center gap-2 transition-colors disabled:opacity-50 w-full md:w-auto"
               >
-                <Save size={16} /> SAVE PAYMENT (F10)
+                <Save size={14} /> SAVE PAYMENT (F10)
               </button>
             </div>
 
@@ -484,7 +484,7 @@ const SupplierPayments = () => {
             </div>
           </div>
 
-          <div className="flex-1 overflow-auto bg-[#F8FAFC]">
+          <div className="flex-1 overflow-auto bg-[#F8FAFC] overflow-x-auto">
             <table className="w-full text-left text-[12px] whitespace-nowrap">
               <thead>
                 <tr className="bg-[#1E293B] text-white font-bold">

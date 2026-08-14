@@ -87,7 +87,7 @@ const SalesList = () => {
           <h2 className="font-bold text-[14px] text-[#1E3A8A]">SALES INVOICES LIST</h2>
         </div>
         <div className="overflow-x-auto p-4">
-          <table className="w-full text-left text-[13px]">
+          <table className="w-full text-left text-[13px] whitespace-nowrap">
             <thead>
               <tr className="bg-[#2A2A2A] text-white font-bold">
                 <th className="px-3 py-2.5 border-r border-[#444] relative">Date</th>

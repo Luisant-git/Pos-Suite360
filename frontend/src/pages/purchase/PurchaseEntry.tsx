@@ -263,8 +263,8 @@ const PurchaseEntry = () => {
     <div className="absolute inset-0 bg-[#F3F4F6] flex flex-col font-sans overflow-hidden z-10">
       
       {/* Top Bar */}
-      <div className="bg-[#0B355B] text-white px-4 py-2 flex justify-between items-center shrink-0">
-        <div className="flex gap-2">
+      <div className="bg-[#0B355B] text-white px-2 sm:px-4 py-2 flex flex-wrap gap-2 justify-between items-center shrink-0">
+        <div className="flex flex-wrap gap-2">
           <button 
             type="button"
             onClick={handleSubmit(onSubmit as any, onError)}
@@ -282,13 +282,13 @@ const PurchaseEntry = () => {
         </button>
       </div>
 
-      <form className="flex flex-col flex-1 overflow-hidden" onSubmit={handleSubmit(onSubmit as any, onError)}>
+      <form className="flex flex-col flex-1 overflow-y-auto custom-scrollbar" onSubmit={handleSubmit(onSubmit as any, onError)}>
         
         {/* Header Section */}
-        <div className="bg-white p-4 border-b border-[#E5E7EB] shrink-0">
-          <div className="flex gap-4">
+        <div className="bg-white p-3 sm:p-4 border-b border-[#E5E7EB] shrink-0">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:flex lg:flex-row gap-3 sm:gap-4">
             
-            <div className="flex-1 max-w-[200px]">
+            <div className="w-full lg:flex-1 lg:max-w-[200px]">
               <label className="block text-[11px] font-bold text-[#1F2937] mb-1">Entry No *</label>
               <input
                 {...register('entryNo')}
@@ -298,7 +298,7 @@ const PurchaseEntry = () => {
               />
             </div>
             
-            <div className="flex-1 max-w-[250px]">
+            <div className="w-full lg:flex-1 lg:max-w-[250px]">
               <label className="block text-[11px] font-bold text-[#1F2937] mb-1">Supplier Invoice number</label>
               <input
                 {...register('invoiceNo')}
@@ -308,9 +308,10 @@ const PurchaseEntry = () => {
               />
             </div>
 
-            <div className="flex-[2]">
+            <div className="w-full lg:flex-[2]">
               <label className="block text-[11px] font-bold text-[#1F2937] mb-1">Supplier Name (Searchable Dropdown) *</label>
-              <div className="flex items-center gap-1">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                <div className="flex-1">
                 <SearchableSelect
                   value={watch('supplierId')}
                   onChange={(val) => setValue('supplierId', Number(val))}
@@ -319,15 +320,14 @@ const PurchaseEntry = () => {
                     ...suppliers.map((s: any) => ({ label: `${s.name} - ${s.phone || ''}`, value: s.id }))
                   ]}
                 />
-              </div>
-              <div className="flex mt-1">
-                <button type="button" onClick={() => setIsSupplierModalOpen(true)} className="bg-[#059669] hover:bg-[#047857] text-white px-2 py-1 rounded transition-colors flex items-center gap-1 text-[11px] font-bold">
-                  <Plus size={12} /> Add Supplier
+                </div>
+                <button type="button" onClick={() => setIsSupplierModalOpen(true)} className="bg-[#059669] hover:bg-[#047857] text-white px-3 py-2 sm:py-1 rounded transition-colors flex justify-center items-center gap-1 text-[11px] font-bold whitespace-nowrap">
+                  <Plus size={12} /> Add Supp
                 </button>
               </div>
             </div>
 
-            <div className="flex-1 max-w-[200px]">
+            <div className="w-full lg:flex-1 lg:max-w-[200px]">
               <label className="block text-[11px] font-bold text-[#1F2937] mb-1">Invoice date</label>
               <input
                 {...register('invoiceDate')}
@@ -336,7 +336,7 @@ const PurchaseEntry = () => {
               />
             </div>
 
-            <div className="flex-1 max-w-[200px]">
+            <div className="w-full lg:flex-1 lg:max-w-[200px]">
               <label className="block text-[11px] font-bold text-[#1F2937] mb-1">Entry Date</label>
               <input
                 {...register('date')}
@@ -345,7 +345,7 @@ const PurchaseEntry = () => {
               />
             </div>
 
-            <div className="flex-1 max-w-[200px]">
+            <div className="w-full lg:flex-1 lg:max-w-[200px]">
               <label className="block text-[11px] font-bold text-[#1F2937] mb-1">Mode</label>
               <select
                 {...register('paymentModeId')}
@@ -361,8 +361,8 @@ const PurchaseEntry = () => {
         </div>
 
         {/* Items Grid */}
-        <div className="flex-1 overflow-auto bg-white p-4">
-          <div className="flex justify-end gap-2 mb-2">
+        <div className="flex-1 overflow-auto custom-scrollbar bg-white p-2 sm:p-4 border-b border-[#E5E7EB] overflow-x-auto">
+          <div className="flex flex-wrap justify-end gap-2 mb-2 min-w-[300px]">
             <button 
               type="button"
               onClick={() => append({ productId: 0, quantity: '' as any, unit: 'Nos', pRate: '' as any, wRate: '' as any, sRate: '' as any, mrp: '' as any, discPercent: '' as any, discAmt: '' as any, total: 0 })}
@@ -392,7 +392,7 @@ const PurchaseEntry = () => {
               <FileText size={14} /> Purchase Report
             </button>
           </div>
-          <table className="w-full border-collapse border border-[#E5E7EB]">
+          <table className="w-full border-collapse border border-[#E5E7EB] md:min-w-[1200px] whitespace-nowrap responsive-table">
             <thead>
               <tr className="bg-[#0F172A] text-white">
                 <th className="px-2 py-2 text-center text-[12px] font-medium border border-[#334155] w-10">#</th>
@@ -412,8 +412,8 @@ const PurchaseEntry = () => {
             <tbody>
               {fields.map((field, index) => (
                 <tr key={field.id} className="border-b border-[#E5E7EB] hover:bg-[#F9FAFB]">
-                  <td className="px-2 py-1 text-center text-[13px] border-r border-[#E5E7EB]">{index + 1}</td>
-                  <td className="px-2 py-1 border-r border-[#E5E7EB]">
+                  <td data-label="#" className="px-2 py-1 text-center text-[13px] border-r border-[#E5E7EB]">{index + 1}</td>
+                  <td data-label="Product" className="px-2 py-1 border-r border-[#E5E7EB]">
                     <SearchableSelect
                       value={watch(`items.${index}.productId`)}
                       onChange={(val) => {
@@ -426,25 +426,25 @@ const PurchaseEntry = () => {
                       ]}
                     />
                   </td>
-                  <td className="px-2 py-1 border-r border-[#E5E7EB]">
+                  <td data-label="Stock" className="px-2 py-1 border-r border-[#E5E7EB]">
                     <input {...register(`items.${index}.quantity`)} type="number" min="1" placeholder="0" className="w-full px-2 py-1 border border-[#D1D5DB] rounded text-[13px] outline-none focus:border-[#3B82F6] text-center" />
                   </td>
-                  <td className="px-2 py-1 border-r border-[#E5E7EB]">
+                  <td data-label="Unit" className="px-2 py-1 border-r border-[#E5E7EB]">
                     <input {...register(`items.${index}.unit`)} type="text" readOnly className="w-full px-1 py-1 bg-transparent text-[13px] outline-none text-center" />
                   </td>
-                  <td className="px-2 py-1 border-r border-[#E5E7EB]">
+                  <td data-label="Qty" className="px-2 py-1 border-r border-[#E5E7EB]">
                     <input {...register(`items.${index}.pRate`)} type="number" step="0.01" placeholder="0.00" className="w-full px-2 py-1 border border-[#D1D5DB] rounded text-[13px] outline-none focus:border-[#3B82F6] text-right" />
                   </td>
-                  <td className="px-2 py-1 border-r border-[#E5E7EB]">
+                  <td data-label="Free" className="px-2 py-1 border-r border-[#E5E7EB]">
                     <input {...register(`items.${index}.wRate`)} type="number" step="0.01" placeholder="0.00" readOnly className="w-full px-2 py-1 bg-blue-50 border border-blue-200 text-blue-700 font-bold rounded text-[13px] outline-none text-right cursor-not-allowed" />
                   </td>
-                  <td className="px-2 py-1 border-r border-[#E5E7EB]">
+                  <td data-label="Pur Rate" className="px-2 py-1 border-r border-[#E5E7EB]">
                     <input {...register(`items.${index}.sRate`)} type="number" step="0.01" placeholder="0.00" readOnly className="w-full px-2 py-1 bg-blue-50 border border-blue-200 text-blue-700 font-bold rounded text-[13px] outline-none text-right cursor-not-allowed" />
                   </td>
-                  <td className="px-2 py-1 border-r border-[#E5E7EB]">
+                  <td data-label="MRP" className="px-2 py-1 border-r border-[#E5E7EB]">
                     <input {...register(`items.${index}.mrp`)} type="number" step="0.01" placeholder="0.00" readOnly className="w-full px-2 py-1 bg-blue-50 border border-blue-200 text-blue-700 font-bold rounded text-[13px] outline-none text-right cursor-not-allowed" />
                   </td>
-                  <td className="px-2 py-1 border-r border-[#E5E7EB]">
+                  <td data-label="Tax %" className="px-2 py-1 border-r border-[#E5E7EB]">
                     <input 
                       {...register(`items.${index}.discPercent`)} 
                       type="number" step="0.01" placeholder="0" 
@@ -459,7 +459,7 @@ const PurchaseEntry = () => {
                       className="w-full px-2 py-1 border border-[#D1D5DB] rounded text-[13px] outline-none focus:border-[#3B82F6] text-right" 
                     />
                   </td>
-                  <td className="px-2 py-1 border-r border-[#E5E7EB]">
+                  <td data-label="Tax Amt" className="px-2 py-1 border-r border-[#E5E7EB]">
                     <input 
                       {...register(`items.${index}.discAmt`)} 
                       type="number" step="0.01" placeholder="0.00" 
@@ -479,10 +479,10 @@ const PurchaseEntry = () => {
                       className="w-full px-2 py-1 border border-[#D1D5DB] rounded text-[13px] outline-none focus:border-[#3B82F6] text-right" 
                     />
                   </td>
-                  <td className="px-2 py-1 border-r border-[#E5E7EB]">
+                  <td data-label="Disc %" className="px-2 py-1 border-r border-[#E5E7EB]">
                     <input {...register(`items.${index}.total`)} type="number" readOnly className="w-full px-2 py-1 bg-transparent text-[13px] outline-none text-right font-bold" />
                   </td>
-                  <td className="px-2 py-1 text-center">
+                  <td data-label="Disc Amt" className="px-2 py-1 text-center">
                     <div className="flex justify-center gap-2">
                       <button type="button" onClick={() => append({ productId: 0, quantity: '' as any, unit: 'Nos', pRate: '' as any, wRate: '' as any, sRate: '' as any, mrp: '' as any, discPercent: '' as any, discAmt: '' as any, total: 0 })} className="text-[#059669] hover:text-[#047857]">
                         <Plus size={14} />
@@ -499,10 +499,10 @@ const PurchaseEntry = () => {
         </div>
 
         {/* Footer Calculation Area */}
-        <div className="bg-white border-t border-[#E5E7EB] p-4 shrink-0 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
-          <div className="flex items-center gap-6">
+        <div className="bg-white border-t border-[#E5E7EB] p-3 sm:p-4 shrink-0 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
+          <div className="flex flex-col md:flex-row items-stretch md:items-center gap-4 md:gap-6">
             
-            <div className="flex-1 flex flex-col gap-1">
+            <div className="w-full md:flex-1 flex flex-col gap-1">
               <label className="text-[12px] font-bold text-[#4B5563]">Total Amount:</label>
               <input
                 {...register('totalAmount')}
@@ -512,7 +512,7 @@ const PurchaseEntry = () => {
               />
             </div>
 
-            <div className="flex-1 flex flex-col gap-1">
+            <div className="w-full md:flex-1 flex flex-col gap-1">
               <label className="text-[12px] font-bold text-[#4B5563]">Total Discount:</label>
               <div className="flex gap-2">
                 <div className="relative w-1/3">
@@ -568,8 +568,8 @@ const PurchaseEntry = () => {
             */}
 
 
-            <div className="flex-[2] flex justify-end items-center pt-5">
-              <div className="flex items-center gap-4">
+            <div className="w-full md:flex-[2] flex justify-end items-center md:pt-5">
+              <div className="flex items-center gap-4 w-full md:w-auto justify-between md:justify-end border-t md:border-t-0 pt-4 md:pt-0">
                 <span className="text-[16px] font-bold text-[#1F2937]">NET PURCHASE AMOUNT:</span>
                 <span className="text-[28px] font-bold text-[#059669]">
                   {formatCurrency(watch('netAmount') || 0)}

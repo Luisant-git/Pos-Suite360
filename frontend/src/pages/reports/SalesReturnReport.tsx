@@ -45,13 +45,15 @@ const SalesReturnReport = () => {
       <div className="p-4 flex-1">
         <div className="bg-white border border-[#E6E9ED] shadow-sm rounded-sm overflow-hidden flex flex-col">
           {/* Header */}
-          <div className="bg-[#F8F9FA] border-b border-[#E6E9ED] px-4 py-3 flex items-center justify-between">
-            <div className="flex items-center gap-2 text-[#EF4444]">
-              <CornerDownLeft size={18} />
-              <h2 className="font-bold text-[14px] uppercase tracking-wide">Sales Returns Audit & History Report</h2>
-            </div>
-            <div className="bg-[#EF4444] text-white font-bold text-[11px] px-3 py-1 rounded-sm shadow-sm">
-              {returns.length} Returns
+          <div className="bg-[#F8F9FA] border-b border-[#E6E9ED] px-4 py-3">
+            <div className="flex items-start md:items-center justify-between gap-2 text-[#EF4444]">
+              <div className="flex items-center gap-2">
+                <CornerDownLeft size={18} className="shrink-0" />
+                <h2 className="font-bold text-[13px] md:text-[14px] uppercase tracking-wide">Sales Returns Audit & History Report</h2>
+              </div>
+              <div className="bg-[#EF4444] text-white font-bold text-[11px] px-3 py-1 rounded-sm shadow-sm shrink-0 whitespace-nowrap">
+                {returns.length} Returns
+              </div>
             </div>
           </div>
 
@@ -91,8 +93,8 @@ const SalesReturnReport = () => {
           </div>
 
           {/* Table */}
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-[13px]">
+          <div className="overflow-x-auto custom-scrollbar">
+            <table className="w-full text-left text-[13px] whitespace-nowrap min-w-[800px]">
               <thead>
                 <tr className="bg-[#0F172A] text-white font-bold">
                   <th className="px-4 py-3 border-r border-[#1E293B]">Return No</th>

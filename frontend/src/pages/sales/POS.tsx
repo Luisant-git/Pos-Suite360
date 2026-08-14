@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Plus, Trash2, Save, X, Printer, RefreshCw, List, UserPlus, AlertTriangle, FileText } from 'lucide-react';
+import { Plus, Trash2, Save, X, Printer, RefreshCw, List, UserPlus, AlertTriangle, FileText, PlusCircle } from 'lucide-react';
 import { useSettings } from '../../contexts/SettingsContext';
 import toast from 'react-hot-toast';
 import api from '../../services/api';
@@ -413,8 +413,8 @@ const POS = () => {
     <div className="absolute inset-0 bg-[#F3F4F6] flex flex-col font-sans overflow-hidden z-10 print:relative print:overflow-visible print:h-auto print:bg-white">
       
       {/* Top Bar */}
-      <div className="bg-gradient-to-r from-[#0F172A] to-[#1E3A8A] text-white px-4 py-2 flex justify-between items-center shrink-0 print:hidden">
-        <div className="flex gap-2">
+      <div className="bg-gradient-to-r from-[#0F172A] to-[#1E3A8A] text-white px-2 sm:px-4 py-2 flex flex-wrap gap-2 justify-between items-center shrink-0 print:hidden">
+        <div className="flex flex-wrap gap-2">
           <button 
             type="button"
             onClick={handleSubmit(onSubmit as any, onError)}
@@ -439,13 +439,13 @@ const POS = () => {
         </button>
       </div>
 
-      <form className="flex flex-col flex-1 overflow-hidden print:hidden" onSubmit={handleSubmit(onSubmit as any, onError)}>
+      <form className="flex flex-col flex-1 overflow-y-auto custom-scrollbar print:hidden" onSubmit={handleSubmit(onSubmit as any, onError)}>
         
         {/* Header Section */}
-        <div className="bg-white p-4 border-b border-[#E5E7EB] shrink-0">
-          <div className="flex gap-4">
+        <div className="bg-white p-3 sm:p-4 border-b border-[#E5E7EB] shrink-0">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:flex lg:flex-row gap-3 sm:gap-4">
             
-            <div className="flex-1 max-w-[200px]">
+            <div className="w-full lg:flex-1 lg:max-w-[200px]">
               <label className="block text-[11px] font-bold text-[#1F2937] mb-1">Entry No</label>
               <input
                 {...register('invoiceNo')}
@@ -455,7 +455,7 @@ const POS = () => {
               />
             </div>
 
-            <div className="flex-1 max-w-[200px]">
+            <div className="w-full lg:flex-1 lg:max-w-[200px]">
               <label className="block text-[11px] font-bold text-[#1F2937] mb-1">Entry Date</label>
               <input
                 {...register('date')}
@@ -464,19 +464,24 @@ const POS = () => {
               />
             </div>
 
-            <div className="flex-[2]">
+            <div className="w-full lg:flex-[2]">
               <label className="block text-[11px] font-bold text-[#1F2937] mb-1">Customer Name (Searchable Dropdown) *</label>
-              <div className="flex items-center gap-1">
-                <SearchableSelect
-                  value={watch('customerId')}
-                  onChange={(val) => setValue('customerId', Number(val))}
-                  options={[
-                    { label: 'Click or type customer name / phone...', value: 0 },
-                    ...customers.map((c: any) => ({ label: `${c.name} - ${c.phone || ''}`, value: c.id }))
-                  ]}
-                />
+              <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                <div className="flex-1">
+                  <SearchableSelect
+                    value={watch('customerId')}
+                    onChange={(val) => setValue('customerId', Number(val))}
+                    options={[
+                      { label: 'Click or type customer name...', value: 0 },
+                      ...customers.map((c: any) => ({ label: `${c.name} - ${c.phone || ''}`, value: c.id }))
+                    ]}
+                  />
+                </div>
+                <button type="button" onClick={() => setIsCustomerModalOpen(true)} className="bg-[#059669] hover:bg-[#047857] text-white px-3 py-2 sm:py-1 rounded transition-colors flex justify-center items-center gap-1 text-[11px] font-bold whitespace-nowrap">
+                  <PlusCircle size={14} /> New Cust
+                </button>
               </div>
-              <div className="flex justify-between mt-1">
+              <div className="flex justify-between mt-1 hidden sm:flex">
                 <button type="button" onClick={() => setIsCustomerModalOpen(true)} className="bg-[#059669] hover:bg-[#047857] text-white px-2 py-1 rounded transition-colors flex items-center gap-1 text-[11px] font-bold">
                   <UserPlus size={12} /> Add Customer
                 </button>
@@ -486,19 +491,7 @@ const POS = () => {
               </div>
             </div>
 
-            {/* <div className="flex-1 max-w-[250px]">
-              <label className="block text-[11px] font-bold text-[#059669] mb-1">Rate Type *</label>
-              <select
-                {...register('rateType')}
-                className="w-full px-2 py-1.5 border border-[#059669] text-[#059669] font-medium rounded text-[13px] outline-none focus:ring-1 focus:ring-[#059669] bg-white"
-              >
-                <option value="Wholesale Rate">Wholesale Rate</option>
-                <option value="Retail Rate">Retail Rate</option>
-                <option value="MRP">MRP</option>
-              </select>
-            </div> */}
-
-            <div className="flex-1 max-w-[200px]">
+            <div className="w-full lg:flex-1 lg:max-w-[200px]">
               <label className="block text-[11px] font-bold text-[#1F2937] mb-1">Payment Mode</label>
               <select
                 {...register('paymentModeId')}
@@ -514,8 +507,8 @@ const POS = () => {
         </div>
 
         {/* Items Grid */}
-        <div className="flex-1 overflow-auto bg-white border-b border-[#E5E7EB]">
-          <div className="flex justify-end gap-2 p-2">
+        <div className="flex-1 overflow-auto custom-scrollbar bg-white border-b border-[#E5E7EB] overflow-x-auto">
+          <div className="flex flex-wrap justify-end gap-2 p-2 min-w-[300px]">
             <button 
               type="button"
               onClick={() => append({ productId: 0, quantity: '' as any, stock: 0, rate: '' as any, unit: 'Nos', discPercent: '' as any, discAmt: '' as any, total: 0 })}
@@ -545,7 +538,7 @@ const POS = () => {
               <FileText size={14} /> Sales Report
             </button>
           </div>
-          <table className="w-full border-collapse">
+          <table className="w-full border-collapse md:min-w-[900px] whitespace-nowrap responsive-table">
             <thead>
               <tr className="bg-[#0F172A] text-white">
                 <th className="px-2 py-2 text-center text-[12px] font-medium border border-[#334155] w-10">#</th>
@@ -563,8 +556,8 @@ const POS = () => {
             <tbody>
               {fields.map((field, index) => (
                 <tr key={field.id} className="border-b border-[#E5E7EB] hover:bg-[#F9FAFB]">
-                  <td className="px-2 py-1 text-center text-[13px] border-r border-[#E5E7EB]">{index + 1}</td>
-                  <td className="px-2 py-1 border-r border-[#E5E7EB]">
+                  <td data-label="#" className="px-2 py-1 text-center text-[13px] border-r border-[#E5E7EB]">{index + 1}</td>
+                  <td data-label="Product" className="px-2 py-1 border-r border-[#E5E7EB]">
                     <SearchableSelect
                       value={watch(`items.${index}.productId`)}
                       onChange={(val) => {
@@ -577,18 +570,18 @@ const POS = () => {
                       ]}
                     />
                   </td>
-                  <td className="px-2 py-1 border-r border-[#E5E7EB] text-center">
+                  <td data-label="Stock" className="px-2 py-1 border-r border-[#E5E7EB] text-center">
                     <span className={`px-2 py-0.5 rounded-full text-[11px] font-bold text-white ${watch(`items.${index}.stock`) > 0 ? 'bg-[#059669]' : 'bg-[#EF4444]'}`}>
                       {watch(`items.${index}.stock`)}
                     </span>
                   </td>
-                  <td className="px-2 py-1 border-r border-[#E5E7EB]">
+                  <td data-label="Unit" className="px-2 py-1 border-r border-[#E5E7EB]">
                     <input {...register(`items.${index}.unit`)} type="text" readOnly className="w-full px-1 py-1 bg-transparent text-[13px] outline-none text-center" />
                   </td>
-                  <td className="px-2 py-1 border-r border-[#E5E7EB]">
+                  <td data-label="Qty" className="px-2 py-1 border-r border-[#E5E7EB]">
                     <input {...register(`items.${index}.quantity`)} type="number" min="1" placeholder="0" className={`w-full px-2 py-1 border rounded text-[13px] outline-none text-center ${watch(`items.${index}.quantity`) > watch(`items.${index}.stock`) ? 'border-red-500 focus:border-red-500 bg-red-100 text-red-700 font-bold' : 'border-[#D1D5DB] focus:border-[#3B82F6]'}`} />
                   </td>
-                  <td className="px-2 py-1 border-r border-[#E5E7EB]">
+                  <td data-label="Rate" className="px-2 py-1 border-r border-[#E5E7EB]">
                     <input 
                       {...register(`items.${index}.rate`)} 
                       type="number" step="0.01" placeholder="0.00" 
@@ -612,7 +605,7 @@ const POS = () => {
                       }}
                     />
                   </td>
-                  <td className="px-2 py-1 border-r border-[#E5E7EB]">
+                  <td data-label="Disc %" className="px-2 py-1 border-r border-[#E5E7EB]">
                     <input 
                       {...register(`items.${index}.discPercent`)} 
                       type="number" step="0.01" placeholder="0" 
@@ -627,7 +620,7 @@ const POS = () => {
                       className="w-full px-2 py-1 border border-[#D1D5DB] rounded text-[13px] outline-none focus:border-[#3B82F6] text-right" 
                     />
                   </td>
-                  <td className="px-2 py-1 border-r border-[#E5E7EB]">
+                  <td data-label="Disc Amt" className="px-2 py-1 border-r border-[#E5E7EB]">
                     <input 
                       {...register(`items.${index}.discAmt`)} 
                       type="number" step="0.01" placeholder="0.00" 
@@ -647,10 +640,10 @@ const POS = () => {
                       className="w-full px-2 py-1 border border-[#D1D5DB] rounded text-[13px] outline-none focus:border-[#3B82F6] text-right" 
                     />
                   </td>
-                  <td className="px-2 py-1 border-r border-[#E5E7EB]">
+                  <td data-label="Total" className="px-2 py-1 border-r border-[#E5E7EB]">
                     <input {...register(`items.${index}.total`)} type="number" readOnly className="w-full px-2 py-1 bg-transparent text-[13px] outline-none text-right font-bold" />
                   </td>
-                  <td className="px-2 py-1 text-center">
+                  <td data-label="Action" className="px-2 py-1 text-center">
                     <div className="flex justify-center gap-2">
                       <button type="button" onClick={() => append({ productId: 0, quantity: '' as any, stock: 0, rate: '' as any, unit: 'Nos', discPercent: '' as any, discAmt: '' as any, total: 0 })} className="text-[#059669] hover:text-[#047857]">
                         <Plus size={14} />
@@ -669,30 +662,11 @@ const POS = () => {
         {/* Tabs & Footer Calculation Area */}
         <div className="bg-[#F9FAFB] shrink-0">
           
-          {/* 
-          <div className="flex border-b border-[#E5E7EB]">
-            {['Amount Details', 'Shipping Address', 'Delivery Address', 'Extra Details'].map(tab => (
-              <button
-                key={tab}
-                type="button"
-                onClick={() => setActiveTab(tab)}
-                className={`px-4 py-2 text-[13px] font-medium border-b-2 transition-colors ${
-                  activeTab === tab 
-                    ? 'border-[#3B82F6] text-[#3B82F6] bg-white' 
-                    : 'border-transparent text-[#6B7280] hover:text-[#374151]'
-                }`}
-              >
-                {tab}
-              </button>
-            ))}
-          </div>
-          */}
-
-          <div className="p-4 bg-white border-b border-[#E5E7EB]">
+          <div className="p-3 sm:p-4 bg-white border-b border-[#E5E7EB]">
             {activeTab === 'Amount Details' && (
-              <div className="flex items-center gap-6">
+              <div className="flex flex-col md:flex-row items-stretch md:items-center gap-4 md:gap-6">
                 
-                <div className="flex-1 flex flex-col gap-1">
+                <div className="w-full md:flex-1 flex flex-col gap-1">
                   <label className="text-[12px] font-bold text-[#4B5563]">Gross Amount:</label>
                   <input
                     {...register('grossAmount')}
@@ -702,7 +676,7 @@ const POS = () => {
                   />
                 </div>
 
-                <div className="flex-1 flex flex-col gap-1">
+                <div className="w-full md:flex-1 flex flex-col gap-1">
                   <label className="text-[12px] font-bold text-[#4B5563]">Total Discount:</label>
                   <div className="flex gap-2">
                     <div className="relative w-1/3">
@@ -745,20 +719,17 @@ const POS = () => {
                   </div>
                 </div>
 
-                {/*
-                <div className="flex-1 flex flex-col gap-1">
-                  <label className="text-[12px] font-bold text-[#4B5563]">Round Off:</label>
+                <div className="w-full md:flex-1 flex flex-col gap-1">
+                  <label className="text-[12px] font-bold text-[#1E3A8A]">NET AMOUNT:</label>
                   <input
-                    {...register('roundOff')}
+                    {...register('netAmount')}
                     type="number"
-                    step="0.01"
-                    placeholder="0.00"
-                    className="w-full px-3 py-2 border border-[#D1D5DB] rounded text-[14px] outline-none focus:border-[#3B82F6] text-right font-medium"
+                    readOnly
+                    className="w-full px-3 py-2 border border-[#059669] bg-[#ECFDF5] text-[#059669] rounded text-[16px] outline-none text-right font-black shadow-inner"
                   />
                 </div>
-                */}
                 
-                <div className="flex-1 flex flex-col gap-1">
+                <div className="w-full md:flex-1 flex flex-col gap-1">
                   {/* Empty space to balance layout */}
                 </div>
 
@@ -772,8 +743,8 @@ const POS = () => {
           </div>
 
           {/* Bottom Black Bar */}
-          <div className="bg-[#020617] text-white px-4 py-3 flex justify-between items-center">
-            <div className="flex gap-2">
+          <div className="bg-[#020617] text-white px-4 py-3 flex flex-col md:flex-row justify-between items-center gap-3 md:gap-0">
+            <div className="flex flex-wrap justify-center gap-2 w-full md:w-auto">
               <div className="bg-[#2563EB] text-white text-[11px] font-bold px-3 py-1.5 rounded-sm flex items-center gap-1">
                 <span className="opacity-70 border-r border-[#60A5FA] pr-1 mr-1">F2</span> POS
               </div>
@@ -791,9 +762,9 @@ const POS = () => {
               </div>
             </div>
             
-            <div className="flex items-center gap-4">
-              <span className="text-[16px] font-bold text-white uppercase tracking-wide">TOTAL NET AMOUNT:</span>
-              <span className="text-[28px] font-bold text-[#38BDF8]">
+            <div className="flex items-center gap-2 sm:gap-4 w-full md:w-auto justify-between md:justify-end border-t md:border-none border-gray-700 pt-3 md:pt-0">
+              <span className="text-[14px] sm:text-[16px] font-bold text-white uppercase tracking-wide">TOTAL NET AMOUNT:</span>
+              <span className="text-[24px] sm:text-[28px] font-bold text-[#38BDF8]">
                 {formatCurrency(watch('netAmount') || 0)}
               </span>
             </div>
@@ -902,7 +873,7 @@ const POS = () => {
           </div>
         </div>
         
-        <table className="w-full text-left border-y border-black mb-4">
+        <table className="w-full text-left border-y border-black mb-4 whitespace-nowrap">
           <thead>
             <tr className="border-b border-black text-xs uppercase">
               <th className="py-2 w-[15%]">Code</th>

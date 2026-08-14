@@ -19,13 +19,13 @@ import api from '../../services/api';
 import { useSettings } from '../../contexts/SettingsContext';
 
 const StatCard = ({ title, value, icon: Icon, colorClass, desc }: any) => (
-  <div className="bg-white border border-[#E6E9ED] shadow-sm p-5 relative flex items-center justify-between rounded-xl hover:shadow-md transition-shadow">
+  <div className="bg-white border border-[#E6E9ED] shadow-sm p-5 relative flex items-center justify-between hover:shadow-md transition-shadow">
     <div>
-      <h3 className="text-3xl font-black text-gray-700">{value}</h3>
+      <h3 className="text-3xl font-black text-gray-500">{value}</h3>
       <p className="text-[14px] text-[#1F2937] font-bold mt-1 uppercase tracking-wide">{title}</p>
       {desc && <p className="text-[12px] text-gray-400 font-medium mt-1">{desc}</p>}
     </div>
-    <div className={`p-4 rounded-xl ${colorClass} text-white flex-shrink-0 flex items-center justify-center shadow-inner`}>
+    <div className={`p-4 ${colorClass} text-white flex-shrink-0 flex items-center justify-center shadow-inner`}>
       <Icon className="w-8 h-8" />
     </div>
   </div>
@@ -89,7 +89,7 @@ const Dashboard = () => {
         <h2 className="text-[20px] font-black text-gray-800 mb-4 flex items-center gap-2">
           <Zap className="text-amber-500" /> Quick Launchpad
         </h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
           <QuickAction 
             title="Sales Entry" 
             desc="Open POS Terminal" 

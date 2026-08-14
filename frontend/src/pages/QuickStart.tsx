@@ -108,7 +108,7 @@ const QuickStart = () => {
         <div className="p-8 flex-1 bg-[#F9FAFB]">
           {!activeCategory ? (
             // Show Main Categories
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 content-start">
+            <div className="grid grid-cols-1 md:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 content-start">
               {menuData.map((category) => (
                 <button 
                   key={category.title}
@@ -127,7 +127,7 @@ const QuickStart = () => {
             </div>
           ) : (
             // Show Sub Items for Selected Category
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6 content-start animate-in fade-in zoom-in-95 duration-200">
+            <div className="grid grid-cols-1 md:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6 content-start animate-in fade-in zoom-in-95 duration-200">
               {currentCategoryData?.items.map((item: any) => {
                 const colorClass = item.colorClass || currentCategoryData.colorClass;
                 return (

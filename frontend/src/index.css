@@ -62,3 +62,48 @@
   @page { margin: 10mm; size: A4 portrait; }
   .print\:hidden { display: none !important; }
 }
+
+@media (max-width: 768px) {
+  .responsive-table {
+    display: block;
+    width: 100%;
+  }
+  .responsive-table thead {
+    display: none;
+  }
+  .responsive-table tbody, .responsive-table tr, .responsive-table td {
+    display: block;
+    width: 100%;
+  }
+  .responsive-table tr {
+    margin-bottom: 15px;
+    border: 1px solid #E5E7EB;
+    border-radius: 0.5rem;
+    background-color: #fff;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  }
+  .responsive-table td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #F3F4F6;
+    text-align: right;
+  }
+  .responsive-table td:last-child {
+    border-bottom: none;
+  }
+  .responsive-table td::before {
+    content: attr(data-label);
+    font-weight: 700;
+    color: #4B5563;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    margin-right: 1rem;
+    white-space: nowrap;
+  }
+  .responsive-table td > input, .responsive-table td > select, .responsive-table td > div {
+    flex-grow: 1;
+    max-width: 60%;
+  }
+}

@@ -124,12 +124,17 @@ const Brands = () => {
 
       {/* Right Column: List */}
       <div className={`${isFullTable ? 'lg:col-span-3' : 'lg:col-span-2'} bg-white border border-[#E6E9ED] shadow-sm rounded-sm overflow-hidden flex flex-col`}>
-        <div className="bg-[#f9f9f9] border-b border-[#E6E9ED] px-4 py-3 flex justify-between items-center">
-          <div className="flex items-center gap-2 text-[#1F2937]">
+        <div className="bg-[#f9f9f9] border-b border-[#E6E9ED] px-4 py-3 flex flex-col md:flex-row justify-between items-start md:items-center gap-3 md:gap-0">
+          <div className="flex items-center justify-between w-full md:w-auto text-[#1F2937]">
+            <div className="flex items-center gap-2">
             <Grid size={16} className="text-[#3B82F6]" />
             <h2 className="font-bold text-[14px]">BRAND LIST</h2>
           </div>
-          <div className="flex items-center gap-3">
+            <div className="bg-gray-500 text-white text-[11px] font-bold px-2 py-0.5 rounded-xl">
+              {brands.length} Brands
+            </div>
+          </div>
+          <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
             <button type="button" 
               onClick={() => setIsFullTable(!isFullTable)}
               className="text-[#3B82F6] hover:bg-[#EFF6FF] px-2 py-1 rounded text-[12px] font-bold flex items-center gap-1 transition-colors border border-[#3B82F6]"
@@ -137,14 +142,12 @@ const Brands = () => {
               {isFullTable ? <Minimize size={14} /> : <Maximize size={14} />}
               {isFullTable ? 'Show Form' : 'View Full Table'}
             </button>
-            <div className="bg-gray-500 text-white text-[11px] font-bold px-2 py-0.5 rounded-xl">
-              {brands.length} Brands
-            </div>
+            
           </div>
         </div>
         
-        <div className="flex-1 overflow-auto p-4">
-          <table className="w-full text-left text-[13px]">
+        <div className="flex-1 overflow-y-auto custom-scrollbar p-4 overflow-x-auto">
+          <table className="w-full text-left text-[13px] whitespace-nowrap min-w-[800px]">
             <thead>
               <tr className="bg-[#2A2A2A] text-white font-bold">
                 <th className="px-3 py-2.5 border-r border-[#444] text-center w-12">ID</th>
@@ -161,10 +164,10 @@ const Brands = () => {
               ) : (
                 brands.map((brand: any, index: number) => (
                   <tr key={brand.id} className={`border-b border-[#E5E7EB] ${index % 2 === 0 ? 'bg-[#F9F9F9]' : 'bg-white'} hover:bg-blue-50`}>
-                    <td className="px-3 py-2.5 border-r border-[#E5E7EB] text-center font-bold">{brand.id}</td>
-                    <td className="px-3 py-2.5 border-r border-[#E5E7EB] font-bold text-[#3B82F6]">{brand.name}</td>
-                    <td className="px-3 py-2.5 border-r border-[#E5E7EB] text-gray-500">{brand.parent ? brand.parent.name : '-'}</td>
-                    <td className="px-3 py-2.5 text-center">
+                    <td data-label="ID" className="px-3 py-2.5 border-r border-[#E5E7EB] text-center font-bold">{brand.id}</td>
+                    <td data-label="Brand Name" className="px-3 py-2.5 border-r border-[#E5E7EB] font-bold text-[#3B82F6]">{brand.name}</td>
+                    <td data-label="Parent Brand" className="px-3 py-2.5 border-r border-[#E5E7EB] text-gray-500">{brand.parent ? brand.parent.name : '-'}</td>
+                    <td data-label="Actions" className="px-3 py-2.5 text-center">
                       <div className="flex justify-center gap-2">
                         <button type="button" 
                           onClick={() => handleEdit(brand)}

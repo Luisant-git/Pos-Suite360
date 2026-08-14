@@ -101,15 +101,15 @@ const Settings = () => {
     <div className="bg-[#F8FAFC] min-h-[calc(100vh-64px)] p-1 flex flex-col w-full">
       
       {/* Header */}
-      <div className="w-full flex justify-between items-center mb-2 px-1">
+      <div className="w-full flex flex-col md:flex-row justify-between items-start md:items-center mb-4 md:mb-2 px-2 gap-3 md:gap-0 mt-2">
         <div>
-          <h1 className="text-xl font-bold text-[#2563EB] flex items-center gap-2">
-            <span className="text-[#F59E0B]"><SettingsIcon size={20} /></span>
+          <h1 className="text-lg md:text-xl font-bold text-[#2563EB] flex items-center gap-2">
+            <span className="text-[#F59E0B]"><SettingsIcon size={18} className="md:w-5 md:h-5" /></span>
             MY ACCOUNT & STORE SETTINGS
           </h1>
-          <p className="text-sm text-[#64748B] mt-1">Manage company details, billing currency, shop address, and account password security</p>
+          <p className="text-xs md:text-sm text-[#64748B] mt-1">Manage company details, billing currency, shop address, and account password security</p>
         </div>
-        <button type="button" onClick={() => navigate('/')} className="bg-[#E11D48] text-white font-bold text-base px-4 py-2 rounded flex items-center gap-1 transition-colors shadow-sm hover:bg-[#BE123C]">
+        <button type="button" onClick={() => navigate('/')} className="w-full md:w-auto justify-center bg-[#E11D48] text-white font-bold text-[14px] md:text-base px-4 py-2 rounded flex items-center gap-1 transition-colors shadow-sm hover:bg-[#BE123C]">
           <X size={14} /> Close
         </button>
       </div>
@@ -143,7 +143,7 @@ const Settings = () => {
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-[12px] font-bold text-[#334155] mb-1">Contact Phone Number</label>
                   <input
@@ -164,7 +164,7 @@ const Settings = () => {
                 <div className="flex items-center gap-2 text-[#475569] font-bold text-[13px] mb-2">
                   <span className="text-[#64748B]"><Store size={14} /></span> Currency & Regional Settings
                 </div>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-[12px] font-bold text-[#334155] mb-1">Currency Symbol</label>
                     <input

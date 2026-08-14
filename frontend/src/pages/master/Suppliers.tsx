@@ -114,7 +114,7 @@ const Suppliers = () => {
             {errors.name && <span className="text-red-500 text-xs mt-1 block">{errors.name.message}</span>}
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <div>
               <label className="block text-[12px] text-[#1F2937] mb-1">Contact Person</label>
               <input 
@@ -153,7 +153,7 @@ const Suppliers = () => {
             ></textarea>
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <div>
               <label className="block text-[12px] text-[#1F2937] mb-1">Opening Bal</label>
               <input 
@@ -175,7 +175,7 @@ const Suppliers = () => {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <div>
               <label className="block text-[12px] text-[#1F2937] mb-1">Account No</label>
               <input 
@@ -227,12 +227,17 @@ const Suppliers = () => {
 
       {/* Right Column: List */}
       <div className={`${isFullTable ? 'xl:col-span-3' : 'xl:col-span-2'} bg-white border border-[#E6E9ED] shadow-sm rounded-sm overflow-hidden flex flex-col`}>
-        <div className="bg-[#f9f9f9] border-b border-[#E6E9ED] px-4 py-3 flex justify-between items-center">
-          <div className="flex items-center gap-2 text-[#1F2937]">
+        <div className="bg-[#f9f9f9] border-b border-[#E6E9ED] px-4 py-3 flex flex-col md:flex-row justify-between items-start md:items-center gap-3 md:gap-0">
+          <div className="flex items-center justify-between w-full md:w-auto text-[#1F2937]">
+            <div className="flex items-center gap-2">
             <Grid size={16} className="text-[#3B82F6]" />
             <h2 className="font-bold text-[14px]">SUPPLIER LIST</h2>
           </div>
-          <div className="flex items-center gap-3">
+            <div className="bg-gray-500 text-white text-[11px] font-bold px-2 py-0.5 rounded-xl">
+              {filteredSuppliers.length} Suppliers
+            </div>
+          </div>
+          <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
             <button type="button" 
               onClick={() => setIsFullTable(!isFullTable)}
               className="text-[#3B82F6] hover:bg-[#EFF6FF] px-2 py-1 rounded text-[12px] font-bold flex items-center gap-1 transition-colors border border-[#3B82F6]"
@@ -240,9 +245,7 @@ const Suppliers = () => {
               {isFullTable ? <Minimize size={14} /> : <Maximize size={14} />}
               {isFullTable ? 'Show Form' : 'View Full Table'}
             </button>
-            <div className="bg-gray-500 text-white text-[11px] font-bold px-2 py-0.5 rounded-xl">
-              {filteredSuppliers.length} Suppliers
-            </div>
+            
           </div>
         </div>
         
@@ -257,8 +260,8 @@ const Suppliers = () => {
           />
         </div>
 
-        <div className="flex-1 overflow-auto">
-          <table className="w-full text-left text-[13px] whitespace-nowrap">
+        <div className="flex-1 overflow-auto overflow-x-auto">
+          <table className="w-full text-left text-[13px] whitespace-nowrap min-w-[800px]">
             <thead>
               <tr className="bg-[#2A2A2A] text-white font-bold">
                 <th className="px-3 py-2.5 border-r border-[#444] text-center w-8">#</th>
@@ -277,14 +280,14 @@ const Suppliers = () => {
               ) : (
                 filteredSuppliers.map((supplier: any, index: number) => (
                   <tr key={supplier.id} className={`border-b border-[#E5E7EB] ${index % 2 === 0 ? 'bg-white' : 'bg-[#F9F9F9]'} hover:bg-blue-50`}>
-                    <td className="px-3 py-3 border-r border-[#E5E7EB] text-center font-bold text-gray-700">{index + 1}</td>
-                    <td className="px-3 py-3 border-r border-[#E5E7EB] font-bold text-[#3B82F6]">{supplier.name}</td>
-                    <td className="px-3 py-3 border-r border-[#E5E7EB] font-medium text-gray-700">{supplier.phone || '-'}</td>
-                    <td className="px-3 py-3 border-r border-[#E5E7EB] text-gray-600 truncate max-w-[200px]">{supplier.address || '-'}</td>
-                    <td className="px-3 py-3 border-r border-[#E5E7EB] text-right font-bold text-gray-800">
+                    <td data-label="#" className="px-3 py-3 border-r border-[#E5E7EB] text-center font-bold text-gray-700">{index + 1}</td>
+                    <td data-label="Supplier Name" className="px-3 py-3 border-r border-[#E5E7EB] font-bold text-[#3B82F6]">{supplier.name}</td>
+                    <td data-label="Mobile" className="px-3 py-3 border-r border-[#E5E7EB] font-medium text-gray-700">{supplier.phone || '-'}</td>
+                    <td data-label="Complete Address" className="px-3 py-3 border-r border-[#E5E7EB] text-gray-600 truncate max-w-[200px]">{supplier.address || '-'}</td>
+                    <td data-label="Opening Bal" className="px-3 py-3 border-r border-[#E5E7EB] text-right font-bold text-gray-800">
                       RM {Number(supplier.openingBalance).toFixed(2)} ({supplier.openingBalanceType})
                     </td>
-                    <td className="px-3 py-3 text-center">
+                    <td data-label="Actions" className="px-3 py-3 text-center">
                       <div className="flex justify-center gap-2">
                         <button type="button" 
                           onClick={() => handleEdit(supplier)}

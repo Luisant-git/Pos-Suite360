@@ -34,7 +34,7 @@ export default function ViewPurchaseModal({ purchaseId, onClose }: Props) {
         </div>
         
         <div className="p-5 overflow-y-auto">
-          <div className="grid grid-cols-2 gap-4 mb-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
             <div>
               <p className="text-[12px] text-gray-500 uppercase tracking-wider font-bold mb-1">Supplier Info</p>
               <p className="font-bold text-[#1E3A8A] text-[15px]">{purchase.supplier?.name}</p>
@@ -50,7 +50,7 @@ export default function ViewPurchaseModal({ purchaseId, onClose }: Props) {
             </div>
           </div>
           
-          <table className="w-full text-left text-[13px] border border-gray-200 mb-6 rounded overflow-hidden">
+          <table className="w-full text-left text-[13px] border border-gray-200 mb-6 rounded overflow-hidden whitespace-nowrap">
             <thead className="bg-[#F3F4F6] text-[#374151]">
               <tr>
                 <th className="px-3 py-2.5 border border-gray-300">#</th>

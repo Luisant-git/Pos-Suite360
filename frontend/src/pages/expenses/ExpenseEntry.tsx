@@ -74,7 +74,7 @@ const ExpenseEntry = () => {
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 p-4 overflow-auto">
+      <div className="flex-1 p-4 overflow-auto overflow-x-auto">
         <div className="flex flex-col lg:flex-row gap-6 h-full">
           
           {/* Left Panel - Log New Expense */}
@@ -153,7 +153,7 @@ const ExpenseEntry = () => {
               </h3>
             </div>
 
-            <div className="p-4 flex-1 overflow-auto">
+            <div className="p-4 flex-1 overflow-auto overflow-x-auto">
               <div className="overflow-x-auto rounded-lg border border-gray-200">
                 <table className="w-full text-sm text-left whitespace-nowrap">
                   <thead className="text-xs text-white uppercase bg-[#0f172a]">

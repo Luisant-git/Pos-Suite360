@@ -146,8 +146,8 @@ const SalesReport = () => {
 
         </div>
 
-        <div className="flex justify-between items-center pt-2 border-t border-dashed border-[#E2E8F0]">
-          <div className="flex items-center gap-3">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center pt-2 border-t border-dashed border-[#E2E8F0] gap-3 md:gap-0">
+          <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
             <button type="button" onClick={() => refetch()} className="bg-[#0F172A] hover:bg-[#1E293B] text-white px-4 py-1.5 rounded-md flex items-center gap-2 text-[13px] font-bold transition-colors">
               <Search size={14} /> Apply Filter
             </button>
@@ -162,7 +162,7 @@ const SalesReport = () => {
               <RotateCcw size={14} /> Reset Filters
             </button>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2 w-full md:w-auto">
             <button type="button" onClick={() => {
               const today = new Date().toISOString().split('T')[0];
               setFromDate(today);
@@ -178,12 +178,12 @@ const SalesReport = () => {
 
       {/* Report Table Section */}
       <div className="bg-white border border-[#E2E8F0] shadow-sm rounded-md overflow-hidden flex flex-col flex-1 min-h-0">
-        <div className="bg-[#F8FAFC] border-b border-[#E2E8F0] px-4 py-3 flex justify-between items-center">
+        <div className="bg-[#F8FAFC] border-b border-[#E2E8F0] px-4 py-3 flex flex-col md:flex-row justify-between items-start md:items-center gap-3 md:gap-0">
           <div className="flex items-center gap-2 text-[#3B82F6]">
             <FileText size={16} />
             <h2 className="font-bold text-[13px] tracking-wide text-[#1E3A8A]">SALES REPORT DISPLAY</h2>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
             <div className="relative">
               <Search size={14} className="absolute left-2.5 top-2.5 text-gray-400" />
               <input 
@@ -209,7 +209,7 @@ const SalesReport = () => {
           </div>
         </div>
 
-        <div className="flex-1 overflow-auto">
+        <div className="flex-1 overflow-auto overflow-x-auto">
           <table className="w-full text-left text-[12px] whitespace-nowrap">
             <thead>
               <tr className="bg-[#0F172A] text-white font-bold">
@@ -284,7 +284,7 @@ const SalesReport = () => {
 
       </div>
       {/* Bottom Black Bar - always visible, outside scroll area */}
-      <div className="bg-[#020617] text-white px-6 py-3 flex justify-between items-center shrink-0 print:hidden">
+      <div className="bg-[#020617] text-white px-4 md:px-6 py-3 flex flex-col-reverse md:flex-row justify-between items-center md:items-end gap-3 md:gap-0 shrink-0 print:hidden w-full">
         <div className="flex gap-2">
           <button
             type="button"
@@ -301,9 +301,9 @@ const SalesReport = () => {
             <span className="opacity-70 border-r border-[#67E8F9] pr-1 mr-1">Esc</span> Dashboard
           </button>
         </div>
-        <div className="flex items-center gap-4">
-          <span className="text-[16px] font-bold text-white uppercase tracking-wide">TOTAL AMOUNT:</span>
-          <span className="text-[28px] font-bold text-[#38BDF8]">{formatCurrency(totalSalesAmount)}</span>
+        <div className="flex items-center gap-2 md:gap-4 flex-wrap justify-end">
+          <span className="text-[13px] md:text-[16px] font-bold text-white uppercase tracking-wide">TOTAL AMOUNT:</span>
+          <span className="text-[20px] md:text-[28px] font-bold text-[#38BDF8]">{formatCurrency(totalSalesAmount)}</span>
         </div>
       </div>
 

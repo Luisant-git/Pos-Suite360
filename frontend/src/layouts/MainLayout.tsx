@@ -141,9 +141,9 @@ const MainLayout = () => {
         <aside className="hidden lg:flex flex-col w-64 h-full bg-[#111827] text-white shadow-2xl z-40 overflow-y-auto print:hidden">
           <div className="flex items-center gap-3 p-4 border-b border-[#2563EB] shrink-0 h-[60px] bg-gradient-to-r from-[#1E40AF] to-[#2563EB]">
             <div className="w-8 h-8 bg-white rounded-xl flex items-center justify-center shadow-md">
-              <span className="text-[#2563EB] font-black text-sm tracking-tighter">P<span className="text-amber-500">O</span>S</span>
+              <span className="text-[#2563EB] font-bold text-sm tracking-tighter">P<span className="text-amber-500">O</span>S</span>
             </div>
-            <span className="font-black tracking-wider leading-tight">SUITE 360</span>
+            <span className="font-bold tracking-wider leading-tight">SUITE 360</span>
           </div>
           
           <nav className="flex-1 py-2 overflow-y-auto custom-scrollbar">
@@ -206,10 +206,10 @@ const MainLayout = () => {
 
             <Link to="/dashboard" className={`items-center gap-2 sm:gap-3 mr-2 sm:mr-6 group ${showBackButton ? 'hidden sm:flex' : 'flex'} ${desktopLayout === 'sidebar' ? 'lg:hidden' : ''}`}>
               <div className="w-8 h-8 sm:w-10 sm:h-10 bg-white rounded-xl flex items-center justify-center shadow-md group-hover:shadow-lg transition-all transform group-hover:-translate-y-0.5 shrink-0">
-                <span className="text-[#2563EB] font-black text-sm sm:text-lg tracking-tighter">P<span className="text-amber-500">O</span>S</span>
+                <span className="text-[#2563EB] font-bold text-sm sm:text-lg tracking-tighter">P<span className="text-amber-500">O</span>S</span>
               </div>
               <div className="hidden sm:block">
-                <span className="text-base sm:text-lg font-black tracking-wider whitespace-nowrap leading-tight">SUITE 360</span>
+                <span className="text-base sm:text-lg font-bold tracking-wider whitespace-nowrap leading-tight">SUITE 360</span>
               </div>
             </Link>
 
@@ -305,7 +305,7 @@ const MainLayout = () => {
                 onClick={() => setIsProfileOpen(!isProfileOpen)}
                 className="flex items-center gap-2 sm:gap-3 hover:bg-[#1E3A8A] px-2 sm:px-3 py-2 rounded-xl transition-all duration-200"
               >
-                <div className="w-7 h-7 sm:w-8 sm:h-8 bg-white text-[#2563EB] rounded-full flex items-center justify-center font-black text-xs sm:text-sm shadow-md ring-2 ring-blue-400/50">
+                <div className="w-7 h-7 sm:w-8 sm:h-8 bg-white text-[#2563EB] rounded-full flex items-center justify-center font-bold text-xs sm:text-sm shadow-md ring-2 ring-blue-400/50">
                   {user?.name?.charAt(0).toUpperCase() || 'U'}
                 </div>
                 <div className="hidden sm:flex flex-col items-start text-left">
@@ -317,7 +317,7 @@ const MainLayout = () => {
               
               <div className={`absolute right-0 top-[90%] mt-2 w-56 bg-white border border-gray-100 shadow-2xl rounded-2xl transition-all duration-300 z-50 overflow-hidden transform origin-top-right ${isProfileOpen ? 'opacity-100 visible scale-100' : 'opacity-0 invisible scale-95'}`}>
                 <div className="p-4 bg-gray-50 border-b border-gray-100">
-                  <p className="text-base font-black text-gray-800">{user?.name || 'User'}</p>
+                  <p className="text-base font-bold text-gray-800">{user?.name || 'User'}</p>
                   <p className="text-xs font-bold text-blue-600 uppercase tracking-wide mt-1">Administrator</p>
                 </div>
                 <div className="py-2 px-2">
@@ -360,9 +360,9 @@ const MainLayout = () => {
             <div className="flex items-center justify-between p-4 border-b border-[#2563EB]">
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 bg-white rounded-xl flex items-center justify-center shadow-md">
-                  <span className="text-[#2563EB] font-black text-sm tracking-tighter">P<span className="text-amber-500">O</span>S</span>
+                  <span className="text-[#2563EB] font-bold text-sm tracking-tighter">P<span className="text-amber-500">O</span>S</span>
                 </div>
-                <span className="font-black tracking-wider leading-tight">SUITE 360</span>
+                <span className="font-bold tracking-wider leading-tight">SUITE 360</span>
               </div>
               <button onClick={closeMobileMenu} className="p-2 hover:bg-white/10 rounded-full transition-colors">
                 <X size={20} />

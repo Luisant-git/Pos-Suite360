@@ -94,42 +94,42 @@ const Dashboard = () => {
             desc="Open POS Terminal" 
             icon={MonitorPlay} 
             to="/sales/pos" 
-            colorClass="hover:border-blue-500 [&>div]:text-blue-600 [&>div]:bg-blue-50"
+            colorClass="hover:border-blue-500 [&>div:first-child]:text-blue-600 [&>div:first-child]:bg-blue-50"
           />
           <QuickAction 
             title="Customer Receipts" 
             desc="Collect Payments" 
             icon={Wallet} 
             to="/sales/receipts" 
-            colorClass="hover:border-emerald-500 [&>div]:text-emerald-600 [&>div]:bg-emerald-50"
+            colorClass="hover:border-emerald-500 [&>div:first-child]:text-emerald-600 [&>div:first-child]:bg-emerald-50"
           />
           <QuickAction 
             title="Purchase Entry" 
             desc="Record Inwards" 
             icon={Truck} 
             to="/purchase/new" 
-            colorClass="hover:border-purple-500 [&>div]:text-purple-600 [&>div]:bg-purple-50"
+            colorClass="hover:border-purple-500 [&>div:first-child]:text-purple-600 [&>div:first-child]:bg-purple-50"
           />
           <QuickAction 
             title="Supplier Payments" 
             desc="Pay Vendors" 
             icon={CreditCard} 
             to="/purchase/payments" 
-            colorClass="hover:border-rose-500 [&>div]:text-rose-600 [&>div]:bg-rose-50"
+            colorClass="hover:border-rose-500 [&>div:first-child]:text-rose-600 [&>div:first-child]:bg-rose-50"
           />
           <QuickAction 
             title="Products" 
             desc="Manage Inventory" 
             icon={Package} 
             to="/master/products" 
-            colorClass="hover:border-amber-500 [&>div]:text-amber-600 [&>div]:bg-amber-50"
+            colorClass="hover:border-amber-500 [&>div:first-child]:text-amber-600 [&>div:first-child]:bg-amber-50"
           />
           <QuickAction 
             title="Sales Report" 
             desc="View Analytics" 
             icon={BarChart3} 
             to="/reports/sales" 
-            colorClass="hover:border-indigo-500 [&>div]:text-indigo-600 [&>div]:bg-indigo-50"
+            colorClass="hover:border-indigo-500 [&>div:first-child]:text-indigo-600 [&>div:first-child]:bg-indigo-50"
           />
         </div>
       </div>

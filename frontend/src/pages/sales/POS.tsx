@@ -433,7 +433,6 @@ const POS = () => {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       // Don't trigger shortcuts if user is typing in an input/textarea unless it's a function key or escape
-      const isInput = ['INPUT', 'TEXTAREA', 'SELECT'].includes((e.target as HTMLElement)?.tagName);
       
       if (e.key === 'F10') {
         e.preventDefault();

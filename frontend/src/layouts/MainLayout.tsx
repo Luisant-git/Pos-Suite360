@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Outlet, NavLink, Link, useNavigate, useLocation } from 'react-router-dom';
-import { ChevronDown, LogOut, Settings as SettingsIcon, Zap, ArrowLeft, Menu, X, LayoutTemplate } from 'lucide-react';
+import { ChevronDown, LogOut, Settings as SettingsIcon, Zap, ArrowLeft, Menu, X } from 'lucide-react';
 
 const NavItem = ({ title, icon, to, onClick }: { title: string, icon: string, to: string, onClick?: () => void }) => (
   <NavLink 
@@ -88,7 +88,7 @@ const MainLayout = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
-  const [desktopLayout, setDesktopLayout] = useState(localStorage.getItem('desktopLayout') || 'topbar');
+  const [desktopLayout] = useState(() => localStorage.getItem('desktopLayout') || 'topbar');
   const profileRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -150,12 +150,6 @@ const MainLayout = () => {
   const showBackButton = location.pathname !== '/dashboard' && location.pathname !== '/quick-start' && location.pathname !== '/';
 
   const closeMobileMenu = () => setIsMobileMenuOpen(false);
-
-  const toggleDesktopLayout = () => {
-    const newLayout = desktopLayout === 'topbar' ? 'sidebar' : 'topbar';
-    setDesktopLayout(newLayout);
-    localStorage.setItem('desktopLayout', newLayout);
-  };
 
   return (
     <div className={`flex ${desktopLayout === 'sidebar' ? 'flex-row' : 'flex-col'} h-screen bg-[#F3F5F8] overflow-hidden font-sans text-[13px] print:h-auto print:overflow-visible print:bg-white`}>

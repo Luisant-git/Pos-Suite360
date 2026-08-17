@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link, useOutletContext } from 'react-router-dom';
+import { useOutletContext, Link } from 'react-router-dom';
 import {
   ShoppingCart,
   TrendingDown,
@@ -8,11 +8,7 @@ import {
   CreditCard,
   Wallet,
   Landmark,
-  Users,
-  MonitorPlay,
-  Truck,
-  BarChart3,
-  Zap
+  Users
 } from 'lucide-react';
 import api from '../../services/api';
 import { useSettings } from '../../contexts/SettingsContext';
@@ -52,18 +48,6 @@ const StatCard = ({ title, value, icon: Icon, colorClass, desc, layout = 'topbar
     </div>
   );
 };
-
-const QuickAction = ({ title, icon: Icon, to, colorClass, desc }: any) => (
-  <Link to={to} className={`group bg-white border border-gray-200 shadow-sm p-6 rounded-xl flex flex-col items-center justify-center gap-3 hover:shadow-lg transition-all transform hover:-translate-y-1 ${colorClass}`}>
-    <div className="w-16 h-16 rounded-2xl flex items-center justify-center bg-gray-50 group-hover:bg-white group-hover:scale-110 transition-all shadow-sm">
-      <Icon className="w-8 h-8" />
-    </div>
-    <div className="text-center">
-      <h3 className="text-[16px] font-semibold text-gray-800">{title}</h3>
-      <p className="text-[12px] text-gray-500 font-medium mt-1">{desc}</p>
-    </div>
-  </Link>
-);
 
 const Dashboard = () => {
   const { desktopLayout } = useOutletContext<any>() || { desktopLayout: 'topbar' };

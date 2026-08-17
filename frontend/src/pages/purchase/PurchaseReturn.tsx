@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, useRef } from 'react';
-import { Save, Trash2, RotateCcw, FileText, X, List, Printer } from 'lucide-react';
+import { Save, Trash2, RotateCcw, FileText, X, List } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import toast from 'react-hot-toast';

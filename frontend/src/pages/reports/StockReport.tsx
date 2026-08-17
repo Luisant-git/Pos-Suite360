@@ -5,6 +5,7 @@ import api from '../../services/api';
 import ReportTabs from '../../components/ReportTabs';
 import { exportToExcel } from '../../utils/exportExcel';
 import { useSettings } from '../../contexts/SettingsContext';
+import PaginationControls from '../../components/PaginationControls';
 
 const StockReport = () => {
   const { formatCurrency } = useSettings();
@@ -39,14 +40,20 @@ const StockReport = () => {
     },
   });
 
+  const [entriesPerPage, setEntriesPerPage] = useState(25);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const totalPages = Math.ceil(products.length / entriesPerPage);
+  const paginatedProducts = products.slice((currentPage - 1) * entriesPerPage, currentPage * entriesPerPage);
+
   return (
-    <div className="bg-[#F8FAFC] min-h-[calc(100vh-100px)] p-4">
+    <div className="absolute inset-0 bg-[#F8FAFC] flex flex-col font-sans overflow-hidden z-10 p-4">
       
       <ReportTabs />
 
       {/* Filter Section */}
-      <div className="bg-white border border-[#E2E8F0] shadow-sm rounded-md mb-4 p-4">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end mb-4">
+      <div className="bg-white border border-[#E2E8F0] shadow-sm rounded-md mb-4 p-4 shrink-0">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end mb-4">
           <div>
             <label className="flex items-center gap-1 text-[12px] text-[#64748B] mb-1 font-bold">Category</label>
             <select
@@ -83,6 +90,22 @@ const StockReport = () => {
               className="w-full px-3 py-1.5 border border-[#CBD5E1] rounded outline-none text-[13px] text-[#334155] focus:border-[#3B82F6]"
             />
           </div>
+          <div>
+            <label className="flex items-center gap-1 text-[12px] text-[#64748B] mb-1 font-bold">Show</label>
+            <select
+              value={entriesPerPage}
+              onChange={(e) => {
+                setEntriesPerPage(Number(e.target.value));
+                setCurrentPage(1);
+              }}
+              className="w-full px-3 py-1.5 border border-[#CBD5E1] rounded outline-none text-[13px] text-[#334155] bg-white focus:border-[#3B82F6]"
+            >
+              <option value={10}>10 Entries</option>
+              <option value={25}>25 Entries</option>
+              <option value={50}>50 Entries</option>
+              <option value={100}>100 Entries</option>
+            </select>
+          </div>
         </div>
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center pt-2 border-t border-dashed border-[#E2E8F0] gap-3 md:gap-0">
           <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
@@ -101,8 +124,8 @@ const StockReport = () => {
       </div>
 
       {/* Report Table Section */}
-      <div className="bg-white border border-[#E2E8F0] shadow-sm rounded-md overflow-hidden flex flex-col">
-        <div className="bg-[#F8FAFC] border-b border-[#E2E8F0] px-4 py-3 flex flex-col md:flex-row justify-between items-start md:items-center gap-3 md:gap-0">
+      <div className="bg-white border border-[#E2E8F0] shadow-sm rounded-md overflow-hidden flex flex-col flex-1">
+        <div className="bg-[#F8FAFC] border-b border-[#E2E8F0] px-4 py-3 flex flex-col md:flex-row justify-between items-start md:items-center gap-3 md:gap-0 shrink-0">
           <div className="flex items-center gap-2 text-[#475569]">
             <Box size={16} />
             <h2 className="font-bold text-[13px] tracking-wide text-[#334155]">STOCK AS ON DATE REPORT</h2>
@@ -139,7 +162,7 @@ const StockReport = () => {
               ) : products.length === 0 ? (
                 <tr><td colSpan={7} className="text-center p-6 text-gray-500">No stock records found.</td></tr>
               ) : (
-                products.map((p: any, index: number) => (
+                paginatedProducts.map((p: any, index: number) => (
                   <tr key={p.id} className={`border-b border-[#E2E8F0] ${index % 2 === 0 ? 'bg-white' : 'bg-[#F8FAFC]'} hover:bg-[#EFF6FF]`}>
                     <td className="px-4 py-3 border-r border-[#E2E8F0] text-[#334155]">{p.code}</td>
                     <td className="px-4 py-3 border-r border-[#E2E8F0] font-bold text-[#1E293B]">{p.name}</td>
@@ -154,6 +177,15 @@ const StockReport = () => {
             </tbody>
           </table>
         </div>
+        {!isLoading && (
+          <PaginationControls
+            currentPage={currentPage}
+            totalPages={totalPages}
+            totalEntries={products.length}
+            entriesPerPage={entriesPerPage}
+            onPageChange={setCurrentPage}
+          />
+        )}
       </div>
       
     </div>

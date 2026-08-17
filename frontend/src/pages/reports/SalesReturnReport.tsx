@@ -4,6 +4,7 @@ import { CornerDownLeft, Package, Search, Filter } from 'lucide-react';
 import api from '../../services/api';
 import ReportTabs from '../../components/ReportTabs';
 import { useSettings } from '../../contexts/SettingsContext';
+import PaginationControls from '../../components/PaginationControls';
 
 const SalesReturnReport = () => {
   const { formatCurrency } = useSettings();
@@ -38,12 +39,18 @@ const SalesReturnReport = () => {
     return match;
   });
 
+  const [entriesPerPage, setEntriesPerPage] = useState(25);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const totalPages = Math.ceil(filteredReturns.length / entriesPerPage);
+  const paginatedReturns = filteredReturns.slice((currentPage - 1) * entriesPerPage, currentPage * entriesPerPage);
+
   return (
-    <div className="bg-[#F7F7F7] min-h-[calc(100vh-60px)] flex flex-col">
+    <div className="absolute inset-0 bg-[#F7F7F7] flex flex-col font-sans overflow-hidden z-10 p-4">
       <ReportTabs />
 
-      <div className="p-4 flex-1">
-        <div className="bg-white border border-[#E6E9ED] shadow-sm rounded-sm overflow-hidden flex flex-col">
+      <div className="flex flex-col flex-1 overflow-hidden mt-4">
+        <div className="bg-white border border-[#E6E9ED] shadow-sm rounded-sm flex flex-col flex-1 overflow-hidden">
           {/* Header */}
           <div className="bg-[#F8F9FA] border-b border-[#E6E9ED] px-4 py-3">
             <div className="flex items-start md:items-center justify-between gap-2 text-[#EF4444]">
@@ -90,6 +97,21 @@ const SalesReturnReport = () => {
                 <Filter size={14} />
               </button>
             </div>
+            <div>
+              <select
+                value={entriesPerPage}
+                onChange={(e) => {
+                  setEntriesPerPage(Number(e.target.value));
+                  setCurrentPage(1);
+                }}
+                className="w-full px-3 py-2 border border-gray-200 rounded text-[13px] outline-none bg-white focus:border-[#EF4444]"
+              >
+                <option value={10}>10 Entries</option>
+                <option value={25}>25 Entries</option>
+                <option value={50}>50 Entries</option>
+                <option value={100}>100 Entries</option>
+              </select>
+            </div>
           </div>
 
           {/* Table */}
@@ -116,7 +138,7 @@ const SalesReturnReport = () => {
                     <td colSpan={7} className="px-4 py-8 text-center text-gray-500 font-medium">No sales returns found matching your filters.</td>
                   </tr>
                 ) : (
-                  filteredReturns.map((ret: any, index: number) => (
+                  paginatedReturns.map((ret: any, index: number) => (
                     <tr key={ret.id} className={`border-b border-gray-100 ${index % 2 === 0 ? 'bg-white' : 'bg-[#FAFAFA]'}`}>
                       <td className="px-4 py-3 border-r border-gray-100 font-bold text-[#EF4444]">{ret.returnNo}</td>
                       <td className="px-4 py-3 border-r border-gray-100 font-medium text-gray-700">
@@ -151,6 +173,15 @@ const SalesReturnReport = () => {
               </tbody>
             </table>
           </div>
+          {!isLoading && (
+            <PaginationControls
+              currentPage={currentPage}
+              totalPages={totalPages}
+              totalEntries={filteredReturns.length}
+              entriesPerPage={entriesPerPage}
+              onPageChange={setCurrentPage}
+            />
+          )}
         </div>
       </div>
     </div>

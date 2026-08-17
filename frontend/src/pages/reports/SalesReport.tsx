@@ -8,6 +8,7 @@ import ReportTabs from '../../components/ReportTabs';
 import { exportToExcel } from '../../utils/exportExcel';
 import InvoicePrintModal from '../../components/InvoicePrintModal';
 import ViewSalesModal from '../sales/ViewSalesModal';
+import PaginationControls from '../../components/PaginationControls';
 
 const SalesReport = () => {
   const navigate = useNavigate();
@@ -22,6 +23,8 @@ const SalesReport = () => {
   const [isPrintModalOpen, setIsPrintModalOpen] = useState(false);
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [selectedViewSaleId, setSelectedViewSaleId] = useState<number | null>(null);
+  const [entriesPerPage, setEntriesPerPage] = useState(25);
+  const [currentPage, setCurrentPage] = useState(1);
 
   // Fetch Master Data for filters
   const { data: customers = [] } = useQuery({ 
@@ -70,14 +73,17 @@ const SalesReport = () => {
 
   const totalSalesAmount = filteredSales.reduce((sum: number, sale: any) => sum + (Number(sale.rawTotalAmount) || 0), 0);
 
+  const totalPages = Math.ceil(filteredSales.length / entriesPerPage);
+  const paginatedSales = filteredSales.slice((currentPage - 1) * entriesPerPage, currentPage * entriesPerPage);
+
   return (
-    <div className="bg-[#F8FAFC] h-full flex flex-col">
+    <div className="absolute inset-0 bg-[#F8FAFC] flex flex-col font-sans overflow-hidden z-10">
       <div className="print:hidden flex flex-col flex-1 overflow-hidden p-2">
         <ReportTabs />
 
         {/* Filter Section */}
       <div className="bg-white border border-[#E2E8F0] shadow-sm rounded-md mb-2 p-3">
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-3 items-end mb-3">
+        <div className="grid grid-cols-1 md:grid-cols-6 gap-3 items-end mb-3">
           
           <div>
             <label className="flex items-center gap-1 text-[12px] text-[#64748B] mb-1 font-bold"><Calendar size={12} /> From Date</label>
@@ -135,12 +141,29 @@ const SalesReport = () => {
             <select
               value={paymentMode}
               onChange={(e) => setPaymentMode(e.target.value)}
-              className="w-full px-3 py-1.5 border border-[#CBD5E1] rounded outline-none text-[13px] text-[#334155] bg-white focus:border-[#3B82F6]"
+              className="w-full px-2 py-1.5 border border-[#CBD5E1] rounded outline-none text-[12px] text-[#334155] bg-white focus:border-[#3B82F6]"
             >
               <option value="">All Payment Modes</option>
               {paymentModes.map((pm: any) => (
                 <option key={pm.id} value={pm.id}>{pm.name}</option>
               ))}
+            </select>
+          </div>
+
+          <div>
+            <label className="flex items-center gap-1 text-[11px] text-[#64748B] mb-1 font-bold">Show</label>
+            <select
+              value={entriesPerPage}
+              onChange={(e) => {
+                setEntriesPerPage(Number(e.target.value));
+                setCurrentPage(1);
+              }}
+              className="w-full px-2 py-1.5 border border-[#CBD5E1] rounded outline-none text-[12px] text-[#334155] bg-white focus:border-[#3B82F6]"
+            >
+              <option value={10}>10 Entries</option>
+              <option value={25}>25 Entries</option>
+              <option value={50}>50 Entries</option>
+              <option value={100}>100 Entries</option>
             </select>
           </div>
 
@@ -225,9 +248,9 @@ const SalesReport = () => {
               {isLoading ? (
                 <tr><td colSpan={6} className="text-center p-6 text-gray-500">Loading report data...</td></tr>
               ) : filteredSales.length === 0 ? (
-                <tr><td colSpan={6} className="text-center p-6 text-gray-500">No sales records found.</td></tr>
+                <tr><td colSpan={7} className="text-center p-6 text-gray-500">No sales records found.</td></tr>
               ) : (
-                filteredSales.map((s: any, index: number) => (
+                paginatedSales.map((s: any, index: number) => (
                   <React.Fragment key={s.id}>
                     <tr className={`border-b border-[#E2E8F0] ${index % 2 === 0 ? 'bg-white' : 'bg-[#F8FAFC]'} hover:bg-[#EFF6FF]`}>
                     <td className="px-4 py-3 border-r border-[#E2E8F0] font-bold text-[#3B82F6] cursor-pointer hover:underline">{s.invoiceNo}</td>
@@ -280,6 +303,15 @@ const SalesReport = () => {
 
           </table>
         </div>
+        {!isLoading && (
+          <PaginationControls
+            currentPage={currentPage}
+            totalPages={totalPages}
+            totalEntries={filteredSales.length}
+            entriesPerPage={entriesPerPage}
+            onPageChange={setCurrentPage}
+          />
+        )}
       </div>
 
       </div>

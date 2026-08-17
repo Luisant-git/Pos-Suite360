@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { useForm, useFieldArray } from 'react-hook-form';
@@ -112,6 +112,12 @@ const POS = () => {
   
   const [showLossWarning, setShowLossWarning] = useState(false);
   const [pendingPayload, setPendingPayload] = useState<any>(null);
+  
+  const [isLeaveModalOpen, setIsLeaveModalOpen] = useState(false);
+  const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
+  const [pendingSavePayload, setPendingSavePayload] = useState<any>(null);
+  const printAfterSaveRef = useRef(false);
+
   const { register, control, handleSubmit, watch, setValue, reset } = useForm<SaleFormValues>({
     resolver: zodResolver(saleSchema) as any,
     defaultValues: {
@@ -146,6 +152,7 @@ const POS = () => {
       setValue('invoiceNo', nextInvoiceData.invoiceNo);
     }
   }, [nextInvoiceData, setValue]);
+
 
   // Watch values
   const items = watch('items');
@@ -199,9 +206,11 @@ const POS = () => {
     onSuccess: () => {
       toast.success('Sale recorded successfully!');
       
-      // Print the bill directly
+      // Conditionally print the bill
       setTimeout(async () => {
-        window.print();
+        if (printAfterSaveRef.current) {
+          window.print();
+        }
         reset();
         
         // Manually fetch and inject the new invoice number for the next sale
@@ -265,14 +274,25 @@ const POS = () => {
       return;
     }
 
-    createMutation.mutate(payload as any);
+    setPendingSavePayload(payload);
+    setIsSaveModalOpen(true);
   };
 
   const confirmLossWarning = () => {
     setShowLossWarning(false);
     if (pendingPayload) {
-      createMutation.mutate(pendingPayload);
+      setPendingSavePayload(pendingPayload);
+      setIsSaveModalOpen(true);
       setPendingPayload(null);
+    }
+  };
+
+  const handleConfirmSave = (print: boolean) => {
+    printAfterSaveRef.current = print;
+    setIsSaveModalOpen(false);
+    if (pendingSavePayload) {
+      createMutation.mutate(pendingSavePayload);
+      setPendingSavePayload(null);
     }
   };
 
@@ -311,7 +331,7 @@ const POS = () => {
       }
     },
     onError: () => {
-      alert('Failed to add customer.');
+      toast.error('Failed to add customer.');
     }
   });
 
@@ -409,6 +429,36 @@ const POS = () => {
     }
   };
 
+  // Keyboard Shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Don't trigger shortcuts if user is typing in an input/textarea unless it's a function key or escape
+      const isInput = ['INPUT', 'TEXTAREA', 'SELECT'].includes((e.target as HTMLElement)?.tagName);
+      
+      if (e.key === 'F10') {
+        e.preventDefault();
+        handleSubmit(onSubmit as any, onError)();
+      } else if (e.key === 'Escape') {
+        if (isCustomerModalOpen || showLossWarning || isSaveModalOpen || isLeaveModalOpen) {
+          setIsCustomerModalOpen(false);
+          setShowLossWarning(false);
+          setIsSaveModalOpen(false);
+          setIsLeaveModalOpen(false);
+        } else {
+          setIsLeaveModalOpen(true);
+        }
+      } else if (e.key === 'F4') {
+        e.preventDefault();
+        reset();
+      } else if (e.key === 'F2') {
+        e.preventDefault();
+        append({ productId: 0, quantity: '' as any, stock: 0, rate: '' as any, unit: 'Nos', discPercent: '' as any, discAmt: '' as any, total: 0 });
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [handleSubmit, isCustomerModalOpen, showLossWarning, isSaveModalOpen, isLeaveModalOpen, reset, append, navigate, onSubmit, onError]);
+
   return (
     <div className="absolute inset-0 bg-[#F3F4F6] flex flex-col font-sans overflow-hidden z-10 print:relative print:overflow-visible print:h-auto print:bg-white">
       
@@ -432,10 +482,10 @@ const POS = () => {
         </div>
         <button 
           type="button"
-          onClick={() => navigate('/dashboard')}
+          onClick={() => setIsLeaveModalOpen(true)}
           className="bg-[#EF4444] hover:bg-[#DC2626] text-white px-4 py-1.5 rounded flex items-center gap-2 font-bold text-[13px] transition-colors"
         >
-          <X size={16} /> Close
+          <X size={16} /> Close (Esc)
         </button>
       </div>
 
@@ -511,14 +561,14 @@ const POS = () => {
               onClick={() => append({ productId: 0, quantity: '' as any, stock: 0, rate: '' as any, unit: 'Nos', discPercent: '' as any, discAmt: '' as any, total: 0 })}
               className="border border-[#1E3A8A] text-[#1E3A8A] hover:bg-[#1E3A8A] hover:text-white px-3 py-1 rounded flex items-center gap-1 text-[12px] transition-colors font-bold"
             >
-              <Plus size={14} /> Add Row
+              <Plus size={14} /> Add Row (F2)
             </button>
             <button 
               type="button"
               onClick={() => reset()}
               className="border border-[#713F12] text-[#713F12] hover:bg-[#713F12] hover:text-white px-3 py-1 rounded flex items-center gap-1 text-[12px] transition-colors font-bold"
             >
-              <RefreshCw size={14} /> Clear (Esc)
+              <RefreshCw size={14} /> Clear (F4)
             </button>
             <button 
               type="button"
@@ -542,7 +592,7 @@ const POS = () => {
                 <th className="px-2 py-2 text-left text-[12px] font-medium border border-[#334155]">Product Code / Name (Searchable Dropdown)</th>
                 <th className="px-2 py-2 text-center text-[12px] font-medium border border-[#334155] w-20">Stock</th>
                 <th className="px-2 py-2 text-center text-[12px] font-medium border border-[#334155] w-20">Unit</th>
-                <th className="px-2 py-2 text-center text-[12px] font-medium border border-[#334155] w-24">PRate</th>
+
                 <th className="px-2 py-2 text-center text-[12px] font-medium border border-[#334155] w-24">Qty</th>
                 <th className="px-2 py-2 text-center text-[12px] font-medium border border-[#334155] w-28">Rate</th>
                 <th className="px-2 py-2 text-center text-[12px] font-medium border border-[#334155] w-20">Disc %</th>
@@ -574,30 +624,30 @@ const POS = () => {
                     </span>
                   </td>
                   <td data-label="Unit" className="px-2 py-1 border-r border-[#E5E7EB]">
-                    <input {...register(`items.${index}.unit`)} type="text" readOnly className="w-full px-1 py-1 bg-transparent text-[13px] outline-none text-center" />
+                    <input {...register(`items.${index}.unit`)} type="text" readOnly tabIndex={-1} className="w-full px-1 py-1 bg-transparent text-[13px] outline-none text-center" />
                   </td>
-                  <td data-label="PRate" className="px-2 py-1 border-r border-[#E5E7EB] text-center text-[13px] font-medium text-gray-700 bg-gray-50">
-                    {(() => {
-                      const pId = watch(`items.${index}.productId`);
-                      const prod = products.find((p: any) => p.id === Number(pId));
-                      return prod && prod.purchaseRate ? formatCurrency(prod.purchaseRate) : '-';
-                    })()}
-                  </td>
+
                   <td data-label="Qty" className="px-2 py-1 border-r border-[#E5E7EB]">
-                    <input {...register(`items.${index}.quantity`)} type="number" min="1" placeholder="0" className={`w-full px-2 py-1 border rounded text-[13px] outline-none text-center ${watch(`items.${index}.quantity`) > watch(`items.${index}.stock`) ? 'border-red-500 focus:border-red-500 bg-red-100 text-red-700 font-bold' : 'border-[#D1D5DB] focus:border-[#3B82F6]'}`} />
+                    <input 
+                      {...register(`items.${index}.quantity`)} 
+                      type="number" min="1" placeholder="0" 
+                      onFocus={(e) => e.target.select()}
+                      className={`w-full px-2 py-1 border rounded text-[13px] outline-none text-center transition-colors ${watch(`items.${index}.quantity`) > watch(`items.${index}.stock`) ? 'border-red-500 focus:border-red-500 bg-red-100 text-red-700 font-bold' : 'border-[#D1D5DB] focus:border-[#3B82F6] focus:ring-1 focus:ring-[#3B82F6] focus:bg-blue-50'}`} 
+                    />
                   </td>
                   <td data-label="Rate" className="px-2 py-1 border-r border-[#E5E7EB]">
                     <input 
                       {...register(`items.${index}.rate`)} 
                       type="number" step="0.01" placeholder="0.00" 
-                      className={`w-full px-2 py-1 border rounded text-[13px] outline-none text-right font-bold ${(() => {
+                      onFocus={(e) => e.target.select()}
+                      className={`w-full px-2 py-1 border rounded text-[13px] outline-none text-right font-bold transition-colors ${(() => {
                         const pId = watch(`items.${index}.productId`);
                         const prod = products.find((p: any) => p.id === Number(pId));
                         const currentRate = Number(watch(`items.${index}.rate`)) || 0;
                         if (prod && currentRate > 0 && currentRate <= Number(prod.purchaseRate)) {
-                          return 'border-red-500 focus:border-red-500 bg-red-100 text-red-700';
+                          return 'border-red-500 focus:border-red-500 focus:ring-1 focus:ring-red-500 bg-red-100 text-red-700';
                         }
-                        return 'border-[#CBD5E1] bg-white focus:border-[#3B82F6] text-[#1E293B]';
+                        return 'border-[#CBD5E1] bg-white focus:border-[#3B82F6] focus:ring-1 focus:ring-[#3B82F6] focus:bg-blue-50 text-[#1E293B]';
                       })()}`}
                       onBlur={(e) => {
                         const enteredRate = Number(e.target.value);
@@ -614,6 +664,7 @@ const POS = () => {
                     <input 
                       {...register(`items.${index}.discPercent`)} 
                       type="number" step="0.01" placeholder="0" 
+                      onFocus={(e) => e.target.select()}
                       onChange={(e) => {
                         register(`items.${index}.discPercent`).onChange(e);
                         const pct = Number(e.target.value) || 0;
@@ -622,13 +673,14 @@ const POS = () => {
                         const amt = (rate * q * pct) / 100;
                         setValue(`items.${index}.discAmt`, Number(amt.toFixed(2)));
                       }}
-                      className="w-full px-2 py-1 border border-[#D1D5DB] rounded text-[13px] outline-none focus:border-[#3B82F6] text-right" 
+                      className="w-full px-2 py-1 border border-[#D1D5DB] rounded text-[13px] outline-none focus:border-[#3B82F6] focus:ring-1 focus:ring-[#3B82F6] focus:bg-blue-50 text-right" 
                     />
                   </td>
                   <td data-label="Disc Amt" className="px-2 py-1 border-r border-[#E5E7EB]">
                     <input 
                       {...register(`items.${index}.discAmt`)} 
                       type="number" step="0.01" placeholder="0.00" 
+                      onFocus={(e) => e.target.select()}
                       onChange={(e) => {
                         register(`items.${index}.discAmt`).onChange(e);
                         const amt = Number(e.target.value) || 0;
@@ -642,18 +694,29 @@ const POS = () => {
                           setValue(`items.${index}.discPercent`, 0);
                         }
                       }}
-                      className="w-full px-2 py-1 border border-[#D1D5DB] rounded text-[13px] outline-none focus:border-[#3B82F6] text-right" 
+                      className="w-full px-2 py-1 border border-[#D1D5DB] rounded text-[13px] outline-none focus:border-[#3B82F6] focus:ring-1 focus:ring-[#3B82F6] focus:bg-blue-50 text-right" 
                     />
                   </td>
                   <td data-label="Total" className="px-2 py-1 border-r border-[#E5E7EB]">
-                    <input {...register(`items.${index}.total`)} type="number" readOnly className="w-full px-2 py-1 bg-transparent text-[13px] outline-none text-right font-bold" />
+                    <input {...register(`items.${index}.total`)} type="number" readOnly tabIndex={-1} className="w-full px-2 py-1 bg-transparent text-[13px] outline-none text-right font-bold" />
                   </td>
                   <td data-label="Action" className="px-2 py-1 text-center">
                     <div className="flex justify-center gap-2">
-                      <button type="button" onClick={() => append({ productId: 0, quantity: '' as any, stock: 0, rate: '' as any, unit: 'Nos', discPercent: '' as any, discAmt: '' as any, total: 0 })} className="text-[#059669] hover:text-[#047857]">
-                        <Plus size={14} />
+                      <button 
+                        type="button" 
+                        onClick={() => append({ productId: 0, quantity: '' as any, stock: 0, rate: '' as any, unit: 'Nos', discPercent: '' as any, discAmt: '' as any, total: 0 })} 
+                        className="bg-[#10B981] text-white p-1.5 rounded hover:bg-[#059669] transition-colors shadow-sm"
+                        title="Add Row"
+                      >
+                        <Plus size={14} strokeWidth={3} />
                       </button>
-                      <button type="button" onClick={() => remove(index)} disabled={fields.length === 1} className="text-[#EF4444] hover:text-[#DC2626] disabled:opacity-30">
+                      <button 
+                        type="button" 
+                        onClick={() => remove(index)} 
+                        disabled={fields.length === 1} 
+                        className="bg-red-50 text-red-500 p-1.5 rounded hover:bg-red-500 hover:text-white transition-colors disabled:opacity-30 disabled:hover:bg-red-50 disabled:hover:text-red-500"
+                        title="Remove Row"
+                      >
                         <Trash2 size={14} />
                       </button>
                     </div>
@@ -672,19 +735,19 @@ const POS = () => {
               <div className="flex flex-col md:flex-row items-stretch md:items-center gap-4 md:gap-6">
                 
                 <div className="w-full md:flex-1 flex flex-col gap-1">
-                  <label className="text-[12px] font-bold text-[#4B5563]">Gross Amount:</label>
+                  <label className="text-[13px] font-extrabold text-[#1F2937] uppercase">Gross Amount:</label>
                   <input
                     {...register('grossAmount')}
                     type="number"
                     readOnly
-                    className="w-full px-3 py-2 border border-[#D1D5DB] bg-[#F9FAFB] rounded text-[14px] outline-none text-right font-medium"
+                    className="w-full px-3 py-2 border-2 border-[#D1D5DB] bg-[#F3F4F6] rounded text-[18px] outline-none text-right font-bold text-gray-800"
                   />
                 </div>
 
                 <div className="w-full md:flex-1 flex flex-col gap-1">
-                  <label className="text-[12px] font-bold text-[#4B5563]">Total Discount:</label>
-                  <div className="flex gap-2">
-                    <div className="relative w-1/3">
+                  <label className="text-[13px] font-extrabold text-[#1F2937] uppercase">Total Discount:</label>
+                  <div className="flex gap-2 w-full">
+                    <div className="relative w-1/2">
                       <input
                         {...register('totalDiscountPercent')}
                         type="number"
@@ -695,14 +758,14 @@ const POS = () => {
                           const amount = (watch('grossAmount') * percent) / 100;
                           setValue('totalDiscount', Number(amount.toFixed(2)));
                         }}
-                        className="w-full pl-2 pr-6 py-2 border border-[#D1D5DB] rounded text-[14px] outline-none focus:border-[#3B82F6] text-right font-medium"
+                        className="w-full pl-2 pr-6 py-2 border-2 border-[#D1D5DB] rounded text-[16px] outline-none focus:border-[#3B82F6] text-right font-bold text-gray-800"
                         placeholder="0"
                       />
-                      <span className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-[13px] pointer-events-none">%</span>
+                      <span className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-[14px] pointer-events-none">%</span>
                     </div>
                     
-                    <div className="relative w-2/3">
-                      <span className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-[13px] pointer-events-none">{settings?.currencySymbol || 'RM'}</span>
+                    <div className="relative w-1/2">
+                      <span className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-500 font-bold text-[15px] pointer-events-none">{settings?.currencySymbol || 'RM'}</span>
                       <input
                         {...register('totalDiscount')}
                         type="number"
@@ -717,7 +780,7 @@ const POS = () => {
                             setValue('totalDiscountPercent', 0);
                           }
                         }}
-                        className="w-full pl-8 pr-3 py-2 border border-[#D1D5DB] rounded text-[14px] outline-none focus:border-[#3B82F6] text-right font-medium"
+                        className="w-full pl-8 pr-3 py-2 border-2 border-[#D1D5DB] rounded text-[16px] outline-none focus:border-[#3B82F6] text-right font-bold text-gray-800"
                         placeholder="0.00"
                       />
                     </div>
@@ -725,12 +788,12 @@ const POS = () => {
                 </div>
 
                 <div className="w-full md:flex-1 flex flex-col gap-1">
-                  <label className="text-[12px] font-bold text-[#1E3A8A]">NET AMOUNT:</label>
+                  <label className="text-[14px] font-black text-[#1E3A8A] uppercase">NET AMOUNT:</label>
                   <input
                     {...register('netAmount')}
                     type="number"
                     readOnly
-                    className="w-full px-3 py-2 border border-[#059669] bg-[#ECFDF5] text-[#059669] rounded text-[16px] outline-none text-right font-black shadow-inner"
+                    className="w-full px-3 py-2 border-2 border-[#059669] bg-[#ECFDF5] text-[#059669] rounded text-[22px] outline-none text-right font-black shadow-inner"
                   />
                 </div>
                 
@@ -749,27 +812,35 @@ const POS = () => {
 
           {/* Bottom Black Bar */}
           <div className="bg-[#020617] text-white px-4 py-3 flex flex-col md:flex-row justify-between items-center gap-3 md:gap-0">
-            <div className="flex flex-wrap justify-center gap-2 w-full md:w-auto">
-              <div className="bg-[#2563EB] text-white text-[11px] font-bold px-3 py-1.5 rounded-sm flex items-center gap-1">
-                <span className="opacity-70 border-r border-[#60A5FA] pr-1 mr-1">F2</span> POS
-              </div>
+            <div className="flex flex-nowrap justify-between sm:justify-center gap-1 sm:gap-2 w-full md:w-auto">
+              <button 
+                type="button"
+                onClick={() => append({ productId: 0, quantity: '' as any, stock: 0, rate: '' as any, unit: 'Nos', discPercent: '' as any, discAmt: '' as any, total: 0 })}
+                className="bg-[#2563EB] text-white text-[10px] sm:text-[11px] font-bold px-2 sm:px-3 py-1.5 rounded-sm flex items-center gap-1 cursor-pointer hover:bg-[#1D4ED8] whitespace-nowrap"
+              >
+                <span className="opacity-70 border-r border-[#60A5FA] pr-1 mr-1">F2</span> Add Row
+              </button>
               <button 
                 type="button"
                 disabled={createMutation.isPending}
-                className="bg-[#4B5563] text-white text-[11px] font-bold px-3 py-1.5 rounded-sm flex items-center gap-1 cursor-pointer hover:bg-[#374151] disabled:opacity-50 disabled:cursor-not-allowed" 
+                className="bg-[#059669] text-white text-[10px] sm:text-[11px] font-bold px-2 sm:px-3 py-1.5 rounded-sm flex items-center gap-1 cursor-pointer hover:bg-[#047857] disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap" 
                 onClick={handleSubmit(onSubmit as any, onError)}
               >
-                <span className="opacity-70 border-r border-[#9CA3AF] pr-1 mr-1">F10</span> 
+                <span className="opacity-70 border-r border-[#34D399] pr-1 mr-1">F10</span> 
                 {createMutation.isPending ? 'Saving...' : 'Save & Print'}
               </button>
-              <div className="bg-[#0891B2] text-white text-[11px] font-bold px-3 py-1.5 rounded-sm flex items-center gap-1 cursor-pointer hover:bg-[#0E7490]" onClick={() => navigate('/dashboard')}>
+              <button 
+                type="button"
+                className="bg-[#0891B2] text-white text-[10px] sm:text-[11px] font-bold px-2 sm:px-3 py-1.5 rounded-sm flex items-center gap-1 cursor-pointer hover:bg-[#0E7490] whitespace-nowrap" 
+                onClick={() => navigate('/dashboard')}
+              >
                 <span className="opacity-70 border-r border-[#67E8F9] pr-1 mr-1">Esc</span> Dashboard
-              </div>
+              </button>
             </div>
             
             <div className="flex items-center gap-2 sm:gap-4 w-full md:w-auto justify-between md:justify-end border-t md:border-none border-gray-700 pt-3 md:pt-0">
-              <span className="text-[14px] sm:text-[16px] font-bold text-white uppercase tracking-wide">TOTAL NET AMOUNT:</span>
-              <span className="text-[24px] sm:text-[28px] font-bold text-[#38BDF8]">
+              <span className="text-[16px] sm:text-[20px] font-black text-white uppercase tracking-wider">TOTAL NET AMOUNT:</span>
+              <span className="text-[28px] sm:text-[36px] font-black text-[#38BDF8] drop-shadow-md">
                 {formatCurrency(watch('netAmount') || 0)}
               </span>
             </div>
@@ -964,6 +1035,81 @@ const POS = () => {
               >
                 Yes, Proceed Anyway
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Save Confirmation Modal */}
+      {isSaveModalOpen && (
+        <div className="fixed inset-0 bg-black/60 z-[100] flex items-center justify-center p-4 backdrop-blur-sm transition-opacity">
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-md overflow-hidden flex flex-col transform transition-all scale-100">
+            <div className="bg-gradient-to-r from-[#0F172A] to-[#1E3A8A] text-white px-5 py-4 flex justify-between items-center">
+              <div className="flex items-center gap-2 font-bold text-[16px]">
+                <Save size={20} /> Confirm Save Transaction
+              </div>
+              <button type="button" onClick={() => setIsSaveModalOpen(false)} className="text-white/80 hover:text-white transition-colors bg-white/10 hover:bg-white/20 p-1.5 rounded-full">
+                <X size={18} />
+              </button>
+            </div>
+            
+            <div className="p-6 text-center">
+              <div className="bg-blue-50 text-blue-800 p-4 rounded-lg mb-6 shadow-sm border border-blue-100">
+                <p className="font-bold text-[15px]">Net Amount: {formatCurrency(pendingSavePayload?.grandTotal || 0)}</p>
+                <p className="text-[13px] mt-1 text-blue-600">Invoice No: {pendingSavePayload?.invoiceNo}</p>
+              </div>
+              <p className="text-[#334155] font-medium mb-2">How would you like to proceed?</p>
+            </div>
+
+            <div className="px-6 pb-6 flex flex-col sm:flex-row gap-3">
+              <button 
+                type="button"
+                onClick={() => handleConfirmSave(false)}
+                className="flex-1 bg-white border-2 border-[#E2E8F0] hover:border-[#94A3B8] hover:bg-[#F8FAFC] text-[#334155] py-2.5 rounded-lg font-bold text-[14px] transition-all flex items-center justify-center gap-2"
+              >
+                <Save size={16} /> Save Only
+              </button>
+              <button 
+                type="button"
+                onClick={() => handleConfirmSave(true)}
+                className="flex-1 bg-gradient-to-r from-[#10B981] to-[#059669] hover:from-[#059669] hover:to-[#047857] text-white py-2.5 rounded-lg font-bold text-[14px] transition-all shadow-md flex items-center justify-center gap-2"
+              >
+                <Printer size={16} /> Save & Print
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Leave Confirmation Modal */}
+      {isLeaveModalOpen && (
+        <div className="fixed inset-0 bg-black/60 z-[100] flex items-center justify-center p-4 backdrop-blur-sm transition-opacity">
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-sm overflow-hidden animate-fade-in-up">
+            <div className="bg-[#EF4444] px-4 py-3 flex justify-between items-center text-white">
+              <h3 className="font-bold flex items-center gap-2">Confirm Navigation</h3>
+              <button type="button" onClick={() => setIsLeaveModalOpen(false)} className="hover:text-white/80 transition-colors">
+                <X size={18} />
+              </button>
+            </div>
+            <div className="p-5">
+              <p className="text-gray-700 font-medium mb-1 text-center">Are you sure you want to leave?</p>
+              <p className="text-gray-500 text-[13px] text-center mb-5">Any unsaved changes will be lost.</p>
+              <div className="flex gap-3">
+                <button
+                  type="button"
+                  onClick={() => setIsLeaveModalOpen(false)}
+                  className="flex-1 px-4 py-2 bg-gray-100 text-gray-700 font-bold rounded hover:bg-gray-200 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={() => navigate('/dashboard')}
+                  className="flex-1 px-4 py-2 bg-[#EF4444] text-white font-bold rounded hover:bg-red-600 transition-colors"
+                >
+                  Leave
+                </button>
+              </div>
             </div>
           </div>
         </div>

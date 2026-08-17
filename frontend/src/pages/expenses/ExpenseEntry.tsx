@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { X, Briefcase, PlusSquare } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import toast from 'react-hot-toast';
 import api from '../../services/api';
 
 const ExpenseEntry = () => {
@@ -42,13 +43,13 @@ const ExpenseEntry = () => {
     },
     onError: (err: any) => {
       console.error(err);
-      alert(`Failed to save expense: ${err.message}`);
+      toast.error(`Failed to save expense: ${err.message}`);
     }
   });
 
   const handleSave = () => {
     if (!categoryId || !amount || !paymentModeId) {
-      alert('Please fill out all required fields');
+      toast.error('Please fill out all required fields');
       return;
     }
     createMutation.mutate({
@@ -69,7 +70,7 @@ const ExpenseEntry = () => {
           <h2 className="text-base font-bold tracking-wide">DAILY EXPENSES MANAGEMENT</h2>
         </div>
         <Link to="/dashboard" className="bg-red-500 hover:bg-red-600 text-white py-1.5 px-4 rounded text-sm flex items-center gap-2 shadow-sm">
-          <X size={16} /> Close
+          <X size={16} /> Close (Esc)
         </Link>
       </div>
 

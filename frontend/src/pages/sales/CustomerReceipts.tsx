@@ -114,6 +114,22 @@ const CustomerReceipts = () => {
     createMutation.mutate(data);
   };
 
+  const onError = (errors: any) => {
+    console.error(errors);
+    toast.error('Please fill all required fields correctly.');
+  };
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'F10') {
+        e.preventDefault();
+        handleSubmit(onSubmit as any, onError)();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [handleSubmit, onSubmit]);
+
   // Filter history
   const filteredHistory = receipts.filter((r: any) => {
     if (filterCustomer && r.customerId.toString() !== filterCustomer) return false;
@@ -171,7 +187,7 @@ const CustomerReceipts = () => {
             <h2 className="font-bold text-[13px] text-[#1E293B]">NEW RECEIPT ENTRY</h2>
           </div>
           
-          <form onSubmit={handleSubmit(onSubmit as any)} className="p-4 flex flex-col gap-4">
+          <form onSubmit={handleSubmit(onSubmit as any, onError)} className="p-4 flex flex-col gap-4">
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 print:hidden">
               <div>

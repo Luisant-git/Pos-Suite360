@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import api from '../../services/api';
 import { useSettings } from '../../contexts/SettingsContext';
 import ViewPurchaseModal from './ViewPurchaseModal';
+import PaginationControls from '../../components/PaginationControls';
 
 const PurchaseList = () => {
   const { formatCurrency } = useSettings();
@@ -21,68 +22,81 @@ const PurchaseList = () => {
     },
   });
 
+  // Pagination & Filtering Logic
+  const [entriesPerPage, setEntriesPerPage] = useState(10);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const filteredPurchases = purchases.filter((purchase: any) => {
+    if (searchTerm) {
+      const term = searchTerm.toLowerCase();
+      const invoiceMatch = purchase.invoiceNo?.toLowerCase().includes(term);
+      const supplierMatch = purchase.supplier?.name?.toLowerCase().includes(term);
+      return invoiceMatch || supplierMatch;
+    }
+    return true;
+  });
+
+  const totalPages = Math.ceil(filteredPurchases.length / entriesPerPage);
+  const paginatedPurchases = filteredPurchases.slice((currentPage - 1) * entriesPerPage, currentPage * entriesPerPage);
 
   return (
-    <div className="bg-white min-h-[calc(100vh-100px)] p-6 shadow-sm border border-[#E6E9ED]">
-      {/* Header & Breadcrumbs */}
-      <div className="flex justify-between items-center mb-6 pb-4 border-b border-[#E6E9ED]">
-        <div>
-          <h2 className="text-[22px] font-bold text-[#1F2937]">Purchase Invoices</h2>
-          <div className="text-[12px] text-[#6B7280] flex items-center gap-2 mt-1">
-            <span className="hover:text-[#3B82F6] cursor-pointer transition-colors" onClick={() => navigate('/dashboard')}>Home</span> 
-            <span>/</span>
-            <span className="hover:text-[#3B82F6] cursor-pointer transition-colors">Transactions</span>
-            <span>/</span>
-            <span className="text-[#3B82F6] font-medium">Purchase Entry</span>
-          </div>
+    <div className="absolute inset-0 bg-[#F3F4F6] flex flex-col font-sans overflow-hidden z-10">
+      {/* Top Header */}
+      <div className="bg-[#0B355B] text-white px-2 sm:px-4 py-2 flex flex-wrap gap-2 justify-between items-center shrink-0">
+        <div className="flex items-center gap-2 text-[12px] sm:text-[13px] font-bold">
+          <span className="opacity-70 hover:opacity-100 cursor-pointer transition-opacity" onClick={() => navigate('/dashboard')}>Home</span> 
+          <span className="opacity-50">/</span>
+          <span className="opacity-70">Transactions</span>
+          <span className="opacity-50">/</span>
+          <span className="text-[#60A5FA]">Purchase Invoices</span>
         </div>
+        <button 
+          type="button" 
+          onClick={() => navigate('/purchase/new')}
+          className="bg-[#2563EB] hover:bg-[#1D4ED8] text-white px-3 sm:px-4 py-1.5 rounded flex items-center gap-2 font-bold text-[12px] sm:text-[13px] transition-colors"
+        >
+          <Plus size={16} /> <span className="hidden sm:inline">Add New Purchase</span>
+        </button>
       </div>
 
-      {/* Info Alert */}
-      <div className="bg-[#EFF6FF] border border-[#BFDBFE] text-[#1E3A8A] px-4 py-3 rounded-md mb-6 flex items-center text-[13px]">
-        <svg className="w-5 h-5 mr-2 text-[#3B82F6]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-        Manage your purchase invoices here. Click <span className="font-bold mx-1">"Add New Purchase"</span> to create a new entry.
-      </div>
-
-      {/* Table Controls */}
-      <div className="flex justify-between items-center mb-4 text-[13px]">
-        <div className="flex items-center gap-2">
-          <span className="text-[#73879C]">Show</span>
-          <select className="border border-[#ccc] rounded px-2 py-1 outline-none text-[#555]">
-            <option>10</option>
-            <option>25</option>
-            <option>50</option>
+      <div className="flex flex-col flex-1 overflow-hidden">
+        
+        {/* Controls / Filters */}
+        <div className="bg-white p-3 border-b border-[#E5E7EB] shrink-0 flex flex-col sm:flex-row justify-between items-center gap-3">
+          <div className="flex items-center gap-2 text-[12px] font-bold text-gray-700">
+            <span>Show</span>
+          <select 
+            className="border border-[#ccc] rounded px-2 py-1 outline-none text-[#1F2937] bg-white"
+            value={entriesPerPage}
+            onChange={(e) => {
+              setEntriesPerPage(Number(e.target.value));
+              setCurrentPage(1);
+            }}
+          >
+            <option value={10}>10</option>
+            <option value={25}>25</option>
+            <option value={50}>50</option>
           </select>
-          <span className="text-[#73879C]">entries</span>
-        </div>
+            <span>entries</span>
+          </div>
 
-        <div className="flex items-center gap-2">
-          <div className="relative">
+          <div className="flex items-center gap-2 w-full sm:w-auto">
+            <label className="text-[12px] font-bold text-[#1F2937] hidden sm:block">Search:</label>
             <input 
               type="text" 
-              placeholder="Search..."
+              placeholder="Search invoices..."
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="border border-[#ccc] rounded px-3 py-1 outline-none text-[#555]"
+              onChange={(e) => {
+                setSearchTerm(e.target.value);
+                setCurrentPage(1);
+              }}
+              className="w-full sm:w-64 px-3 py-1.5 border border-[#ccc] rounded outline-none text-[12px] focus:border-[#3B82F6]"
             />
           </div>
-
-          <button type="button" 
-            onClick={() => navigate('/purchase/new')}
-            className="bg-[#3B82F6] hover:bg-[#2563EB] font-bold text-white px-3 py-1 rounded border border-[#2563EB] flex items-center gap-1 transition-colors"
-          >
-            <Plus size={16} />
-            Add New Purchase
-          </button>
         </div>
-      </div>
 
-      {/* Table */}
-      <div className="bg-white border border-[#E6E9ED] shadow-sm rounded-sm overflow-hidden">
-        <div className="bg-[#EBF5FF] border-b border-[#3B82F6] px-4 py-3 flex items-center gap-2">
-          <h2 className="font-bold text-[14px] text-[#1E3A8A]">PURCHASE INVOICES LIST</h2>
-        </div>
-        <div className="overflow-x-auto p-4">
+        {/* Table Container */}
+        <div className="flex-1 overflow-auto overflow-x-auto bg-white">
           <table className="w-full text-left text-[13px] whitespace-nowrap">
             <thead>
               <tr className="bg-[#2A2A2A] text-white font-bold">
@@ -99,12 +113,12 @@ const PurchaseList = () => {
                 <tr>
                   <td colSpan={6} className="px-3 py-4 text-center text-[#73879C]">Loading...</td>
                 </tr>
-              ) : purchases.length === 0 ? (
+              ) : filteredPurchases.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-3 py-4 text-center text-[#73879C]">No purchase invoices found.</td>
+                  <td colSpan={6} className="px-3 py-4 text-center text-[#73879C]">No purchase invoices found matching your criteria.</td>
                 </tr>
               ) : (
-                purchases.map((purchase: any, index: number) => (
+                paginatedPurchases.map((purchase: any, index: number) => (
                   <tr key={purchase.id} className={`border-b border-[#E5E7EB] ${index % 2 === 0 ? 'bg-[#F9F9F9]' : 'bg-white'} hover:bg-blue-50`}>
                     <td className="px-3 py-2.5 border-r border-[#E5E7EB] text-[#333] font-medium">{purchase.date ? new Date(purchase.date).toISOString().split('T')[0] : '-'}</td>
                     <td className="px-3 py-2.5 border-r border-[#E5E7EB] text-[#3B82F6] font-bold cursor-pointer hover:underline">{purchase.invoiceNo}</td>
@@ -136,6 +150,15 @@ const PurchaseList = () => {
             </tbody>
           </table>
         </div>
+        {!isLoading && (
+          <PaginationControls
+            currentPage={currentPage}
+            totalPages={totalPages}
+            totalEntries={filteredPurchases.length}
+            entriesPerPage={entriesPerPage}
+            onPageChange={setCurrentPage}
+          />
+        )}
       </div>
 
       {viewId && (

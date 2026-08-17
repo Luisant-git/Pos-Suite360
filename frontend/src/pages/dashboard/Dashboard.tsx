@@ -107,7 +107,8 @@ const Dashboard = () => {
 
   return (
     <div className="bg-[#F3F5F8] min-h-full pb-8">
-      {/* Quick Launchpad for POS */}
+      {/*
+      Quick Launchpad for POS
       <div className="mb-8">
         <h2 className="text-[20px] font-semibold text-gray-800 mb-4 flex items-center gap-2">
           <Zap className="text-amber-500" /> Quick Launchpad
@@ -157,6 +158,7 @@ const Dashboard = () => {
           />
         </div>
       </div>
+      */}
 
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
         <h1 className="text-[20px] font-semibold text-gray-800">Financial Overview</h1>
@@ -257,7 +259,7 @@ const Dashboard = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Low Stock Products */}
-        <div className="bg-white border border-gray-200 shadow-sm rounded-xl overflow-hidden lg:col-span-3 xl:col-span-1">
+        <div className="bg-white border border-gray-200 shadow-sm rounded-xl overflow-hidden lg:col-span-1">
           <div className="border-b border-gray-100 px-5 py-4 flex justify-between items-center bg-gray-50/50">
             <h2 className="text-[16px] font-semibold text-gray-800 flex items-center gap-2">
               <Package size={18} className="text-rose-500" /> Low Stock Alerts
@@ -291,6 +293,48 @@ const Dashboard = () => {
                 <p className="font-semibold text-[14px]">All stock levels are optimal</p>
               </div>
             )}
+          </div>
+        </div>
+
+        {/* Supplier Payments Due */}
+        <div className="bg-white border border-gray-200 shadow-sm rounded-xl overflow-hidden lg:col-span-1">
+          <div className="border-b border-gray-100 px-5 py-4 flex justify-between items-center bg-gray-50/50">
+            <h2 className="text-[16px] font-semibold text-gray-800 flex items-center gap-2">
+              <Landmark size={18} className="text-rose-500" /> Supplier Payments Due
+            </h2>
+          </div>
+          <div className="p-6 h-[350px] overflow-y-auto custom-scrollbar bg-white flex flex-col items-center justify-center text-center gap-4">
+            <div className="w-20 h-20 bg-rose-50 rounded-full flex items-center justify-center">
+              <Landmark size={36} className="text-rose-500" />
+            </div>
+            <div>
+              <p className="text-[32px] font-bold text-gray-800">{formatCurrency(data.pendingPayables)}</p>
+              <p className="text-[14px] text-gray-500 font-medium mt-1">Total amount owed to suppliers</p>
+            </div>
+            <Link to="/purchase/payments" className="mt-4 px-6 py-2 bg-rose-50 text-rose-600 font-semibold rounded-lg hover:bg-rose-100 transition-colors text-[14px]">
+              Settle Payments
+            </Link>
+          </div>
+        </div>
+
+        {/* Customer Payments Expected */}
+        <div className="bg-white border border-gray-200 shadow-sm rounded-xl overflow-hidden lg:col-span-1">
+          <div className="border-b border-gray-100 px-5 py-4 flex justify-between items-center bg-gray-50/50">
+            <h2 className="text-[16px] font-semibold text-gray-800 flex items-center gap-2">
+              <Users size={18} className="text-amber-500" /> Customer Payments Expected
+            </h2>
+          </div>
+          <div className="p-6 h-[350px] overflow-y-auto custom-scrollbar bg-white flex flex-col items-center justify-center text-center gap-4">
+            <div className="w-20 h-20 bg-amber-50 rounded-full flex items-center justify-center">
+              <Users size={36} className="text-amber-500" />
+            </div>
+            <div>
+              <p className="text-[32px] font-bold text-gray-800">{formatCurrency(data.pendingReceivables)}</p>
+              <p className="text-[14px] text-gray-500 font-medium mt-1">Total amount expected from customers</p>
+            </div>
+            <Link to="/sales/receipts" className="mt-4 px-6 py-2 bg-amber-50 text-amber-600 font-semibold rounded-lg hover:bg-amber-100 transition-colors text-[14px]">
+              Collect Payments
+            </Link>
           </div>
         </div>
       </div>

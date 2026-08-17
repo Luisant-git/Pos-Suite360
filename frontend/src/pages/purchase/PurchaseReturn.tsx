@@ -1,7 +1,8 @@
-import { useState, useEffect, useMemo } from 'react';
-import { Save, Trash2, RotateCcw, FileText, X, List } from 'lucide-react';
+import { useState, useEffect, useMemo, useRef } from 'react';
+import { Save, Trash2, RotateCcw, FileText, X, List, Printer } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation } from '@tanstack/react-query';
+import toast from 'react-hot-toast';
 import api from '../../services/api';
 import SearchableSelect from '../../components/SearchableSelect';
 
@@ -9,6 +10,10 @@ const PurchaseReturn = () => {
   const navigate = useNavigate();
   const [returnNo, setReturnNo] = useState('');
   const [returnDate, setReturnDate] = useState(new Date().toISOString().split('T')[0]);
+
+  const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
+  const [pendingSavePayload, setPendingSavePayload] = useState<any>(null);
+  const printAfterSaveRef = useRef(false);
 
   // Fetch next sequential code
   const fetchNextCode = async () => {
@@ -102,18 +107,23 @@ const PurchaseReturn = () => {
       return res.data;
     },
     onSuccess: () => {
-      alert('Purchase Return Saved Successfully!');
-      handleClear();
+      toast.success('Purchase Return Saved Successfully!');
+      setTimeout(() => {
+        if (printAfterSaveRef.current) {
+          window.print();
+        }
+        handleClear();
+      }, 100);
     },
     onError: (err: any) => {
       console.error(err);
-      alert(`Failed to save purchase return: ${err.response?.data?.message || err.message}`);
+      toast.error(`Failed to save purchase return: ${err.response?.data?.message || err.message}`);
     }
   });
 
   const handleSave = () => {
-    if (!selectedSupplierId) return alert('Select a supplier');
-    if (totals.qtyCount === 0) return alert('Return at least 1 quantity');
+    if (!selectedSupplierId) { toast.error('Select a supplier'); return; }
+    if (totals.qtyCount === 0) { toast.error('Return at least 1 quantity'); return; }
     
     const itemsPayload = returnItems
       .filter(item => item.returnQty > 0)
@@ -124,7 +134,7 @@ const PurchaseReturn = () => {
         amount: item.returnQty * Number(item.rate)
       }));
 
-    saveMutation.mutate({
+    setPendingSavePayload({
       returnNo,
       date: returnDate,
       purchaseId: selectedPurchaseId ? Number(selectedPurchaseId) : undefined,
@@ -133,7 +143,34 @@ const PurchaseReturn = () => {
       totalAmount: totals.totalAmount,
       items: itemsPayload
     });
+    setIsSaveModalOpen(true);
   };
+
+  const handleConfirmSave = (print: boolean) => {
+    printAfterSaveRef.current = print;
+    setIsSaveModalOpen(false);
+    if (pendingSavePayload) {
+      saveMutation.mutate(pendingSavePayload);
+      setPendingSavePayload(null);
+    }
+  };
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'F10') {
+        e.preventDefault();
+        handleSave();
+      } else if (e.key === 'Escape') {
+        if (isSaveModalOpen) {
+          setIsSaveModalOpen(false);
+        } else {
+          navigate('/dashboard');
+        }
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [handleSave, isSaveModalOpen, navigate]);
 
   return (
     <div className="absolute inset-0 bg-[#F3F4F6] flex flex-col font-sans overflow-hidden z-10">
@@ -145,7 +182,7 @@ const PurchaseReturn = () => {
           </button>
         </div>
         <Link to="/dashboard" className="bg-red-500 hover:bg-red-600 text-white py-1.5 px-4 rounded text-sm flex items-center gap-2">
-          <X size={16} /> Close
+          <X size={16} /> Close (Esc)
         </Link>
       </div>
 
@@ -281,18 +318,18 @@ const PurchaseReturn = () => {
             {/* Totals */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 border-t border-gray-200 bg-gray-50">
             <div>
-              <label className="block text-[11px] text-gray-500 mb-1">Total Items Returned</label>
-              <div className="border border-gray-300 rounded px-3 py-1.5 bg-white text-center font-bold">{totals.itemsCount}</div>
+              <label className="block text-[13px] font-bold text-[#1F2937] uppercase mb-1">Total Items Returned</label>
+              <div className="border border-[#D1D5DB] rounded px-3 py-1.5 bg-white text-center font-black text-[20px] text-[#1F2937]">{totals.itemsCount}</div>
             </div>
             <div>
-              <label className="block text-[11px] text-gray-500 mb-1">Total Quantity Returned</label>
-              <div className="border border-gray-300 rounded px-3 py-1.5 bg-white text-center font-bold text-yellow-600">{totals.qtyCount.toFixed(2)}</div>
+              <label className="block text-[13px] font-bold text-[#1F2937] uppercase mb-1">Total Quantity Returned</label>
+              <div className="border border-[#D1D5DB] rounded px-3 py-1.5 bg-white text-center font-black text-[20px] text-red-500">{totals.qtyCount.toFixed(2)}</div>
             </div>
             <div>
-              <label className="block text-[11px] text-gray-500 mb-1">Total Debit / Claim Amount</label>
-              <div className="flex items-center justify-between border-b-2 border-gray-200 pb-1">
-                <span className="bg-yellow-400 text-black font-bold px-2 py-0.5 rounded text-xs">TOTAL CLAIM</span>
-                <span className="font-bold text-lg">{totals.totalAmount.toFixed(2)}</span>
+              <label className="block text-[13px] font-bold text-[#1F2937] uppercase mb-1">Total Debit / Claim Amount</label>
+              <div className="flex items-center justify-between border-b-2 border-[#D1D5DB] pb-1 mt-1">
+                <span className="bg-yellow-400 text-black font-black px-2 py-0.5 rounded text-[14px]">TOTAL CLAIM</span>
+                <span className="font-black text-[28px] text-[#059669]">{totals.totalAmount.toFixed(2)}</span>
               </div>
             </div>
           </div>
@@ -306,6 +343,42 @@ const PurchaseReturn = () => {
           </div>
         </div>
       </div>
+
+
+      {/* Save Confirmation Modal */}
+      {isSaveModalOpen && (
+        <div className="fixed inset-0 bg-black/60 z-[100] flex items-center justify-center p-4 backdrop-blur-sm transition-opacity">
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-md overflow-hidden flex flex-col transform transition-all scale-100">
+            <div className="bg-gradient-to-r from-[#0F172A] to-[#1E3A8A] text-white px-5 py-4 flex justify-between items-center">
+              <div className="flex items-center gap-2 font-bold text-[16px]">
+                <Save size={20} /> Confirm Purchase Return
+              </div>
+              <button type="button" onClick={() => setIsSaveModalOpen(false)} className="text-white/80 hover:text-white transition-colors bg-white/10 hover:bg-white/20 p-1.5 rounded-full">
+                <X size={18} />
+              </button>
+            </div>
+            
+            <div className="p-6 text-center">
+              <div className="bg-orange-50 text-orange-800 p-4 rounded-lg mb-6 shadow-sm border border-orange-100">
+                <p className="font-bold text-[15px]">Claim Amount: {pendingSavePayload?.totalAmount?.toFixed(2)}</p>
+                <p className="text-[13px] mt-1 text-orange-600">Return No: {pendingSavePayload?.returnNo}</p>
+              </div>
+              <p className="text-[#334155] font-medium mb-2">How would you like to proceed?</p>
+            </div>
+
+            <div className="px-6 pb-6 flex gap-3">
+              <button 
+                type="button"
+                onClick={() => handleConfirmSave(false)}
+                className="w-full bg-[#10B981] hover:bg-[#059669] text-white py-2.5 rounded-lg font-bold text-[14px] transition-all shadow-md flex items-center justify-center gap-2"
+              >
+                <Save size={16} /> Confirm Save
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 };

@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Edit, Trash2, CheckCircle, CreditCard, Grid, Search, Maximize, Minimize } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import toast from 'react-hot-toast';
+import DeleteConfirmationModal from '../../components/DeleteConfirmationModal';
 import api from '../../services/api';
 
 const paymentModeSchema = z.object({
@@ -16,6 +17,7 @@ type PaymentModeFormValues = z.infer<typeof paymentModeSchema>;
 
 const PaymentModes = () => {
   const queryClient = useQueryClient();
+  const [itemToDelete, setItemToDelete] = useState<any>(null);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [isFullTable, setIsFullTable] = useState(false);
@@ -51,7 +53,10 @@ const PaymentModes = () => {
 
   const deleteMutation = useMutation({
     mutationFn: (id: number) => api.delete(`/payment-modes/${id}`),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['paymentModes'] }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['paymentmodes'] });
+      setItemToDelete(null);
+    },
     onError: (error: any) => {
       const message = error.response?.data?.message || 'Failed to delete Payment Mode';
       toast.error(message);
@@ -61,6 +66,17 @@ const PaymentModes = () => {
   const onSubmit = (data: PaymentModeFormValues) => {
     mutation.mutate(data);
   };
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'F10') {
+        e.preventDefault();
+        handleSubmit(onSubmit)();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [handleSubmit, onSubmit]);
 
   const handleEdit = (mode: any) => {
     setEditingId(mode.id);
@@ -190,9 +206,7 @@ const PaymentModes = () => {
                         </button>
                         <button type="button" 
                           onClick={() => {
-                            if (window.confirm('Are you sure you want to delete this payment mode?')) {
-                              deleteMutation.mutate(mode.id);
-                            }
+                            setItemToDelete(mode);
                           }}
                           className="text-[#EF4444] border border-[#EF4444] rounded p-1 hover:bg-[#EF4444] hover:text-white transition-colors"
                         >
@@ -207,9 +221,19 @@ const PaymentModes = () => {
           </table>
         </div>
       </div>
-      
+      {/* Delete Confirmation Modal */}
+      <DeleteConfirmationModal 
+        isOpen={!!itemToDelete}
+        itemName={itemToDelete?.name}
+        isDeleting={deleteMutation.isPending}
+        onConfirm={() => {
+          if (itemToDelete) {
+            deleteMutation.mutate(itemToDelete.id);
+          }
+        }}
+        onCancel={() => setItemToDelete(null)}
+      />
     </div>
   );
 };
-
 export default PaymentModes;

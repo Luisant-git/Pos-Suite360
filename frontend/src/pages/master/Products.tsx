@@ -4,6 +4,7 @@ import { Edit, Trash2, CheckCircle, Package, Grid, Maximize, Minimize } from 'lu
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import DeleteConfirmationModal from '../../components/DeleteConfirmationModal';
 import api from '../../services/api';
 
 const productSchema = z.object({
@@ -31,6 +32,7 @@ const Products = () => {
   const [filterBrand, setFilterBrand] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [isFullTable, setIsFullTable] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState<any>(null);
 
   const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm<ProductFormValues>({
     resolver: zodResolver(productSchema) as any,
@@ -116,12 +118,32 @@ const Products = () => {
 
   const deleteMutation = useMutation({
     mutationFn: (id: number) => api.delete(`/products/${id}`),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['products'] })
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['products'] });
+      toast.success('Product deleted successfully');
+      setItemToDelete(null);
+    },
+    onError: (err: any) => {
+      console.error(err);
+      toast.error('Failed to delete product. It may be in use.');
+      setItemToDelete(null);
+    }
   });
 
   const onSubmit = (data: ProductFormValues) => {
     mutation.mutate(data);
   };
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'F10') {
+        e.preventDefault();
+        handleSubmit(onSubmit as any)();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [handleSubmit, onSubmit]);
 
   const handleEdit = (product: any) => {
     setEditingId(product.id);
@@ -427,9 +449,7 @@ const Products = () => {
                         </button>
                         <button type="button" 
                           onClick={() => {
-                            if (window.confirm('Are you sure you want to delete this product?')) {
-                              deleteMutation.mutate(product.id);
-                            }
+                            setItemToDelete(product);
                           }}
                           className="text-[#EF4444] border border-[#EF4444] rounded p-1 hover:bg-[#EF4444] hover:text-white transition-colors"
                         >
@@ -445,6 +465,18 @@ const Products = () => {
         </div>
       </div>
       
+      {/* Delete Confirmation Modal */}
+      <DeleteConfirmationModal 
+        isOpen={!!itemToDelete}
+        itemName={itemToDelete?.name}
+        isDeleting={deleteMutation.isPending}
+        onConfirm={() => {
+          if (itemToDelete) {
+            deleteMutation.mutate(itemToDelete.id);
+          }
+        }}
+        onCancel={() => setItemToDelete(null)}
+      />
     </div>
   );
 };

@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Edit, Trash2, CheckCircle, CreditCard, Grid, Search, Maximize, Minimize } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import DeleteConfirmationModal from '../../components/DeleteConfirmationModal';
 import api from '../../services/api';
 
 const paymentTypeSchema = z.object({
@@ -15,6 +16,7 @@ type PaymentTypeFormValues = z.infer<typeof paymentTypeSchema>;
 
 const PaymentTypes = () => {
   const queryClient = useQueryClient();
+  const [itemToDelete, setItemToDelete] = useState<any>(null);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [isFullTable, setIsFullTable] = useState(false);
@@ -50,12 +52,26 @@ const PaymentTypes = () => {
 
   const deleteMutation = useMutation({
     mutationFn: (id: number) => api.delete(`/payment-types/${id}`),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['paymentTypes'] })
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['paymenttypes'] });
+      setItemToDelete(null);
+    }
   });
 
   const onSubmit = (data: PaymentTypeFormValues) => {
     mutation.mutate(data);
   };
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'F10') {
+        e.preventDefault();
+        handleSubmit(onSubmit)();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [handleSubmit, onSubmit]);
 
   const handleEdit = (type: any) => {
     setEditingId(type.id);
@@ -185,9 +201,7 @@ const PaymentTypes = () => {
                         </button>
                         <button type="button" 
                           onClick={() => {
-                            if (window.confirm('Are you sure you want to delete this payment type?')) {
-                              deleteMutation.mutate(type.id);
-                            }
+                            setItemToDelete(type);
                           }}
                           className="text-[#EF4444] border border-[#EF4444] rounded p-1 hover:bg-[#EF4444] hover:text-white transition-colors"
                         >
@@ -202,9 +216,19 @@ const PaymentTypes = () => {
           </table>
         </div>
       </div>
-      
+      {/* Delete Confirmation Modal */}
+      <DeleteConfirmationModal 
+        isOpen={!!itemToDelete}
+        itemName={itemToDelete?.name}
+        isDeleting={deleteMutation.isPending}
+        onConfirm={() => {
+          if (itemToDelete) {
+            deleteMutation.mutate(itemToDelete.id);
+          }
+        }}
+        onCancel={() => setItemToDelete(null)}
+      />
     </div>
   );
 };
-
 export default PaymentTypes;

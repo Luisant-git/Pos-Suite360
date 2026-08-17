@@ -542,6 +542,7 @@ const POS = () => {
                 <th className="px-2 py-2 text-left text-[12px] font-medium border border-[#334155]">Product Code / Name (Searchable Dropdown)</th>
                 <th className="px-2 py-2 text-center text-[12px] font-medium border border-[#334155] w-20">Stock</th>
                 <th className="px-2 py-2 text-center text-[12px] font-medium border border-[#334155] w-20">Unit</th>
+                <th className="px-2 py-2 text-center text-[12px] font-medium border border-[#334155] w-24">PRate</th>
                 <th className="px-2 py-2 text-center text-[12px] font-medium border border-[#334155] w-24">Qty</th>
                 <th className="px-2 py-2 text-center text-[12px] font-medium border border-[#334155] w-28">Rate</th>
                 <th className="px-2 py-2 text-center text-[12px] font-medium border border-[#334155] w-20">Disc %</th>
@@ -574,6 +575,13 @@ const POS = () => {
                   </td>
                   <td data-label="Unit" className="px-2 py-1 border-r border-[#E5E7EB]">
                     <input {...register(`items.${index}.unit`)} type="text" readOnly className="w-full px-1 py-1 bg-transparent text-[13px] outline-none text-center" />
+                  </td>
+                  <td data-label="PRate" className="px-2 py-1 border-r border-[#E5E7EB] text-center text-[13px] font-medium text-gray-700 bg-gray-50">
+                    {(() => {
+                      const pId = watch(`items.${index}.productId`);
+                      const prod = products.find((p: any) => p.id === Number(pId));
+                      return prod && prod.purchaseRate ? formatCurrency(prod.purchaseRate) : '-';
+                    })()}
                   </td>
                   <td data-label="Qty" className="px-2 py-1 border-r border-[#E5E7EB]">
                     <input {...register(`items.${index}.quantity`)} type="number" min="1" placeholder="0" className={`w-full px-2 py-1 border rounded text-[13px] outline-none text-center ${watch(`items.${index}.quantity`) > watch(`items.${index}.stock`) ? 'border-red-500 focus:border-red-500 bg-red-100 text-red-700 font-bold' : 'border-[#D1D5DB] focus:border-[#3B82F6]'}`} />

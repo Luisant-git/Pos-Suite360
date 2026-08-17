@@ -116,6 +116,30 @@ const MainLayout = () => {
     return () => clearInterval(timer);
   }, []);
 
+  useEffect(() => {
+    const handleGlobalKeyDown = (e: KeyboardEvent) => {
+      // Don't trigger if typing in an input
+      const isInput = ['INPUT', 'TEXTAREA', 'SELECT'].includes((e.target as HTMLElement)?.tagName);
+      if (e.key === 'Escape' && !isInput) {
+        // If we are not on the dashboard/home, navigate back
+        const path = window.location.pathname;
+        if (
+          path !== '/dashboard' && 
+          path !== '/quick-start' && 
+          path !== '/' &&
+          path !== '/purchase/new' &&
+          path !== '/sales/pos'
+        ) {
+          navigate(-1);
+        }
+      }
+    };
+    
+    // Add listener
+    window.addEventListener('keydown', handleGlobalKeyDown);
+    return () => window.removeEventListener('keydown', handleGlobalKeyDown);
+  }, [navigate]);
+
   const formattedDate = `${currentDate.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })} ${currentDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true })}`;
 
   const isMasterActive = location.pathname.startsWith('/master');
@@ -149,20 +173,6 @@ const MainLayout = () => {
           <nav className="flex-1 py-2 overflow-y-auto custom-scrollbar">
             <NavItem to="/dashboard" icon="fa-dashboard" title="Dashboard" />
             
-            <MobileNavDropdown title="Sales" icon="fa-shopping-cart" isActive={isSalesActive}>
-              <MobileDropdownItem to="/sales/pos" icon="fa-th-large" title="Sales Entry (POS)" />
-              <MobileDropdownItem to="/sales/return" icon="fa-reply" title="Sales Return" isDanger />
-              <MobileDropdownItem to="/sales/receipts" icon="fa-money" title="Customer Receipts" />
-            </MobileNavDropdown>
-
-            <MobileNavDropdown title="Purchases" icon="fa-truck" isActive={isPurchaseActive}>
-              <MobileDropdownItem to="/purchase/new" icon="fa-shopping-basket" title="Purchase Entry" />
-              <MobileDropdownItem to="/purchase/return" icon="fa-undo" title="Purchase Return" isWarning />
-              <MobileDropdownItem to="/purchase/payments" icon="fa-credit-card" title="Supplier Payments" />
-            </MobileNavDropdown>
-
-            <NavItem to="/expenses/new" icon="fa-calculator" title="Expenses" />
-
             <MobileNavDropdown title="Master" icon="fa-database" isActive={isMasterActive}>
               <MobileDropdownItem to="/master/products" icon="fa-cubes" title="Products" />
               <MobileDropdownItem to="/master/brands" icon="fa-tags" title="Brands" />
@@ -176,6 +186,20 @@ const MainLayout = () => {
               <MobileDropdownItem to="/master/payment-types" icon="fa-money" title="Payment Types" />
               <MobileDropdownItem to="/master/expense-categories" icon="fa-list-alt" title="Expense Categories" />
             </MobileNavDropdown>
+
+            <MobileNavDropdown title="Purchases" icon="fa-truck" isActive={isPurchaseActive}>
+              <MobileDropdownItem to="/purchase/new" icon="fa-shopping-basket" title="Purchase Entry" />
+              <MobileDropdownItem to="/purchase/return" icon="fa-undo" title="Purchase Return" isWarning />
+              <MobileDropdownItem to="/purchase/payments" icon="fa-credit-card" title="Supplier Payments" />
+            </MobileNavDropdown>
+
+            <MobileNavDropdown title="Sales" icon="fa-shopping-cart" isActive={isSalesActive}>
+              <MobileDropdownItem to="/sales/pos" icon="fa-th-large" title="Sales Entry (POS)" />
+              <MobileDropdownItem to="/sales/return" icon="fa-reply" title="Sales Return" isDanger />
+              <MobileDropdownItem to="/sales/receipts" icon="fa-money" title="Customer Receipts" />
+            </MobileNavDropdown>
+
+            <NavItem to="/expenses/new" icon="fa-calculator" title="Expenses" />
 
             <MobileNavDropdown title="Reports" icon="fa-pie-chart" isActive={isReportsActive}>
               <MobileDropdownItem to="/reports/sales" icon="fa-line-chart" title="Sales Report" />
@@ -220,7 +244,7 @@ const MainLayout = () => {
                 className="flex items-center gap-1.5 px-3 py-1.5 mr-2 sm:mr-6 bg-white/10 hover:bg-white/20 border border-white/10 rounded-lg transition-all font-bold text-[12px] sm:text-[13px] text-white shadow-sm shrink-0"
                 title="Go Back"
               >
-                <ArrowLeft size={16} /> <span className="hidden sm:inline">Back</span>
+                <ArrowLeft size={16} /> <span className="hidden sm:inline">Back (Esc)</span>
               </button>
             )}
 
@@ -228,22 +252,6 @@ const MainLayout = () => {
               <nav className="hidden lg:flex h-full items-center">
                 <NavItem to="/dashboard" icon="fa-dashboard" title="Dashboard" />
               
-              <NavDropdown title="Sales" icon="fa-shopping-cart" isActive={isSalesActive}>
-                <DropdownItem to="/sales/pos" icon="fa-th-large" title="Sales Entry (POS)" />
-                <DropdownItem to="/sales/return" icon="fa-reply" title="Sales Return" isDanger />
-                <div className="h-px bg-gray-100 my-1 mx-4"></div>
-                <DropdownItem to="/sales/receipts" icon="fa-money" title="Customer Receipts" />
-              </NavDropdown>
-
-              <NavDropdown title="Purchases" icon="fa-truck" isActive={isPurchaseActive}>
-                <DropdownItem to="/purchase/new" icon="fa-shopping-basket" title="Purchase Entry" />
-                <DropdownItem to="/purchase/return" icon="fa-undo" title="Purchase Return" isWarning />
-                <div className="h-px bg-gray-100 my-1 mx-4"></div>
-                <DropdownItem to="/purchase/payments" icon="fa-credit-card" title="Supplier Payments" />
-              </NavDropdown>
-
-              <NavItem to="/expenses/new" icon="fa-calculator" title="Expenses" />
-
               <NavDropdown title="Master" icon="fa-database" isActive={isMasterActive}>
                 <div className="px-4 py-1.5 text-[11px] font-bold text-gray-400 uppercase tracking-wider">Inventory</div>
                 <DropdownItem to="/master/products" icon="fa-cubes" title="Products" />
@@ -262,6 +270,22 @@ const MainLayout = () => {
                 <DropdownItem to="/master/payment-types" icon="fa-money" title="Payment Types" />
                 <DropdownItem to="/master/expense-categories" icon="fa-list-alt" title="Expense Categories" />
               </NavDropdown>
+
+              <NavDropdown title="Purchases" icon="fa-truck" isActive={isPurchaseActive}>
+                <DropdownItem to="/purchase/new" icon="fa-shopping-basket" title="Purchase Entry" />
+                <DropdownItem to="/purchase/return" icon="fa-undo" title="Purchase Return" isWarning />
+                <div className="h-px bg-gray-100 my-1 mx-4"></div>
+                <DropdownItem to="/purchase/payments" icon="fa-credit-card" title="Supplier Payments" />
+              </NavDropdown>
+
+              <NavDropdown title="Sales" icon="fa-shopping-cart" isActive={isSalesActive}>
+                <DropdownItem to="/sales/pos" icon="fa-th-large" title="Sales Entry (POS)" />
+                <DropdownItem to="/sales/return" icon="fa-reply" title="Sales Return" isDanger />
+                <div className="h-px bg-gray-100 my-1 mx-4"></div>
+                <DropdownItem to="/sales/receipts" icon="fa-money" title="Customer Receipts" />
+              </NavDropdown>
+
+              <NavItem to="/expenses/new" icon="fa-calculator" title="Expenses" />
 
               <NavDropdown title="Reports" icon="fa-pie-chart" isActive={isReportsActive}>
                 <div className="px-4 py-1.5 text-[11px] font-bold text-gray-400 uppercase tracking-wider">Sales & Purchase</div>
@@ -327,6 +351,7 @@ const MainLayout = () => {
                     </div>
                     Settings
                   </Link>
+                  {/* 
                   <button 
                     onClick={toggleDesktopLayout}
                     className="w-full flex items-center gap-3 px-3 py-2.5 text-sm text-blue-600 hover:bg-blue-50 rounded-lg transition-colors font-bold mt-1"
@@ -336,6 +361,7 @@ const MainLayout = () => {
                     </div>
                     {desktopLayout === 'topbar' ? 'Switch to Sidebar' : 'Switch to Topbar'}
                   </button>
+                  */}
                   <button 
                     onClick={() => { localStorage.removeItem('token'); navigate('/login'); }}
                     className="w-full flex items-center gap-3 px-3 py-2.5 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors font-bold mt-1"
@@ -372,20 +398,6 @@ const MainLayout = () => {
             <nav className="flex-1 py-2 overflow-y-auto custom-scrollbar">
               <NavItem to="/dashboard" icon="fa-dashboard" title="Dashboard" onClick={closeMobileMenu} />
               
-              <MobileNavDropdown title="Sales" icon="fa-shopping-cart" isActive={isSalesActive}>
-                <MobileDropdownItem to="/sales/pos" icon="fa-th-large" title="Sales Entry (POS)" onClick={closeMobileMenu} />
-                <MobileDropdownItem to="/sales/return" icon="fa-reply" title="Sales Return" isDanger onClick={closeMobileMenu} />
-                <MobileDropdownItem to="/sales/receipts" icon="fa-money" title="Customer Receipts" onClick={closeMobileMenu} />
-              </MobileNavDropdown>
-
-              <MobileNavDropdown title="Purchases" icon="fa-truck" isActive={isPurchaseActive}>
-                <MobileDropdownItem to="/purchase/new" icon="fa-shopping-basket" title="Purchase Entry" onClick={closeMobileMenu} />
-                <MobileDropdownItem to="/purchase/return" icon="fa-undo" title="Purchase Return" isWarning onClick={closeMobileMenu} />
-                <MobileDropdownItem to="/purchase/payments" icon="fa-credit-card" title="Supplier Payments" onClick={closeMobileMenu} />
-              </MobileNavDropdown>
-
-              <NavItem to="/expenses/new" icon="fa-calculator" title="Expenses" onClick={closeMobileMenu} />
-
               <MobileNavDropdown title="Master" icon="fa-database" isActive={isMasterActive}>
                 <MobileDropdownItem to="/master/products" icon="fa-cubes" title="Products" onClick={closeMobileMenu} />
                 <MobileDropdownItem to="/master/brands" icon="fa-tags" title="Brands" onClick={closeMobileMenu} />
@@ -399,6 +411,20 @@ const MainLayout = () => {
                 <MobileDropdownItem to="/master/payment-types" icon="fa-money" title="Payment Types" onClick={closeMobileMenu} />
                 <MobileDropdownItem to="/master/expense-categories" icon="fa-list-alt" title="Expense Categories" onClick={closeMobileMenu} />
               </MobileNavDropdown>
+
+              <MobileNavDropdown title="Purchases" icon="fa-truck" isActive={isPurchaseActive}>
+                <MobileDropdownItem to="/purchase/new" icon="fa-shopping-basket" title="Purchase Entry" onClick={closeMobileMenu} />
+                <MobileDropdownItem to="/purchase/return" icon="fa-undo" title="Purchase Return" isWarning onClick={closeMobileMenu} />
+                <MobileDropdownItem to="/purchase/payments" icon="fa-credit-card" title="Supplier Payments" onClick={closeMobileMenu} />
+              </MobileNavDropdown>
+
+              <MobileNavDropdown title="Sales" icon="fa-shopping-cart" isActive={isSalesActive}>
+                <MobileDropdownItem to="/sales/pos" icon="fa-th-large" title="Sales Entry (POS)" onClick={closeMobileMenu} />
+                <MobileDropdownItem to="/sales/return" icon="fa-reply" title="Sales Return" isDanger onClick={closeMobileMenu} />
+                <MobileDropdownItem to="/sales/receipts" icon="fa-money" title="Customer Receipts" onClick={closeMobileMenu} />
+              </MobileNavDropdown>
+
+              <NavItem to="/expenses/new" icon="fa-calculator" title="Expenses" onClick={closeMobileMenu} />
 
               <MobileNavDropdown title="Reports" icon="fa-pie-chart" isActive={isReportsActive}>
                 <MobileDropdownItem to="/reports/sales" icon="fa-line-chart" title="Sales Report" onClick={closeMobileMenu} />

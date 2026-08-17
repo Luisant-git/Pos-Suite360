@@ -309,6 +309,7 @@ model SaleItem {
   product    Product  @relation(fields: [productId], references: [id])
   
   quantity   Int
+  noOfBirds  Int      @default(0)
   rate       Decimal
   discount   Decimal  @default(0)
   tax        Decimal  @default(0)

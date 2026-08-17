@@ -50,16 +50,20 @@ const SalesReport = () => {
           paymentModeId: paymentMode || undefined,
         } 
       });
-      return data.map((s: any) => ({
-        id: s.id,
-        invoiceNo: s.invoiceNo,
-        date: new Date(s.date).toISOString().split('T')[0],
-        customerName: s.customer?.name || 'Walk-in',
-        paymentMode: s.paymentMode?.name || 'Cash',
-        netPayable: formatCurrency(s.grandTotal || 0),
-        rawTotalAmount: s.grandTotal || 0,
-        items: s.items || [],
-      }));
+      return data.map((s: any) => {
+        const totalBirds = s.items?.reduce((sum: number, item: any) => sum + (Number(item.noOfBirds) || 0), 0) || 0;
+        return {
+          id: s.id,
+          invoiceNo: s.invoiceNo,
+          date: new Date(s.date).toISOString().split('T')[0],
+          customerName: s.customer?.name || 'Walk-in',
+          paymentMode: s.paymentMode?.name || 'Cash',
+          totalBirds,
+          netPayable: formatCurrency(s.grandTotal || 0),
+          rawTotalAmount: s.grandTotal || 0,
+          items: s.items || [],
+        };
+      });
     },
   });
 
@@ -240,6 +244,7 @@ const SalesReport = () => {
                 <th className="px-4 py-3 border-r border-[#1E293B] text-center">Date</th>
                 <th className="px-4 py-3 border-r border-[#1E293B]">Customer Name</th>
                 <th className="px-4 py-3 border-r border-[#1E293B] text-center">Payment Mode</th>
+                <th className="px-4 py-3 border-r border-[#1E293B] text-center">Total Birds</th>
                 <th className="px-4 py-3 border-r border-[#1E293B] text-center">Total Amount</th>
                 <th className="px-4 py-3 text-center w-40">Action</th>
               </tr>
@@ -248,7 +253,7 @@ const SalesReport = () => {
               {isLoading ? (
                 <tr><td colSpan={6} className="text-center p-6 text-gray-500">Loading report data...</td></tr>
               ) : filteredSales.length === 0 ? (
-                <tr><td colSpan={7} className="text-center p-6 text-gray-500">No sales records found.</td></tr>
+                <tr><td colSpan={8} className="text-center p-6 text-gray-500">No sales records found.</td></tr>
               ) : (
                 paginatedSales.map((s: any, index: number) => (
                   <React.Fragment key={s.id}>
@@ -261,6 +266,7 @@ const SalesReport = () => {
                         {s.paymentMode}
                       </span>
                     </td>
+                    <td className="px-4 py-3 border-r border-[#E2E8F0] text-center font-bold">{s.totalBirds > 0 ? s.totalBirds : '-'}</td>
                     <td className="px-4 py-3 border-r border-[#E2E8F0] text-center font-bold text-[#3B82F6]">{s.netPayable}</td>
                     <td className="px-4 py-3 text-center">
                       <div className="flex justify-center items-center gap-2">

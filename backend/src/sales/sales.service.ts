@@ -46,6 +46,7 @@ export class SalesService {
             create: createSaleDto.items.map((item) => ({
               productId: item.productId,
               quantity: item.quantity,
+              noOfBirds: item.noOfBirds || 0,
               rate: item.rate,
               discount: item.discount || 0,
               tax: item.tax || 0,

@@ -51,6 +51,7 @@ const numberToWords = (num: number): string => {
 const saleItemSchema = z.object({
   productId: z.coerce.number().min(0),
   quantity: z.coerce.number().min(0),
+  noOfBirds: z.union([z.coerce.number(), z.literal('')]).optional(),
   stock: z.coerce.number(),
   rate: z.coerce.number().min(0),
   unit: z.string().optional(),
@@ -126,7 +127,7 @@ const POS = () => {
       customerId: 0,
       rateType: 'Wholesale Rate',
       paymentModeId: 0,
-      items: [{ productId: 0, quantity: '' as any, stock: 0, rate: '' as any, unit: 'Nos', discPercent: '' as any, discAmt: '' as any, total: 0 }],
+      items: [{ productId: 0, quantity: '' as any, noOfBirds: '' as any, stock: 0, rate: '' as any, unit: 'Nos', discPercent: '' as any, discAmt: '' as any, total: 0 }],
       grossAmount: 0,
       totalDiscountPercent: '' as any,
       totalDiscount: '' as any,
@@ -255,8 +256,9 @@ const POS = () => {
       grandTotal: Number(data.netAmount),
       items: validItems.map(item => ({
         productId: Number(item.productId),
-        quantity: Number(item.quantity),
-        rate: Number(item.rate),
+        quantity: Number(item.quantity) || 0,
+        noOfBirds: Number(item.noOfBirds) || 0,
+        rate: Number(item.rate) || 0,
         discount: Number(item.discAmt || 0),
         tax: 0,
         amount: Number(item.total),
@@ -557,7 +559,7 @@ const POS = () => {
           <div className="flex flex-wrap justify-end gap-2 p-2 min-w-[300px]">
             <button 
               type="button"
-              onClick={() => append({ productId: 0, quantity: '' as any, stock: 0, rate: '' as any, unit: 'Nos', discPercent: '' as any, discAmt: '' as any, total: 0 })}
+              onClick={() => append({ productId: 0, quantity: '' as any, noOfBirds: '' as any, stock: 0, rate: '' as any, unit: 'Nos', discPercent: '' as any, discAmt: '' as any, total: 0 })}
               className="border border-[#1E3A8A] text-[#1E3A8A] hover:bg-[#1E3A8A] hover:text-white px-3 py-1 rounded flex items-center gap-1 text-[12px] transition-colors font-bold"
             >
               <Plus size={14} /> Add Row (F2)
@@ -591,7 +593,7 @@ const POS = () => {
                 <th className="px-2 py-2 text-left text-[12px] font-medium border border-[#334155]">Product Code / Name (Searchable Dropdown)</th>
                 <th className="px-2 py-2 text-center text-[12px] font-medium border border-[#334155] w-20">Stock</th>
                 <th className="px-2 py-2 text-center text-[12px] font-medium border border-[#334155] w-20">Unit</th>
-
+                <th className="px-2 py-2 text-center text-[12px] font-medium border border-[#334155] w-20">Birds</th>
                 <th className="px-2 py-2 text-center text-[12px] font-medium border border-[#334155] w-24">Qty</th>
                 <th className="px-2 py-2 text-center text-[12px] font-medium border border-[#334155] w-28">Rate</th>
                 <th className="px-2 py-2 text-center text-[12px] font-medium border border-[#334155] w-20">Disc %</th>
@@ -625,7 +627,14 @@ const POS = () => {
                   <td data-label="Unit" className="px-2 py-1 border-r border-[#E5E7EB]">
                     <input {...register(`items.${index}.unit`)} type="text" readOnly tabIndex={-1} className="w-full px-1 py-1 bg-transparent text-[13px] outline-none text-center" />
                   </td>
-
+                  <td data-label="Birds" className="px-2 py-1 border-r border-[#E5E7EB]">
+                    <input 
+                      {...register(`items.${index}.noOfBirds`)} 
+                      type="number" min="0" placeholder="0" 
+                      onFocus={(e) => e.target.select()}
+                      className="w-full px-2 py-1 border border-[#D1D5DB] rounded text-[13px] outline-none text-center transition-colors focus:border-[#3B82F6] focus:ring-1 focus:ring-[#3B82F6] focus:bg-blue-50" 
+                    />
+                  </td>
                   <td data-label="Qty" className="px-2 py-1 border-r border-[#E5E7EB]">
                     <input 
                       {...register(`items.${index}.quantity`)} 

@@ -67,6 +67,8 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
   const items = sale?.items || [];
   const grandTotal = sale?.grandTotal || 0;
 
+  const totalBirds = items.reduce((sum: number, item: any) => sum + (Number(item.noOfBirds) || 0), 0);
+
   const handlePrint = () => {
     window.print();
   };
@@ -134,11 +136,12 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
           <thead>
             <tr className="border-b border-black text-xs uppercase">
               <th className="py-2 w-[15%] font-bold">Code</th>
-              <th className="py-2 w-[40%] font-bold">Description</th>
+              <th className="py-2 w-[35%] font-bold">Description</th>
+              <th className="py-2 w-[10%] text-center font-bold">Birds</th>
               <th className="py-2 w-[10%] text-right font-bold">Qty</th>
               <th className="py-2 w-[10%] text-center font-bold">UOM</th>
               <th className="py-2 w-[10%] text-right font-bold">U.Price</th>
-              <th className="py-2 w-[15%] text-right font-bold">Amount</th>
+              <th className="py-2 w-[10%] text-right font-bold">Amount</th>
             </tr>
           </thead>
           <tbody className="align-top">
@@ -146,6 +149,7 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
               <tr key={idx}>
                 <td className="py-1 font-medium">{item.product?.code || ''}</td>
                 <td className="py-1 font-medium">{item.product?.name || ''}</td>
+                <td className="py-1 text-center font-medium">{Number(item.noOfBirds) || '-'}</td>
                 <td className="py-1 text-right font-medium">{item.quantity}</td>
                 <td className="py-1 text-center font-medium">{item.product?.unit?.name || item.product?.unit?.shortCode || 'Nos'}</td>
                 <td className="py-1 text-right font-medium">{Number(item.rate || 0).toFixed(2)}</td>
@@ -160,12 +164,15 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
           
           <div className="flex justify-between items-start border-t border-black pt-2">
             <div 
-              className="w-2/3 text-[10px] text-black pr-4 html-content"
+              className="w-1/2 text-[10px] text-black pr-4 html-content"
               dangerouslySetInnerHTML={{ __html: settings?.invoiceNotes || '' }}
             />
-            <div className="w-1/3 flex justify-between font-bold text-sm">
-              <span>TOTAL : RM</span>
-              <span className="border-b-2 border-black border-double min-w-[100px] text-right">{Number(grandTotal).toFixed(2)}</span>
+            <div className="w-1/2 flex justify-end gap-8 font-bold text-sm">
+              {totalBirds > 0 && <span>TOTAL BIRDS : {totalBirds}</span>}
+              <div className="flex gap-4">
+                <span>TOTAL : RM</span>
+                <span className="border-b-2 border-black border-double min-w-[100px] text-right">{Number(grandTotal).toFixed(2)}</span>
+              </div>
             </div>
           </div>
           
@@ -250,11 +257,12 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
             <thead>
               <tr className="border-b border-black uppercase">
                 <th className="py-2 w-[15%] font-bold">Code</th>
-                <th className="py-2 w-[40%] font-bold">Description</th>
+                <th className="py-2 w-[35%] font-bold">Description</th>
+                <th className="py-2 w-[10%] text-center font-bold">Birds</th>
                 <th className="py-2 w-[10%] text-right font-bold">Qty</th>
                 <th className="py-2 w-[10%] text-center font-bold">UOM</th>
                 <th className="py-2 w-[10%] text-right font-bold">U.Price</th>
-                <th className="py-2 w-[15%] text-right font-bold">Amount</th>
+                <th className="py-2 w-[10%] text-right font-bold">Amount</th>
               </tr>
             </thead>
             <tbody className="align-top">
@@ -262,6 +270,7 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
                 <tr key={idx}>
                   <td className="py-1 font-medium">{item.product?.code || ''}</td>
                   <td className="py-1 font-medium">{item.product?.name || ''}</td>
+                  <td className="py-1 text-center font-medium">{Number(item.noOfBirds) || '-'}</td>
                   <td className="py-1 text-right font-medium">{item.quantity}</td>
                   <td className="py-1 text-center font-medium">{item.product?.unit?.name || item.product?.unit?.shortCode || 'Nos'}</td>
                   <td className="py-1 text-right font-medium">{Number(item.rate || 0).toFixed(2)}</td>
@@ -278,12 +287,15 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
             
             <div className="flex justify-between items-start border-t border-black pt-2">
               <div 
-                className="w-2/3 text-[10px] text-black pr-4 html-content"
+                className="w-1/2 text-[10px] text-black pr-4 html-content"
                 dangerouslySetInnerHTML={{ __html: settings?.invoiceNotes || '' }}
               />
-              <div className="w-1/3 flex justify-between font-bold text-sm">
-                <span>TOTAL : RM</span>
-                <span className="border-b-2 border-black border-double min-w-[100px] text-right">{Number(grandTotal).toFixed(2)}</span>
+              <div className="w-1/2 flex justify-end gap-8 font-bold text-sm">
+                {totalBirds > 0 && <span>TOTAL BIRDS : {totalBirds}</span>}
+                <div className="flex gap-4">
+                  <span>TOTAL : RM</span>
+                  <span className="border-b-2 border-black border-double min-w-[100px] text-right">{Number(grandTotal).toFixed(2)}</span>
+                </div>
               </div>
             </div>
             

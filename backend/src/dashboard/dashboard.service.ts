@@ -1,9 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { CustomerReceiptsService } from '../customer-receipts/customer-receipts.service';
+import { SupplierPaymentsService } from '../supplier-payments/supplier-payments.service';
 
 @Injectable()
 export class DashboardService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private customerReceiptsService: CustomerReceiptsService,
+    private supplierPaymentsService: SupplierPaymentsService
+  ) {}
 
   async getDashboardSummary(startDateStr?: string, endDateStr?: string) {
     const start = startDateStr ? new Date(startDateStr) : new Date();
@@ -165,6 +171,62 @@ export class DashboardService {
       billsToday,
       lowStockProducts,
       chartData,
+      unpaidCustomerBills: await this.getTopUnpaidCustomerBills(15),
+      unpaidSupplierBills: await this.getTopUnpaidSupplierBills(15)
     };
+  }
+
+  private async getTopUnpaidCustomerBills(limit: number) {
+    const customers = await this.prisma.customer.findMany();
+    let allUnpaidBills: any[] = [];
+    
+    // Process all customers to find unpaid bills
+    for (const customer of customers) {
+      try {
+        const { balance } = await this.customerReceiptsService.getBalance(customer.id);
+        if (balance > 0) {
+          const unpaid = await this.customerReceiptsService.getUnpaidBills(customer.id);
+          const pendingBills = unpaid.filter(b => b.pending > 0).map(b => ({
+            ...b,
+            entityName: customer.name,
+            entityId: customer.id
+          }));
+          allUnpaidBills.push(...pendingBills);
+        }
+      } catch(e) {
+        // Skip on error
+      }
+    }
+    
+    // Sort by date (oldest first)
+    allUnpaidBills.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+    return allUnpaidBills.slice(0, limit);
+  }
+
+  private async getTopUnpaidSupplierBills(limit: number) {
+    const suppliers = await this.prisma.supplier.findMany();
+    let allUnpaidBills: any[] = [];
+    
+    // Process all suppliers to find unpaid bills
+    for (const supplier of suppliers) {
+      try {
+        const { balance } = await this.supplierPaymentsService.getBalance(supplier.id);
+        if (balance > 0) {
+          const unpaid = await this.supplierPaymentsService.getUnpaidBills(supplier.id);
+          const pendingBills = unpaid.filter(b => b.pending > 0).map(b => ({
+            ...b,
+            entityName: supplier.name,
+            entityId: supplier.id
+          }));
+          allUnpaidBills.push(...pendingBills);
+        }
+      } catch(e) {
+        // Skip on error
+      }
+    }
+    
+    // Sort by date (oldest first)
+    allUnpaidBills.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+    return allUnpaidBills.slice(0, limit);
   }
 }

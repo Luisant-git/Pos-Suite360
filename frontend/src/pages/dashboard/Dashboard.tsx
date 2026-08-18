@@ -281,44 +281,94 @@ const Dashboard = () => {
         </div>
 
         {/* Supplier Payments Due */}
-        <div className="bg-white border border-gray-200 shadow-sm rounded-xl overflow-hidden lg:col-span-1">
+        <div className="bg-white border border-gray-200 shadow-sm rounded-xl overflow-hidden lg:col-span-1 flex flex-col">
           <div className="border-b border-gray-100 px-5 py-4 flex justify-between items-center bg-gray-50/50">
             <h2 className="text-[16px] font-semibold text-gray-800 flex items-center gap-2">
               <Landmark size={18} className="text-rose-500" /> Supplier Payments Due
             </h2>
-          </div>
-          <div className="p-6 h-[350px] overflow-y-auto custom-scrollbar bg-white flex flex-col items-center justify-center text-center gap-4">
-            <div className="w-20 h-20 bg-rose-50 rounded-full flex items-center justify-center">
-              <Landmark size={36} className="text-rose-500" />
-            </div>
-            <div>
-              <p className="text-[32px] font-bold text-gray-800">{formatCurrency(data.pendingPayables)}</p>
-              <p className="text-[14px] text-gray-500 font-medium mt-1">Total amount owed to suppliers</p>
-            </div>
-            <Link to="/purchase/payments" className="mt-4 px-6 py-2 bg-rose-50 text-rose-600 font-semibold rounded-lg hover:bg-rose-100 transition-colors text-[14px]">
-              Settle Payments
+            <Link to="/purchase/payments" className="px-3 py-1 bg-rose-50 text-rose-600 font-semibold rounded hover:bg-rose-100 transition-colors text-[12px]">
+              Settle
             </Link>
+          </div>
+          <div className="flex-1 p-0 h-[350px] overflow-y-auto custom-scrollbar bg-white">
+            <table className="w-full text-left text-[12px] whitespace-nowrap">
+              <thead className="bg-[#F8FAFC] border-b border-[#E2E8F0] sticky top-0">
+                <tr>
+                  <th className="px-4 py-3 font-bold text-[#334155]">Supplier / Bill</th>
+                  <th className="px-4 py-3 font-bold text-[#059669] text-right">Pending</th>
+                </tr>
+              </thead>
+              <tbody>
+                {data.unpaidSupplierBills?.length > 0 ? data.unpaidSupplierBills.map((bill: any, idx: number) => (
+                  <tr key={idx} className="border-b border-[#E2E8F0] hover:bg-[#F8FAFC]">
+                    <td className="px-4 py-3">
+                      <div className="font-bold text-[#1E293B]">{bill.entityName}</div>
+                      <div className="text-[#64748B] text-[11px] mt-0.5">
+                        {bill.entryNo} • {new Date(bill.date).toLocaleDateString('en-GB')}
+                      </div>
+                    </td>
+                    <td className="px-4 py-3 text-right">
+                      <div className="font-bold text-[#059669]">{formatCurrency(bill.pending)}</div>
+                      <div className="text-[#64748B] text-[11px] mt-0.5">
+                        Total: {formatCurrency(bill.total)}
+                      </div>
+                    </td>
+                  </tr>
+                )) : (
+                  <tr>
+                    <td colSpan={2} className="px-4 py-8 text-center text-gray-500">
+                      No pending supplier bills
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
           </div>
         </div>
 
         {/* Customer Payments Expected */}
-        <div className="bg-white border border-gray-200 shadow-sm rounded-xl overflow-hidden lg:col-span-1">
+        <div className="bg-white border border-gray-200 shadow-sm rounded-xl overflow-hidden lg:col-span-1 flex flex-col">
           <div className="border-b border-gray-100 px-5 py-4 flex justify-between items-center bg-gray-50/50">
             <h2 className="text-[16px] font-semibold text-gray-800 flex items-center gap-2">
-              <Users size={18} className="text-amber-500" /> Customer Payments Expected
+              <Users size={18} className="text-amber-500" /> Customer Payments Due
             </h2>
-          </div>
-          <div className="p-6 h-[350px] overflow-y-auto custom-scrollbar bg-white flex flex-col items-center justify-center text-center gap-4">
-            <div className="w-20 h-20 bg-amber-50 rounded-full flex items-center justify-center">
-              <Users size={36} className="text-amber-500" />
-            </div>
-            <div>
-              <p className="text-[32px] font-bold text-gray-800">{formatCurrency(data.pendingReceivables)}</p>
-              <p className="text-[14px] text-gray-500 font-medium mt-1">Total amount expected from customers</p>
-            </div>
-            <Link to="/sales/receipts" className="mt-4 px-6 py-2 bg-amber-50 text-amber-600 font-semibold rounded-lg hover:bg-amber-100 transition-colors text-[14px]">
-              Collect Payments
+            <Link to="/sales/receipts" className="px-3 py-1 bg-amber-50 text-amber-600 font-semibold rounded hover:bg-amber-100 transition-colors text-[12px]">
+              Collect
             </Link>
+          </div>
+          <div className="flex-1 p-0 h-[350px] overflow-y-auto custom-scrollbar bg-white">
+            <table className="w-full text-left text-[12px] whitespace-nowrap">
+              <thead className="bg-[#F8FAFC] border-b border-[#E2E8F0] sticky top-0">
+                <tr>
+                  <th className="px-4 py-3 font-bold text-[#334155]">Customer / Bill</th>
+                  <th className="px-4 py-3 font-bold text-[#059669] text-right">Pending</th>
+                </tr>
+              </thead>
+              <tbody>
+                {data.unpaidCustomerBills?.length > 0 ? data.unpaidCustomerBills.map((bill: any, idx: number) => (
+                  <tr key={idx} className="border-b border-[#E2E8F0] hover:bg-[#F8FAFC]">
+                    <td className="px-4 py-3">
+                      <div className="font-bold text-[#1E293B]">{bill.entityName}</div>
+                      <div className="text-[#64748B] text-[11px] mt-0.5">
+                        {bill.entryNo} • {new Date(bill.date).toLocaleDateString('en-GB')}
+                      </div>
+                    </td>
+                    <td className="px-4 py-3 text-right">
+                      <div className="font-bold text-[#059669]">{formatCurrency(bill.pending)}</div>
+                      <div className="text-[#64748B] text-[11px] mt-0.5">
+                        Total: {formatCurrency(bill.total)}
+                      </div>
+                    </td>
+                  </tr>
+                )) : (
+                  <tr>
+                    <td colSpan={2} className="px-4 py-8 text-center text-gray-500">
+                      No pending customer bills
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
           </div>
         </div>
       </div>

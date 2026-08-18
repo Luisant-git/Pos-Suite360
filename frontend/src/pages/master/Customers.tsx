@@ -247,22 +247,31 @@ const Customers = () => {
       {/* Right Column: List */}
       <div className={`${isFullTable ? 'xl:col-span-3' : 'xl:col-span-2'} bg-white border border-[#E6E9ED] shadow-sm rounded-sm overflow-hidden flex flex-col`}>
         <div className="bg-[#EBF5FF] border-b border-[#3B82F6] px-4 py-3 flex flex-col md:flex-row justify-between items-start md:items-center gap-3 md:gap-0">
-          <div className="flex items-center gap-2 text-[#1E3A8A]">
+          <div className="flex items-center justify-between w-full md:w-auto">
+            <div className="flex items-center gap-2 text-[#1E3A8A]">
             <Grid size={16} className="text-[#1E3A8A]" />
             <h2 className="font-bold text-[14px]">CUSTOMER LIST</h2>
           </div>
-          <div className="flex flex-wrap items-center justify-between md:justify-end gap-3 w-full md:w-auto">
-            <div className="bg-gray-500 text-white text-[11px] font-bold px-2 py-1 rounded-xl">
+            <div className="md:hidden bg-gray-500 text-white text-[11px] font-bold px-2 py-1 rounded-xl">
               {filteredCustomers.length} Customers
             </div>
-            <button type="button" 
+          </div>
+          
+          <div className="flex items-center justify-between w-full md:w-auto gap-3">
+            <div className="hidden md:block bg-gray-500 text-white text-[11px] font-bold px-2 py-1 rounded-xl">
+              {filteredCustomers.length} Customers
+            </div>
+            <div className="flex flex-row items-center gap-2 w-full md:w-auto">
+              
+              <button type="button" 
               onClick={() => setIsFullTable(!isFullTable)}
-              className="text-[#3B82F6] hover:bg-white px-2 py-1 rounded text-[12px] font-bold flex items-center gap-1 transition-colors border border-[#3B82F6]"
+              className="whitespace-nowrap text-[#3B82F6] hover:bg-white px-2 py-1 rounded text-[12px] font-bold flex items-center justify-center gap-1 transition-colors border border-[#3B82F6]"
             >
               {isFullTable ? <Minimize size={14} /> : <Maximize size={14} />}
-              {isFullTable ? 'Show Form' : 'View Full Table'}
+              <span className="hidden sm:inline">{isFullTable ? 'Show Form' : 'View Full Table'}</span>
+                <span className="sm:hidden">{isFullTable ? 'Form' : 'Full Table'}</span>
             </button>
-            
+            </div>
           </div>
         </div>
         

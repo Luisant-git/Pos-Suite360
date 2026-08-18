@@ -1,3 +1,5 @@
+import { useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { X, Printer, Loader2 } from 'lucide-react';
 import { useSettings } from '../contexts/SettingsContext';
 import { useQuery } from '@tanstack/react-query';
@@ -47,6 +49,15 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
   });
 
   const sale = fullSale || initialSale;
+
+  useEffect(() => {
+    if (isOpen) {
+      document.body.classList.add('printing-modal');
+    } else {
+      document.body.classList.remove('printing-modal');
+    }
+    return () => document.body.classList.remove('printing-modal');
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -193,8 +204,8 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
     );
   }
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 print:absolute print:top-0 print:left-0 print:block print:bg-transparent print:m-0 print:p-0">
+  const modalContent = (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 print:absolute print:top-0 print:left-0 print:block print:bg-transparent print:m-0 print:p-0 print-invoice-container">
       <div className="bg-white w-[210mm] h-[97vh] flex flex-col rounded-md shadow-2xl relative print:w-full print:shadow-none print:h-auto print:min-h-[250mm]">
         
         {/* Header - Screen Only */}
@@ -347,6 +358,8 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
       </div>
     </div>
   );
+
+  return createPortal(modalContent, document.body);
 };
 
 export default InvoicePrintModal;

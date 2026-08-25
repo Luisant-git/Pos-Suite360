@@ -17,7 +17,6 @@ import PaymentModes from '../pages/master/PaymentModes';
 import PaymentTypes from '../pages/master/PaymentTypes';
 import ExpenseCategories from '../pages/master/ExpenseCategories';
 import Users from '../pages/master/Users';
-import Taxes from '../pages/master/Taxes';
 import MenuPermissions from '../pages/master/MenuPermissions';
 
 // Purchase
@@ -83,7 +82,6 @@ const AppRoutes = () => {
           <Route path="/master/users" element={<Users />} />
           <Route path="/master/permissions" element={<MenuPermissions />} />
         </Route>
-        <Route path="/master/taxes" element={<Taxes />} /> {/* Tax GST doesn't seem to have a specific perm in MainLayout, just settings.enableTax */}
 
         {/* Purchase Routes */}
         <Route element={<ProtectedRoute requiredPerms={['purchase_entry', 'purchase_return', 'purchase_payments']} />}><Route path="/purchase" element={<PurchaseList />} /></Route>

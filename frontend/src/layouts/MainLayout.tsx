@@ -86,7 +86,7 @@ const MainLayout = () => {
   const navigate = useNavigate();
   const location = useLocation();
   
-  const [user, setUser] = useState<any>(() => {
+  const [user] = useState<any>(() => {
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
       try {

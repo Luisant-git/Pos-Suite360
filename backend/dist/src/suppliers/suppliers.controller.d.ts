@@ -1,0 +1,87 @@
+import { SuppliersService } from './suppliers.service';
+import { CreateSupplierDto } from './dto/create-supplier.dto';
+import { UpdateSupplierDto } from './dto/update-supplier.dto';
+export declare class SuppliersController {
+    private readonly suppliersService;
+    constructor(suppliersService: SuppliersService);
+    create(createSupplierDto: CreateSupplierDto): import("@prisma/client").Prisma.Prisma__SupplierClient<{
+        id: number;
+        createdAt: Date;
+        updatedAt: Date;
+        name: string;
+        phone: string | null;
+        email: string | null;
+        address: string | null;
+        gstNumber: string | null;
+        openingBalance: import("@prisma/client-runtime-utils").Decimal;
+        contactPerson: string | null;
+        openingBalanceType: string;
+        accountNo: string | null;
+        ifscCode: string | null;
+        bankBranch: string | null;
+    }, never, import("@prisma/client/runtime/client").DefaultArgs, import("@prisma/client").Prisma.PrismaClientOptions>;
+    findAll(): import("@prisma/client").Prisma.PrismaPromise<{
+        id: number;
+        createdAt: Date;
+        updatedAt: Date;
+        name: string;
+        phone: string | null;
+        email: string | null;
+        address: string | null;
+        gstNumber: string | null;
+        openingBalance: import("@prisma/client-runtime-utils").Decimal;
+        contactPerson: string | null;
+        openingBalanceType: string;
+        accountNo: string | null;
+        ifscCode: string | null;
+        bankBranch: string | null;
+    }[]>;
+    findOne(id: string): import("@prisma/client").Prisma.Prisma__SupplierClient<{
+        id: number;
+        createdAt: Date;
+        updatedAt: Date;
+        name: string;
+        phone: string | null;
+        email: string | null;
+        address: string | null;
+        gstNumber: string | null;
+        openingBalance: import("@prisma/client-runtime-utils").Decimal;
+        contactPerson: string | null;
+        openingBalanceType: string;
+        accountNo: string | null;
+        ifscCode: string | null;
+        bankBranch: string | null;
+    } | null, null, import("@prisma/client/runtime/client").DefaultArgs, import("@prisma/client").Prisma.PrismaClientOptions>;
+    update(id: string, updateSupplierDto: UpdateSupplierDto): import("@prisma/client").Prisma.Prisma__SupplierClient<{
+        id: number;
+        createdAt: Date;
+        updatedAt: Date;
+        name: string;
+        phone: string | null;
+        email: string | null;
+        address: string | null;
+        gstNumber: string | null;
+        openingBalance: import("@prisma/client-runtime-utils").Decimal;
+        contactPerson: string | null;
+        openingBalanceType: string;
+        accountNo: string | null;
+        ifscCode: string | null;
+        bankBranch: string | null;
+    }, never, import("@prisma/client/runtime/client").DefaultArgs, import("@prisma/client").Prisma.PrismaClientOptions>;
+    remove(id: string): import("@prisma/client").Prisma.Prisma__SupplierClient<{
+        id: number;
+        createdAt: Date;
+        updatedAt: Date;
+        name: string;
+        phone: string | null;
+        email: string | null;
+        address: string | null;
+        gstNumber: string | null;
+        openingBalance: import("@prisma/client-runtime-utils").Decimal;
+        contactPerson: string | null;
+        openingBalanceType: string;
+        accountNo: string | null;
+        ifscCode: string | null;
+        bankBranch: string | null;
+    }, never, import("@prisma/client/runtime/client").DefaultArgs, import("@prisma/client").Prisma.PrismaClientOptions>;
+}

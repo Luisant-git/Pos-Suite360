@@ -16,6 +16,7 @@ import PaymentModes from '../pages/master/PaymentModes';
 import PaymentTypes from '../pages/master/PaymentTypes';
 import ExpenseCategories from '../pages/master/ExpenseCategories';
 import Users from '../pages/master/Users';
+import MenuPermissions from '../pages/master/MenuPermissions';
 
 // Purchase
 import PurchaseList from '../pages/purchase/PurchaseList';
@@ -77,6 +78,7 @@ const AppRoutes = () => {
         <Route path="/master/payment-types" element={<PaymentTypes />} />
         <Route path="/master/expense-categories" element={<ExpenseCategories />} />
         <Route path="/master/users" element={<Users />} />
+        <Route path="/master/permissions" element={<MenuPermissions />} />
 
         {/* Purchase Routes */}
         <Route path="/purchase" element={<PurchaseList />} />

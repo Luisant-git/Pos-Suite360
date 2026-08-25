@@ -24,6 +24,7 @@ import { SalesReturnsModule } from './sales-returns/sales-returns.module';
 import { ExpensesModule } from './expenses/expenses.module';
 import { WhatsappModule } from './whatsapp/whatsapp.module';
 import { ReportsModule } from './reports/reports.module';
+import { RolesModule } from './roles/roles.module';
 
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
@@ -56,7 +57,8 @@ import { join } from 'path';
     SalesReturnsModule,
     ExpensesModule,
     WhatsappModule,
-    ReportsModule
+    ReportsModule,
+    RolesModule
   ],
   controllers: [AppController],
   providers: [AppService],

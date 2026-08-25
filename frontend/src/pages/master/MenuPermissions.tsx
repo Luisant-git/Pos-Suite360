@@ -11,6 +11,7 @@ const MODULES = [
     icon: <Settings2 size={18} />,
     permissions: [
       { id: 'master_products', name: 'Products' },
+      { id: 'mfg_product_master', name: 'Product (Mfg)' },
       { id: 'master_brands', name: 'Brands' },
       { id: 'master_categories', name: 'Categories' },
       { id: 'master_units', name: 'Units' },
@@ -29,6 +30,16 @@ const MODULES = [
       { id: 'purchase_entry', name: 'Purchase Entry' },
       { id: 'purchase_return', name: 'Purchase Return' },
       { id: 'purchase_payments', name: 'Supplier Payments' },
+    ]
+  },
+  {
+    id: 'manufacturing',
+    name: 'Manufacturing',
+    icon: <Shield size={18} />,
+    permissions: [
+      { id: 'mfg_rm_master', name: 'Raw Material Master' },
+      { id: 'mfg_rm_purchase', name: 'Raw Material Purchase' },
+      { id: 'mfg_production', name: 'Production Entry' },
     ]
   },
   {
@@ -56,6 +67,7 @@ const MODULES = [
     permissions: [
       { id: 'reports_sales', name: 'Sales Reports' },
       { id: 'reports_purchase', name: 'Purchase Reports' },
+      { id: 'reports_manufacturing', name: 'Manufacturing Reports' },
       { id: 'reports_financial', name: 'Financial & Stock Reports' },
     ]
   },
@@ -139,10 +151,12 @@ const MenuPermissions = () => {
       await api.put(`/roles/${selectedRoleId}/permissions`, { permissions: activePermissions });
       
       const storedUser = localStorage.getItem('user');
+      let isCurrentUserRole = false;
       if (storedUser) {
         try {
           const parsed = JSON.parse(storedUser);
           if (parsed.roleId === selectedRoleId) {
+            isCurrentUserRole = true;
             parsed.role = parsed.role || {};
             parsed.role.permissions = activePermissions;
             localStorage.setItem('user', JSON.stringify(parsed));
@@ -150,7 +164,13 @@ const MenuPermissions = () => {
         } catch (e) {}
       }
 
-      toast.success('Permissions saved successfully! Please reload the page to apply changes.');
+      toast.success('Permissions saved successfully!');
+      
+      if (isCurrentUserRole) {
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
+      }
     } catch (error) {
       toast.error('Failed to save permissions');
     } finally {

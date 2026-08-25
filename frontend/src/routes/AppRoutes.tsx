@@ -35,13 +35,6 @@ import SalesView from '../pages/sales/SalesView';
 import CustomerReceipts from '../pages/sales/CustomerReceipts';
 import SalesReturn from '../pages/sales/SalesReturn';
 
-// Raw Materials & Production
-import RawMaterialMaster from '../pages/raw-materials/RawMaterialMaster';
-import RawMaterialPurchaseEntry from '../pages/raw-materials/RawMaterialPurchaseEntry';
-import RawMaterialPurchaseList from '../pages/raw-materials/RawMaterialPurchaseList';
-import Production from '../pages/production/Production';
-import ManufacturingProducts from '../pages/production/ManufacturingProducts';
-
 // Inventory
 import Stock from '../pages/inventory/Stock';
 import StockLedger from '../pages/inventory/StockLedger';
@@ -60,8 +53,6 @@ import StockReport from '../pages/reports/StockReport';
 import StockLedgerReport from '../pages/reports/StockLedgerReport';
 import ExpenseReport from '../pages/reports/ExpenseReport';
 import ProfitLossReport from '../pages/reports/ProfitLossReport';
-import RawMaterialPurchaseReport from '../pages/reports/RawMaterialPurchaseReport';
-import ProductionReport from '../pages/reports/ProductionReport';
 
 // Settings
 import Settings from '../pages/Settings';
@@ -128,15 +119,6 @@ const AppRoutes = () => {
         <Route element={<ProtectedRoute requiredPerms="reports_financial" />}><Route path="/reports/profit-ledger" element={<ProfitLossReport />} /></Route>
         <Route element={<ProtectedRoute requiredPerms="reports_financial" />}><Route path="/reports/expenses" element={<ExpenseReport />} /></Route>
         <Route element={<ProtectedRoute requiredPerms="reports_financial" />}><Route path="/reports/stock-ledger" element={<StockLedgerReport />} /></Route>
-        <Route element={<ProtectedRoute requiredPerms="reports_manufacturing" />}><Route path="/reports/raw-material-purchase" element={<RawMaterialPurchaseReport />} /></Route>
-        <Route element={<ProtectedRoute requiredPerms="reports_manufacturing" />}><Route path="/reports/production" element={<ProductionReport />} /></Route>
-
-        {/* Manufacturing & Raw Materials */}
-        <Route element={<ProtectedRoute requiredPerms="mfg_rm_master" />}><Route path="/raw-materials/master" element={<RawMaterialMaster />} /></Route>
-        <Route element={<ProtectedRoute requiredPerms="mfg_rm_purchase" />}><Route path="/raw-materials/purchase" element={<RawMaterialPurchaseEntry />} /></Route>
-        <Route element={<ProtectedRoute requiredPerms="mfg_rm_purchase" />}><Route path="/raw-materials/purchase-list" element={<RawMaterialPurchaseList />} /></Route>
-        <Route element={<ProtectedRoute requiredPerms="mfg_production" />}><Route path="/production" element={<Production />} /></Route>
-        <Route element={<ProtectedRoute requiredPerms="mfg_product_master" />}><Route path="/production/products" element={<ManufacturingProducts />} /></Route>
 
         {/* Settings */}
         <Route path="/settings" element={<Settings />} />

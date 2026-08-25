@@ -11,7 +11,6 @@ const MODULES = [
     icon: <Settings2 size={18} />,
     permissions: [
       { id: 'master_products', name: 'Products' },
-      { id: 'mfg_product_master', name: 'Product (Mfg)' },
       { id: 'master_brands', name: 'Brands' },
       { id: 'master_categories', name: 'Categories' },
       { id: 'master_units', name: 'Units' },
@@ -30,16 +29,6 @@ const MODULES = [
       { id: 'purchase_entry', name: 'Purchase Entry' },
       { id: 'purchase_return', name: 'Purchase Return' },
       { id: 'purchase_payments', name: 'Supplier Payments' },
-    ]
-  },
-  {
-    id: 'manufacturing',
-    name: 'Manufacturing',
-    icon: <Shield size={18} />,
-    permissions: [
-      { id: 'mfg_rm_master', name: 'Raw Material Master' },
-      { id: 'mfg_rm_purchase', name: 'Raw Material Purchase' },
-      { id: 'mfg_production', name: 'Production Entry' },
     ]
   },
   {
@@ -67,7 +56,6 @@ const MODULES = [
     permissions: [
       { id: 'reports_sales', name: 'Sales Reports' },
       { id: 'reports_purchase', name: 'Purchase Reports' },
-      { id: 'reports_manufacturing', name: 'Manufacturing Reports' },
       { id: 'reports_financial', name: 'Financial & Stock Reports' },
     ]
   },

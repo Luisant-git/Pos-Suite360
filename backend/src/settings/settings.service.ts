@@ -54,31 +54,44 @@ export class SettingsService {
     });
   }
 
-  async resetDatabase() {
+  async resetDatabase(type: string) {
     try {
-      // Delete all records from transactional tables
-      await this.prisma.saleItem.deleteMany();
-      await this.prisma.sale.deleteMany();
-      await this.prisma.purchaseItem.deleteMany();
-      await this.prisma.purchase.deleteMany();
-      await this.prisma.stockTransaction.deleteMany();
-      await this.prisma.expense.deleteMany();
-      await this.prisma.supplierPayment.deleteMany();
-      await this.prisma.customerReceipt.deleteMany();
-      
-      // Delete Master Data
-      await this.prisma.product.deleteMany();
-      await this.prisma.supplier.deleteMany();
-      await this.prisma.customer.deleteMany();
-      await this.prisma.category.deleteMany();
-      await this.prisma.brand.deleteMany();
-      await this.prisma.unit.deleteMany();
-      await this.prisma.expenseCategory.deleteMany();
+      const truncateTransactions = async () => {
+        const tables = [
+          'SaleItem', 'Sale', 'SalesReturnItem', 'SalesReturn',
+          'PurchaseItem', 'Purchase', 'PurchaseReturnItem', 'PurchaseReturn',
+          'StockTransaction', 'Expense', 'SupplierPayment', 'CustomerReceipt'
+        ];
+        for (const table of tables) {
+          await this.prisma.$executeRawUnsafe(`TRUNCATE TABLE "${table}" CASCADE;`);
+        }
+        await this.prisma.product.updateMany({ data: { currentStock: 0 } });
+      };
+
+      const truncateMaster = async () => {
+        const tables = [
+          'Product', 'Supplier', 'Customer', 'Category', 'Brand', 'Unit', 'ExpenseCategory'
+        ];
+        for (const table of tables) {
+          await this.prisma.$executeRawUnsafe(`TRUNCATE TABLE "${table}" CASCADE;`);
+        }
+      };
+
+      if (type === 'transactions') {
+        await truncateTransactions();
+      } else if (type === 'master') {
+        await truncateMaster();
+      } else if (type === 'full') {
+        await truncateTransactions();
+        await truncateMaster();
+      } else {
+        throw new BadRequestException('Invalid reset type');
+      }
 
       return { message: 'Database reset successfully' };
-    } catch (error) {
+    } catch (error: any) {
       console.error('Reset DB Error:', error);
-      throw new BadRequestException('Failed to reset database: ' + (error.message || ''));
+      throw new BadRequestException('Failed to reset database: ' + (error?.message || ''));
     }
   }
 }

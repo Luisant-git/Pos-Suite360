@@ -337,11 +337,11 @@ const MainLayout = () => {
 
             {hasAnyPerm(['reports_sales', 'reports_purchase', 'reports_financial']) && (
               <NavDropdown title="Reports" icon="fa-pie-chart" isActive={isReportsActive}>
-                <div className="px-4 py-1.5 text-[11px] font-bold text-gray-400 uppercase tracking-wider">Sales & Purchase</div>
-                {hasPerm('reports_sales') && <DropdownItem to="/reports/sales" icon="fa-line-chart" title="Sales Report" />}
-                {hasPerm('reports_sales') && <DropdownItem to="/reports/sales-return" icon="fa-mail-reply" title="Sales Return Report" isDanger />}
+                <div className="px-4 py-1.5 text-[11px] font-bold text-gray-400 uppercase tracking-wider">Purchase & Sales</div>
                 {hasPerm('reports_purchase') && <DropdownItem to="/reports/purchase" icon="fa-file-text-o" title="Purchase Report" />}
                 {hasPerm('reports_purchase') && <DropdownItem to="/reports/purchase-return" icon="fa-mail-reply" title="Purchase Return Report" isWarning />}
+                {hasPerm('reports_sales') && <DropdownItem to="/reports/sales" icon="fa-line-chart" title="Sales Report" />}
+                {hasPerm('reports_sales') && <DropdownItem to="/reports/sales-return" icon="fa-mail-reply" title="Sales Return Report" isDanger />}
                 
                 <div className="h-px bg-gray-100 my-1 mx-4"></div>
                 <div className="px-4 py-1.5 text-[11px] font-bold text-gray-400 uppercase tracking-wider">Financial</div>
@@ -395,12 +395,14 @@ const MainLayout = () => {
                   <p className="text-xs font-bold text-blue-600 uppercase tracking-wide mt-1">Administrator</p>
                 </div>
                 <div className="py-2 px-2">
-                  <Link to="/settings" className="flex items-center gap-3 px-3 py-2.5 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 rounded-lg transition-colors font-bold">
-                    <div className="w-8 h-8 rounded-md bg-gray-100 flex items-center justify-center text-gray-500">
-                      <SettingsIcon size={16} />
-                    </div>
-                    Settings
-                  </Link>
+                  {hasPerm('master_store_settings') && (
+                    <Link to="/settings" className="flex items-center gap-3 px-3 py-2.5 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 rounded-lg transition-colors font-bold">
+                      <div className="w-8 h-8 rounded-md bg-gray-100 flex items-center justify-center text-gray-500">
+                        <SettingsIcon size={16} />
+                      </div>
+                      Settings
+                    </Link>
+                  )}
                   {hasPerm('master_users') && (
                     <Link to="/master/users" className="flex items-center gap-3 px-3 py-2.5 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 rounded-lg transition-colors font-bold">
                       <div className="w-8 h-8 rounded-md bg-blue-50 flex items-center justify-center text-blue-600">

@@ -81,6 +81,9 @@ export class SalesService {
         });
       }
       return sale;
+    }).catch(err => {
+      console.error('PRISMA ERROR IN SALE CREATE:', err);
+      throw new BadRequestException(err.message || 'Error creating sale');
     });
   }
 

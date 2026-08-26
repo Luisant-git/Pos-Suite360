@@ -42,7 +42,7 @@ const purchaseItemSchema = z.object({
 
 const purchaseSchema = z.object({
   supplierId: z.coerce.number().min(1, 'Supplier is required').or(z.literal(0)),
-  invoiceNo: z.string(),
+  invoiceNo: z.string().min(1, 'Supplier Invoice number is required'),
   invoiceDate: z.string().optional(),
   entryNo: z.string(),
   date: z.string(),
@@ -98,6 +98,7 @@ const PurchaseEntry = () => {
   // Fetch Masters & Next Entry No
   const { data: suppliers = [] } = useQuery({ queryKey: ['suppliers'], queryFn: async () => (await api.get('/suppliers')).data });
   const { data: products = [] } = useQuery({ queryKey: ['products'], queryFn: async () => (await api.get('/products')).data });
+  const { data: paymentModes = [] } = useQuery({ queryKey: ['paymentModes'], queryFn: async () => (await api.get('/payment-modes')).data });
   const { data: nextEntryData } = useQuery({ queryKey: ['nextEntryNo'], queryFn: async () => (await api.get('/purchases/next-entry-no')).data });
 
   // Update default entry no
@@ -354,7 +355,7 @@ const PurchaseEntry = () => {
             </div>
             
             <div className="w-full lg:flex-1 lg:max-w-[250px]">
-              <label className="block text-[11px] font-bold text-[#1F2937] mb-1">Supplier Invoice number</label>
+              <label className="block text-[11px] font-bold text-[#1F2937] mb-1">Supplier Invoice number *</label>
               <input
                 {...register('invoiceNo')}
                 type="text"
@@ -412,8 +413,9 @@ const PurchaseEntry = () => {
                 className="w-full px-2 py-1.5 border border-[#D1D5DB] rounded text-[13px] outline-none focus:border-[#3B82F6] bg-white"
               >
                 <option value="0">Select Payment Mode...</option>
-                <option value="3">Cash</option>
-                <option value="4">Credit</option>
+                {paymentModes.map((pm: any) => (
+                  <option key={pm.id} value={pm.id}>{pm.name}</option>
+                ))}
               </select>
             </div>
 

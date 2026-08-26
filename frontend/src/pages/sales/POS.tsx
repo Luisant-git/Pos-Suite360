@@ -962,12 +962,12 @@ const POS = () => {
           <thead>
             <tr className="border-b border-black text-xs uppercase">
               <th className="py-2 w-[15%]">Code</th>
-              <th className="py-2 w-[30%]">Description</th>
-              <th className="py-2 w-[10%] text-center">Birds</th>
+              <th className="py-2 w-[35%]">Description</th>
+              <th className="py-2 w-[10%] text-right">Birds</th>
               <th className="py-2 w-[10%] text-right">Qty</th>
               <th className="py-2 w-[10%] text-center">UOM</th>
               <th className="py-2 w-[10%] text-right">U.Price</th>
-              <th className="py-2 w-[15%] text-right">Amount</th>
+              <th className="py-2 w-[10%] text-right">Amount</th>
             </tr>
           </thead>
           <tbody className="align-top">
@@ -977,7 +977,7 @@ const POS = () => {
                 <tr key={idx}>
                   <td className="py-1">{product?.code || ''}</td>
                   <td className="py-1">{product?.name || ''}</td>
-                  <td className="py-1 text-center">{item.noOfBirds || ''}</td>
+                  <td className="py-1 text-right">{item.noOfBirds || 0}</td>
                   <td className="py-1 text-right">{item.quantity}</td>
                   <td className="py-1 text-center">{item.unit || ''}</td>
                   <td className="py-1 text-right">{Number(item.rate || 0).toFixed(2)}</td>

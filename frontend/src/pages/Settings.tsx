@@ -260,7 +260,7 @@ const Settings = () => {
                   <Editor
                     value={watchStore('invoiceNotes') || ''}
                     onChange={(e: any) => setValueStore('invoiceNotes', e.target.value)}
-                    containerProps={{ style: { height: '150px', fontSize: '13px', color: 'black', fontWeight: '500' } }}
+                    containerProps={{ className: 'html-content', style: { height: '150px', fontSize: '13px', color: 'black', fontWeight: '500' } }}
                   />
                 </div>
                 <p className="text-[11px] text-[#64748B] mt-1">These notes will be printed at the bottom of all sales receipts. Supports multiple lines.</p>

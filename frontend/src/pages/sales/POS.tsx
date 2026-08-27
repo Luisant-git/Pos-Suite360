@@ -483,13 +483,6 @@ const POS = () => {
           >
             <Printer size={16} /> SAVE & PRINT (F10)
           </button>
-          <button 
-            type="button"
-            onClick={handleWhatsApp}
-            className="bg-[#25D366] hover:bg-[#128C7E] text-white px-4 py-1.5 rounded flex items-center gap-2 font-bold text-[13px] transition-colors"
-          >
-            <WhatsAppIcon size={16} /> WhatsApp
-          </button>
         </div>
         <button 
           type="button"

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Download, FileText, Search, Calendar, FileDigit, Users, CreditCard, RotateCcw, Plus, Printer, MessageCircle, Eye } from 'lucide-react';
+import { Download, FileText, Search, Calendar, FileDigit, Users, CreditCard, RotateCcw, Plus, Printer, Share2, Eye, MessageCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useSettings } from '../../contexts/SettingsContext';
 import api from '../../services/api';
@@ -312,7 +312,7 @@ const SalesReport = () => {
                           }}
                           className="bg-[#25D366] hover:bg-[#1EBE55] text-white px-2 py-1 rounded-full flex items-center gap-1 font-bold text-[11px] transition-colors"
                         >
-                          <MessageCircle size={12} /> WhatsApp
+                          <Share2 size={12} /> Share PDF
                         </button>
                       </div>
                     </td>

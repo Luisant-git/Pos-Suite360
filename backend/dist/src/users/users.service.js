@@ -20,11 +20,18 @@ let UsersService = class UsersService {
     async findOne(username) {
         return this.prisma.user.findUnique({
             where: { username },
+            include: { role: true },
         });
     }
     async findById(id) {
         return this.prisma.user.findUnique({
             where: { id },
+            include: { role: true },
+        });
+    }
+    async findAll() {
+        return this.prisma.user.findMany({
+            include: { role: true },
         });
     }
     async create(username, pass) {
@@ -46,12 +53,41 @@ let UsersService = class UsersService {
                 name: username,
                 roleId: role.id,
             },
+            include: { role: true },
+        });
+    }
+    async createUser(data) {
+        const { username, password, name, roleId } = data;
+        return this.prisma.user.create({
+            data: {
+                username,
+                password,
+                name,
+                roleId,
+            },
         });
     }
     async updatePassword(userId, hash) {
         return this.prisma.user.update({
             where: { id: userId },
             data: { password: hash },
+        });
+    }
+    async updateUser(id, data) {
+        const updateData = { ...data };
+        if (updateData.password) {
+            if (updateData.password.trim() === '') {
+                delete updateData.password;
+            }
+        }
+        return this.prisma.user.update({
+            where: { id },
+            data: updateData,
+        });
+    }
+    async deleteUser(id) {
+        return this.prisma.user.delete({
+            where: { id },
         });
     }
 };

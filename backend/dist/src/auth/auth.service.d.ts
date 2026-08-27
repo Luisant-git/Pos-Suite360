@@ -11,6 +11,8 @@ export declare class AuthService {
             id: any;
             username: any;
             name: any;
+            roleId: any;
+            role: any;
         };
     }>;
     register(username: string, pass: string): Promise<{
@@ -19,6 +21,8 @@ export declare class AuthService {
             id: any;
             username: any;
             name: any;
+            roleId: any;
+            role: any;
         };
     }>;
     changePassword(userId: number, currentPass: string, newPass: string): Promise<{

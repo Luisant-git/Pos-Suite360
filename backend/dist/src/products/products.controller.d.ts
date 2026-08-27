@@ -12,17 +12,17 @@ export declare class ProductsController {
         name: string;
         code: string;
         barcode: string | null;
-        categoryId: number | null;
-        brandId: number | null;
-        unitId: number;
         purchaseRate: import("@prisma/client-runtime-utils").Decimal;
         sellingRate: import("@prisma/client-runtime-utils").Decimal;
+        wholesaleRate: import("@prisma/client-runtime-utils").Decimal;
         mrp: import("@prisma/client-runtime-utils").Decimal;
         taxPercent: import("@prisma/client-runtime-utils").Decimal;
         minStock: number;
-        wholesaleRate: import("@prisma/client-runtime-utils").Decimal;
         reorderLevel: number;
         currentStock: number;
+        categoryId: number | null;
+        brandId: number | null;
+        unitId: number;
     }, never, import("@prisma/client/runtime/client").DefaultArgs, import("@prisma/client").Prisma.PrismaClientOptions>;
     findAll(query: any): import("@prisma/client").Prisma.PrismaPromise<({
         supplier: {
@@ -30,12 +30,12 @@ export declare class ProductsController {
             createdAt: Date;
             updatedAt: Date;
             name: string;
+            contactPerson: string | null;
             phone: string | null;
             email: string | null;
             address: string | null;
             gstNumber: string | null;
             openingBalance: import("@prisma/client-runtime-utils").Decimal;
-            contactPerson: string | null;
             openingBalanceType: string;
             accountNo: string | null;
             ifscCode: string | null;
@@ -70,17 +70,17 @@ export declare class ProductsController {
         name: string;
         code: string;
         barcode: string | null;
-        categoryId: number | null;
-        brandId: number | null;
-        unitId: number;
         purchaseRate: import("@prisma/client-runtime-utils").Decimal;
         sellingRate: import("@prisma/client-runtime-utils").Decimal;
+        wholesaleRate: import("@prisma/client-runtime-utils").Decimal;
         mrp: import("@prisma/client-runtime-utils").Decimal;
         taxPercent: import("@prisma/client-runtime-utils").Decimal;
         minStock: number;
-        wholesaleRate: import("@prisma/client-runtime-utils").Decimal;
         reorderLevel: number;
         currentStock: number;
+        categoryId: number | null;
+        brandId: number | null;
+        unitId: number;
     })[]>;
     getNextCode(): Promise<{
         code: string;
@@ -91,12 +91,12 @@ export declare class ProductsController {
             createdAt: Date;
             updatedAt: Date;
             name: string;
+            contactPerson: string | null;
             phone: string | null;
             email: string | null;
             address: string | null;
             gstNumber: string | null;
             openingBalance: import("@prisma/client-runtime-utils").Decimal;
-            contactPerson: string | null;
             openingBalanceType: string;
             accountNo: string | null;
             ifscCode: string | null;
@@ -131,17 +131,17 @@ export declare class ProductsController {
         name: string;
         code: string;
         barcode: string | null;
-        categoryId: number | null;
-        brandId: number | null;
-        unitId: number;
         purchaseRate: import("@prisma/client-runtime-utils").Decimal;
         sellingRate: import("@prisma/client-runtime-utils").Decimal;
+        wholesaleRate: import("@prisma/client-runtime-utils").Decimal;
         mrp: import("@prisma/client-runtime-utils").Decimal;
         taxPercent: import("@prisma/client-runtime-utils").Decimal;
         minStock: number;
-        wholesaleRate: import("@prisma/client-runtime-utils").Decimal;
         reorderLevel: number;
         currentStock: number;
+        categoryId: number | null;
+        brandId: number | null;
+        unitId: number;
     }>;
     update(id: string, updateProductDto: UpdateProductDto): import("@prisma/client").Prisma.Prisma__ProductClient<{
         id: number;
@@ -151,17 +151,17 @@ export declare class ProductsController {
         name: string;
         code: string;
         barcode: string | null;
-        categoryId: number | null;
-        brandId: number | null;
-        unitId: number;
         purchaseRate: import("@prisma/client-runtime-utils").Decimal;
         sellingRate: import("@prisma/client-runtime-utils").Decimal;
+        wholesaleRate: import("@prisma/client-runtime-utils").Decimal;
         mrp: import("@prisma/client-runtime-utils").Decimal;
         taxPercent: import("@prisma/client-runtime-utils").Decimal;
         minStock: number;
-        wholesaleRate: import("@prisma/client-runtime-utils").Decimal;
         reorderLevel: number;
         currentStock: number;
+        categoryId: number | null;
+        brandId: number | null;
+        unitId: number;
     }, never, import("@prisma/client/runtime/client").DefaultArgs, import("@prisma/client").Prisma.PrismaClientOptions>;
     remove(id: string): import("@prisma/client").Prisma.Prisma__ProductClient<{
         id: number;
@@ -171,16 +171,16 @@ export declare class ProductsController {
         name: string;
         code: string;
         barcode: string | null;
-        categoryId: number | null;
-        brandId: number | null;
-        unitId: number;
         purchaseRate: import("@prisma/client-runtime-utils").Decimal;
         sellingRate: import("@prisma/client-runtime-utils").Decimal;
+        wholesaleRate: import("@prisma/client-runtime-utils").Decimal;
         mrp: import("@prisma/client-runtime-utils").Decimal;
         taxPercent: import("@prisma/client-runtime-utils").Decimal;
         minStock: number;
-        wholesaleRate: import("@prisma/client-runtime-utils").Decimal;
         reorderLevel: number;
         currentStock: number;
+        categoryId: number | null;
+        brandId: number | null;
+        unitId: number;
     }, never, import("@prisma/client/runtime/client").DefaultArgs, import("@prisma/client").Prisma.PrismaClientOptions>;
 }

@@ -16,11 +16,11 @@ export declare class CustomerReceiptsController {
             createdAt: Date;
             updatedAt: Date;
             name: string;
+            contactPerson: string | null;
             phone: string;
             email: string | null;
             address: string | null;
             openingBalance: import("@prisma/client-runtime-utils").Decimal;
-            contactPerson: string | null;
             openingBalanceType: string;
             shippingAddress: string | null;
             creditLimit: import("@prisma/client-runtime-utils").Decimal;
@@ -39,13 +39,13 @@ export declare class CustomerReceiptsController {
         paymentModeId: number | null;
         createdAt: Date;
         updatedAt: Date;
-        customerId: number;
-        userId: number;
+        receiptNo: string;
         amount: import("@prisma/client-runtime-utils").Decimal;
-        paymentTypeId: number | null;
         reference: string | null;
         remarks: string | null;
-        receiptNo: string;
+        customerId: number;
+        paymentTypeId: number | null;
+        userId: number;
     }>;
     findAll(): Promise<({
         paymentMode: {
@@ -60,11 +60,11 @@ export declare class CustomerReceiptsController {
             createdAt: Date;
             updatedAt: Date;
             name: string;
+            contactPerson: string | null;
             phone: string;
             email: string | null;
             address: string | null;
             openingBalance: import("@prisma/client-runtime-utils").Decimal;
-            contactPerson: string | null;
             openingBalanceType: string;
             shippingAddress: string | null;
             creditLimit: import("@prisma/client-runtime-utils").Decimal;
@@ -83,12 +83,12 @@ export declare class CustomerReceiptsController {
         paymentModeId: number | null;
         createdAt: Date;
         updatedAt: Date;
-        customerId: number;
-        userId: number;
+        receiptNo: string;
         amount: import("@prisma/client-runtime-utils").Decimal;
-        paymentTypeId: number | null;
         reference: string | null;
         remarks: string | null;
-        receiptNo: string;
+        customerId: number;
+        paymentTypeId: number | null;
+        userId: number;
     })[]>;
 }

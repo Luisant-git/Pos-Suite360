@@ -39,8 +39,19 @@ let SettingsController = class SettingsController {
             url: `${baseUrl}/signatures/${file.filename}`
         };
     }
-    async resetDatabase() {
-        return this.settingsService.resetDatabase();
+    async verifyDevPassword(password) {
+        const devPassword = process.env.DEV_PASSWORD || 'developer123';
+        if (password !== devPassword) {
+            throw new common_1.BadRequestException('Invalid Developer Password');
+        }
+        return { success: true };
+    }
+    async resetDatabase(data) {
+        const devPassword = process.env.DEV_PASSWORD || 'developer123';
+        if (data.password !== devPassword) {
+            throw new common_1.BadRequestException('Invalid Developer Password');
+        }
+        return this.settingsService.resetDatabase(data.type);
     }
 };
 exports.SettingsController = SettingsController;
@@ -74,9 +85,17 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], SettingsController.prototype, "uploadSignature", null);
 __decorate([
-    (0, common_1.Post)('reset-database'),
+    (0, common_1.Post)('verify-dev-password'),
+    __param(0, (0, common_1.Body)('password')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], SettingsController.prototype, "verifyDevPassword", null);
+__decorate([
+    (0, common_1.Post)('reset-database'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], SettingsController.prototype, "resetDatabase", null);
 exports.SettingsController = SettingsController = __decorate([

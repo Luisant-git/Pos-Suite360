@@ -8,12 +8,12 @@ export declare class SupplierPaymentsService {
             createdAt: Date;
             updatedAt: Date;
             name: string;
+            contactPerson: string | null;
             phone: string | null;
             email: string | null;
             address: string | null;
             gstNumber: string | null;
             openingBalance: import("@prisma/client-runtime-utils").Decimal;
-            contactPerson: string | null;
             openingBalanceType: string;
             accountNo: string | null;
             ifscCode: string | null;
@@ -33,12 +33,12 @@ export declare class SupplierPaymentsService {
         paymentModeId: number | null;
         createdAt: Date;
         updatedAt: Date;
-        userId: number;
         amount: import("@prisma/client-runtime-utils").Decimal;
-        paymentTypeId: number | null;
         reference: string | null;
-        paymentNo: string;
         remarks: string | null;
+        paymentTypeId: number | null;
+        userId: number;
+        paymentNo: string;
     }>;
     findAll(): Promise<({
         supplier: {
@@ -46,12 +46,12 @@ export declare class SupplierPaymentsService {
             createdAt: Date;
             updatedAt: Date;
             name: string;
+            contactPerson: string | null;
             phone: string | null;
             email: string | null;
             address: string | null;
             gstNumber: string | null;
             openingBalance: import("@prisma/client-runtime-utils").Decimal;
-            contactPerson: string | null;
             openingBalanceType: string;
             accountNo: string | null;
             ifscCode: string | null;
@@ -78,12 +78,12 @@ export declare class SupplierPaymentsService {
         paymentModeId: number | null;
         createdAt: Date;
         updatedAt: Date;
-        userId: number;
         amount: import("@prisma/client-runtime-utils").Decimal;
-        paymentTypeId: number | null;
         reference: string | null;
-        paymentNo: string;
         remarks: string | null;
+        paymentTypeId: number | null;
+        userId: number;
+        paymentNo: string;
     })[]>;
     getBalance(supplierId: number): Promise<{
         balance: number;

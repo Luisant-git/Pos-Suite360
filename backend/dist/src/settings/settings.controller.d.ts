@@ -15,6 +15,7 @@ export declare class SettingsController {
         invoicePrefix: string;
         invoiceNotes: string | null;
         signatureImage: string | null;
+        yearlyInvoiceReset: boolean;
     }>;
     updateSettings(data: any): Promise<{
         id: number;
@@ -29,11 +30,18 @@ export declare class SettingsController {
         invoicePrefix: string;
         invoiceNotes: string | null;
         signatureImage: string | null;
+        yearlyInvoiceReset: boolean;
     }>;
     uploadSignature(file: Express.Multer.File): Promise<{
         url: string;
     }>;
-    resetDatabase(): Promise<{
+    verifyDevPassword(password: string): Promise<{
+        success: boolean;
+    }>;
+    resetDatabase(data: {
+        type: string;
+        password?: string;
+    }): Promise<{
         message: string;
     }>;
 }

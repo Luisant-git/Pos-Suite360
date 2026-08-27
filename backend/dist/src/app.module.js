@@ -33,6 +33,7 @@ const sales_returns_module_1 = require("./sales-returns/sales-returns.module");
 const expenses_module_1 = require("./expenses/expenses.module");
 const whatsapp_module_1 = require("./whatsapp/whatsapp.module");
 const reports_module_1 = require("./reports/reports.module");
+const roles_module_1 = require("./roles/roles.module");
 const serve_static_1 = require("@nestjs/serve-static");
 const path_1 = require("path");
 let AppModule = class AppModule {
@@ -67,7 +68,8 @@ exports.AppModule = AppModule = __decorate([
             sales_returns_module_1.SalesReturnsModule,
             expenses_module_1.ExpensesModule,
             whatsapp_module_1.WhatsappModule,
-            reports_module_1.ReportsModule
+            reports_module_1.ReportsModule,
+            roles_module_1.RolesModule
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],

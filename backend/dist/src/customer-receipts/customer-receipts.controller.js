@@ -31,7 +31,7 @@ let CustomerReceiptsController = class CustomerReceiptsController {
         return this.customerReceiptsService.getUnpaidBills(Number(id));
     }
     async create(createCustomerReceiptDto, req) {
-        const userId = req.user?.userId || 1;
+        const userId = (req.user?.userId && req.user.userId > 0) ? req.user.userId : 1;
         return this.customerReceiptsService.create(createCustomerReceiptDto, userId);
     }
     async findAll() {

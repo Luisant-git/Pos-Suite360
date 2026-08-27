@@ -15,6 +15,7 @@ export declare class SettingsService {
         invoicePrefix: string;
         invoiceNotes: string | null;
         signatureImage: string | null;
+        yearlyInvoiceReset: boolean;
     }>;
     updateSettings(data: any): Promise<{
         id: number;
@@ -29,8 +30,9 @@ export declare class SettingsService {
         invoicePrefix: string;
         invoiceNotes: string | null;
         signatureImage: string | null;
+        yearlyInvoiceReset: boolean;
     }>;
-    resetDatabase(): Promise<{
+    resetDatabase(type: string): Promise<{
         message: string;
     }>;
 }

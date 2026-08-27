@@ -7,8 +7,8 @@ export declare class SalesReturnsController {
         items: {
             id: number;
             amount: import("@prisma/client-runtime-utils").Decimal;
-            productId: number;
             rate: import("@prisma/client-runtime-utils").Decimal;
+            productId: number;
             returnQty: number;
             salesReturnId: number;
         }[];
@@ -17,11 +17,11 @@ export declare class SalesReturnsController {
         date: Date;
         createdAt: Date;
         updatedAt: Date;
+        remarks: string | null;
         customerId: number;
         userId: number;
         totalAmount: import("@prisma/client-runtime-utils").Decimal;
         saleId: number | null;
-        remarks: string | null;
         returnNo: string;
     }>;
     getNextCode(): Promise<string>;
@@ -35,23 +35,23 @@ export declare class SalesReturnsController {
                 name: string;
                 code: string;
                 barcode: string | null;
-                categoryId: number | null;
-                brandId: number | null;
-                unitId: number;
                 purchaseRate: import("@prisma/client-runtime-utils").Decimal;
                 sellingRate: import("@prisma/client-runtime-utils").Decimal;
+                wholesaleRate: import("@prisma/client-runtime-utils").Decimal;
                 mrp: import("@prisma/client-runtime-utils").Decimal;
                 taxPercent: import("@prisma/client-runtime-utils").Decimal;
                 minStock: number;
-                wholesaleRate: import("@prisma/client-runtime-utils").Decimal;
                 reorderLevel: number;
                 currentStock: number;
+                categoryId: number | null;
+                brandId: number | null;
+                unitId: number;
             };
         } & {
             id: number;
             amount: import("@prisma/client-runtime-utils").Decimal;
-            productId: number;
             rate: import("@prisma/client-runtime-utils").Decimal;
+            productId: number;
             returnQty: number;
             salesReturnId: number;
         })[];
@@ -60,11 +60,11 @@ export declare class SalesReturnsController {
             createdAt: Date;
             updatedAt: Date;
             name: string;
+            contactPerson: string | null;
             phone: string;
             email: string | null;
             address: string | null;
             openingBalance: import("@prisma/client-runtime-utils").Decimal;
-            contactPerson: string | null;
             openingBalanceType: string;
             shippingAddress: string | null;
             creditLimit: import("@prisma/client-runtime-utils").Decimal;
@@ -89,11 +89,11 @@ export declare class SalesReturnsController {
         date: Date;
         createdAt: Date;
         updatedAt: Date;
+        remarks: string | null;
         customerId: number;
         userId: number;
         totalAmount: import("@prisma/client-runtime-utils").Decimal;
         saleId: number | null;
-        remarks: string | null;
         returnNo: string;
     })[]>;
     findOne(id: string): import("@prisma/client").Prisma.Prisma__SalesReturnClient<({
@@ -106,23 +106,23 @@ export declare class SalesReturnsController {
                 name: string;
                 code: string;
                 barcode: string | null;
-                categoryId: number | null;
-                brandId: number | null;
-                unitId: number;
                 purchaseRate: import("@prisma/client-runtime-utils").Decimal;
                 sellingRate: import("@prisma/client-runtime-utils").Decimal;
+                wholesaleRate: import("@prisma/client-runtime-utils").Decimal;
                 mrp: import("@prisma/client-runtime-utils").Decimal;
                 taxPercent: import("@prisma/client-runtime-utils").Decimal;
                 minStock: number;
-                wholesaleRate: import("@prisma/client-runtime-utils").Decimal;
                 reorderLevel: number;
                 currentStock: number;
+                categoryId: number | null;
+                brandId: number | null;
+                unitId: number;
             };
         } & {
             id: number;
             amount: import("@prisma/client-runtime-utils").Decimal;
-            productId: number;
             rate: import("@prisma/client-runtime-utils").Decimal;
+            productId: number;
             returnQty: number;
             salesReturnId: number;
         })[];
@@ -131,11 +131,11 @@ export declare class SalesReturnsController {
             createdAt: Date;
             updatedAt: Date;
             name: string;
+            contactPerson: string | null;
             phone: string;
             email: string | null;
             address: string | null;
             openingBalance: import("@prisma/client-runtime-utils").Decimal;
-            contactPerson: string | null;
             openingBalanceType: string;
             shippingAddress: string | null;
             creditLimit: import("@prisma/client-runtime-utils").Decimal;
@@ -160,11 +160,11 @@ export declare class SalesReturnsController {
         date: Date;
         createdAt: Date;
         updatedAt: Date;
+        remarks: string | null;
         customerId: number;
         userId: number;
         totalAmount: import("@prisma/client-runtime-utils").Decimal;
         saleId: number | null;
-        remarks: string | null;
         returnNo: string;
     }) | null, null, import("@prisma/client/runtime/client").DefaultArgs, import("@prisma/client").Prisma.PrismaClientOptions>;
 }

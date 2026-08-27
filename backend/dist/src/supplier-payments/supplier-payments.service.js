@@ -64,10 +64,14 @@ let SupplierPaymentsService = class SupplierPaymentsService {
         if (!supplier) {
             throw new common_1.BadRequestException('Supplier not found');
         }
+        const creditMode = await this.prisma.paymentMode.findFirst({
+            where: { name: { equals: 'Credit', mode: 'insensitive' } }
+        });
+        const creditModeId = creditMode?.id || -1;
         const purchases = await this.prisma.purchase.aggregate({
             where: {
                 supplierId,
-                paymentModeId: 4
+                paymentModeId: creditModeId
             },
             _sum: { grandTotal: true },
         });
@@ -150,10 +154,14 @@ let SupplierPaymentsService = class SupplierPaymentsService {
         else if (isOpeningDebit && openingBalance > 0) {
             totalPaid += openingBalance;
         }
+        const creditMode = await this.prisma.paymentMode.findFirst({
+            where: { name: { equals: 'Credit', mode: 'insensitive' } }
+        });
+        const creditModeId = creditMode?.id || -1;
         const purchases = await this.prisma.purchase.findMany({
             where: {
                 supplierId,
-                paymentModeId: 4
+                paymentModeId: creditModeId
             },
             orderBy: { date: 'asc' },
         });

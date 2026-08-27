@@ -8,6 +8,8 @@ export declare class AuthController {
             id: any;
             username: any;
             name: any;
+            roleId: any;
+            role: any;
         };
     }>;
     register(body: any): Promise<{
@@ -16,6 +18,8 @@ export declare class AuthController {
             id: any;
             username: any;
             name: any;
+            roleId: any;
+            role: any;
         };
     } | {
         error: any;

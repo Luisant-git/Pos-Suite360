@@ -40,7 +40,7 @@ interface InvoicePrintModalProps {
 }
 
 const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer = false }: InvoicePrintModalProps) => {
-  const { settings, formatCurrency } = useSettings();
+  const { settings } = useSettings();
   const [isProcessingPdf, setIsProcessingPdf] = useState(false);
   const [readyPdfBlob, setReadyPdfBlob] = useState<Blob | null>(null);
 
@@ -109,7 +109,7 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
     const opt = {
       margin:       0.5,
       filename:     `Invoice_${invoiceNo}.pdf`,
-      image:        { type: 'jpeg', quality: 0.98 },
+      image:        { type: 'jpeg' as const, quality: 0.98 },
       html2canvas:  { scale: 2, useCORS: true, logging: true },
       jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
     };

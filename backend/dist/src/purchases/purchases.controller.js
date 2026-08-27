@@ -23,7 +23,7 @@ let PurchasesController = class PurchasesController {
         this.purchasesService = purchasesService;
     }
     create(createPurchaseDto, req) {
-        const userId = req.user?.userId || 1;
+        const userId = (req.user?.userId && req.user.userId > 0) ? req.user.userId : 1;
         return this.purchasesService.create(createPurchaseDto, userId);
     }
     findAll(query) {

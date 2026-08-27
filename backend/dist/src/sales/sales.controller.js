@@ -23,7 +23,7 @@ let SalesController = class SalesController {
         this.salesService = salesService;
     }
     create(createSaleDto, req) {
-        const userId = req.user?.userId || 1;
+        const userId = (req.user?.userId && req.user.userId > 0) ? req.user.userId : 1;
         return this.salesService.create(createSaleDto, userId);
     }
     findAll(query) {

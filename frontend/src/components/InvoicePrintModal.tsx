@@ -111,7 +111,7 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
       filename:     `Invoice_${invoiceNo}.pdf`,
       image:        { type: 'jpeg' as const, quality: 0.98 },
       html2canvas:  { scale: 2, useCORS: true, logging: true },
-      jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
+      jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' as const }
     };
 
     const originalOverflow = element.style.overflow;

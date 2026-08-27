@@ -238,18 +238,21 @@ const Settings = () => {
                 />
                 <p className="text-[11px] text-[#64748B] mt-1">Generated sales bills will use this prefix (e.g. <span className="text-[#2563EB] font-bold">{settings?.invoicePrefix || 'INV-'}788839</span>)</p>
               </div>
-              <div className="flex items-center gap-2 mt-2">
-                <input
-                  type="checkbox"
-                  id="yearlyInvoiceReset"
-                  {...registerStore('yearlyInvoiceReset')}
-                  className="w-4 h-4 text-[#2563EB] bg-gray-100 border-gray-300 rounded focus:ring-[#2563EB]"
-                />
-                <label htmlFor="yearlyInvoiceReset" className="text-[12px] font-bold text-[#334155]">
-                  Append Current Year to Prefix (Yearly Reset)
+              <div className="flex items-center mt-3">
+                <label className="relative inline-flex items-center cursor-pointer">
+                  <input
+                    type="checkbox"
+                    id="yearlyInvoiceReset"
+                    {...registerStore('yearlyInvoiceReset')}
+                    className="sr-only peer"
+                  />
+                  <div className="w-9 h-5 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#2563EB]"></div>
+                  <span className="ml-3 text-[12px] font-bold text-[#334155]">
+                    Enable Auto Yearly Invoice Reset
+                  </span>
                 </label>
               </div>
-              <p className="text-[11px] text-[#64748B] mt-1 ml-6">Automatically adds the current year to invoices (e.g. <span className="text-[#2563EB] font-bold">{settings?.invoicePrefix || 'INV-'}{new Date().getFullYear()}-00001</span>), causing the sequence to reset back to 1 every year.</p>
+              <p className="text-[11px] text-[#64748B] mt-1 ml-[48px]">Automatically adds the current year to invoices (e.g. <span className="text-[#2563EB] font-bold">{settings?.invoicePrefix || 'INV-'}{new Date().getFullYear()}-00001</span>), causing the sequence to reset back to 1 every year.</p>
               
               <div className="mt-3">
                 <label className="block text-[12px] font-bold text-[#334155] mb-1">Invoice Footer Notes (Terms & Conditions)</label>

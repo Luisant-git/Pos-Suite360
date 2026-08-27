@@ -163,6 +163,16 @@ const POS = () => {
 
   const selectedCustomer = customers.find((c: any) => c.id === Number(selectedCustomerId));
 
+  const { data: customerBalance } = useQuery({
+    queryKey: ['customerBalance', selectedCustomerId],
+    queryFn: async () => (await api.get(`/customer-receipts/balance/${selectedCustomerId}`)).data,
+    enabled: !!selectedCustomerId && Number(selectedCustomerId) > 0,
+  });
+
+  const pendingAmount = customerBalance?.balance !== undefined 
+    ? customerBalance.balance 
+    : (Number(selectedCustomer?.openingBalance || 0));
+
   // Calculations
   useEffect(() => {
     let grossAmount = 0;
@@ -918,7 +928,7 @@ const POS = () => {
         <div className="text-center mb-4 print:pt-4">
           <div className="text-xl font-bold uppercase">NASA FRESH MART <span className="text-base font-normal">(001634825-A)</span></div>
           <p className="mt-1">NO 8G, JLN 3/2 PANDAN JAYA, 55100 KUALA LUMPUR.</p>
-          <p>Tel : 019-300 1451</p>
+          <p>Tel : 0392856786</p>
         </div>
         
         <div className="border-t border-b border-black py-2 mb-4 text-center font-bold text-lg uppercase tracking-wider">
@@ -949,10 +959,10 @@ const POS = () => {
                <span className="font-bold">NO.</span><span>:</span><span>{watch('invoiceNo')}</span>
                <span>DATE</span><span>:</span><span>{watch('date')}</span>
                {/* <span>YOUR P/O NO.</span><span>:</span><span></span> */}
-               <span>SALESMAN</span><span>:</span><span></span>
+               {/* <span>SALESMAN</span><span>:</span><span></span> */}
                {/* <span>TERMS</span><span>:</span><span>C.O.D.</span> */}
                <span>PAY TYPE</span><span>:</span><span>{paymentModes.find((p: any) => p.id === Number(watch('paymentModeId')))?.name || ''}</span>
-               <span>PENDING AMT</span><span>:</span><span>{Number(selectedCustomer?.openingBalance || 0).toFixed(2)}</span>
+               <span>PENDING AMT</span><span>:</span><span>{Number(pendingAmount).toFixed(2)}</span>
                <span>PAGE</span><span>:</span><span>1 of 1</span>
              </div>
           </div>

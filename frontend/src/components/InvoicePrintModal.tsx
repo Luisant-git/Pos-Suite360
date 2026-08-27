@@ -50,6 +50,16 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
 
   const sale = fullSale || initialSale;
 
+  const { data: customerBalance } = useQuery({
+    queryKey: ['customerBalance', sale?.customer?.id],
+    queryFn: async () => (await api.get(`/customer-receipts/balance/${sale.customer.id}`)).data,
+    enabled: isOpen && !!sale?.customer?.id,
+  });
+
+  const pendingAmount = customerBalance?.balance !== undefined
+    ? customerBalance.balance
+    : (Number(sale?.customer?.openingBalance || 0));
+
   useEffect(() => {
     if (isOpen) {
       document.body.classList.add('printing-modal');
@@ -103,7 +113,7 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
         <div className="text-center mb-4 print:pt-4">
           <div className="text-xl font-bold uppercase">NASA FRESH MART <span className="text-base font-normal">(001634825-A)</span></div>
           <p className="mt-1">NO 8G, JLN 3/2 PANDAN JAYA, 55100 KUALA LUMPUR.</p>
-          <p>Tel : 019-300 1451</p>
+          <p>Tel : 0392856786</p>
         </div>
         
         <div className="border-t border-b border-black py-2 mb-4 text-center font-bold text-lg uppercase tracking-wider">
@@ -134,10 +144,10 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
                <span className="font-bold">NO.</span><span className="font-bold">:</span><span className="font-bold">{invoiceNo}</span>
                <span className="font-bold">DATE</span><span className="font-bold">:</span><span className="font-bold">{date}</span>
                {/* <span className="font-bold">YOUR P/O NO.</span><span className="font-bold">:</span><span></span> */}
-               <span className="font-bold">SALESMAN</span><span className="font-bold">:</span><span></span>
+               {/* <span className="font-bold">SALESMAN</span><span className="font-bold">:</span><span></span> */}
                {/* <span className="font-bold">TERMS</span><span className="font-bold">:</span><span className="font-bold">C.O.D.</span> */}
                <span className="font-bold">PAY TYPE</span><span className="font-bold">:</span><span>{sale?.paymentMode?.name || 'Cash'}</span>
-               <span className="font-bold">PENDING AMT</span><span className="font-bold">:</span><span className="font-bold">{Number(sale?.customer?.openingBalance || 0).toFixed(2)}</span>
+               <span className="font-bold">PENDING AMT</span><span className="font-bold">:</span><span className="font-bold">{Number(pendingAmount).toFixed(2)}</span>
                <span className="font-bold">PAGE</span><span className="font-bold">:</span><span className="font-bold">1 of 1</span>
              </div>
           </div>
@@ -224,7 +234,7 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
           <div className="text-center mb-4 print:pt-4">
             <div className="text-xl font-bold uppercase">NASA FRESH MART <span className="text-base font-normal">(001634825-A)</span></div>
             <p className="mt-1">NO 8G, JLN 3/2 PANDAN JAYA, 55100 KUALA LUMPUR.</p>
-            <p>Tel : 019-300 1451</p>
+            <p>Tel : 0392856786</p>
           </div>
           
           <div className="border-t border-b border-black py-2 mb-4 text-center font-bold text-lg uppercase tracking-wider">
@@ -255,10 +265,10 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
                  <span className="font-bold">NO.</span><span className="font-bold">:</span><span className="font-bold">{invoiceNo}</span>
                  <span className="font-bold">DATE</span><span className="font-bold">:</span><span className="font-bold">{date}</span>
                  {/* <span className="font-bold">YOUR P/O NO.</span><span className="font-bold">:</span><span></span> */}
-                 <span className="font-bold">SALESMAN</span><span className="font-bold">:</span><span></span>
+                 {/* <span className="font-bold">SALESMAN</span><span className="font-bold">:</span><span></span> */}
                  {/* <span className="font-bold">TERMS</span><span className="font-bold">:</span><span className="font-bold">C.O.D.</span> */}
                  <span className="font-bold">PAY TYPE</span><span className="font-bold">:</span><span>{sale?.paymentMode?.name || 'Cash'}</span>
-                 <span className="font-bold">PENDING AMT</span><span className="font-bold">:</span><span className="font-bold">{Number(sale?.customer?.openingBalance || 0).toFixed(2)}</span>
+                 <span className="font-bold">PENDING AMT</span><span className="font-bold">:</span><span className="font-bold">{Number(pendingAmount).toFixed(2)}</span>
                  <span className="font-bold">PAGE</span><span className="font-bold">:</span><span className="font-bold">1 of 1</span>
                </div>
             </div>

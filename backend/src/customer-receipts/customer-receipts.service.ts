@@ -56,11 +56,16 @@ export class CustomerReceiptsService {
       throw new BadRequestException('Customer not found');
     }
 
+    const creditMode = await this.prisma.paymentMode.findFirst({
+      where: { name: { equals: 'Credit', mode: 'insensitive' } }
+    });
+    const creditModeId = creditMode?.id || -1;
+
     // Sum of all CREDIT sales
     const sales = await this.prisma.sale.aggregate({
       where: { 
         customerId,
-        paymentModeId: 4 // Hardcoded Credit ID
+        paymentModeId: creditModeId
       },
       _sum: { grandTotal: true },
     });
@@ -167,10 +172,15 @@ export class CustomerReceiptsService {
       totalCollected += openingBalance;
     }
 
+    const creditMode = await this.prisma.paymentMode.findFirst({
+      where: { name: { equals: 'Credit', mode: 'insensitive' } }
+    });
+    const creditModeId = creditMode?.id || -1;
+
     const sales = await this.prisma.sale.findMany({
       where: { 
         customerId,
-        paymentModeId: 4 // Hardcoded Credit ID
+        paymentModeId: creditModeId
       },
       orderBy: { date: 'asc' },
     });

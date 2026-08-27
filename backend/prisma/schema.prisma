@@ -475,6 +475,7 @@ model Settings {
   invoicePrefix    String   @default("INV-")
   invoiceNotes     String?
   signatureImage   String?
+  yearlyInvoiceReset Boolean @default(false)
 
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt

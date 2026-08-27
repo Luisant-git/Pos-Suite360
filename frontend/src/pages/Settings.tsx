@@ -19,6 +19,7 @@ const storeSettingsSchema = z.object({
   invoicePrefix: z.string().min(1, 'Prefix is required'),
   invoiceNotes: z.string().optional(),
   signatureImage: z.string().optional(),
+  yearlyInvoiceReset: z.boolean().optional(),
 });
 
 type StoreSettingsValues = z.infer<typeof storeSettingsSchema>;
@@ -57,6 +58,7 @@ const Settings = () => {
         invoicePrefix: settings.invoicePrefix || 'INV-',
         invoiceNotes: settings.invoiceNotes || '',
         signatureImage: settings.signatureImage || '',
+        yearlyInvoiceReset: settings.yearlyInvoiceReset || false,
       });
     }
   }, [settings, resetStoreForm]);
@@ -236,7 +238,20 @@ const Settings = () => {
                 />
                 <p className="text-[11px] text-[#64748B] mt-1">Generated sales bills will use this prefix (e.g. <span className="text-[#2563EB] font-bold">{settings?.invoicePrefix || 'INV-'}788839</span>)</p>
               </div>
-              <div>
+              <div className="flex items-center gap-2 mt-2">
+                <input
+                  type="checkbox"
+                  id="yearlyInvoiceReset"
+                  {...registerStore('yearlyInvoiceReset')}
+                  className="w-4 h-4 text-[#2563EB] bg-gray-100 border-gray-300 rounded focus:ring-[#2563EB]"
+                />
+                <label htmlFor="yearlyInvoiceReset" className="text-[12px] font-bold text-[#334155]">
+                  Append Current Year to Prefix (Yearly Reset)
+                </label>
+              </div>
+              <p className="text-[11px] text-[#64748B] mt-1 ml-6">Automatically adds the current year to invoices (e.g. <span className="text-[#2563EB] font-bold">{settings?.invoicePrefix || 'INV-'}{new Date().getFullYear()}-00001</span>), causing the sequence to reset back to 1 every year.</p>
+              
+              <div className="mt-3">
                 <label className="block text-[12px] font-bold text-[#334155] mb-1">Invoice Footer Notes (Terms & Conditions)</label>
                 <div className="border border-[#CBD5E1] rounded overflow-hidden">
                   <Editor

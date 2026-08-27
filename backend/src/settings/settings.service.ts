@@ -38,6 +38,7 @@ export class SettingsService {
         invoicePrefix: data.invoicePrefix,
         invoiceNotes: data.invoiceNotes,
         signatureImage: data.signatureImage,
+        yearlyInvoiceReset: data.yearlyInvoiceReset,
       },
       create: {
         id: 1,
@@ -50,6 +51,7 @@ export class SettingsService {
         invoicePrefix: data.invoicePrefix || 'INV-',
         invoiceNotes: data.invoiceNotes,
         signatureImage: data.signatureImage,
+        yearlyInvoiceReset: data.yearlyInvoiceReset || false,
       },
     });
   }

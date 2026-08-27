@@ -13,7 +13,11 @@ export class SalesService {
       
       // 0. Auto-generate the correct invoice number safely inside the transaction
       const settings = await tx.settings.findUnique({ where: { id: 1 } });
-      const prefix = settings?.invoicePrefix || 'INV-';
+      let prefix = settings?.invoicePrefix || 'INV-';
+      if (settings?.yearlyInvoiceReset) {
+        const cleanPrefix = prefix.endsWith('-') ? prefix.slice(0, -1) : prefix;
+        prefix = `${cleanPrefix}-${new Date().getFullYear()}-`;
+      }
       
       const lastSale = await tx.sale.findFirst({
         orderBy: { invoiceNo: 'desc' },
@@ -150,7 +154,11 @@ export class SalesService {
 
   async getNextInvoiceNo() {
     const settings = await this.prisma.settings.findUnique({ where: { id: 1 } });
-    const prefix = settings?.invoicePrefix || 'INV-';
+    let prefix = settings?.invoicePrefix || 'INV-';
+    if (settings?.yearlyInvoiceReset) {
+      const cleanPrefix = prefix.endsWith('-') ? prefix.slice(0, -1) : prefix;
+      prefix = `${cleanPrefix}-${new Date().getFullYear()}-`;
+    }
 
     const lastSale = await this.prisma.sale.findFirst({
       orderBy: { invoiceNo: 'desc' },

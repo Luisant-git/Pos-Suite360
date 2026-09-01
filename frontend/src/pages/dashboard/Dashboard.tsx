@@ -291,18 +291,18 @@ const Dashboard = () => {
             </Link>
           </div>
           <div className="flex-1 p-0 h-[350px] overflow-y-auto custom-scrollbar bg-white">
-            <table className="w-full text-left text-[12px] whitespace-nowrap">
+            <table className="w-full text-left text-[12px]">
               <thead className="bg-[#F8FAFC] border-b border-[#E2E8F0] sticky top-0">
                 <tr>
                   <th className="px-4 py-3 font-bold text-[#334155]">Supplier / Bill</th>
-                  <th className="px-4 py-3 font-bold text-[#059669] text-right">Pending</th>
+                  <th className="px-4 py-3 font-bold text-[#059669] text-right whitespace-nowrap">Pending</th>
                 </tr>
               </thead>
               <tbody>
                 {data.unpaidSupplierBills?.length > 0 ? data.unpaidSupplierBills.map((bill: any, idx: number) => (
                   <tr key={idx} className="border-b border-[#E2E8F0] hover:bg-[#F8FAFC]">
                     <td className="px-4 py-3">
-                      <div className="font-bold text-[#1E293B]">{bill.entityName}</div>
+                      <div className="font-bold text-[#1E293B] break-words">{bill.entityName}</div>
                       <div className="text-[#64748B] text-[11px] mt-0.5">
                         {bill.entryNo} • {new Date(bill.date).toLocaleDateString('en-GB')}
                       </div>
@@ -337,18 +337,18 @@ const Dashboard = () => {
             </Link>
           </div>
           <div className="flex-1 p-0 h-[350px] overflow-y-auto custom-scrollbar bg-white">
-            <table className="w-full text-left text-[12px] whitespace-nowrap">
+            <table className="w-full text-left text-[12px]">
               <thead className="bg-[#F8FAFC] border-b border-[#E2E8F0] sticky top-0">
                 <tr>
                   <th className="px-4 py-3 font-bold text-[#334155]">Customer / Bill</th>
-                  <th className="px-4 py-3 font-bold text-[#059669] text-right">Pending</th>
+                  <th className="px-4 py-3 font-bold text-[#059669] text-right whitespace-nowrap">Pending</th>
                 </tr>
               </thead>
               <tbody>
                 {data.unpaidCustomerBills?.length > 0 ? data.unpaidCustomerBills.map((bill: any, idx: number) => (
                   <tr key={idx} className="border-b border-[#E2E8F0] hover:bg-[#F8FAFC]">
                     <td className="px-4 py-3">
-                      <div className="font-bold text-[#1E293B]">{bill.entityName}</div>
+                      <div className="font-bold text-[#1E293B] break-words">{bill.entityName}</div>
                       <div className="text-[#64748B] text-[11px] mt-0.5">
                         {bill.entryNo} • {new Date(bill.date).toLocaleDateString('en-GB')}
                       </div>

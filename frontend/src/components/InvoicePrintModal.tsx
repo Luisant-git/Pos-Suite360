@@ -5,8 +5,7 @@ import { useSettings } from '../contexts/SettingsContext';
 import { useQuery } from '@tanstack/react-query';
 import api from '../services/api';
 import toast from 'react-hot-toast';
-// @ts-ignore
-import html2pdf from 'html2pdf.js';
+import jsPDF from 'jspdf';
 
 // Basic number to words converter (for Malaysian Ringgit / general use)
 const numberToWords = (num: number): string => {
@@ -41,8 +40,7 @@ interface InvoicePrintModalProps {
 
 const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer = false }: InvoicePrintModalProps) => {
   const { settings } = useSettings();
-  const [isProcessingPdf, setIsProcessingPdf] = useState(false);
-  const [readyPdfBlob, setReadyPdfBlob] = useState<Blob | null>(null);
+  const [isSharing, setIsSharing] = useState(false);
 
   // Always fetch full sale data to ensure unit, paymentMode, customer are fully populated
   const { data: fullSale, isLoading } = useQuery({
@@ -99,80 +97,108 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
     window.print();
   };
 
-  const handleGenerateForShare = async () => {
-    const element = document.getElementById('printable-invoice');
-    if (!element) return;
+  const buildPdf = (): { blob: Blob; file: File } => {
+    const doc = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait' });
+    const W = 210, margin = 14, lineH = 6;
+    let y = margin;
+    const col = margin;
 
-    setIsProcessingPdf(true);
-    toast.loading('Generating PDF...', { id: 'share-toast' });
-    
-    const opt = {
-      margin:       0.5,
-      filename:     `Invoice_${invoiceNo}.pdf`,
-      image:        { type: 'jpeg' as const, quality: 0.98 },
-      html2canvas:  { scale: 2, useCORS: true, logging: true },
-      jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' as const }
+    const addText = (text: string, x: number, yPos: number, opts: any = {}) => {
+      doc.setFontSize(opts.size || 10);
+      doc.setFont('helvetica', opts.bold ? 'bold' : 'normal');
+      doc.setTextColor(opts.color || '#000000');
+      doc.text(String(text ?? ''), x, yPos, { maxWidth: opts.maxWidth, align: opts.align || 'left' });
     };
 
-    const originalOverflow = element.style.overflow;
-    const originalHeight = element.style.height;
+    addText('NASA FRESH MART', W/2, y, { size: 14, bold: true, align: 'center' }); y += 5;
+    addText('(001634825-A)', W/2, y, { size: 9, align: 'center' }); y += 5;
+    addText('NO 8G, JLN 3/2 PANDAN JAYA, 55100 KUALA LUMPUR.', W/2, y, { size: 9, align: 'center' }); y += 5;
+    addText('Tel : 0392856786', W/2, y, { size: 9, align: 'center' }); y += 8;
+    doc.setDrawColor('#000000'); doc.setLineWidth(0.3);
+    doc.line(col, y, W - margin, y); y += 6;
+    addText('INVOICE', W/2, y, { size: 12, bold: true, align: 'center' }); y += 6;
+    doc.line(col, y, W - margin, y); y += 6;
 
-    try {
-      element.style.overflow = 'visible';
-      element.style.height = `${element.scrollHeight}px`;
-      
-      const pdfBlob = await html2pdf().set(opt).from(element).output('blob');
-      setReadyPdfBlob(pdfBlob);
-      
-      toast.dismiss('share-toast');
-      toast.success('PDF Ready! Click "Share Now" to send it.', { duration: 4000 });
-    } catch (err: any) {
-      console.error('[SHARE] Error occurred:', err);
-      toast.error('Failed to generate PDF.', { id: 'share-toast' });
-    } finally {
-      element.style.overflow = originalOverflow;
-      element.style.height = originalHeight;
-      setIsProcessingPdf(false);
+    doc.setFontSize(9);
+    addText('Bill To:', col, y, { bold: true });
+    if (sale?.customer?.id) addText(`CUST-${sale.customer.id}`, col, y+5, { bold: true });
+    addText(customerName, col, y+10, { bold: true });
+    if (sale?.customer?.address) addText(sale.customer.address, col, y+15, { maxWidth: 80 });
+    const rightCol = W/2 + 20;
+    addText('NO.', rightCol, y, { bold: true }); addText(`: ${invoiceNo}`, rightCol+25, y, { bold: true });
+    addText('DATE', rightCol, y+5, { bold: true }); addText(`: ${date}`, rightCol+25, y+5, { bold: true });
+    addText('PAY TYPE', rightCol, y+10, { bold: true }); addText(`: ${sale?.paymentMode?.name || 'Cash'}`, rightCol+25, y+10);
+    addText('PENDING AMT', rightCol, y+15, { bold: true }); addText(`: ${Number(pendingAmount).toFixed(2)}`, rightCol+25, y+15, { bold: true });
+    addText('PAGE', rightCol, y+20, { bold: true }); addText(': 1 of 1', rightCol+25, y+20, { bold: true });
+    y += 28; doc.line(col, y, W-margin, y); y += 6;
+
+    doc.setFontSize(9); doc.setFont('helvetica', 'bold');
+    doc.text('Code', col, y); doc.text('Description', col+20, y);
+    doc.text('Birds', col+90, y, { align: 'center' }); doc.text('Qty', col+110, y, { align: 'right' });
+    doc.text('UOM', col+130, y, { align: 'center' }); doc.text('U.Price', col+155, y, { align: 'right' });
+    doc.text('Amount', W-margin, y, { align: 'right' });
+    y += 2; doc.line(col, y, W-margin, y); y += 6;
+
+    items.forEach((item: any) => {
+      doc.setFont('helvetica', 'normal');
+      doc.text(item.product?.code || '', col, y);
+      doc.text(item.product?.name || '', col+20, y, { maxWidth: 60 });
+      doc.text(String(Number(item.noOfBirds) || '-'), col+90, y, { align: 'center' });
+      doc.text(String(item.quantity), col+110, y, { align: 'right' });
+      doc.text(item.product?.unit?.name || item.product?.unit?.shortCode || 'Nos', col+130, y, { align: 'center' });
+      doc.text(Number(item.rate || 0).toFixed(2), col+155, y, { align: 'right' });
+      doc.text(Number(item.amount || item.total || 0).toFixed(2), W-margin, y, { align: 'right' });
+      y += lineH;
+    });
+
+    y += 2; doc.line(col, y, W-margin, y); y += 6;
+    addText(`RINGGIT MALAYSIA ${numberToWords(grandTotal)} ONLY`, col, y);
+    y += 8; doc.line(col, y, W-margin, y); y += 6;
+    if (totalBirds > 0) {
+      addText('TOTAL BIRDS :', W-margin-60, y, { bold: true });
+      addText(String(totalBirds), W-margin-10, y, { align: 'right' }); y += 6;
     }
+    addText('TOTAL : RM', W-margin-60, y, { bold: true });
+    addText(Number(grandTotal).toFixed(2), W-margin-10, y, { bold: true, align: 'right' });
+    doc.line(W-margin-65, y+2, W-margin, y+2); doc.line(W-margin-65, y+3, W-margin, y+3);
+    y += 25;
+    addText('Authorised Signature', W-30, y, { size: 9, align: 'center' });
+    doc.line(W-60, y-4, W-10, y-4);
+
+    const blob = doc.output('blob');
+    return { blob, file: new File([blob], `Invoice_${invoiceNo}.pdf`, { type: 'application/pdf' }) };
   };
 
-  const handleFinalShare = async () => {
-    if (!readyPdfBlob) return;
-    
-    const file = new File([readyPdfBlob], `Invoice_${invoiceNo}.pdf`, { type: 'application/pdf' });
-    const url = URL.createObjectURL(readyPdfBlob);
-
-    const fallbackDownload = () => {
-      const a = document.createElement('a');
-      a.style.display = 'none';
-      a.href = url;
-      a.download = `Invoice_${invoiceNo}.pdf`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      setTimeout(() => URL.revokeObjectURL(url), 10000);
-      setReadyPdfBlob(null);
-    };
-
-    if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
-      try {
-        await navigator.share({
-          title: `Invoice ${invoiceNo}`,
-          text: `Here is the invoice ${invoiceNo} from NASA FRESH MART.`,
-          files: [file]
-        });
-        setReadyPdfBlob(null); // Reset after sharing
-      } catch (err: any) {
-        console.error('Share cancelled or failed:', err);
-        // If it's an AbortError, user just cancelled the dialog. If it's not, it's a browser/OS crash.
-        // On Windows Desktop, it frequently crashes immediately. We must download it so they have the file.
-        toast.error('Share window failed to open. Downloading PDF instead...');
-        fallbackDownload();
-      }
-    } else {
-      toast.success('Native share not supported. Downloading PDF...');
-      fallbackDownload();
+  const handleShare = () => {
+    setIsSharing(true);
+    let blob: Blob, file: File;
+    try {
+      ({ blob, file } = buildPdf());
+    } catch (err) {
+      toast.error('Failed to generate invoice PDF.');
+      console.error('Share invoice error:', err);
+      setIsSharing(false);
+      return;
     }
+
+    // navigator.share must be called synchronously within the user gesture
+    if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+      navigator.share({ files: [file], title: `Invoice ${invoiceNo}` })
+        .catch(() => { /* user cancelled or share failed — fall through to download */ })
+        .finally(() => setIsSharing(false));
+      return;
+    }
+
+    // Fallback: download the PDF
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `Invoice_${invoiceNo}.pdf`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    setIsSharing(false);
   };
 
 
@@ -187,16 +213,10 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
             <span>Invoice - {invoiceNo}</span>
           </div>
           <div className="flex items-center gap-3">
-            {readyPdfBlob ? (
-              <button type="button" onClick={handleFinalShare} className="bg-[#25D366] hover:bg-[#1EBE55] text-white px-3 py-1 rounded flex items-center gap-1 text-[12px] font-bold transition-colors animate-pulse">
-                <Share2 size={14} /> Share Now
-              </button>
-            ) : (
-              <button type="button" onClick={handleGenerateForShare} disabled={isProcessingPdf} className="bg-[#25D366] hover:bg-[#1EBE55] text-white px-3 py-1 rounded flex items-center gap-1 text-[12px] font-bold transition-colors">
-                {isProcessingPdf ? <Loader2 size={14} className="animate-spin" /> : <Share2 size={14} />} 
-                {isProcessingPdf ? 'Generating...' : 'Share PDF'}
-              </button>
-            )}
+            <button type="button" onClick={handleShare} disabled={isSharing} className="bg-[#25D366] hover:bg-[#1EBE55] disabled:opacity-70 text-white px-3 py-1 rounded flex items-center gap-1 text-[12px] font-bold transition-colors">
+              {isSharing ? <Loader2 size={14} className="animate-spin" /> : <Share2 size={14} />} 
+              {isSharing ? 'Preparing...' : 'Share Invoice'}
+            </button>
             <button type="button" onClick={handlePrint} className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded flex items-center gap-1 text-[12px] font-bold transition-colors">
               <Printer size={14} /> Print
             </button>
@@ -319,25 +339,15 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
 
         {/* Footer Actions - Screen Only */}
         <div className="flex justify-between items-center p-4 bg-gray-50 border-t border-gray-200 rounded-b-md print:hidden">
-          {readyPdfBlob ? (
-            <button 
-              type="button"
-              onClick={handleFinalShare}
-              className="flex items-center gap-2 bg-[#25D366] hover:bg-[#1DA851] text-white font-bold py-2 px-4 rounded transition-colors shadow-sm animate-pulse"
-            >
-              <Share2 size={16} /> Share Now
-            </button>
-          ) : (
-            <button 
-              type="button"
-              onClick={handleGenerateForShare}
-              disabled={isProcessingPdf}
-              className="flex items-center gap-2 bg-[#25D366] hover:bg-[#1DA851] text-white font-bold py-2 px-4 rounded transition-colors shadow-sm"
-            >
-              {isProcessingPdf ? <Loader2 size={16} className="animate-spin" /> : <Share2 size={16} />}
-              {isProcessingPdf ? 'Generating...' : 'Share PDF'}
-            </button>
-          )}
+          <button 
+            type="button"
+            onClick={handleShare}
+            disabled={isSharing}
+            className="flex items-center gap-2 bg-[#25D366] hover:bg-[#1DA851] disabled:opacity-70 text-white font-bold py-2 px-4 rounded transition-colors shadow-sm"
+          >
+            {isSharing ? <Loader2 size={16} className="animate-spin" /> : <Share2 size={16} />}
+            {isSharing ? 'Preparing...' : 'Share Invoice'}
+          </button>
           
           <div className="flex gap-2">
             <button 

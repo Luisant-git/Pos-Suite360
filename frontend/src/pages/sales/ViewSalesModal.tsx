@@ -1,24 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
-import { X, Printer, FileText, CheckCircle2 } from 'lucide-react';
+import { X, Printer, FileText, CheckCircle2, Share2 } from 'lucide-react';
 import api from '../../services/api';
 import { useSettings } from '../../contexts/SettingsContext';
 import { useState } from 'react';
 import InvoicePrintModal from '../../components/InvoicePrintModal';
-import html2pdf from 'html2pdf.js';
-import toast from 'react-hot-toast';
-
-const WhatsAppIcon = ({ size = 16, className = "" }: { size?: number, className?: string }) => (
-  <svg 
-    xmlns="http://www.w3.org/2000/svg" 
-    width={size} 
-    height={size} 
-    viewBox="0 0 24 24" 
-    fill="currentColor"
-    className={className}
-  >
-    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
-  </svg>
-);
 
 interface Props {
   saleId: number;
@@ -28,63 +13,12 @@ interface Props {
 export default function ViewSalesModal({ saleId, onClose }: Props) {
   const { formatCurrency } = useSettings();
   const [isPrintModalOpen, setIsPrintModalOpen] = useState(false);
-  const [isProcessingPdf, setIsProcessingPdf] = useState(false);
 
   const { data: sale, isLoading } = useQuery({
     queryKey: ['sales', saleId],
     queryFn: async () => (await api.get(`/sales/${saleId}`)).data,
     enabled: !!saleId,
   });
-
-  const processHiddenPdf = async (): Promise<string | null> => {
-    return new Promise((resolve) => {
-      setIsProcessingPdf(true);
-      setTimeout(async () => {
-        const element = document.getElementById('hidden-printable-invoice');
-        if (!element) {
-          setIsProcessingPdf(false);
-          return resolve(null);
-        }
-        const opt = {
-          margin: 0.5,
-          filename: `Invoice_${sale?.invoiceNo}.pdf`,
-          image:        { type: 'jpeg' as const, quality: 0.98 },
-          html2canvas: { scale: 2 },
-          jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' as const }
-        };
-        const pdfBase64 = await html2pdf().set(opt).from(element).output('datauristring');
-        setIsProcessingPdf(false);
-        resolve(pdfBase64);
-      }, 300);
-    });
-  };
-
-  const handleWhatsAppSend = async () => {
-    const phone = sale?.customer?.phone;
-    if (!phone) {
-      toast.error('Customer does not have a phone number attached.');
-      return;
-    }
-    toast.loading('Preparing WhatsApp message...', { id: 'wa-toast' });
-    const pdfBase64 = await processHiddenPdf();
-    if (pdfBase64) {
-      toast.loading('Sending invoice directly to WhatsApp...', { id: 'wa-toast' });
-      try {
-        const message = `Hello ${sale.customer.name},\n\nHere is your invoice ${sale.invoiceNo}.\nTotal Amount: ${formatCurrency(sale.grandTotal)}\n\nThank you for your business!`;
-        await api.post('/whatsapp/send-pdf', {
-          phone: phone,
-          base64Pdf: pdfBase64,
-          filename: `Invoice_${sale.invoiceNo}.pdf`,
-          caption: message
-        });
-        toast.success('Invoice sent successfully to WhatsApp!', { id: 'wa-toast' });
-      } catch (err: any) {
-        toast.error(err.response?.data?.message || 'Failed to send WhatsApp message.', { id: 'wa-toast' });
-      }
-    } else {
-      toast.error('Failed to generate PDF for WhatsApp.', { id: 'wa-toast' });
-    }
-  };
 
   if (isLoading) {
     return (
@@ -120,10 +54,10 @@ export default function ViewSalesModal({ saleId, onClose }: Props) {
               <Printer size={14} /> Print
             </button>
             <button 
-              onClick={handleWhatsAppSend}
-              className="flex items-center gap-1.5 bg-[#22C55E] hover:bg-[#16A34A] px-3 py-1.5 rounded font-bold text-[12px] transition-colors"
+              onClick={() => setIsPrintModalOpen(true)}
+              className="flex items-center gap-1.5 bg-[#25D366] hover:bg-[#1EBE55] px-3 py-1.5 rounded font-bold text-[12px] transition-colors"
             >
-              <WhatsAppIcon size={14} /> Send WhatsApp
+              <Share2 size={14} /> Share Invoice
             </button>
             <button onClick={onClose} className="hover:bg-blue-600 p-1.5 rounded transition-colors ml-2"><X size={18} /></button>
           </div>
@@ -226,15 +160,6 @@ export default function ViewSalesModal({ saleId, onClose }: Props) {
         onClose={() => setIsPrintModalOpen(false)} 
         sale={sale} 
       />
-
-      {isProcessingPdf && (
-        <InvoicePrintModal 
-          isOpen={true} 
-          onClose={() => {}} 
-          sale={sale} 
-          hiddenRenderer={true}
-        />
-      )}
     </div>
   );
 }

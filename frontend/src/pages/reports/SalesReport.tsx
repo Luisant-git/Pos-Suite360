@@ -6,6 +6,7 @@ import { useSettings } from '../../contexts/SettingsContext';
 import api from '../../services/api';
 import ReportTabs from '../../components/ReportTabs';
 import { exportToExcel } from '../../utils/exportExcel';
+import { exportTableToPdf } from '../../utils/exportPdf';
 import InvoicePrintModal from '../../components/InvoicePrintModal';
 import ViewSalesModal from '../sales/ViewSalesModal';
 import PaginationControls from '../../components/PaginationControls';
@@ -242,6 +243,12 @@ const SalesReport = () => {
               className="bg-[#10B981] hover:bg-[#059669] text-white px-3 py-1.5 rounded flex items-center gap-1.5 text-[12px] font-bold transition-colors"
             >
               <Download size={14} /> Export Excel
+            </button>
+            <button type="button"
+              onClick={() => exportTableToPdf('sales-report-table', `Sales_Report_${fromDate}_to_${toDate}`)}
+              className="bg-[#EF4444] hover:bg-[#DC2626] text-white px-3 py-1.5 rounded flex items-center gap-1.5 text-[12px] font-bold transition-colors"
+            >
+              <Download size={14} /> Export PDF
             </button>
             <button type="button" 
               onClick={() => navigate('/sales/pos')}

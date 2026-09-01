@@ -266,8 +266,7 @@ const Settings = () => {
                 <p className="text-[11px] text-[#64748B] mt-1">These notes will be printed at the bottom of all sales receipts. Supports multiple lines.</p>
               </div>
               
-              {/* Signature upload section commented out
-              <div className="border-t border-[#E2E8F0] pt-4 mt-2">
+              {/* <div className="border-t border-[#E2E8F0] pt-4 mt-2">
                 <label className="block text-[12px] font-bold text-[#334155] mb-1">Authorised Signature Image</label>
                 {watchStore('signatureImage') && (
                   <div className="mb-3 p-2 border border-[#E2E8F0] rounded-lg inline-block bg-[#F8FAFC]">
@@ -289,6 +288,7 @@ const Settings = () => {
                         });
                         const url = response.data.url;
                         setValueStore('signatureImage', url, { shouldValidate: true, shouldDirty: true });
+                        // Auto-save so the signature URL is persisted immediately
                         const currentValues = watchStore();
                         await api.post('/settings', { ...currentValues, signatureImage: url });
                         queryClient.invalidateQueries({ queryKey: ['settings'] });
@@ -301,8 +301,7 @@ const Settings = () => {
                   className="w-full text-base file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-base file:font-bold file:bg-[#EFF6FF] file:text-[#2563EB] hover:file:bg-[#DBEAFE] cursor-pointer"
                 />
                 <p className="text-[11px] text-[#64748B] mt-1">Upload a clear signature image. Best with transparent background (PNG).</p>
-              </div>
-              */}
+              </div> */}
               
               <div className="flex justify-end mt-2">
                 <button 

@@ -187,7 +187,7 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
             <p className="text-[11px]">Tel : 0392856786</p>
           </div>
           
-          <div className="border-t border-b border-black py-1 mb-4 text-center font-bold text-base uppercase tracking-wider">
+          <div className="border-t border-b border-black py-2 mb-4 text-center font-bold text-base uppercase tracking-wider">
             INVOICE
           </div>
           
@@ -265,7 +265,7 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
                 )}
                 <div className="flex items-center gap-4">
                   <span>TOTAL : RM</span>
-                  <span className="border-b-2 border-black border-double min-w-[100px] text-right inline-block">{Number(grandTotal).toFixed(2)}</span>
+                  <span className="border-b-2 border-black min-w-[100px] text-right inline-block pb-1">{Number(grandTotal).toFixed(2)}</span>
                 </div>
               </div>
             </div>

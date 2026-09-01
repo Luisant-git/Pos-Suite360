@@ -91,7 +91,7 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
         : '';
 
       const pdfHtml = `
-        <div style="width:794px;height:1123px;position:relative;background:white;padding:32px;box-sizing:border-box;font-family:Arial,sans-serif;color:#000">
+        <div style="width:794px;min-height:1123px;background:white;padding:32px;box-sizing:border-box;font-family:Arial,sans-serif;color:#000;display:flex;flex-direction:column">
           <div style="text-align:center;margin-bottom:10px">
             <div style="font-size:16px;font-weight:bold;text-transform:uppercase">NASA FRESH MART <span style="font-size:11px;font-weight:normal">(001634825-A)</span></div>
             <p style="margin:4px 0;font-size:11px">NO 8G, JLN 3/2 PANDAN JAYA, 55100 KUALA LUMPUR.</p>
@@ -138,7 +138,8 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
             </thead>
             <tbody>${itemRows}</tbody>
           </table>
-          <div style="position:absolute;bottom:32px;left:32px;right:32px">
+          <div style="flex:1"></div>
+          <div style="margin-top:40px">
             <p style="text-transform:uppercase;font-size:11px;margin:0 0 10px 0">RINGGIT MALAYSIA ${numberToWords(grandTotal)} ONLY</p>
             <div style="border-top:1px solid #000;padding-top:8px;display:flex;align-items:flex-start">
               <div style="width:45%;font-size:9px;line-height:1.5;padding-right:12px">${settings?.invoiceNotes || ''}</div>
@@ -160,7 +161,7 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
         </div>`;
 
       const container = document.createElement('div');
-      container.style.cssText = 'position:fixed;left:-9999px;top:0;';
+      container.style.cssText = 'position:fixed;left:-9999px;top:0;width:794px;';
       container.innerHTML = pdfHtml;
       document.body.appendChild(container);
 

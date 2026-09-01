@@ -73,26 +73,16 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
     }
     setIsSharing(true);
     try {
-      // Clone element and apply A4 fixed layout for PDF only (modal untouched)
-      const clone = element.cloneNode(true) as HTMLElement;
-      clone.style.cssText = 'width:794px;height:1123px;position:relative;overflow:hidden;background:white;padding:32px;box-sizing:border-box;font-family:Arial,sans-serif;';
-      // Force bottom section to absolute bottom in PDF clone
-      const bottomDiv = clone.querySelector('.mt-auto') as HTMLElement | null;
-      if (bottomDiv) {
-        bottomDiv.style.cssText = 'position:absolute;bottom:32px;left:32px;right:32px;';
-      }
-      document.body.appendChild(clone);
       const blob: Blob = await html2pdf()
         .set({
           margin: 0,
           filename: `Invoice_${invoiceNo}.pdf`,
           image: { type: 'jpeg', quality: 0.98 },
-          html2canvas: { scale: 2, useCORS: true, logging: false, width: 794, windowWidth: 794 },
+          html2canvas: { scale: 2, useCORS: true, logging: false },
           jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
         })
-        .from(clone)
+        .from(element)
         .outputPdf('blob');
-      document.body.removeChild(clone);
 
       const file = new File([blob], `Invoice_${invoiceNo}.pdf`, { type: 'application/pdf' });
 
@@ -174,7 +164,7 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
         </div>
 
         {/* Printable Area */}
-        <div id="printable-invoice" className="flex-1 overflow-auto bg-white" style={{fontFamily:'Arial,sans-serif',color:'#000',padding:'24px 32px',position:'relative',minHeight:'257mm',boxSizing:'border-box'}}>
+        <div id="printable-invoice" className="flex-1 overflow-auto flex flex-col p-8 font-sans text-black print:p-6 bg-white">
           <div className="text-center mb-3 print:pt-4">
             <div className="text-lg font-bold uppercase">NASA FRESH MART <span className="text-xs font-normal">(001634825-A)</span></div>
             <p className="mt-1 text-[11px]">NO 8G, JLN 3/2 PANDAN JAYA, 55100 KUALA LUMPUR.</p>
@@ -240,34 +230,40 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
             </tbody>
           </table>
           
-          <div style={{position:'absolute',bottom:'24px',left:'32px',right:'32px'}}>
-            <p style={{textTransform:'uppercase',fontSize:'11px',fontWeight:'500',marginBottom:'10px'}}>RINGGIT MALAYSIA {numberToWords(grandTotal)} ONLY</p>
-            <div style={{borderTop:'1px solid #000',paddingTop:'8px',display:'flex',alignItems:'flex-start'}}>
+          <div className="flex-1"></div>
+
+          <div>
+            <p className="uppercase mb-4">RINGGIT MALAYSIA {numberToWords(grandTotal)} ONLY</p>
+            
+            <div className="flex justify-between items-start border-t border-black pt-2">
               <div 
-                style={{width:'45%',fontSize:'9px',paddingRight:'12px',lineHeight:'1.4'}}
+                className="w-[45%] text-[9px] text-black pr-4 html-content leading-tight"
                 dangerouslySetInnerHTML={{ __html: settings?.invoiceNotes || '' }}
               />
-              <div style={{width:'25%',display:'flex',justifyContent:'center',alignItems:'flex-start',paddingTop:'2px'}}>
-                <div style={{display:'flex',flexDirection:'column',gap:'4px',alignItems:'center'}}>
-                  {totalBirds > 0 && <span style={{fontWeight:'bold',fontSize:'13px',whiteSpace:'nowrap'}}>TOTAL BIRDS : {totalBirds}</span>}
-                  <span style={{fontWeight:'bold',fontSize:'13px',whiteSpace:'nowrap'}}>TOTAL : RM</span>
+              <div className="w-[60%] flex flex-col items-end gap-2 font-bold text-sm whitespace-nowrap">
+                {totalBirds > 0 && (
+                  <div className="flex items-center gap-4">
+                    <span>TOTAL BIRDS :</span>
+                    <span className="min-w-[100px] text-right inline-block">{totalBirds}</span>
+                  </div>
+                )}
+                <div className="flex items-center gap-4">
+                  <span>TOTAL : RM</span>
+                  <span className="border-b-2 border-black border-double min-w-[100px] text-right inline-block">{Number(grandTotal).toFixed(2)}</span>
                 </div>
               </div>
-              <div style={{width:'30%',display:'flex',flexDirection:'column',alignItems:'flex-end',paddingTop:'2px'}}>
-                {totalBirds > 0 && <span style={{fontWeight:'bold',fontSize:'13px',marginBottom:'4px'}}>{totalBirds}</span>}
-                <span style={{fontWeight:'bold',fontSize:'13px',borderBottom:'2px solid #000',width:'100%',textAlign:'right',paddingBottom:'1px'}}>{Number(grandTotal).toFixed(2)}</span>
-              </div>
             </div>
-            <div style={{display:'flex',justifyContent:'flex-end',marginTop:'40px'}}>
-              <div style={{textAlign:'center',width:'220px',borderTop:'1px solid #000',paddingTop:'6px',position:'relative'}}>
+            
+            <div className="flex justify-end mt-24">
+              <div className="text-center w-64 border-t border-black pt-2 relative">
                 {settings?.signatureImage && (
                   <img 
                     src={settings.signatureImage} 
                     alt="Authorised Signature" 
-                    style={{position:'absolute',bottom:'24px',left:'50%',transform:'translateX(-50%)',height:'56px',objectFit:'contain'}}
+                    className="absolute bottom-6 left-1/2 -translate-x-1/2 h-16 object-contain"
                   />
                 )}
-                <span style={{fontSize:'11px'}}>Authorised Signature</span>
+                <span className="text-xs">Authorised Signature</span>
               </div>
             </div>
           </div>

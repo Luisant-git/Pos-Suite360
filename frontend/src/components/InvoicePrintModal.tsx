@@ -270,7 +270,7 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
               </div>
             </div>
             
-            <div className="flex justify-end mt-24">
+            {/* <div className="flex justify-end mt-24">
               <div className="text-center w-64 border-t border-black pt-2 relative">
                 {settings?.signatureImage && (
                   <img 
@@ -281,7 +281,8 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
                 )}
                 <span className="text-xs">Authorised Signature</span>
               </div>
-            </div>
+            </div> */}
+
           </div>
         </div>
 

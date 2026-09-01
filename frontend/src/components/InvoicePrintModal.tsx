@@ -66,117 +66,23 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
   const totalBirds = items.reduce((sum: number, item: any) => sum + (Number(item.noOfBirds) || 0), 0);
 
   const handleShare = useCallback(async () => {
+    const element = document.getElementById('printable-invoice');
+    if (!element) {
+      toast.error('Invoice content not found.');
+      return;
+    }
     setIsSharing(true);
     try {
-      // Build a separate off-screen A4 div for PDF only — modal is never touched
-      const itemRows = items.map((item: any) => `
-        <tr>
-          <td style="padding:3px 0;font-size:11px">${item.product?.code || ''}</td>
-          <td style="padding:3px 0;font-size:11px">${item.product?.name || ''}</td>
-          <td style="padding:3px 0;font-size:11px;text-align:center">${Number(item.noOfBirds) || '-'}</td>
-          <td style="padding:3px 0;font-size:11px;text-align:right">${item.quantity}</td>
-          <td style="padding:3px 0;font-size:11px;text-align:center">${item.product?.unit?.name || item.product?.unit?.shortCode || 'Nos'}</td>
-          <td style="padding:3px 0;font-size:11px;text-align:right">${Number(item.rate || 0).toFixed(2)}</td>
-          <td style="padding:3px 0;font-size:11px;text-align:right">${Number(item.amount || item.total || 0).toFixed(2)}</td>
-        </tr>`).join('');
-
-      const sigHtml = settings?.signatureImage
-        ? `<img src="${settings.signatureImage}" style="position:absolute;bottom:28px;left:50%;transform:translateX(-50%);height:56px;object-fit:contain" />`
-        : '';
-
-      const totalBirdsRow = totalBirds > 0
-        ? `<div style="display:flex;justify-content:space-between;font-weight:bold;font-size:13px;margin-bottom:4px">
-             <span>TOTAL BIRDS :</span><span>${totalBirds}</span>
-           </div>`
-        : '';
-
-      const pdfHtml = `
-        <div style="width:794px;min-height:1123px;background:white;padding:32px;box-sizing:border-box;font-family:Arial,sans-serif;color:#000;display:flex;flex-direction:column">
-          <div style="text-align:center;margin-bottom:10px">
-            <div style="font-size:16px;font-weight:bold;text-transform:uppercase">NASA FRESH MART <span style="font-size:11px;font-weight:normal">(001634825-A)</span></div>
-            <p style="margin:4px 0;font-size:11px">NO 8G, JLN 3/2 PANDAN JAYA, 55100 KUALA LUMPUR.</p>
-            <p style="margin:0;font-size:11px">Tel : 0392856786</p>
-          </div>
-          <div style="border-top:1px solid #000;border-bottom:1px solid #000;padding:4px 0;text-align:center;font-weight:bold;font-size:14px;letter-spacing:2px;margin-bottom:14px">INVOICE</div>
-          <div style="display:flex;justify-content:space-between;margin-bottom:18px;font-size:11px">
-            <div style="width:48%">
-              <div style="display:flex">
-                <span style="width:60px;font-weight:bold">Bill To:</span>
-                <div>
-                  <p style="margin:0;font-weight:bold">${sale?.customer?.id ? `CUST-${sale.customer.id}` : ''}</p>
-                  <p style="margin:0;font-weight:bold">${customerName}</p>
-                  <p style="margin:0">${sale?.customer?.address || ''}</p>
-                </div>
-              </div>
-              <div style="margin-top:10px">
-                <span style="font-weight:bold">TEL: ${sale?.customer?.phone || ''}</span>
-                <span style="font-weight:bold;margin-left:16px">FAX: </span>
-              </div>
-              <p style="margin:4px 0;font-weight:bold">Attn:</p>
-            </div>
-            <div style="width:48%">
-              <table style="width:100%;font-size:11px;border-collapse:collapse">
-                <tr><td style="font-weight:bold;width:110px">NO.</td><td style="font-weight:bold;width:10px">:</td><td style="font-weight:bold">${invoiceNo}</td></tr>
-                <tr><td style="font-weight:bold">DATE</td><td style="font-weight:bold">:</td><td style="font-weight:bold">${date}</td></tr>
-                <tr><td style="font-weight:bold">PAY TYPE</td><td style="font-weight:bold">:</td><td>${sale?.paymentMode?.name || 'Cash'}</td></tr>
-                <tr><td style="font-weight:bold">PENDING AMT</td><td style="font-weight:bold">:</td><td style="font-weight:bold">${Number(pendingAmount).toFixed(2)}</td></tr>
-                <tr><td style="font-weight:bold">PAGE</td><td style="font-weight:bold">:</td><td style="font-weight:bold">1 of 1</td></tr>
-              </table>
-            </div>
-          </div>
-          <table style="width:100%;border-collapse:collapse;border-top:1px solid #000;border-bottom:1px solid #000;margin-bottom:12px">
-            <thead>
-              <tr style="border-bottom:1px solid #000">
-                <th style="padding:6px 0;font-size:11px;text-align:left;width:15%">CODE</th>
-                <th style="padding:6px 0;font-size:11px;text-align:left;width:35%">DESCRIPTION</th>
-                <th style="padding:6px 0;font-size:11px;text-align:center;width:10%">BIRDS</th>
-                <th style="padding:6px 0;font-size:11px;text-align:right;width:10%">QTY</th>
-                <th style="padding:6px 0;font-size:11px;text-align:center;width:10%">UOM</th>
-                <th style="padding:6px 0;font-size:11px;text-align:right;width:10%">U.PRICE</th>
-                <th style="padding:6px 0;font-size:11px;text-align:right;width:10%">AMOUNT</th>
-              </tr>
-            </thead>
-            <tbody>${itemRows}</tbody>
-          </table>
-          <div style="flex:1"></div>
-          <div style="margin-top:40px">
-            <p style="text-transform:uppercase;font-size:11px;margin:0 0 10px 0">RINGGIT MALAYSIA ${numberToWords(grandTotal)} ONLY</p>
-            <div style="border-top:1px solid #000;padding-top:8px;display:flex;align-items:flex-start">
-              <div style="width:45%;font-size:9px;line-height:1.5;padding-right:12px">${settings?.invoiceNotes || ''}</div>
-              <div style="width:55%;font-size:13px;font-weight:bold">
-                ${totalBirdsRow}
-                <div style="display:flex;justify-content:space-between">
-                  <span>TOTAL : RM</span>
-                  <span style="border-bottom:2px solid #000;min-width:120px;text-align:right">${Number(grandTotal).toFixed(2)}</span>
-                </div>
-              </div>
-            </div>
-            <div style="display:flex;justify-content:flex-end;margin-top:40px">
-              <div style="text-align:center;width:220px;border-top:1px solid #000;padding-top:6px;position:relative">
-                ${sigHtml}
-                <span style="font-size:11px">Authorised Signature</span>
-              </div>
-            </div>
-          </div>
-        </div>`;
-
-      const container = document.createElement('div');
-      container.style.cssText = 'position:fixed;left:-9999px;top:0;width:794px;';
-      container.innerHTML = pdfHtml;
-      document.body.appendChild(container);
-
       const blob: Blob = await html2pdf()
         .set({
           margin: 0,
           filename: `Invoice_${invoiceNo}.pdf`,
           image: { type: 'jpeg', quality: 0.98 },
-          html2canvas: { scale: 2, useCORS: true, logging: false, width: 794, windowWidth: 794 },
+          html2canvas: { scale: 2, useCORS: true, logging: false },
           jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
         })
-        .from(container.firstElementChild as HTMLElement)
+        .from(element)
         .outputPdf('blob');
-
-      document.body.removeChild(container);
 
       const file = new File([blob], `Invoice_${invoiceNo}.pdf`, { type: 'application/pdf' });
 

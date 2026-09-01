@@ -230,9 +230,7 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
             </tbody>
           </table>
           
-          <div className="flex-1"></div>
-
-          <div>
+          <div className="mt-auto">
             <p className="uppercase mb-4">RINGGIT MALAYSIA {numberToWords(grandTotal)} ONLY</p>
             
             <div className="flex justify-between items-start border-t border-black pt-2">
@@ -240,21 +238,21 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
                 className="w-[45%] text-[9px] text-black pr-4 html-content leading-tight"
                 dangerouslySetInnerHTML={{ __html: settings?.invoiceNotes || '' }}
               />
-              <div className="w-[60%] flex flex-col items-end gap-2 font-bold text-sm whitespace-nowrap">
+              <div className="w-[55%] flex flex-col items-end gap-2 font-bold text-sm whitespace-nowrap">
                 {totalBirds > 0 && (
-                  <div className="flex items-center gap-4">
+                  <div className="flex items-center justify-between w-full">
                     <span>TOTAL BIRDS :</span>
-                    <span className="min-w-[100px] text-right inline-block">{totalBirds}</span>
+                    <span className="min-w-[100px] text-right">{totalBirds}</span>
                   </div>
                 )}
-                <div className="flex items-center gap-4">
+                <div className="flex items-center justify-between w-full">
                   <span>TOTAL : RM</span>
-                  <span className="border-b-2 border-black border-double min-w-[100px] text-right inline-block">{Number(grandTotal).toFixed(2)}</span>
+                  <span className="min-w-[100px] text-right border-b-2 border-black">{Number(grandTotal).toFixed(2)}</span>
                 </div>
               </div>
             </div>
             
-            <div className="flex justify-end mt-24">
+            <div className="flex justify-end mt-16">
               <div className="text-center w-64 border-t border-black pt-2 relative">
                 {settings?.signatureImage && (
                   <img 

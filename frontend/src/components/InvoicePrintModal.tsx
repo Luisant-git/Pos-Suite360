@@ -72,17 +72,30 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
       return;
     }
     setIsSharing(true);
+    // Temporarily expand element to full height for capture
+    const prevOverflow = element.style.overflow;
+    const prevMaxHeight = element.style.maxHeight;
+    const prevHeight = element.style.height;
+    element.style.overflow = 'visible';
+    element.style.maxHeight = 'none';
+    element.style.height = 'auto';
     try {
       const blob: Blob = await html2pdf()
         .set({
           margin: 0,
           filename: `Invoice_${invoiceNo}.pdf`,
           image: { type: 'jpeg', quality: 0.98 },
-          html2canvas: { scale: 2, useCORS: true, logging: false },
+          html2canvas: { scale: 2, useCORS: true, logging: false, scrollY: 0 },
           jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+          pagebreak: { mode: 'avoid-all' },
         })
         .from(element)
         .outputPdf('blob');
+
+      // Restore element styles
+      element.style.overflow = prevOverflow;
+      element.style.maxHeight = prevMaxHeight;
+      element.style.height = prevHeight;
 
       const file = new File([blob], `Invoice_${invoiceNo}.pdf`, { type: 'application/pdf' });
 
@@ -100,6 +113,9 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
         toast.success('Invoice PDF saved.');
       }
     } catch (err) {
+      element.style.overflow = prevOverflow;
+      element.style.maxHeight = prevMaxHeight;
+      element.style.height = prevHeight;
       toast.error('Failed to generate invoice PDF.');
       console.error(err);
     } finally {

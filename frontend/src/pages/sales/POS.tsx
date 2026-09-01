@@ -609,7 +609,7 @@ const POS = () => {
                     />
                   </td>
                   <td data-label="Total" className="px-2 py-1 border-r border-[#E5E7EB]">
-                    <input {...register(`items.${index}.total`)} type="number" readOnly tabIndex={-1} className="w-full px-2 py-1 bg-transparent text-[13px] outline-none text-right font-bold" />
+                    <input value={Number(watch(`items.${index}.total`) || 0).toFixed(2)} readOnly tabIndex={-1} className="w-full px-2 py-1 bg-transparent text-[13px] outline-none text-right font-bold" onChange={() => {}} />
                   </td>
                   <td data-label="Action" className="px-2 py-1 text-center">
                     <div className="flex justify-center gap-2">
@@ -648,10 +648,10 @@ const POS = () => {
                 <div className="w-full md:flex-1 flex flex-col gap-1">
                   <label className="text-[13px] font-extrabold text-[#1F2937] uppercase">Gross Amount:</label>
                   <input
-                    {...register('grossAmount')}
-                    type="number"
+                    value={Number(watch('grossAmount') || 0).toFixed(2)}
                     readOnly
                     className="w-full px-3 py-2 border-2 border-[#D1D5DB] bg-[#F3F4F6] rounded text-[18px] outline-none text-right font-bold text-gray-800"
+                    onChange={() => {}}
                   />
                 </div>
 
@@ -701,10 +701,10 @@ const POS = () => {
                 <div className="w-full md:flex-1 flex flex-col gap-1">
                   <label className="text-[14px] font-black text-[#1E3A8A] uppercase">NET AMOUNT:</label>
                   <input
-                    {...register('netAmount')}
-                    type="number"
+                    value={Number(watch('netAmount') || 0).toFixed(2)}
                     readOnly
                     className="w-full px-3 py-2 border-2 border-[#059669] bg-[#ECFDF5] text-[#059669] rounded text-[22px] outline-none text-right font-black shadow-inner"
+                    onChange={() => {}}
                   />
                 </div>
                 

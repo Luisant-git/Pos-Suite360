@@ -554,7 +554,7 @@ const PurchaseEntry = () => {
                     />
                   </td>
                   <td data-label="Disc %" className="px-2 py-1 border-r border-[#E5E7EB]">
-                    <input {...register(`items.${index}.total`)} type="number" readOnly tabIndex={-1} className="w-full px-2 py-1 bg-transparent text-[13px] outline-none text-right font-bold" />
+                    <input value={Number(watch(`items.${index}.total`) || 0).toFixed(2)} readOnly tabIndex={-1} className="w-full px-2 py-1 bg-transparent text-[13px] outline-none text-right font-bold" onChange={() => {}} />
                   </td>
                   <td data-label="Disc Amt" className="px-2 py-1 text-center">
                     <div className="flex justify-center gap-2">
@@ -590,10 +590,10 @@ const PurchaseEntry = () => {
             <div className="w-full md:flex-1 flex flex-col gap-1">
               <label className="text-[14px] font-extrabold text-[#1F2937] uppercase">Total Amount:</label>
               <input
-                {...register('totalAmount')}
-                type="number"
+                value={Number(watch('totalAmount') || 0).toFixed(2)}
                 readOnly
                 className="w-full px-3 py-2 border border-[#D1D5DB] bg-[#F9FAFB] rounded text-[20px] outline-none text-right font-black text-[#1F2937]"
+                onChange={() => {}}
               />
             </div>
 

@@ -231,34 +231,41 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
           </table>
           
           <div className="mt-auto">
-            <p className="uppercase mb-4">RINGGIT MALAYSIA {numberToWords(grandTotal)} ONLY</p>
+            <p className="uppercase text-[11px] font-medium mb-3">RINGGIT MALAYSIA {numberToWords(grandTotal)} ONLY</p>
             
-            <div className="flex justify-between items-start border-t border-black pt-2">
+            <div className="border-t border-black pt-2 flex items-start">
+              {/* Left: Notes */}
               <div 
                 className="w-[45%] text-[9px] text-black pr-4 html-content leading-tight"
                 dangerouslySetInnerHTML={{ __html: settings?.invoiceNotes || '' }}
               />
-              <div className="w-[55%] flex flex-col items-end gap-2 font-bold text-sm whitespace-nowrap">
-                {totalBirds > 0 && (
-                  <div className="flex items-center justify-between w-full">
-                    <span>TOTAL BIRDS :</span>
-                    <span className="min-w-[100px] text-right">{totalBirds}</span>
+              {/* Center: TOTAL : RM label */}
+              <div className="w-[25%] flex items-center justify-center font-bold text-sm pt-1">
+                {totalBirds > 0 ? (
+                  <div className="flex flex-col gap-1 items-center">
+                    <span>TOTAL BIRDS : {totalBirds}</span>
+                    <span>TOTAL : RM</span>
                   </div>
-                )}
-                <div className="flex items-center justify-between w-full">
+                ) : (
                   <span>TOTAL : RM</span>
-                  <span className="min-w-[100px] text-right border-b-2 border-black">{Number(grandTotal).toFixed(2)}</span>
-                </div>
+                )}
+              </div>
+              {/* Right: Amount */}
+              <div className="w-[30%] flex flex-col items-end justify-start pt-1">
+                {totalBirds > 0 && (
+                  <span className="font-bold text-sm mb-1">{totalBirds}</span>
+                )}
+                <span className="font-bold text-sm border-b-2 border-black w-full text-right pb-[1px]">{Number(grandTotal).toFixed(2)}</span>
               </div>
             </div>
             
-            <div className="flex justify-end mt-16">
-              <div className="text-center w-64 border-t border-black pt-2 relative">
+            <div className="flex justify-end mt-10">
+              <div className="text-center w-56 border-t border-black pt-2 relative">
                 {settings?.signatureImage && (
                   <img 
                     src={settings.signatureImage} 
                     alt="Authorised Signature" 
-                    className="absolute bottom-6 left-1/2 -translate-x-1/2 h-16 object-contain"
+                    className="absolute bottom-6 left-1/2 -translate-x-1/2 h-14 object-contain"
                   />
                 )}
                 <span className="text-xs">Authorised Signature</span>

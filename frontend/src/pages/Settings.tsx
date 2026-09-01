@@ -286,8 +286,13 @@ const Settings = () => {
                         const response = await api.post('/settings/upload-signature', formData, {
                           headers: { 'Content-Type': 'multipart/form-data' }
                         });
-                        setValueStore('signatureImage', response.data.url, { shouldValidate: true, shouldDirty: true });
-                        toast.success('Signature image uploaded successfully', { id: toastId });
+                        const url = response.data.url;
+                        setValueStore('signatureImage', url, { shouldValidate: true, shouldDirty: true });
+                        // Auto-save so the signature URL is persisted immediately
+                        const currentValues = watchStore();
+                        await api.post('/settings', { ...currentValues, signatureImage: url });
+                        queryClient.invalidateQueries({ queryKey: ['settings'] });
+                        toast.success('Signature uploaded and saved', { id: toastId });
                       } catch (error) {
                         toast.error('Failed to upload signature image');
                       }

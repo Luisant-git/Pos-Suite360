@@ -13,6 +13,7 @@ interface Props {
 export default function ViewSalesModal({ saleId, onClose }: Props) {
   const { formatCurrency } = useSettings();
   const [isPrintModalOpen, setIsPrintModalOpen] = useState(false);
+  const [autoShare, setAutoShare] = useState(false);
 
   const { data: sale, isLoading } = useQuery({
     queryKey: ['sales', saleId],
@@ -54,7 +55,7 @@ export default function ViewSalesModal({ saleId, onClose }: Props) {
               <Printer size={14} /> Print
             </button>
             <button 
-              onClick={() => setIsPrintModalOpen(true)}
+              onClick={() => { setAutoShare(true); setIsPrintModalOpen(true); }}
               className="flex items-center gap-1.5 bg-[#25D366] hover:bg-[#1EBE55] px-3 py-1.5 rounded font-bold text-[12px] transition-colors"
             >
               <Share2 size={14} /> Share Invoice
@@ -157,8 +158,9 @@ export default function ViewSalesModal({ saleId, onClose }: Props) {
 
       <InvoicePrintModal 
         isOpen={isPrintModalOpen} 
-        onClose={() => setIsPrintModalOpen(false)} 
-        sale={sale} 
+        onClose={() => { setIsPrintModalOpen(false); setAutoShare(false); }} 
+        sale={sale}
+        autoShare={autoShare}
       />
     </div>
   );

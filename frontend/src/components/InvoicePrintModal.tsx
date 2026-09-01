@@ -1,33 +1,27 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { X, Printer, Share2, Loader2 } from 'lucide-react';
 import { useSettings } from '../contexts/SettingsContext';
 import { useQuery } from '@tanstack/react-query';
 import api from '../services/api';
 import toast from 'react-hot-toast';
-import jsPDF from 'jspdf';
+import html2pdf from 'html2pdf.js';
 
-// Basic number to words converter (for Malaysian Ringgit / general use)
 const numberToWords = (num: number): string => {
   if (!num || num === 0) return "ZERO";
   const a = ["", "ONE ", "TWO ", "THREE ", "FOUR ", "FIVE ", "SIX ", "SEVEN ", "EIGHT ", "NINE ", "TEN ", "ELEVEN ", "TWELVE ", "THIRTEEN ", "FOURTEEN ", "FIFTEEN ", "SIXTEEN ", "SEVENTEEN ", "EIGHTEEN ", "NINETEEN "];
   const b = ["", "", "TWENTY ", "THIRTY ", "FORTY ", "FIFTY ", "SIXTY ", "SEVENTY ", "EIGHTY ", "NINETY "];
-
   const convertWhole = (n: number): string => {
     if (n < 20) return a[n];
     if (n < 100) return b[Math.floor(n / 10)] + (n % 10 !== 0 ? a[n % 10] : "");
     if (n < 1000) return a[Math.floor(n / 100)] + "HUNDRED " + (n % 100 !== 0 ? convertWhole(n % 100) : "");
     if (n < 1000000) return convertWhole(Math.floor(n / 1000)) + "THOUSAND " + (n % 1000 !== 0 ? convertWhole(n % 1000) : "");
-    return n.toString(); // Fallback for very large numbers
+    return n.toString();
   };
-
   const wholePart = Math.floor(Number(num));
   const cents = Math.round((Number(num) - wholePart) * 100);
-  
   let res = convertWhole(wholePart) || "";
-  if (cents > 0) {
-    res += `AND CENTS ${convertWhole(cents) || ""}`;
-  }
+  if (cents > 0) res += `AND CENTS ${convertWhole(cents) || ""}`;
   return res ? res.trim() : "";
 };
 
@@ -36,13 +30,14 @@ interface InvoicePrintModalProps {
   onClose: () => void;
   sale: any;
   hiddenRenderer?: boolean;
+  autoShare?: boolean;
 }
 
-const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer = false }: InvoicePrintModalProps) => {
+const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer = false, autoShare = false }: InvoicePrintModalProps) => {
   const { settings } = useSettings();
   const [isSharing, setIsSharing] = useState(false);
+  const autoShareTriggered = useRef(false);
 
-  // Always fetch full sale data to ensure unit, paymentMode, customer are fully populated
   const { data: fullSale, isLoading } = useQuery({
     queryKey: ['invoice-print', initialSale?.id],
     queryFn: async () => (await api.get(`/sales/${initialSale.id}`)).data,
@@ -63,11 +58,69 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
     ? customerBalance.balance
     : (Number(sale?.customer?.openingBalance || 0));
 
+  const invoiceNo = sale?.invoiceNo || '';
+  const date = sale?.date ? new Date(sale.date).toISOString().split('T')[0] : '';
+  const customerName = sale?.customer?.name || 'CASH A/C\nCounter Sale';
+  const items = sale?.items || [];
+  const grandTotal = sale?.grandTotal || 0;
+  const totalBirds = items.reduce((sum: number, item: any) => sum + (Number(item.noOfBirds) || 0), 0);
+
+  const handleShare = useCallback(async () => {
+    const element = document.getElementById('printable-invoice');
+    if (!element) {
+      toast.error('Invoice content not found.');
+      return;
+    }
+    setIsSharing(true);
+    try {
+      const blob: Blob = await html2pdf()
+        .set({
+          margin: 0,
+          filename: `Invoice_${invoiceNo}.pdf`,
+          image: { type: 'jpeg', quality: 0.98 },
+          html2canvas: { scale: 2, useCORS: true, logging: false },
+          jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+        })
+        .from(element)
+        .outputPdf('blob');
+
+      const file = new File([blob], `Invoice_${invoiceNo}.pdf`, { type: 'application/pdf' });
+
+      if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+        await navigator.share({ files: [file], title: `Invoice ${invoiceNo}` }).catch(() => {});
+      } else {
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `Invoice_${invoiceNo}.pdf`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+        toast.success('Invoice PDF saved.');
+      }
+    } catch (err) {
+      toast.error('Failed to generate invoice PDF.');
+      console.error(err);
+    } finally {
+      setIsSharing(false);
+    }
+  }, [invoiceNo]);
+
+  // Auto-trigger share once data is loaded
+  useEffect(() => {
+    if (autoShare && !isLoading && fullSale && !autoShareTriggered.current) {
+      autoShareTriggered.current = true;
+      setTimeout(() => handleShare(), 300);
+    }
+  }, [autoShare, isLoading, fullSale, handleShare]);
+
   useEffect(() => {
     if (isOpen) {
       document.body.classList.add('printing-modal');
     } else {
       document.body.classList.remove('printing-modal');
+      autoShareTriggered.current = false;
     }
     return () => document.body.classList.remove('printing-modal');
   }, [isOpen]);
@@ -84,123 +137,7 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
     );
   }
 
-  // Fallback data if sale is not fully populated yet
-  const invoiceNo = sale?.invoiceNo || '';
-  const date = sale?.date ? new Date(sale.date).toISOString().split('T')[0] : '';
-  const customerName = sale?.customer?.name || 'CASH A/C\nCounter Sale';
-  const items = sale?.items || [];
-  const grandTotal = sale?.grandTotal || 0;
-
-  const totalBirds = items.reduce((sum: number, item: any) => sum + (Number(item.noOfBirds) || 0), 0);
-
-  const handlePrint = () => {
-    window.print();
-  };
-
-  const buildPdf = (): { blob: Blob; file: File } => {
-    const doc = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait' });
-    const W = 210, margin = 14, lineH = 6;
-    let y = margin;
-    const col = margin;
-
-    const addText = (text: string, x: number, yPos: number, opts: any = {}) => {
-      doc.setFontSize(opts.size || 10);
-      doc.setFont('helvetica', opts.bold ? 'bold' : 'normal');
-      doc.setTextColor(opts.color || '#000000');
-      doc.text(String(text ?? ''), x, yPos, { maxWidth: opts.maxWidth, align: opts.align || 'left' });
-    };
-
-    addText('NASA FRESH MART', W/2, y, { size: 14, bold: true, align: 'center' }); y += 5;
-    addText('(001634825-A)', W/2, y, { size: 9, align: 'center' }); y += 5;
-    addText('NO 8G, JLN 3/2 PANDAN JAYA, 55100 KUALA LUMPUR.', W/2, y, { size: 9, align: 'center' }); y += 5;
-    addText('Tel : 0392856786', W/2, y, { size: 9, align: 'center' }); y += 8;
-    doc.setDrawColor('#000000'); doc.setLineWidth(0.3);
-    doc.line(col, y, W - margin, y); y += 6;
-    addText('INVOICE', W/2, y, { size: 12, bold: true, align: 'center' }); y += 6;
-    doc.line(col, y, W - margin, y); y += 6;
-
-    doc.setFontSize(9);
-    addText('Bill To:', col, y, { bold: true });
-    if (sale?.customer?.id) addText(`CUST-${sale.customer.id}`, col, y+5, { bold: true });
-    addText(customerName, col, y+10, { bold: true });
-    if (sale?.customer?.address) addText(sale.customer.address, col, y+15, { maxWidth: 80 });
-    const rightCol = W/2 + 20;
-    addText('NO.', rightCol, y, { bold: true }); addText(`: ${invoiceNo}`, rightCol+25, y, { bold: true });
-    addText('DATE', rightCol, y+5, { bold: true }); addText(`: ${date}`, rightCol+25, y+5, { bold: true });
-    addText('PAY TYPE', rightCol, y+10, { bold: true }); addText(`: ${sale?.paymentMode?.name || 'Cash'}`, rightCol+25, y+10);
-    addText('PENDING AMT', rightCol, y+15, { bold: true }); addText(`: ${Number(pendingAmount).toFixed(2)}`, rightCol+25, y+15, { bold: true });
-    addText('PAGE', rightCol, y+20, { bold: true }); addText(': 1 of 1', rightCol+25, y+20, { bold: true });
-    y += 28; doc.line(col, y, W-margin, y); y += 6;
-
-    doc.setFontSize(9); doc.setFont('helvetica', 'bold');
-    doc.text('Code', col, y); doc.text('Description', col+20, y);
-    doc.text('Birds', col+90, y, { align: 'center' }); doc.text('Qty', col+110, y, { align: 'right' });
-    doc.text('UOM', col+130, y, { align: 'center' }); doc.text('U.Price', col+155, y, { align: 'right' });
-    doc.text('Amount', W-margin, y, { align: 'right' });
-    y += 2; doc.line(col, y, W-margin, y); y += 6;
-
-    items.forEach((item: any) => {
-      doc.setFont('helvetica', 'normal');
-      doc.text(item.product?.code || '', col, y);
-      doc.text(item.product?.name || '', col+20, y, { maxWidth: 60 });
-      doc.text(String(Number(item.noOfBirds) || '-'), col+90, y, { align: 'center' });
-      doc.text(String(item.quantity), col+110, y, { align: 'right' });
-      doc.text(item.product?.unit?.name || item.product?.unit?.shortCode || 'Nos', col+130, y, { align: 'center' });
-      doc.text(Number(item.rate || 0).toFixed(2), col+155, y, { align: 'right' });
-      doc.text(Number(item.amount || item.total || 0).toFixed(2), W-margin, y, { align: 'right' });
-      y += lineH;
-    });
-
-    y += 2; doc.line(col, y, W-margin, y); y += 6;
-    addText(`RINGGIT MALAYSIA ${numberToWords(grandTotal)} ONLY`, col, y);
-    y += 8; doc.line(col, y, W-margin, y); y += 6;
-    if (totalBirds > 0) {
-      addText('TOTAL BIRDS :', W-margin-60, y, { bold: true });
-      addText(String(totalBirds), W-margin-10, y, { align: 'right' }); y += 6;
-    }
-    addText('TOTAL : RM', W-margin-60, y, { bold: true });
-    addText(Number(grandTotal).toFixed(2), W-margin-10, y, { bold: true, align: 'right' });
-    doc.line(W-margin-65, y+2, W-margin, y+2); doc.line(W-margin-65, y+3, W-margin, y+3);
-    y += 25;
-    addText('Authorised Signature', W-30, y, { size: 9, align: 'center' });
-    doc.line(W-60, y-4, W-10, y-4);
-
-    const blob = doc.output('blob');
-    return { blob, file: new File([blob], `Invoice_${invoiceNo}.pdf`, { type: 'application/pdf' }) };
-  };
-
-  const handleShare = () => {
-    setIsSharing(true);
-    let blob: Blob, file: File;
-    try {
-      ({ blob, file } = buildPdf());
-    } catch (err) {
-      toast.error('Failed to generate invoice PDF.');
-      console.error('Share invoice error:', err);
-      setIsSharing(false);
-      return;
-    }
-
-    // navigator.share must be called synchronously within the user gesture
-    if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
-      navigator.share({ files: [file], title: `Invoice ${invoiceNo}` })
-        .catch(() => { /* user cancelled or share failed — fall through to download */ })
-        .finally(() => setIsSharing(false));
-      return;
-    }
-
-    // Fallback: download the PDF
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `Invoice_${invoiceNo}.pdf`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
-    setIsSharing(false);
-  };
-
+  const handlePrint = () => window.print();
 
   const modalContent = (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 print:absolute print:top-0 print:left-0 print:block print:bg-transparent print:m-0 print:p-0 print-invoice-container">
@@ -239,7 +176,6 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
           </div>
           
           <div className="flex justify-between mb-6 text-[11px]">
-            {/* Left Column */}
             <div className="w-1/2 pr-4">
                <div className="flex">
                  <span className="w-16 font-bold">Bill To:</span>
@@ -256,14 +192,10 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
                <p className="font-bold">Attn:</p>
             </div>
             
-            {/* Right Column */}
             <div className="w-1/2 pl-12 text-[11px]">
                <div className="grid grid-cols-[100px_10px_1fr] gap-y-1">
                  <span className="font-bold">NO.</span><span className="font-bold">:</span><span className="font-bold">{invoiceNo}</span>
                  <span className="font-bold">DATE</span><span className="font-bold">:</span><span className="font-bold">{date}</span>
-                 {/* <span className="font-bold">YOUR P/O NO.</span><span className="font-bold">:</span><span></span> */}
-                 {/* <span className="font-bold">SALESMAN</span><span className="font-bold">:</span><span></span> */}
-                 {/* <span className="font-bold">TERMS</span><span className="font-bold">:</span><span className="font-bold">C.O.D.</span> */}
                  <span className="font-bold">PAY TYPE</span><span className="font-bold">:</span><span>{sale?.paymentMode?.name || 'Cash'}</span>
                  <span className="font-bold">PENDING AMT</span><span className="font-bold">:</span><span className="font-bold">{Number(pendingAmount).toFixed(2)}</span>
                  <span className="font-bold">PAGE</span><span className="font-bold">:</span><span className="font-bold">1 of 1</span>

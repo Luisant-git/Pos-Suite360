@@ -269,7 +269,7 @@ const SalesReport = () => {
                 <th className="px-4 py-3 border-r border-[#1E293B] text-center">Payment Mode</th>
                 <th className="px-4 py-3 border-r border-[#1E293B] text-center">Total Birds</th>
                 <th className="px-4 py-3 border-r border-[#1E293B] text-center">Total Amount</th>
-                <th className="px-4 py-3 text-center w-40">Action</th>
+                <th data-html2canvas-ignore="true" className="px-4 py-3 text-center w-40">Action</th>
               </tr>
             </thead>
             <tbody>
@@ -291,7 +291,7 @@ const SalesReport = () => {
                     </td>
                     <td className="px-4 py-3 border-r border-[#E2E8F0] text-center font-bold">{s.totalBirds > 0 ? s.totalBirds : '-'}</td>
                     <td className="px-4 py-3 border-r border-[#E2E8F0] text-center font-bold text-[#3B82F6]">{s.netPayable}</td>
-                    <td className="px-4 py-3 text-center">
+                    <td data-html2canvas-ignore="true" className="px-4 py-3 text-center">
                       <div className="flex justify-center items-center gap-2">
                         <button type="button" 
                           onClick={() => {

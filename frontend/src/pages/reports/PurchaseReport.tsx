@@ -270,7 +270,7 @@ const PurchaseReport = () => {
                 <th className="px-4 py-3 border-r border-[#1E293B] text-right">Total Amount</th>
                 {/* <th className="px-4 py-3 border-r border-[#1E293B] text-right">Tax Amount</th> */}
                 <th className="px-4 py-3 border-r border-[#1E293B] text-right">Net Amount</th>
-                <th className="px-4 py-3 text-center">Actions</th>
+                <th data-html2canvas-ignore="true" className="px-4 py-3 text-center">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -297,7 +297,7 @@ const PurchaseReport = () => {
                     <td className="px-4 py-3 border-r border-[#E2E8F0] text-right text-[#475569]">{p.totalAmount}</td>
                     {/* <td className="px-4 py-3 border-r border-[#E2E8F0] text-right text-[#475569]">{p.taxAmount}</td> */}
                     <td className="px-4 py-3 border-r border-[#E2E8F0] text-right font-bold text-[#10B981]">{p.netAmount}</td>
-                    <td className="px-4 py-3 text-center">
+                    <td data-html2canvas-ignore="true" className="px-4 py-3 text-center">
                       <button type="button" 
                         onClick={() => setViewId(p.id)}
                         className="text-[#3B82F6] border border-[#3B82F6] rounded p-1 hover:bg-[#3B82F6] hover:text-white transition-colors"

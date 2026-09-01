@@ -166,19 +166,19 @@ const ProfitLossReport = () => {
         </div>
 
         <div className="flex flex-wrap items-center gap-2 w-full lg:w-auto justify-start lg:justify-end mt-2 lg:mt-0">
-          <button 
+          <button
             onClick={exportToCsv}
-            className="bg-white border border-gray-300 hover:bg-gray-50 text-green-700 px-2 py-1 rounded flex items-center gap-1 font-bold text-[12px] transition-colors shadow-sm"
+            className="bg-white border border-gray-300 hover:bg-gray-50 text-green-700 px-3 py-1.5 rounded flex items-center justify-center gap-1 font-bold text-[12px] whitespace-nowrap transition-colors shadow-sm"
           >
             <Download size={14} /> Export CSV
           </button>
           <button
             onClick={() => exportTableToPdf('pnl-report-content', `PNL_${fromDate}_to_${toDate}`)}
-            className="bg-[#EF4444] hover:bg-[#DC2626] text-white px-2 py-1 rounded flex items-center gap-1 font-bold text-[12px] transition-colors shadow-sm"
+            className="bg-[#EF4444] hover:bg-[#DC2626] text-white px-3 py-1.5 rounded flex items-center justify-center gap-1 font-bold text-[12px] whitespace-nowrap transition-colors shadow-sm"
           >
             <Download size={14} /> Export PDF
           </button>
-          <button className="bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 px-2 py-1 rounded flex items-center gap-1 font-bold text-[12px] transition-colors shadow-sm" onClick={() => window.print()}>
+          <button className="bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 px-3 py-1.5 rounded flex items-center justify-center gap-1 font-bold text-[12px] whitespace-nowrap transition-colors shadow-sm" onClick={() => window.print()}>
             <Printer size={14} /> Print
           </button>
         </div>

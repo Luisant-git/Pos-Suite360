@@ -64,7 +64,7 @@ const SalesReturnReport = () => {
               </div>
               <button type="button"
                 onClick={() => exportTableToPdf('sales-return-table', 'Sales_Return_Report')}
-                className="bg-[#EF4444] hover:bg-[#DC2626] text-white px-3 py-1 rounded flex items-center gap-1.5 text-[12px] font-bold transition-colors shrink-0"
+                className="bg-[#EF4444] hover:bg-[#DC2626] text-white px-3 py-1 rounded flex items-center justify-center gap-1.5 text-[12px] font-bold whitespace-nowrap transition-colors shrink-0"
               >
                 <Download size={13} /> Export PDF
               </button>

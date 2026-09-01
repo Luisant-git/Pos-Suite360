@@ -308,7 +308,7 @@ const SalesReport = () => {
                             setSelectedSale({ id: s.id });
                             setIsPrintModalOpen(true);
                           }}
-                          className="bg-[#3B82F6] hover:bg-[#2563EB] text-white px-2 py-1 rounded-full flex items-center gap-1 font-bold text-[11px] transition-colors"
+                          className="bg-[#3B82F6] hover:bg-[#2563EB] text-white px-3 py-1.5 rounded-full flex items-center justify-center gap-1 font-bold text-[11px] whitespace-nowrap transition-colors"
                         >
                           <Printer size={12} /> Print
                         </button>
@@ -317,7 +317,7 @@ const SalesReport = () => {
                             setSelectedSale({ id: s.id });
                             setIsPrintModalOpen(true);
                           }}
-                          className="bg-[#25D366] hover:bg-[#1EBE55] text-white px-2 py-1 rounded-full flex items-center gap-1 font-bold text-[11px] transition-colors"
+                          className="bg-[#25D366] hover:bg-[#1EBE55] text-white px-3 py-1.5 rounded-full flex items-center justify-center gap-1 font-bold text-[11px] whitespace-nowrap transition-colors"
                         >
                           <Share2 size={12} /> Share PDF
                         </button>

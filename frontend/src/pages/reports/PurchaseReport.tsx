@@ -239,19 +239,19 @@ const PurchaseReport = () => {
                 }));
                 exportToExcel(exportData, `Purchase_Report_${fromDate}_to_${toDate}`);
               }}
-              className="bg-[#10B981] hover:bg-[#059669] text-white px-3 py-1.5 rounded flex items-center gap-1.5 text-[12px] font-bold transition-colors"
+              className="bg-[#10B981] hover:bg-[#059669] text-white px-3 py-1.5 rounded flex items-center justify-center gap-1.5 text-[12px] font-bold whitespace-nowrap transition-colors"
             >
               <Download size={14} /> Export Excel
             </button>
             <button type="button"
               onClick={() => exportTableToPdf('purchase-report-table', `Purchase_Report_${fromDate}_to_${toDate}`)}
-              className="bg-[#EF4444] hover:bg-[#DC2626] text-white px-3 py-1.5 rounded flex items-center gap-1.5 text-[12px] font-bold transition-colors"
+              className="bg-[#EF4444] hover:bg-[#DC2626] text-white px-3 py-1.5 rounded flex items-center justify-center gap-1.5 text-[12px] font-bold whitespace-nowrap transition-colors"
             >
               <Download size={14} /> Export PDF
             </button>
             <button type="button" 
               onClick={() => navigate('/purchase/new')}
-              className="text-[#64748B] border border-[#CBD5E1] hover:bg-gray-50 px-3 py-1.5 rounded flex items-center gap-1.5 text-[12px] font-bold transition-colors"
+              className="text-[#64748B] border border-[#CBD5E1] hover:bg-gray-50 px-3 py-1.5 rounded flex items-center justify-center gap-1.5 text-[12px] font-bold whitespace-nowrap transition-colors"
             >
               <Plus size={14} /> New Purchase Entry
             </button>

@@ -134,17 +134,17 @@ const StockReport = () => {
           <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
             <button type="button" 
               onClick={() => exportToExcel(products, 'Stock_Report')}
-              className="bg-[#10B981] hover:bg-[#059669] text-white px-3 py-1.5 rounded flex items-center gap-1.5 text-[12px] font-bold transition-colors"
+              className="bg-[#10B981] hover:bg-[#059669] text-white px-3 py-1.5 rounded flex items-center justify-center gap-1.5 text-[12px] font-bold whitespace-nowrap transition-colors"
             >
               <Download size={14} /> Export Excel
             </button>
             <button type="button"
               onClick={() => exportTableToPdf('stock-report-table', 'Stock_Report')}
-              className="bg-[#EF4444] hover:bg-[#DC2626] text-white px-3 py-1.5 rounded flex items-center gap-1.5 text-[12px] font-bold transition-colors"
+              className="bg-[#EF4444] hover:bg-[#DC2626] text-white px-3 py-1.5 rounded flex items-center justify-center gap-1.5 text-[12px] font-bold whitespace-nowrap transition-colors"
             >
               <Download size={14} /> Export PDF
             </button>
-            <button type="button" className="bg-[#64748B] hover:bg-[#475569] text-white px-3 py-1.5 rounded flex items-center gap-1.5 text-[12px] font-bold transition-colors">
+            <button type="button" className="bg-[#64748B] hover:bg-[#475569] text-white px-3 py-1.5 rounded flex items-center justify-center gap-1.5 text-[12px] font-bold whitespace-nowrap transition-colors">
               <Activity size={14} /> Live Inventory Valuation
             </button>
           </div>

@@ -285,7 +285,7 @@ const SalesReport = () => {
                     <td className="px-4 py-3 border-r border-[#E2E8F0] text-center text-[#475569]">{s.date}</td>
                     <td className="px-4 py-3 border-r border-[#E2E8F0] font-medium text-[#334155]">{s.customerName}</td>
                     <td className="px-4 py-3 border-r border-[#E2E8F0] text-center">
-                      <span className="bg-[#64748B] text-white px-2 py-1 rounded text-[11px] font-bold inline-flex items-center justify-center min-w-[50px]">
+                      <span className="bg-[#64748B] text-white px-2 py-0.5 rounded text-[10px] font-bold inline-flex items-center justify-center">
                         {s.paymentMode}
                       </span>
                     </td>

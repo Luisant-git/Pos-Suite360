@@ -286,7 +286,7 @@ const PurchaseReport = () => {
                     <td className="px-4 py-3 border-r border-[#E2E8F0] text-[#475569]">{p.date}</td>
                     <td className="px-4 py-3 border-r border-[#E2E8F0] font-medium text-[#334155]">{p.supplierName}</td>
                     <td className="px-4 py-3 border-r border-[#E2E8F0]">
-                      <span className={`px-2 py-1 rounded text-[11px] font-bold inline-flex items-center justify-center min-w-[50px] ${
+                      <span className={`px-2 py-0.5 rounded text-[10px] font-bold inline-flex items-center justify-center ${
                         p.mode === 'Cash' ? 'bg-[#06B6D4] text-white' : 
                         p.mode === 'Card' ? 'bg-[#0EA5E9] text-white' : 
                         'bg-[#14B8A6] text-white'

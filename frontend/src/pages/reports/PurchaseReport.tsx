@@ -6,6 +6,7 @@ import { useSettings } from '../../contexts/SettingsContext';
 import api from '../../services/api';
 import ReportTabs from '../../components/ReportTabs';
 import { exportToExcel } from '../../utils/exportExcel';
+import { exportTableToPdf } from '../../utils/exportPdf';
 import ViewPurchaseModal from '../purchase/ViewPurchaseModal';
 import PaginationControls from '../../components/PaginationControls';
 
@@ -242,6 +243,12 @@ const PurchaseReport = () => {
             >
               <Download size={14} /> Export Excel
             </button>
+            <button type="button"
+              onClick={() => exportTableToPdf('purchase-report-table', `Purchase_Report_${fromDate}_to_${toDate}`)}
+              className="bg-[#EF4444] hover:bg-[#DC2626] text-white px-3 py-1.5 rounded flex items-center gap-1.5 text-[12px] font-bold transition-colors"
+            >
+              <Download size={14} /> Export PDF
+            </button>
             <button type="button" 
               onClick={() => navigate('/purchase/new')}
               className="text-[#64748B] border border-[#CBD5E1] hover:bg-gray-50 px-3 py-1.5 rounded flex items-center gap-1.5 text-[12px] font-bold transition-colors"
@@ -251,7 +258,7 @@ const PurchaseReport = () => {
           </div>
         </div>
 
-        <div className="flex-1 overflow-auto overflow-x-auto">
+        <div className="flex-1 overflow-auto overflow-x-auto" id="purchase-report-table">
           <table className="w-full text-left text-[12px] whitespace-nowrap">
             <thead>
               <tr className="bg-[#0F172A] text-white font-bold">

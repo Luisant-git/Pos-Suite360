@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { CornerDownLeft, Package, Search, Filter } from 'lucide-react';
+import { CornerDownLeft, Package, Search, Filter, Download } from 'lucide-react';
 import api from '../../services/api';
 import ReportTabs from '../../components/ReportTabs';
 import { useSettings } from '../../contexts/SettingsContext';
+import { exportTableToPdf } from '../../utils/exportPdf';
 import PaginationControls from '../../components/PaginationControls';
 
 const PurchaseReturnReport = () => {
@@ -60,6 +61,12 @@ const PurchaseReturnReport = () => {
               <div className="bg-[#FACC15] text-[#854D0E] font-bold text-[11px] px-3 py-1 rounded-sm shadow-sm shrink-0 whitespace-nowrap">
                 {returns.length} Returns
               </div>
+              <button type="button"
+                onClick={() => exportTableToPdf('purchase-return-table', 'Purchase_Return_Report')}
+                className="bg-[#EF4444] hover:bg-[#DC2626] text-white px-3 py-1 rounded flex items-center gap-1.5 text-[12px] font-bold transition-colors shrink-0"
+              >
+                <Download size={13} /> Export PDF
+              </button>
             </div>
           </div>
 
@@ -114,7 +121,7 @@ const PurchaseReturnReport = () => {
           </div>
 
           {/* Table */}
-          <div className="overflow-x-auto custom-scrollbar">
+          <div className="overflow-x-auto custom-scrollbar" id="purchase-return-table">
             <table className="w-full text-left text-[13px] whitespace-nowrap min-w-[800px]">
               <thead>
                 <tr className="bg-[#0F172A] text-white font-bold">

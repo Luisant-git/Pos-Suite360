@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Download, Box, Activity } from 'lucide-react';
+import { exportTableToPdf } from '../../utils/exportPdf';
 import api from '../../services/api';
 import ReportTabs from '../../components/ReportTabs';
 import { exportToExcel } from '../../utils/exportExcel';
@@ -137,13 +138,19 @@ const StockReport = () => {
             >
               <Download size={14} /> Export Excel
             </button>
+            <button type="button"
+              onClick={() => exportTableToPdf('stock-report-table', 'Stock_Report')}
+              className="bg-[#EF4444] hover:bg-[#DC2626] text-white px-3 py-1.5 rounded flex items-center gap-1.5 text-[12px] font-bold transition-colors"
+            >
+              <Download size={14} /> Export PDF
+            </button>
             <button type="button" className="bg-[#64748B] hover:bg-[#475569] text-white px-3 py-1.5 rounded flex items-center gap-1.5 text-[12px] font-bold transition-colors">
               <Activity size={14} /> Live Inventory Valuation
             </button>
           </div>
         </div>
 
-        <div className="flex-1 overflow-auto overflow-x-auto">
+        <div className="flex-1 overflow-auto overflow-x-auto" id="stock-report-table">
           <table className="w-full text-left text-[12px] whitespace-nowrap">
             <thead>
               <tr className="bg-[#0F172A] text-white font-bold">

@@ -259,7 +259,7 @@ const SalesReport = () => {
           </div>
         </div>
 
-        <div className="flex-1 overflow-auto overflow-x-auto">
+        <div className="flex-1 overflow-auto overflow-x-auto" id="sales-report-table">
           <table className="w-full text-left text-[12px] whitespace-nowrap">
             <thead>
               <tr className="bg-[#0F172A] text-white font-bold">

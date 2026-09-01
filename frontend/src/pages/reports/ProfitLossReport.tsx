@@ -6,6 +6,7 @@ import { format, startOfMonth, startOfYear } from 'date-fns';
 import { useSettings } from '../../contexts/SettingsContext';
 import api from '../../services/api';
 import ReportTabs from '../../components/ReportTabs';
+import { exportTableToPdf } from '../../utils/exportPdf';
 
 const ProfitLossReport = () => {
   const { formatCurrency } = useSettings();
@@ -169,7 +170,13 @@ const ProfitLossReport = () => {
             onClick={exportToCsv}
             className="bg-white border border-gray-300 hover:bg-gray-50 text-green-700 px-2 py-1 rounded flex items-center gap-1 font-bold text-[12px] transition-colors shadow-sm"
           >
-            <Download size={14} /> Export
+            <Download size={14} /> Export CSV
+          </button>
+          <button
+            onClick={() => exportTableToPdf('pnl-report-content', `PNL_${fromDate}_to_${toDate}`)}
+            className="bg-[#EF4444] hover:bg-[#DC2626] text-white px-2 py-1 rounded flex items-center gap-1 font-bold text-[12px] transition-colors shadow-sm"
+          >
+            <Download size={14} /> Export PDF
           </button>
           <button className="bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 px-2 py-1 rounded flex items-center gap-1 font-bold text-[12px] transition-colors shadow-sm" onClick={() => window.print()}>
             <Printer size={14} /> Print
@@ -179,7 +186,7 @@ const ProfitLossReport = () => {
 
       <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-3 min-h-0 print:block">
         {/* Left Side: Ledger */}
-        <div className="lg:col-span-8 bg-white rounded shadow-sm border border-gray-200 flex flex-col min-h-0 print:border-none print:shadow-none print:h-auto">
+        <div className="lg:col-span-8 bg-white rounded shadow-sm border border-gray-200 flex flex-col min-h-0 print:border-none print:shadow-none print:h-auto" id="pnl-report-content">
           {/* Header */}
           <div className="bg-[#1F2937] text-white px-4 py-2 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-0 shrink-0">
             <div>

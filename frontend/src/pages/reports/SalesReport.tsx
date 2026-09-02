@@ -60,6 +60,7 @@ const SalesReport = () => {
           customerName: s.customer?.name || 'Walk-in',
           paymentMode: s.paymentMode?.name || 'Cash',
           totalBirds,
+          noOfItems: s.items?.length || 0,
           netPayable: formatCurrency(s.grandTotal || 0),
           rawTotalAmount: s.grandTotal || 0,
           items: s.items || [],
@@ -120,7 +121,7 @@ const SalesReport = () => {
           <div>
             <label className="flex items-center gap-1 text-[12px] text-[#3B82F6] mb-1 font-bold"><FileDigit size={12} /> Invoice No</label>
             <div className="relative">
-              <Search size={14} className="absolute left-2.5 top-2.5 text-gray-400" />
+              <Search size={14} className="absolute left-2.5 top-2.5 text-[#9CA3AF]" />
               <input 
                 type="text" 
                 value={invoiceNo}
@@ -134,7 +135,7 @@ const SalesReport = () => {
           <div>
             <label className="flex items-center gap-1 text-[12px] text-[#64748B] mb-1 font-bold"><Users size={12} /> Customer Name</label>
             <div className="relative">
-              <Search size={14} className="absolute left-2.5 top-2.5 text-gray-400" />
+              <Search size={14} className="absolute left-2.5 top-2.5 text-[#9CA3AF]" />
               <select
                 value={customerId}
                 onChange={(e) => setCustomerId(e.target.value)}
@@ -193,7 +194,7 @@ const SalesReport = () => {
               setInvoiceNo('');
               setPaymentMode('');
               setQuickSearch('');
-            }} className={`flex items-center gap-1 px-3 py-1.5 rounded-md text-[12px] font-bold transition-colors shadow-sm border ${!isReset ? 'bg-white text-red-600 border-red-200 hover:bg-red-50' : 'bg-white text-[#1F2937] border-gray-200 hover:bg-gray-50'}`}>
+            }} className={`flex items-center gap-1 px-3 py-1.5 rounded-md text-[12px] font-bold transition-colors shadow-sm border ${!isReset ? 'bg-white text-red-600 border-red-200 hover:bg-red-50' : 'bg-white text-[#1F2937] border-[#E5E7EB] hover:bg-[#F9FAFB]'}`}>
               <RotateCcw size={14} /> Reset Filters
             </button>
           </div>
@@ -219,7 +220,7 @@ const SalesReport = () => {
           </div>
           <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
             <div className="relative">
-              <Search size={14} className="absolute left-2.5 top-2.5 text-gray-400" />
+              <Search size={14} className="absolute left-2.5 top-2.5 text-[#9CA3AF]" />
               <input 
                 type="text" 
                 value={quickSearch}
@@ -235,6 +236,7 @@ const SalesReport = () => {
                   'Date': s.date,
                   'Customer Name': s.customerName,
                   'Payment Mode': s.paymentMode,
+                  'No. of Items': s.noOfItems,
                   'Total Birds': s.totalBirds,
                   'Total Amount': s.netPayable
                 }));
@@ -245,7 +247,7 @@ const SalesReport = () => {
               <Download size={14} /> Export Excel
             </button>
             <button type="button"
-              onClick={() => exportTableToPdf('sales-report-table', `Sales_Report_${fromDate}_to_${toDate}`)}
+              onClick={() => exportTableToPdf('sales-report-export', `Sales_Report_${fromDate}_to_${toDate}`)}
               className="bg-[#EF4444] hover:bg-[#DC2626] text-white px-3 py-1.5 rounded flex items-center gap-1.5 text-[12px] font-bold transition-colors"
             >
               <Download size={14} /> Export PDF
@@ -259,14 +261,23 @@ const SalesReport = () => {
           </div>
         </div>
 
-        <div className="flex-1 overflow-auto overflow-x-auto" id="sales-report-table">
+        <div id="sales-report-export" className="flex-1 flex flex-col min-h-0 overflow-hidden">
+          <div className="pdf-header hidden mb-4">
+            <div className="flex justify-between items-end">
+              <h2 className="text-base font-bold text-[#1E293B] uppercase tracking-wider">Sales Report</h2>
+              <p className="text-[#475569] font-bold text-xs">Date: {fromDate || 'All Time'} to {toDate || 'All Time'}</p>
+            </div>
+          </div>
+          <div className="flex-1 overflow-auto overflow-x-auto" id="sales-report-table">
           <table className="w-full text-left text-[12px] whitespace-nowrap">
             <thead>
               <tr className="bg-[#0F172A] text-white font-bold">
+                <th className="px-4 py-3 border-r border-[#1E293B] w-12 text-center">S.No</th>
                 <th className="px-4 py-3 border-r border-[#1E293B]">Invoice No</th>
                 <th className="px-4 py-3 border-r border-[#1E293B] text-center">Date</th>
                 <th className="px-4 py-3 border-r border-[#1E293B]">Customer Name</th>
                 <th className="px-4 py-3 border-r border-[#1E293B] text-center">Payment Mode</th>
+                <th className="px-4 py-3 border-r border-[#1E293B] text-center">No. of Items</th>
                 <th className="px-4 py-3 border-r border-[#1E293B] text-center">Total Birds</th>
                 <th className="px-4 py-3 border-r border-[#1E293B] text-center">Total Amount</th>
                 <th data-html2canvas-ignore="true" className="px-4 py-3 text-center w-40">Action</th>
@@ -274,21 +285,25 @@ const SalesReport = () => {
             </thead>
             <tbody>
               {isLoading ? (
-                <tr><td colSpan={6} className="text-center p-6 text-gray-500">Loading report data...</td></tr>
+                <tr><td colSpan={9} className="text-center p-6 text-[#6B7280]">Loading report data...</td></tr>
               ) : filteredSales.length === 0 ? (
-                <tr><td colSpan={8} className="text-center p-6 text-gray-500">No sales records found.</td></tr>
+                <tr><td colSpan={9} className="text-center p-6 text-[#6B7280]">No sales records found.</td></tr>
               ) : (
                 paginatedSales.map((s: any, index: number) => (
                   <React.Fragment key={s.id}>
                     <tr className={`border-b border-[#E2E8F0] ${index % 2 === 0 ? 'bg-white' : 'bg-[#F8FAFC]'} hover:bg-[#EFF6FF]`}>
+                    <td className="px-4 py-3 border-r border-[#E2E8F0] text-center text-[#64748B] font-medium">{(currentPage - 1) * entriesPerPage + index + 1}</td>
                     <td className="px-4 py-3 border-r border-[#E2E8F0] font-bold text-[#3B82F6] cursor-pointer hover:underline">{s.invoiceNo}</td>
                     <td className="px-4 py-3 border-r border-[#E2E8F0] text-center text-[#475569]">{s.date}</td>
                     <td className="px-4 py-3 border-r border-[#E2E8F0] font-medium text-[#334155]">{s.customerName}</td>
                     <td className="px-4 py-3 border-r border-[#E2E8F0] text-center">
-                      <span className="bg-[#64748B] text-white px-2 py-0.5 rounded text-[10px] font-bold inline-flex items-center justify-center">
-                        {s.paymentMode}
-                      </span>
+                      <div className="flex justify-center items-center">
+                        <span className="payment-badge bg-[#64748B] text-white px-2 rounded text-[10px] font-bold inline-block h-[18px] leading-[18px] text-center" data-pdf-color="#64748B">
+                          {s.paymentMode}
+                        </span>
+                      </div>
                     </td>
+                    <td className="px-4 py-3 border-r border-[#E2E8F0] text-center font-bold text-[#475569]">{s.noOfItems}</td>
                     <td className="px-4 py-3 border-r border-[#E2E8F0] text-center font-bold">{s.totalBirds > 0 ? s.totalBirds : '-'}</td>
                     <td className="px-4 py-3 border-r border-[#E2E8F0] text-center font-bold text-[#3B82F6]">{s.netPayable}</td>
                     <td data-html2canvas-ignore="true" className="px-4 py-3 text-center">
@@ -331,6 +346,10 @@ const SalesReport = () => {
             </tbody>
 
           </table>
+        </div>
+        <div className="pdf-footer hidden mt-6 text-right border-t-2 border-[#1E293B] pt-4 pb-8 pr-6">
+          <h3 className="text-xl font-bold text-[#1E293B] inline-block">Total Amount: {formatCurrency(totalSalesAmount)}</h3>
+        </div>
         </div>
         {!isLoading && (
           <PaginationControls

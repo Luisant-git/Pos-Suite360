@@ -39,6 +39,8 @@ const PurchaseReturnReport = () => {
     return match;
   });
 
+  const totalReturnsAmount = filteredReturns.reduce((sum: number, ret: any) => sum + (Number(ret.totalAmount) || 0), 0);
+
   const [entriesPerPage, setEntriesPerPage] = useState(25);
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -62,7 +64,7 @@ const PurchaseReturnReport = () => {
                 {returns.length} Returns
               </div>
               <button type="button"
-                onClick={() => exportTableToPdf('purchase-return-table', 'Purchase_Return_Report')}
+                onClick={() => exportTableToPdf('purchase-return-export', 'Purchase_Return_Report')}
                 className="bg-[#EF4444] hover:bg-[#DC2626] text-white px-3 py-1 rounded flex items-center justify-center gap-1.5 text-[12px] font-bold whitespace-nowrap transition-colors shrink-0"
               >
                 <Download size={13} /> Export PDF
@@ -74,14 +76,14 @@ const PurchaseReturnReport = () => {
           <div className="bg-white p-3 border-b border-[#E6E9ED] grid grid-cols-1 md:grid-cols-4 gap-3">
             <div className="relative col-span-1 md:col-span-2">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Search size={14} className="text-gray-400" />
+                <Search size={14} className="text-[#9CA3AF]" />
               </div>
               <input
                 type="text"
                 placeholder="Search by return no or supplier name..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full pl-9 pr-3 py-2 border border-gray-200 rounded text-[13px] outline-none focus:border-[#F59E0B]"
+                className="w-full pl-9 pr-3 py-2 border border-[#E5E7EB] rounded text-[13px] outline-none focus:border-[#F59E0B]"
               />
             </div>
             <div>
@@ -89,7 +91,7 @@ const PurchaseReturnReport = () => {
                 type="date"
                 value={filterFromDate}
                 onChange={(e) => setFilterFromDate(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-200 rounded text-[13px] outline-none focus:border-[#F59E0B]"
+                className="w-full px-3 py-2 border border-[#E5E7EB] rounded text-[13px] outline-none focus:border-[#F59E0B]"
               />
             </div>
             <div className="flex gap-2">
@@ -97,7 +99,7 @@ const PurchaseReturnReport = () => {
                 type="date"
                 value={filterToDate}
                 onChange={(e) => setFilterToDate(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-200 rounded text-[13px] outline-none focus:border-[#F59E0B]"
+                className="w-full px-3 py-2 border border-[#E5E7EB] rounded text-[13px] outline-none focus:border-[#F59E0B]"
               />
               <button className="bg-[#F59E0B] text-white px-3 rounded flex items-center justify-center hover:bg-[#D97706] transition-colors">
                 <Filter size={14} />
@@ -110,7 +112,7 @@ const PurchaseReturnReport = () => {
                   setEntriesPerPage(Number(e.target.value));
                   setCurrentPage(1);
                 }}
-                className="w-full px-3 py-2 border border-gray-200 rounded text-[13px] outline-none bg-white focus:border-[#F59E0B]"
+                className="w-full px-3 py-2 border border-[#E5E7EB] rounded text-[13px] outline-none bg-white focus:border-[#F59E0B]"
               >
                 <option value={10}>10 Entries</option>
                 <option value={25}>25 Entries</option>
@@ -121,10 +123,18 @@ const PurchaseReturnReport = () => {
           </div>
 
           {/* Table */}
-          <div className="overflow-x-auto custom-scrollbar" id="purchase-return-table">
-            <table className="w-full text-left text-[13px] whitespace-nowrap min-w-[800px]">
+          <div id="purchase-return-export" className="flex-1 flex flex-col min-h-0 overflow-hidden">
+            <div className="pdf-header hidden mb-4">
+              <div className="flex justify-between items-end">
+                <h2 className="text-base font-bold text-[#1E293B] uppercase tracking-wider">Purchase Return Report</h2>
+                <p className="text-[#475569] font-bold text-xs">Date: {filterFromDate || 'All Time'} to {filterToDate || 'All Time'}</p>
+              </div>
+            </div>
+            <div className="overflow-x-auto custom-scrollbar flex-1" id="purchase-return-table">
+              <table className="w-full text-left text-[13px] whitespace-nowrap min-w-[800px]">
               <thead>
                 <tr className="bg-[#0F172A] text-white font-bold">
+                  <th className="px-4 py-3 border-r border-[#1E293B] w-12 text-center">S.No</th>
                   <th className="px-4 py-3 border-r border-[#1E293B]">Return No</th>
                   <th className="px-4 py-3 border-r border-[#1E293B]">Return Date</th>
                   <th className="px-4 py-3 border-r border-[#1E293B]">Supplier Name</th>
@@ -136,37 +146,38 @@ const PurchaseReturnReport = () => {
               <tbody>
                 {isLoading ? (
                   <tr>
-                    <td colSpan={6} className="px-4 py-8 text-center text-gray-500 font-medium">Loading report data...</td>
+                    <td colSpan={7} className="px-4 py-8 text-center text-[#6B7280] font-medium">Loading report data...</td>
                   </tr>
                 ) : filteredReturns.length === 0 ? (
                   <tr>
-                    <td colSpan={6} className="px-4 py-8 text-center text-gray-500 font-medium">No purchase returns found matching your filters.</td>
+                    <td colSpan={7} className="px-4 py-8 text-center text-[#6B7280] font-medium">No purchase returns found matching your filters.</td>
                   </tr>
                 ) : (
                   paginatedReturns.map((ret: any, index: number) => (
-                    <tr key={ret.id} className={`border-b border-gray-100 ${index % 2 === 0 ? 'bg-white' : 'bg-[#FAFAFA]'}`}>
-                      <td className="px-4 py-3 border-r border-gray-100 font-bold text-[#F59E0B]">{ret.returnNo}</td>
-                      <td className="px-4 py-3 border-r border-gray-100 font-medium text-gray-700">
+                    <tr key={ret.id} className={`border-b border-[#F3F4F6] ${index % 2 === 0 ? 'bg-white' : 'bg-[#FAFAFA]'}`}>
+                      <td className="px-4 py-3 border-r border-[#F3F4F6] text-center text-[#64748B] font-medium">{(currentPage - 1) * entriesPerPage + index + 1}</td>
+                      <td className="px-4 py-3 border-r border-[#F3F4F6] font-bold text-[#F59E0B]">{ret.returnNo}</td>
+                      <td className="px-4 py-3 border-r border-[#F3F4F6] font-medium text-[#374151]">
                         {new Date(ret.date).toISOString().split('T')[0]}
                       </td>
-                      <td className="px-4 py-3 border-r border-gray-100 font-bold text-gray-800">
+                      <td className="px-4 py-3 border-r border-[#F3F4F6] font-bold text-[#1F2937]">
                         {ret.supplier?.name || 'Unknown Supplier'}
                       </td>
-                      <td className="px-4 py-3 border-r border-gray-100">
+                      <td className="px-4 py-3 border-r border-[#F3F4F6]">
                         <div className="flex flex-wrap gap-2">
                           {ret.items?.map((item: any) => (
                             <div key={item.id} className="bg-white border border-[#FDE68A] text-[#92400E] px-2 py-1 rounded flex items-center gap-1 text-[11px] font-bold shadow-sm">
                               <Package size={12} className="text-[#F59E0B]" />
-                              {item.product?.name} <span className="font-normal text-gray-600">(Qty: {item.returnQty})</span>
+                              {item.product?.name} <span className="font-normal text-[#4B5563]">(Qty: {item.returnQty})</span>
                             </div>
                           ))}
-                          {(!ret.items || ret.items.length === 0) && <span className="text-gray-400 text-[11px]">No items</span>}
+                          {(!ret.items || ret.items.length === 0) && <span className="text-[#9CA3AF] text-[11px]">No items</span>}
                         </div>
                       </td>
-                      <td className="px-4 py-3 border-r border-gray-100 text-gray-600">
+                      <td className="px-4 py-3 border-r border-[#F3F4F6] text-[#4B5563]">
                         {ret.remarks || '-'}
                       </td>
-                      <td className="px-4 py-3 text-right font-bold text-gray-900">
+                      <td className="px-4 py-3 text-right font-bold text-[#111827]">
                         {formatCurrency(ret.totalAmount)}
                       </td>
                     </tr>
@@ -174,6 +185,10 @@ const PurchaseReturnReport = () => {
                 )}
               </tbody>
             </table>
+          </div>
+          <div className="pdf-footer hidden mt-6 text-right border-t-2 border-[#1E293B] pt-4 pb-8 pr-6">
+            <h3 className="text-xl font-bold text-[#1E293B] inline-block">Total Claim Amount: {formatCurrency(totalReturnsAmount)}</h3>
+          </div>
           </div>
           {!isLoading && (
             <PaginationControls

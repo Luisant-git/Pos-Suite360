@@ -55,6 +55,7 @@ const PurchaseReport = () => {
         totalAmount: formatCurrency(p.subtotal),
         taxAmount: formatCurrency(p.tax),
         netAmount: formatCurrency(p.grandTotal),
+        rawGrandTotal: p.grandTotal,
       }));
     },
   });
@@ -71,6 +72,8 @@ const PurchaseReport = () => {
       p.netAmount.toLowerCase().includes(term)
     );
   });
+
+  const totalPurchasesAmount = filteredPurchases.reduce((sum: number, p: any) => sum + (Number(p.rawGrandTotal) || 0), 0);
 
   const [entriesPerPage, setEntriesPerPage] = useState(25);
   const [currentPage, setCurrentPage] = useState(1);
@@ -117,7 +120,7 @@ const PurchaseReport = () => {
           <div>
             <label className="flex items-center gap-1 text-[12px] text-[#3B82F6] mb-1 font-bold"><FileDigit size={12} /> Entry / Supp. Inv. No</label>
             <div className="relative">
-              <Search size={14} className="absolute left-2.5 top-2.5 text-gray-400" />
+              <Search size={14} className="absolute left-2.5 top-2.5 text-[#9CA3AF]" />
               <input 
                 type="text" 
                 value={invoiceNo}
@@ -131,7 +134,7 @@ const PurchaseReport = () => {
           <div>
             <label className="flex items-center gap-1 text-[12px] text-[#64748B] mb-1 font-bold"><Truck size={12} /> Supplier Name</label>
             <div className="relative">
-              <Search size={14} className="absolute left-2.5 top-2.5 text-gray-400" />
+              <Search size={14} className="absolute left-2.5 top-2.5 text-[#9CA3AF]" />
               <select
                 value={supplierId}
                 onChange={(e) => setSupplierId(e.target.value)}
@@ -190,7 +193,7 @@ const PurchaseReport = () => {
               setInvoiceNo('');
               setPaymentMode('');
               setQuickSearch('');
-            }} className={`flex items-center gap-1 px-3 py-1.5 rounded-md text-[12px] font-bold transition-colors shadow-sm border ${!isReset ? 'bg-white text-red-600 border-red-200 hover:bg-red-50' : 'bg-white text-[#1F2937] border-gray-200 hover:bg-gray-50'}`}>
+            }} className={`flex items-center gap-1 px-3 py-1.5 rounded-md text-[12px] font-bold transition-colors shadow-sm border ${!isReset ? 'bg-white text-red-600 border-red-200 hover:bg-red-50' : 'bg-white text-[#1F2937] border-[#E5E7EB] hover:bg-[#F9FAFB]'}`}>
               <RotateCcw size={14} /> Reset Filters
             </button>
           </div>
@@ -216,7 +219,7 @@ const PurchaseReport = () => {
           </div>
           <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
             <div className="relative">
-              <Search size={14} className="absolute left-2.5 top-2.5 text-gray-400" />
+              <Search size={14} className="absolute left-2.5 top-2.5 text-[#9CA3AF]" />
               <input 
                 type="text" 
                 value={quickSearch}
@@ -244,24 +247,32 @@ const PurchaseReport = () => {
               <Download size={14} /> Export Excel
             </button>
             <button type="button"
-              onClick={() => exportTableToPdf('purchase-report-table', `Purchase_Report_${fromDate}_to_${toDate}`)}
+              onClick={() => exportTableToPdf('purchase-report-export', `Purchase_Report_${fromDate}_to_${toDate}`)}
               className="bg-[#EF4444] hover:bg-[#DC2626] text-white px-3 py-1.5 rounded flex items-center justify-center gap-1.5 text-[12px] font-bold whitespace-nowrap transition-colors"
             >
               <Download size={14} /> Export PDF
             </button>
             <button type="button" 
               onClick={() => navigate('/purchase/new')}
-              className="text-[#64748B] border border-[#CBD5E1] hover:bg-gray-50 px-3 py-1.5 rounded flex items-center justify-center gap-1.5 text-[12px] font-bold whitespace-nowrap transition-colors"
+              className="text-[#64748B] border border-[#CBD5E1] hover:bg-[#F9FAFB] px-3 py-1.5 rounded flex items-center justify-center gap-1.5 text-[12px] font-bold whitespace-nowrap transition-colors"
             >
               <Plus size={14} /> New Purchase Entry
             </button>
           </div>
         </div>
 
-        <div className="flex-1 overflow-auto overflow-x-auto" id="purchase-report-table">
+        <div id="purchase-report-export" className="flex-1 flex flex-col min-h-0 overflow-hidden">
+          <div className="pdf-header hidden mb-4">
+            <div className="flex justify-between items-end">
+              <h2 className="text-base font-bold text-[#1E293B] uppercase tracking-wider">Purchase Report</h2>
+              <p className="text-[#475569] font-bold text-xs">Date: {fromDate || 'All Time'} to {toDate || 'All Time'}</p>
+            </div>
+          </div>
+          <div className="flex-1 overflow-auto overflow-x-auto" id="purchase-report-table">
           <table className="w-full text-left text-[12px] whitespace-nowrap">
             <thead>
               <tr className="bg-[#0F172A] text-white font-bold">
+                <th className="px-4 py-3 border-r border-[#1E293B] w-12 text-center">S.No</th>
                 <th className="px-4 py-3 border-r border-[#1E293B]">Entry No</th>
                 <th className="px-4 py-3 border-r border-[#1E293B]">Supp. Inv. No.</th>
                 <th className="px-4 py-3 border-r border-[#1E293B]">Date</th>
@@ -275,24 +286,29 @@ const PurchaseReport = () => {
             </thead>
             <tbody>
               {isLoading ? (
-                <tr><td colSpan={8} className="text-center p-6 text-gray-500">Loading report data...</td></tr>
+                <tr><td colSpan={9} className="text-center p-6 text-[#6B7280]">Loading report data...</td></tr>
               ) : filteredPurchases.length === 0 ? (
-                <tr><td colSpan={8} className="text-center p-6 text-gray-500">No purchase records found.</td></tr>
+                <tr><td colSpan={9} className="text-center p-6 text-[#6B7280]">No purchase records found.</td></tr>
               ) : (
                 paginatedPurchases.map((p: any, index: number) => (
                   <tr key={p.id} className={`border-b border-[#E2E8F0] ${index % 2 === 0 ? 'bg-white' : 'bg-[#F8FAFC]'} hover:bg-[#EFF6FF]`}>
+                    <td className="px-4 py-3 border-r border-[#E2E8F0] text-center text-[#64748B] font-medium">{(currentPage - 1) * entriesPerPage + index + 1}</td>
                     <td className="px-4 py-3 border-r border-[#E2E8F0] text-[#64748B]">{p.entryNo}</td>
                     <td className="px-4 py-3 border-r border-[#E2E8F0] font-bold text-[#1E293B]">{p.invoiceNo}</td>
                     <td className="px-4 py-3 border-r border-[#E2E8F0] text-[#475569]">{p.date}</td>
                     <td className="px-4 py-3 border-r border-[#E2E8F0] font-medium text-[#334155]">{p.supplierName}</td>
-                    <td className="px-4 py-3 border-r border-[#E2E8F0]">
-                      <span className={`px-2 py-0.5 rounded text-[10px] font-bold inline-flex items-center justify-center ${
-                        p.mode === 'Cash' ? 'bg-[#06B6D4] text-white' : 
-                        p.mode === 'Card' ? 'bg-[#0EA5E9] text-white' : 
-                        'bg-[#14B8A6] text-white'
-                      }`}>
-                        {p.mode}
-                      </span>
+                    <td className="px-4 py-3 border-r border-[#E2E8F0] text-center">
+                      <div className="flex justify-center items-center">
+                        <span 
+                          data-pdf-color={p.mode === 'Cash' ? '#06B6D4' : p.mode === 'Card' ? '#0EA5E9' : '#14B8A6'}
+                          className={`payment-badge px-2 rounded text-[10px] font-bold inline-block h-[18px] leading-[18px] text-center ${
+                          p.mode === 'Cash' ? 'bg-[#06B6D4] text-white' : 
+                          p.mode === 'Card' ? 'bg-[#0EA5E9] text-white' : 
+                          'bg-[#14B8A6] text-white'
+                        }`}>
+                          {p.mode}
+                        </span>
+                      </div>
                     </td>
                     <td className="px-4 py-3 border-r border-[#E2E8F0] text-right text-[#475569]">{p.totalAmount}</td>
                     {/* <td className="px-4 py-3 border-r border-[#E2E8F0] text-right text-[#475569]">{p.taxAmount}</td> */}
@@ -311,6 +327,10 @@ const PurchaseReport = () => {
               )}
             </tbody>
           </table>
+        </div>
+        <div className="pdf-footer hidden mt-6 text-right border-t-2 border-[#1E293B] pt-4 pb-8 pr-6">
+          <h3 className="text-xl font-bold text-[#1E293B] inline-block">Total Amount: {formatCurrency(totalPurchasesAmount)}</h3>
+        </div>
         </div>
         {!isLoading && (
           <PaginationControls

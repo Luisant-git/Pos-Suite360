@@ -37,12 +37,15 @@ const StockReport = () => {
         currentQty: `${p.currentStock} ${p.unit?.shortCode || p.unit?.name || ''}`.trim(),
         purRate: formatCurrency(p.purchaseRate),
         stockValue: formatCurrency(Number(p.currentStock) * Number(p.purchaseRate)),
+        rawStockValue: Number(p.currentStock) * Number(p.purchaseRate),
       }));
     },
   });
 
   const [entriesPerPage, setEntriesPerPage] = useState(25);
   const [currentPage, setCurrentPage] = useState(1);
+
+  const totalStockValue = products.reduce((sum: number, p: any) => sum + (Number(p.rawStockValue) || 0), 0);
 
   const totalPages = Math.ceil(products.length / entriesPerPage);
   const paginatedProducts = products.slice((currentPage - 1) * entriesPerPage, currentPage * entriesPerPage);
@@ -139,7 +142,7 @@ const StockReport = () => {
               <Download size={14} /> Export Excel
             </button>
             <button type="button"
-              onClick={() => exportTableToPdf('stock-report-table', 'Stock_Report')}
+              onClick={() => exportTableToPdf('stock-report-export', 'Stock_Report')}
               className="bg-[#EF4444] hover:bg-[#DC2626] text-white px-3 py-1.5 rounded flex items-center justify-center gap-1.5 text-[12px] font-bold whitespace-nowrap transition-colors"
             >
               <Download size={14} /> Export PDF
@@ -150,10 +153,18 @@ const StockReport = () => {
           </div>
         </div>
 
-        <div className="flex-1 overflow-auto overflow-x-auto" id="stock-report-table">
+        <div id="stock-report-export" className="flex-1 flex flex-col min-h-0 overflow-hidden">
+          <div className="pdf-header hidden mb-4">
+            <div className="flex justify-between items-end">
+              <h2 className="text-base font-bold text-[#1E293B] uppercase tracking-wider">Stock Report</h2>
+              <p className="text-[#475569] font-bold text-xs">Date: {new Date().toLocaleDateString()}</p>
+            </div>
+          </div>
+          <div className="flex-1 overflow-auto overflow-x-auto" id="stock-report-table">
           <table className="w-full text-left text-[12px] whitespace-nowrap">
             <thead>
               <tr className="bg-[#0F172A] text-white font-bold">
+                <th className="px-4 py-3 border-r border-[#1E293B] w-12 text-center">S.No</th>
                 <th className="px-4 py-3 border-r border-[#1E293B]">Item Code</th>
                 <th className="px-4 py-3 border-r border-[#1E293B]">Product Name</th>
                 <th className="px-4 py-3 border-r border-[#1E293B]">Brand</th>
@@ -165,12 +176,13 @@ const StockReport = () => {
             </thead>
             <tbody>
               {isLoading ? (
-                <tr><td colSpan={7} className="text-center p-6 text-gray-500">Loading report data...</td></tr>
+                <tr><td colSpan={8} className="text-center p-6 text-[#6B7280]">Loading report data...</td></tr>
               ) : products.length === 0 ? (
-                <tr><td colSpan={7} className="text-center p-6 text-gray-500">No stock records found.</td></tr>
+                <tr><td colSpan={8} className="text-center p-6 text-[#6B7280]">No stock records found.</td></tr>
               ) : (
                 paginatedProducts.map((p: any, index: number) => (
                   <tr key={p.id} className={`border-b border-[#E2E8F0] ${index % 2 === 0 ? 'bg-white' : 'bg-[#F8FAFC]'} hover:bg-[#EFF6FF]`}>
+                    <td className="px-4 py-3 border-r border-[#E2E8F0] text-center text-[#64748B] font-medium">{(currentPage - 1) * entriesPerPage + index + 1}</td>
                     <td className="px-4 py-3 border-r border-[#E2E8F0] text-[#334155]">{p.code}</td>
                     <td className="px-4 py-3 border-r border-[#E2E8F0] font-bold text-[#1E293B]">{p.name}</td>
                     <td className="px-4 py-3 border-r border-[#E2E8F0] text-[#475569]">{p.brandName}</td>
@@ -183,6 +195,10 @@ const StockReport = () => {
               )}
             </tbody>
           </table>
+        </div>
+        <div className="pdf-footer hidden mt-6 text-right border-t-2 border-[#1E293B] pt-4 pb-8 pr-6">
+          <h3 className="text-xl font-bold text-[#1E293B] inline-block">Total Stock Value: {formatCurrency(totalStockValue)}</h3>
+        </div>
         </div>
         {!isLoading && (
           <PaginationControls

@@ -549,7 +549,7 @@ const POS = () => {
                   <td data-label="Rate" className="px-2 py-1 border-r border-[#E5E7EB]">
                     <input 
                       {...register(`items.${index}.rate`)} 
-                      type="number" step="any" step="0.01" placeholder="0.00" 
+                      type="number" step="0.01" placeholder="0.00" 
                       onFocus={(e) => e.target.select()}
                       className={`w-full px-2 py-1 border rounded text-[13px] outline-none text-right font-bold transition-colors ${(() => {
                         const pId = watch(`items.${index}.productId`);
@@ -574,7 +574,7 @@ const POS = () => {
                   <td data-label="Disc %" className="px-2 py-1 border-r border-[#E5E7EB]">
                     <input 
                       {...register(`items.${index}.discPercent`)} 
-                      type="number" step="any" step="0.01" placeholder="0" 
+                      type="number" step="0.01" placeholder="0" 
                       onFocus={(e) => e.target.select()}
                       onChange={(e) => {
                         register(`items.${index}.discPercent`).onChange(e);
@@ -590,7 +590,7 @@ const POS = () => {
                   <td data-label="Disc Amt" className="px-2 py-1 border-r border-[#E5E7EB]">
                     <input 
                       {...register(`items.${index}.discAmt`)} 
-                      type="number" step="any" step="0.01" placeholder="0.00" 
+                      type="number" step="0.01" placeholder="0.00" 
                       onFocus={(e) => e.target.select()}
                       onChange={(e) => {
                         register(`items.${index}.discAmt`).onChange(e);
@@ -661,8 +661,7 @@ const POS = () => {
                     <div className="relative w-1/2">
                       <input
                         {...register('totalDiscountPercent')}
-                        type="number" step="any"
-                        step="0.01"
+                        type="number" step="0.01"
                         onChange={(e) => {
                           register('totalDiscountPercent').onChange(e);
                           const percent = Number(e.target.value) || 0;
@@ -679,8 +678,7 @@ const POS = () => {
                       <span className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-500 font-bold text-[15px] pointer-events-none">{settings?.currencySymbol || 'RM'}</span>
                       <input
                         {...register('totalDiscount')}
-                        type="number" step="any"
-                        step="0.01"
+                        type="number" step="0.01"
                         onChange={(e) => {
                           register('totalDiscount').onChange(e);
                           const amt = Number(e.target.value) || 0;

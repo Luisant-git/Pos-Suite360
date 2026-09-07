@@ -502,24 +502,24 @@ const PurchaseEntry = () => {
                   <td data-label="Qty" className="px-2 py-1 border-r border-[#E5E7EB]">
                     <input 
                       {...register(`items.${index}.pRate`)} 
-                      type="number" step="any" step="0.01" placeholder="0.00" 
+                      type="number" step="0.01" placeholder="0.00" 
                       onFocus={(e) => e.target.select()}
                       className="w-full px-2 py-1 border border-[#D1D5DB] rounded text-[13px] outline-none focus:border-[#3B82F6] focus:ring-1 focus:ring-[#3B82F6] focus:bg-blue-50 transition-colors text-right" 
                     />
                   </td>
                   <td data-label="Free" className="px-2 py-1 border-r border-[#E5E7EB]">
-                    <input {...register(`items.${index}.wRate`)} type="number" step="any" step="0.01" placeholder="0.00" readOnly tabIndex={-1} className="w-full px-2 py-1 bg-blue-50/50 border border-blue-200/50 text-blue-700/80 font-bold rounded text-[13px] outline-none text-right cursor-not-allowed" />
+                    <input {...register(`items.${index}.wRate`)} type="number" step="0.01" placeholder="0.00" readOnly tabIndex={-1} className="w-full px-2 py-1 bg-blue-50/50 border border-blue-200/50 text-blue-700/80 font-bold rounded text-[13px] outline-none text-right cursor-not-allowed" />
                   </td>
                   <td data-label="Pur Rate" className="px-2 py-1 border-r border-[#E5E7EB]">
-                    <input {...register(`items.${index}.sRate`)} type="number" step="any" step="0.01" placeholder="0.00" readOnly tabIndex={-1} className="w-full px-2 py-1 bg-blue-50/50 border border-blue-200/50 text-blue-700/80 font-bold rounded text-[13px] outline-none text-right cursor-not-allowed" />
+                    <input {...register(`items.${index}.sRate`)} type="number" step="0.01" placeholder="0.00" readOnly tabIndex={-1} className="w-full px-2 py-1 bg-blue-50/50 border border-blue-200/50 text-blue-700/80 font-bold rounded text-[13px] outline-none text-right cursor-not-allowed" />
                   </td>
                   <td data-label="MRP" className="px-2 py-1 border-r border-[#E5E7EB]">
-                    <input {...register(`items.${index}.mrp`)} type="number" step="any" step="0.01" placeholder="0.00" readOnly tabIndex={-1} className="w-full px-2 py-1 bg-blue-50/50 border border-blue-200/50 text-blue-700/80 font-bold rounded text-[13px] outline-none text-right cursor-not-allowed" />
+                    <input {...register(`items.${index}.mrp`)} type="number" step="0.01" placeholder="0.00" readOnly tabIndex={-1} className="w-full px-2 py-1 bg-blue-50/50 border border-blue-200/50 text-blue-700/80 font-bold rounded text-[13px] outline-none text-right cursor-not-allowed" />
                   </td>
                   <td data-label="Tax %" className="px-2 py-1 border-r border-[#E5E7EB]">
                     <input 
                       {...register(`items.${index}.discPercent`)} 
-                      type="number" step="any" step="0.01" placeholder="0" 
+                      type="number" step="0.01" placeholder="0" 
                       onFocus={(e) => e.target.select()}
                       onChange={(e) => {
                         register(`items.${index}.discPercent`).onChange(e);
@@ -535,7 +535,7 @@ const PurchaseEntry = () => {
                   <td data-label="Tax Amt" className="px-2 py-1 border-r border-[#E5E7EB]">
                     <input 
                       {...register(`items.${index}.discAmt`)} 
-                      type="number" step="any" step="0.01" placeholder="0.00" 
+                      type="number" step="0.01" placeholder="0.00" 
                       onFocus={(e) => e.target.select()}
                       onChange={(e) => {
                         register(`items.${index}.discAmt`).onChange(e);
@@ -603,8 +603,7 @@ const PurchaseEntry = () => {
                 <div className="relative w-1/2">
                   <input
                     {...register('totalDiscountPercent')}
-                    type="number" step="any"
-                    step="0.01"
+                    type="number" step="0.01"
                     onChange={(e) => {
                       register('totalDiscountPercent').onChange(e);
                       const percent = Number(e.target.value) || 0;
@@ -620,8 +619,7 @@ const PurchaseEntry = () => {
                   <span className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-800 font-black text-[14px] pointer-events-none">{settings?.currencySymbol || 'RM'}</span>
                   <input
                     {...register('totalDiscount')}
-                    type="number" step="any"
-                    step="0.01"
+                    type="number" step="0.01"
                     onChange={(e) => {
                       register('totalDiscount').onChange(e);
                       const amt = Number(e.target.value) || 0;

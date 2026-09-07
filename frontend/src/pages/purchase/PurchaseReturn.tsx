@@ -290,7 +290,7 @@ const PurchaseReturn = () => {
                       </td>
                       <td data-label="Return Qty" className="px-4 py-2 border-r border-gray-200">
                         <input 
-                          type="number" 
+                          type="number" step="any" 
                           min="0" 
                           max={item.quantity}
                           value={item.returnQty === '' ? '' : item.returnQty || ''}

@@ -110,7 +110,7 @@ const ExpenseEntry = () => {
               <div>
                 <label className="block text-[12px] font-medium text-gray-700 mb-1">Amount *</label>
                 <input 
-                  type="number" 
+                  type="number" step="any" 
                   value={amount}
                   placeholder="0.00"
                   onChange={(e) => setAmount(e.target.value)}

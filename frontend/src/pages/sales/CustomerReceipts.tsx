@@ -376,7 +376,7 @@ const CustomerReceipts = () => {
                 <label className="block text-[12px] font-bold text-[#059669] mb-1">Amount Collected Now *</label>
                 <input
                   {...register('amount')}
-                  type="number"
+                  type="number" step="any"
                   step="0.01"
                   placeholder="0.00"
                   className="w-full px-3 py-2 border border-[#CBD5E1] rounded text-[15px] font-bold outline-none focus:border-[#3B82F6]"

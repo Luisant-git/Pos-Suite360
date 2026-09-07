@@ -533,7 +533,7 @@ const POS = () => {
                   <td data-label="Birds" className="px-2 py-1 border-r border-[#E5E7EB]">
                     <input 
                       {...register(`items.${index}.noOfBirds`)} 
-                      type="number" min="0" placeholder="0" 
+                      type="number" step="any" min="0" placeholder="0" 
                       onFocus={(e) => e.target.select()}
                       className="w-full px-2 py-1 border border-[#D1D5DB] rounded text-[13px] outline-none text-center transition-colors focus:border-[#3B82F6] focus:ring-1 focus:ring-[#3B82F6] focus:bg-blue-50" 
                     />
@@ -541,7 +541,7 @@ const POS = () => {
                   <td data-label="Qty" className="px-2 py-1 border-r border-[#E5E7EB]">
                     <input 
                       {...register(`items.${index}.quantity`)} 
-                      type="number" min="1" placeholder="0" 
+                      type="number" step="any" min="1" placeholder="0" 
                       onFocus={(e) => e.target.select()}
                       className={`w-full px-2 py-1 border rounded text-[13px] outline-none text-center transition-colors ${watch(`items.${index}.quantity`) > watch(`items.${index}.stock`) ? 'border-red-500 focus:border-red-500 bg-red-100 text-red-700 font-bold' : 'border-[#D1D5DB] focus:border-[#3B82F6] focus:ring-1 focus:ring-[#3B82F6] focus:bg-blue-50'}`} 
                     />
@@ -549,7 +549,7 @@ const POS = () => {
                   <td data-label="Rate" className="px-2 py-1 border-r border-[#E5E7EB]">
                     <input 
                       {...register(`items.${index}.rate`)} 
-                      type="number" step="0.01" placeholder="0.00" 
+                      type="number" step="any" step="0.01" placeholder="0.00" 
                       onFocus={(e) => e.target.select()}
                       className={`w-full px-2 py-1 border rounded text-[13px] outline-none text-right font-bold transition-colors ${(() => {
                         const pId = watch(`items.${index}.productId`);
@@ -574,7 +574,7 @@ const POS = () => {
                   <td data-label="Disc %" className="px-2 py-1 border-r border-[#E5E7EB]">
                     <input 
                       {...register(`items.${index}.discPercent`)} 
-                      type="number" step="0.01" placeholder="0" 
+                      type="number" step="any" step="0.01" placeholder="0" 
                       onFocus={(e) => e.target.select()}
                       onChange={(e) => {
                         register(`items.${index}.discPercent`).onChange(e);
@@ -590,7 +590,7 @@ const POS = () => {
                   <td data-label="Disc Amt" className="px-2 py-1 border-r border-[#E5E7EB]">
                     <input 
                       {...register(`items.${index}.discAmt`)} 
-                      type="number" step="0.01" placeholder="0.00" 
+                      type="number" step="any" step="0.01" placeholder="0.00" 
                       onFocus={(e) => e.target.select()}
                       onChange={(e) => {
                         register(`items.${index}.discAmt`).onChange(e);
@@ -661,7 +661,7 @@ const POS = () => {
                     <div className="relative w-1/2">
                       <input
                         {...register('totalDiscountPercent')}
-                        type="number"
+                        type="number" step="any"
                         step="0.01"
                         onChange={(e) => {
                           register('totalDiscountPercent').onChange(e);
@@ -679,7 +679,7 @@ const POS = () => {
                       <span className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-500 font-bold text-[15px] pointer-events-none">{settings?.currencySymbol || 'RM'}</span>
                       <input
                         {...register('totalDiscount')}
-                        type="number"
+                        type="number" step="any"
                         step="0.01"
                         onChange={(e) => {
                           register('totalDiscount').onChange(e);

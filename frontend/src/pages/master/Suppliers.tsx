@@ -174,7 +174,7 @@ const Suppliers = () => {
               <label className="block text-[12px] text-[#1F2937] mb-1">Opening Bal</label>
               <input 
                 {...register('openingBalance')}
-                type="number" 
+                type="number" step="any" 
                 placeholder="0"
                 className="w-full px-3 py-1.5 border border-[#ccc] rounded shadow-inner focus:border-[#3B82F6] outline-none text-[13px] text-right"
               />

@@ -256,7 +256,7 @@ const Products = () => {
               <label className="block text-[12px] text-[#1F2937] mb-1">Opening Stock</label>
               <input 
                 {...register('currentStock')}
-                type="number" 
+                type="number" step="any"
                 placeholder="0"
                 className="w-full px-3 py-1.5 border border-[#ccc] rounded shadow-inner focus:border-[#3B82F6] outline-none text-[13px] text-right"
               />
@@ -265,7 +265,7 @@ const Products = () => {
               <label className="block text-[12px] text-[#1F2937] mb-1">Pur Rate</label>
               <input 
                 {...register('purchaseRate')}
-                type="number" 
+                type="number" step="any"
                 placeholder="0"
                 className="w-full px-3 py-1.5 border border-[#ccc] rounded shadow-inner focus:border-[#3B82F6] outline-none text-[13px] text-right"
               />
@@ -274,7 +274,7 @@ const Products = () => {
               <label className="block text-[12px] font-bold text-[#16A34A] mb-1">Wholesale Rate</label>
               <input 
                 {...register('wholesaleRate')}
-                type="number" 
+                type="number" step="any"
                 placeholder="0"
                 className="w-full px-3 py-1.5 border border-[#ccc] rounded shadow-inner focus:border-[#3B82F6] outline-none text-[13px] text-right"
               />
@@ -283,7 +283,7 @@ const Products = () => {
               <label className="block text-[12px] font-bold text-[#3B82F6] mb-1">Sale Rate (Retail)</label>
               <input 
                 {...register('sellingRate')}
-                type="number" 
+                type="number" step="any"
                 placeholder="0"
                 className="w-full px-3 py-1.5 border border-[#ccc] rounded shadow-inner focus:border-[#3B82F6] outline-none text-[13px] text-right"
               />
@@ -297,7 +297,7 @@ const Products = () => {
               <label className="block text-[12px] text-[#1F2937] mb-1">Min Qty (Alert)</label>
               <input 
                 {...register('minStock')}
-                type="number" 
+                type="number" step="any"
                 placeholder="0"
                 className="w-full px-3 py-1.5 border border-[#ccc] rounded shadow-inner focus:border-[#3B82F6] outline-none text-[13px] text-right"
               />
@@ -306,7 +306,7 @@ const Products = () => {
               <label className="block text-[12px] text-[#1F2937] mb-1">Reorder Level</label>
               <input 
                 {...register('reorderLevel')}
-                type="number" 
+                type="number" step="any"
                 placeholder="0"
                 className="w-full px-3 py-1.5 border border-[#ccc] rounded shadow-inner focus:border-[#3B82F6] outline-none text-[13px] text-right"
               />

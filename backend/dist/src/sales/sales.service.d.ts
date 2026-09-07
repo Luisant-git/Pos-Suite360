@@ -74,11 +74,11 @@ export declare class SalesService {
             createdAt: Date;
             updatedAt: Date;
             name: string;
+            contactPerson: string | null;
             phone: string;
             email: string | null;
             address: string | null;
             openingBalance: import("@prisma/client-runtime-utils").Decimal;
-            contactPerson: string | null;
             openingBalanceType: string;
             shippingAddress: string | null;
             creditLimit: import("@prisma/client-runtime-utils").Decimal;
@@ -156,11 +156,11 @@ export declare class SalesService {
             createdAt: Date;
             updatedAt: Date;
             name: string;
+            contactPerson: string | null;
             phone: string;
             email: string | null;
             address: string | null;
             openingBalance: import("@prisma/client-runtime-utils").Decimal;
-            contactPerson: string | null;
             openingBalanceType: string;
             shippingAddress: string | null;
             creditLimit: import("@prisma/client-runtime-utils").Decimal;

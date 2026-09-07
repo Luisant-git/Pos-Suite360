@@ -43,7 +43,7 @@ let PurchaseReturnsService = class PurchaseReturnsService {
                     const product = await tx.product.findUnique({ where: { id: item.productId } });
                     if (!product)
                         throw new common_1.BadRequestException(`Product not found: ${item.productId}`);
-                    if (product.currentStock < item.returnQty) {
+                    if (Number(product.currentStock) < item.returnQty) {
                         throw new common_1.BadRequestException(`Insufficient stock for product ${product.name}`);
                     }
                     await tx.product.update({
@@ -56,7 +56,7 @@ let PurchaseReturnsService = class PurchaseReturnsService {
                             productId: item.productId,
                             type: 'PURCHASE_RETURN',
                             quantityOut: item.returnQty,
-                            balance: product.currentStock - item.returnQty,
+                            balance: Number(product.currentStock) - item.returnQty,
                             reference: createPurchaseReturnDto.returnNo
                         }
                     });

@@ -42,7 +42,7 @@ export class CreateProductDto {
   @Min(0)
   taxPercent?: number;
 
-  @IsInt()
+  @IsNumber()
   @IsOptional()
   @Min(0)
   minStock?: number;
@@ -56,12 +56,12 @@ export class CreateProductDto {
   @Min(0)
   wholesaleRate?: number;
 
-  @IsInt()
+  @IsNumber()
   @IsOptional()
   @Min(0)
   reorderLevel?: number;
 
-  @IsInt()
+  @IsNumber()
   @IsOptional()
   @Min(0)
   currentStock?: number;

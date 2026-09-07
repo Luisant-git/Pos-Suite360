@@ -33,12 +33,12 @@ export declare class ProductsService {
             createdAt: Date;
             updatedAt: Date;
             name: string;
+            contactPerson: string | null;
             phone: string | null;
             email: string | null;
             address: string | null;
             gstNumber: string | null;
             openingBalance: import("@prisma/client-runtime-utils").Decimal;
-            contactPerson: string | null;
             openingBalanceType: string;
             accountNo: string | null;
             ifscCode: string | null;
@@ -91,12 +91,12 @@ export declare class ProductsService {
             createdAt: Date;
             updatedAt: Date;
             name: string;
+            contactPerson: string | null;
             phone: string | null;
             email: string | null;
             address: string | null;
             gstNumber: string | null;
             openingBalance: import("@prisma/client-runtime-utils").Decimal;
-            contactPerson: string | null;
             openingBalanceType: string;
             accountNo: string | null;
             ifscCode: string | null;

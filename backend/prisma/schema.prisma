@@ -179,10 +179,10 @@ model Product {
   wholesaleRate  Decimal  @default(0)
   mrp            Decimal  @default(0)
   taxPercent     Decimal  @default(0)
-  minStock       Int      @default(0) // Used as Min Qty (Alert)
-  reorderLevel   Int      @default(0)
+  minStock       Decimal  @default(0) // Used as Min Qty (Alert)
+  reorderLevel   Decimal  @default(0)
   
-  currentStock   Int      @default(0) // Usually computed, but caching it for quick access is common in POS
+  currentStock   Decimal  @default(0) // Usually computed, but caching it for quick access is common in POS
   
   purchaseItems       PurchaseItem[]
   purchaseReturnItems PurchaseReturnItem[]
@@ -231,7 +231,7 @@ model PurchaseItem {
   productId  Int
   product    Product  @relation(fields: [productId], references: [id])
   
-  quantity   Int
+  quantity   Decimal
   rate       Decimal
   tax        Decimal  @default(0)
   amount     Decimal
@@ -265,7 +265,7 @@ model PurchaseReturnItem {
   productId        Int
   product          Product  @relation(fields: [productId], references: [id])
   
-  returnQty        Int
+  returnQty        Decimal
   rate             Decimal
   amount           Decimal
 }
@@ -308,7 +308,7 @@ model SaleItem {
   productId  Int
   product    Product  @relation(fields: [productId], references: [id])
   
-  quantity   Int
+  quantity   Decimal
   noOfBirds  Int      @default(0)
   rate       Decimal
   discount   Decimal  @default(0)
@@ -347,7 +347,7 @@ model SalesReturnItem {
   productId     Int
   product       Product  @relation(fields: [productId], references: [id])
   
-  returnQty     Int
+  returnQty     Decimal
   rate          Decimal
   amount        Decimal
 }
@@ -442,9 +442,9 @@ model StockTransaction {
   product     Product  @relation(fields: [productId], references: [id])
   
   type        TransactionType // PURCHASE, SALE, ADJUSTMENT, RETURN
-  quantityIn  Int      @default(0)
-  quantityOut Int      @default(0)
-  balance     Int      // Snapshot of stock balance after this transaction
+  quantityIn  Decimal  @default(0)
+  quantityOut Decimal  @default(0)
+  balance     Decimal  // Snapshot of stock balance after this transaction
   
   reference   String?  // Could be Invoice No or Adjustment ID
   

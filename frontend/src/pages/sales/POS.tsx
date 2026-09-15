@@ -979,7 +979,7 @@ const POS = () => {
                   <td className="py-1 text-right">{item.quantity}</td>
                   <td className="py-1 text-center">{item.unit || ''}</td>
                   <td className="py-1 text-right">{Number(item.rate || 0).toFixed(2)}</td>
-                  <td className="py-1 text-right">{(item.total || 0).toFixed(2)}</td>
+                  <td className="py-1 text-right">{Number(item.total || 0).toFixed(2)}</td>
                 </tr>
               );
             })}

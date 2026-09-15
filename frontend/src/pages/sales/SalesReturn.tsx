@@ -360,7 +360,7 @@ const SalesReturn = () => {
             
             <div className="p-6 text-center">
               <div className="bg-red-50 text-red-800 p-4 rounded-lg mb-6 shadow-sm border border-red-100">
-                <p className="font-bold text-[15px]">Refund Amount: {pendingSavePayload?.totalAmount?.toFixed(2)}</p>
+                <p className="font-bold text-[15px]">Refund Amount: {Number(pendingSavePayload?.totalAmount || 0).toFixed(2)}</p>
                 <p className="text-[13px] mt-1 text-red-600">Return No: {pendingSavePayload?.returnNo}</p>
               </div>
               <p className="text-[#334155] font-medium mb-2">How would you like to proceed?</p>

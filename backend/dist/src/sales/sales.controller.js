@@ -26,6 +26,10 @@ let SalesController = class SalesController {
         const userId = (req.user?.userId && req.user.userId > 0) ? req.user.userId : 1;
         return this.salesService.create(createSaleDto, userId);
     }
+    update(id, createSaleDto, req) {
+        const userId = (req.user?.userId && req.user.userId > 0) ? req.user.userId : 1;
+        return this.salesService.update(+id, createSaleDto, userId);
+    }
     findAll(query) {
         return this.salesService.findAll(query);
     }
@@ -48,6 +52,15 @@ __decorate([
     __metadata("design:paramtypes", [create_sale_dto_1.CreateSaleDto, Object]),
     __metadata("design:returntype", void 0)
 ], SalesController.prototype, "create", null);
+__decorate([
+    (0, common_1.Put)(':id'),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)()),
+    __param(2, (0, common_1.Request)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, create_sale_dto_1.CreateSaleDto, Object]),
+    __metadata("design:returntype", void 0)
+], SalesController.prototype, "update", null);
 __decorate([
     (0, common_1.Get)(),
     __param(0, (0, common_1.Query)()),

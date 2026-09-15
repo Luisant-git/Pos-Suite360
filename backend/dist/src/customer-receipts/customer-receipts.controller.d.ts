@@ -39,11 +39,11 @@ export declare class CustomerReceiptsController {
         paymentModeId: number | null;
         createdAt: Date;
         updatedAt: Date;
+        customerId: number;
         receiptNo: string;
         amount: import("@prisma/client-runtime-utils").Decimal;
         reference: string | null;
         remarks: string | null;
-        customerId: number;
         paymentTypeId: number | null;
         userId: number;
     }>;
@@ -83,11 +83,11 @@ export declare class CustomerReceiptsController {
         paymentModeId: number | null;
         createdAt: Date;
         updatedAt: Date;
+        customerId: number;
         receiptNo: string;
         amount: import("@prisma/client-runtime-utils").Decimal;
         reference: string | null;
         remarks: string | null;
-        customerId: number;
         paymentTypeId: number | null;
         userId: number;
     })[]>;

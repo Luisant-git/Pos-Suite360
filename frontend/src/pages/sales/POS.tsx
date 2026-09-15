@@ -625,7 +625,7 @@ const POS = () => {
                       {...register(`items.${index}.quantity`)} 
                       type="number" step="any" min="0.001" placeholder="0" 
                       onFocus={(e) => e.target.select()}
-                      className={`w-full px-2 py-1 border rounded text-[13px] outline-none text-center transition-colors ${watch(`items.${index}.quantity`) > watch(`items.${index}.stock`) ? 'border-red-500 focus:border-red-500 bg-red-100 text-red-700 font-bold' : 'border-[#D1D5DB] focus:border-[#3B82F6] focus:ring-1 focus:ring-[#3B82F6] focus:bg-blue-50'}`} 
+                      className={`w-full px-2 py-1 border rounded text-[13px] outline-none text-center transition-colors ${Number(watch(`items.${index}.quantity`)) > Number(watch(`items.${index}.stock`)) ? 'border-red-500 focus:border-red-500 bg-red-100 text-red-700 font-bold' : 'border-[#D1D5DB] focus:border-[#3B82F6] focus:ring-1 focus:ring-[#3B82F6] focus:bg-blue-50'}`} 
                     />
                   </td>
                   <td data-label="Rate" className="px-2 py-1 border-r border-[#E5E7EB]">

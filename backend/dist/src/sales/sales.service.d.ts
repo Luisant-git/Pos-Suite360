@@ -8,11 +8,11 @@ export declare class SalesService {
             id: number;
             tax: import("@prisma/client-runtime-utils").Decimal;
             discount: import("@prisma/client-runtime-utils").Decimal;
+            productId: number;
+            rate: import("@prisma/client-runtime-utils").Decimal;
             amount: import("@prisma/client-runtime-utils").Decimal;
             saleId: number;
             quantity: import("@prisma/client-runtime-utils").Decimal;
-            rate: import("@prisma/client-runtime-utils").Decimal;
-            productId: number;
             noOfBirds: number;
         }[];
     } & {
@@ -46,27 +46,27 @@ export declare class SalesService {
                 name: string;
                 code: string;
                 barcode: string | null;
-                purchaseRate: import("@prisma/client-runtime-utils").Decimal;
-                sellingRate: import("@prisma/client-runtime-utils").Decimal;
-                wholesaleRate: import("@prisma/client-runtime-utils").Decimal;
-                mrp: import("@prisma/client-runtime-utils").Decimal;
-                taxPercent: import("@prisma/client-runtime-utils").Decimal;
-                minStock: import("@prisma/client-runtime-utils").Decimal;
-                reorderLevel: import("@prisma/client-runtime-utils").Decimal;
-                currentStock: import("@prisma/client-runtime-utils").Decimal;
                 categoryId: number | null;
                 brandId: number | null;
                 unitId: number;
+                purchaseRate: import("@prisma/client-runtime-utils").Decimal;
+                sellingRate: import("@prisma/client-runtime-utils").Decimal;
+                mrp: import("@prisma/client-runtime-utils").Decimal;
+                taxPercent: import("@prisma/client-runtime-utils").Decimal;
+                minStock: import("@prisma/client-runtime-utils").Decimal;
+                wholesaleRate: import("@prisma/client-runtime-utils").Decimal;
+                reorderLevel: import("@prisma/client-runtime-utils").Decimal;
+                currentStock: import("@prisma/client-runtime-utils").Decimal;
             };
         } & {
             id: number;
             tax: import("@prisma/client-runtime-utils").Decimal;
             discount: import("@prisma/client-runtime-utils").Decimal;
+            productId: number;
+            rate: import("@prisma/client-runtime-utils").Decimal;
             amount: import("@prisma/client-runtime-utils").Decimal;
             saleId: number;
             quantity: import("@prisma/client-runtime-utils").Decimal;
-            rate: import("@prisma/client-runtime-utils").Decimal;
-            productId: number;
             noOfBirds: number;
         })[];
         customer: {
@@ -123,27 +123,27 @@ export declare class SalesService {
                 name: string;
                 code: string;
                 barcode: string | null;
-                purchaseRate: import("@prisma/client-runtime-utils").Decimal;
-                sellingRate: import("@prisma/client-runtime-utils").Decimal;
-                wholesaleRate: import("@prisma/client-runtime-utils").Decimal;
-                mrp: import("@prisma/client-runtime-utils").Decimal;
-                taxPercent: import("@prisma/client-runtime-utils").Decimal;
-                minStock: import("@prisma/client-runtime-utils").Decimal;
-                reorderLevel: import("@prisma/client-runtime-utils").Decimal;
-                currentStock: import("@prisma/client-runtime-utils").Decimal;
                 categoryId: number | null;
                 brandId: number | null;
                 unitId: number;
+                purchaseRate: import("@prisma/client-runtime-utils").Decimal;
+                sellingRate: import("@prisma/client-runtime-utils").Decimal;
+                mrp: import("@prisma/client-runtime-utils").Decimal;
+                taxPercent: import("@prisma/client-runtime-utils").Decimal;
+                minStock: import("@prisma/client-runtime-utils").Decimal;
+                wholesaleRate: import("@prisma/client-runtime-utils").Decimal;
+                reorderLevel: import("@prisma/client-runtime-utils").Decimal;
+                currentStock: import("@prisma/client-runtime-utils").Decimal;
             };
         } & {
             id: number;
             tax: import("@prisma/client-runtime-utils").Decimal;
             discount: import("@prisma/client-runtime-utils").Decimal;
+            productId: number;
+            rate: import("@prisma/client-runtime-utils").Decimal;
             amount: import("@prisma/client-runtime-utils").Decimal;
             saleId: number;
             quantity: import("@prisma/client-runtime-utils").Decimal;
-            rate: import("@prisma/client-runtime-utils").Decimal;
-            productId: number;
             noOfBirds: number;
         })[];
         user: {
@@ -182,6 +182,32 @@ export declare class SalesService {
     }) | null, null, import("@prisma/client/runtime/client").DefaultArgs, import("@prisma/client").Prisma.PrismaClientOptions>;
     getNextInvoiceNo(): Promise<string>;
     remove(id: number): Promise<{
+        id: number;
+        invoiceNo: string;
+        date: Date;
+        subtotal: import("@prisma/client-runtime-utils").Decimal;
+        tax: import("@prisma/client-runtime-utils").Decimal;
+        discount: import("@prisma/client-runtime-utils").Decimal;
+        grandTotal: import("@prisma/client-runtime-utils").Decimal;
+        paymentModeId: number;
+        createdAt: Date;
+        updatedAt: Date;
+        customerId: number;
+        userId: number;
+    }>;
+    update(id: number, createSaleDto: CreateSaleDto, userId: number): Promise<{
+        items: {
+            id: number;
+            tax: import("@prisma/client-runtime-utils").Decimal;
+            discount: import("@prisma/client-runtime-utils").Decimal;
+            productId: number;
+            rate: import("@prisma/client-runtime-utils").Decimal;
+            amount: import("@prisma/client-runtime-utils").Decimal;
+            saleId: number;
+            quantity: import("@prisma/client-runtime-utils").Decimal;
+            noOfBirds: number;
+        }[];
+    } & {
         id: number;
         invoiceNo: string;
         date: Date;

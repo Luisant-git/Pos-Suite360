@@ -79,4 +79,52 @@ export declare class CustomersService {
         creditLimit: import("@prisma/client-runtime-utils").Decimal;
         creditDays: number;
     }, never, import("@prisma/client/runtime/client").DefaultArgs, import("@prisma/client").Prisma.PrismaClientOptions>;
+    getCustomerRates(customerId: number): Promise<({
+        product: {
+            id: number;
+            supplierId: number | null;
+            createdAt: Date;
+            updatedAt: Date;
+            name: string;
+            code: string;
+            barcode: string | null;
+            categoryId: number | null;
+            brandId: number | null;
+            unitId: number;
+            purchaseRate: import("@prisma/client-runtime-utils").Decimal;
+            sellingRate: import("@prisma/client-runtime-utils").Decimal;
+            mrp: import("@prisma/client-runtime-utils").Decimal;
+            taxPercent: import("@prisma/client-runtime-utils").Decimal;
+            minStock: import("@prisma/client-runtime-utils").Decimal;
+            wholesaleRate: import("@prisma/client-runtime-utils").Decimal;
+            reorderLevel: import("@prisma/client-runtime-utils").Decimal;
+            currentStock: import("@prisma/client-runtime-utils").Decimal;
+        };
+    } & {
+        id: number;
+        createdAt: Date;
+        updatedAt: Date;
+        customerId: number;
+        productId: number;
+        rate: import("@prisma/client-runtime-utils").Decimal;
+    })[]>;
+    upsertCustomerRate(customerId: number, productId: number, rate: number): Promise<{
+        id: number;
+        createdAt: Date;
+        updatedAt: Date;
+        customerId: number;
+        productId: number;
+        rate: import("@prisma/client-runtime-utils").Decimal;
+    }>;
+    setCustomerRates(customerId: number, rates: {
+        productId: number;
+        rate: number;
+    }[]): Promise<{
+        id: number;
+        createdAt: Date;
+        updatedAt: Date;
+        customerId: number;
+        productId: number;
+        rate: import("@prisma/client-runtime-utils").Decimal;
+    }[]>;
 }

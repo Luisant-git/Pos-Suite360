@@ -7,11 +7,11 @@ export declare class PurchasesController {
         items: {
             id: number;
             tax: import("@prisma/client-runtime-utils").Decimal;
+            productId: number;
+            rate: import("@prisma/client-runtime-utils").Decimal;
             amount: import("@prisma/client-runtime-utils").Decimal;
             purchaseId: number;
             quantity: import("@prisma/client-runtime-utils").Decimal;
-            rate: import("@prisma/client-runtime-utils").Decimal;
-            productId: number;
         }[];
     } & {
         id: number;
@@ -73,11 +73,11 @@ export declare class PurchasesController {
     getLatestRate(productId: string): Promise<{
         id: number;
         tax: import("@prisma/client-runtime-utils").Decimal;
+        productId: number;
+        rate: import("@prisma/client-runtime-utils").Decimal;
         amount: import("@prisma/client-runtime-utils").Decimal;
         purchaseId: number;
         quantity: import("@prisma/client-runtime-utils").Decimal;
-        rate: import("@prisma/client-runtime-utils").Decimal;
-        productId: number;
     } | null>;
     findOne(id: string): import("@prisma/client").Prisma.Prisma__PurchaseClient<({
         supplier: {
@@ -120,26 +120,26 @@ export declare class PurchasesController {
                 name: string;
                 code: string;
                 barcode: string | null;
-                purchaseRate: import("@prisma/client-runtime-utils").Decimal;
-                sellingRate: import("@prisma/client-runtime-utils").Decimal;
-                wholesaleRate: import("@prisma/client-runtime-utils").Decimal;
-                mrp: import("@prisma/client-runtime-utils").Decimal;
-                taxPercent: import("@prisma/client-runtime-utils").Decimal;
-                minStock: import("@prisma/client-runtime-utils").Decimal;
-                reorderLevel: import("@prisma/client-runtime-utils").Decimal;
-                currentStock: import("@prisma/client-runtime-utils").Decimal;
                 categoryId: number | null;
                 brandId: number | null;
                 unitId: number;
+                purchaseRate: import("@prisma/client-runtime-utils").Decimal;
+                sellingRate: import("@prisma/client-runtime-utils").Decimal;
+                mrp: import("@prisma/client-runtime-utils").Decimal;
+                taxPercent: import("@prisma/client-runtime-utils").Decimal;
+                minStock: import("@prisma/client-runtime-utils").Decimal;
+                wholesaleRate: import("@prisma/client-runtime-utils").Decimal;
+                reorderLevel: import("@prisma/client-runtime-utils").Decimal;
+                currentStock: import("@prisma/client-runtime-utils").Decimal;
             };
         } & {
             id: number;
             tax: import("@prisma/client-runtime-utils").Decimal;
+            productId: number;
+            rate: import("@prisma/client-runtime-utils").Decimal;
             amount: import("@prisma/client-runtime-utils").Decimal;
             purchaseId: number;
             quantity: import("@prisma/client-runtime-utils").Decimal;
-            rate: import("@prisma/client-runtime-utils").Decimal;
-            productId: number;
         })[];
     } & {
         id: number;

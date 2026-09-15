@@ -20,6 +20,8 @@ const storeSettingsSchema = z.object({
   invoiceNotes: z.string().optional(),
   signatureImage: z.string().optional(),
   yearlyInvoiceReset: z.boolean().optional(),
+  allowEditSaleInvoice: z.boolean().optional(),
+  enableCustomerRates: z.boolean().optional(),
 });
 
 type StoreSettingsValues = z.infer<typeof storeSettingsSchema>;
@@ -59,6 +61,8 @@ const Settings = () => {
         invoiceNotes: settings.invoiceNotes || '',
         signatureImage: settings.signatureImage || '',
         yearlyInvoiceReset: settings.yearlyInvoiceReset || false,
+        allowEditSaleInvoice: settings.allowEditSaleInvoice || false,
+        enableCustomerRates: settings.enableCustomerRates || false,
       });
     }
   }, [settings, resetStoreForm]);
@@ -253,6 +257,38 @@ const Settings = () => {
                 </label>
               </div>
               <p className="text-[11px] text-[#64748B] mt-1 ml-[48px]">Automatically adds the current year to invoices (e.g. <span className="text-[#2563EB] font-bold">{settings?.invoicePrefix || 'INV-'}{new Date().getFullYear()}-00001</span>), causing the sequence to reset back to 1 every year.</p>
+              
+              <div className="flex items-center mt-3">
+                <label className="relative inline-flex items-center cursor-pointer">
+                  <input
+                    type="checkbox"
+                    id="allowEditSaleInvoice"
+                    {...registerStore('allowEditSaleInvoice')}
+                    className="sr-only peer"
+                  />
+                  <div className="w-9 h-5 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#2563EB]"></div>
+                  <span className="ml-3 text-[12px] font-bold text-[#334155]">
+                    Allow Edit Sales Invoice in Sales List
+                  </span>
+                </label>
+              </div>
+              <p className="text-[11px] text-[#64748B] mt-1 ml-[48px]">Enables the Edit action button for sales invoices in the Sales List view.</p>
+
+              <div className="flex items-center mt-3">
+                <label className="relative inline-flex items-center cursor-pointer">
+                  <input
+                    type="checkbox"
+                    id="enableCustomerRates"
+                    {...registerStore('enableCustomerRates')}
+                    className="sr-only peer"
+                  />
+                  <div className="w-9 h-5 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#2563EB]"></div>
+                  <span className="ml-3 text-[12px] font-bold text-[#334155]">
+                    Enable Customer-wise Product Rates / Price Fixing
+                  </span>
+                </label>
+              </div>
+              <p className="text-[11px] text-[#64748B] mt-1 ml-[48px]">Allows fixing specific selling rates per product for each customer in Customer Master & auto-filling them in Sales Entry.</p>
               
               <div className="mt-3">
                 <label className="block text-[12px] font-bold text-[#334155] mb-1">Invoice Footer Notes (Terms & Conditions)</label>

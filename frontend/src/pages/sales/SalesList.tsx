@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Plus, Eye, Printer } from 'lucide-react';
+import { Plus, Eye, Printer, Edit } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../services/api';
 import InvoicePrintModal from '../../components/InvoicePrintModal';
@@ -9,9 +9,10 @@ import ViewSalesModal from './ViewSalesModal';
 import PaginationControls from '../../components/PaginationControls';
 
 const SalesList = () => {
-  const { formatCurrency } = useSettings();
+  const { settings, formatCurrency } = useSettings();
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
+  const [paymentModeFilter, setPaymentModeFilter] = useState('');
   const [selectedSale, setSelectedSale] = useState<any>(null);
   const [isPrintModalOpen, setIsPrintModalOpen] = useState(false);
   const [viewSaleId, setViewSaleId] = useState<number | null>(null);
@@ -25,11 +26,20 @@ const SalesList = () => {
     },
   });
 
+  // Fetch Payment Modes
+  const { data: paymentModes = [] } = useQuery({
+    queryKey: ['paymentModes'],
+    queryFn: async () => (await api.get('/payment-modes')).data,
+  });
+
   // Pagination & Filtering Logic
   const [entriesPerPage, setEntriesPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
 
   const filteredSales = sales.filter((sale: any) => {
+    if (paymentModeFilter && Number(sale.paymentModeId) !== Number(paymentModeFilter)) {
+      return false;
+    }
     if (searchTerm) {
       const term = searchTerm.toLowerCase();
       const invoiceMatch = sale.invoiceNo?.toLowerCase().includes(term);
@@ -83,18 +93,37 @@ const SalesList = () => {
             <span>entries</span>
           </div>
 
-          <div className="flex items-center gap-2 w-full sm:w-auto">
-            <label className="text-[12px] font-bold text-[#1F2937] hidden sm:block">Search:</label>
-            <input 
-              type="text" 
-              placeholder="Search invoices..."
-              value={searchTerm}
-              onChange={(e) => {
-                setSearchTerm(e.target.value);
-                setCurrentPage(1);
-              }}
-              className="w-full sm:w-64 px-3 py-1.5 border border-[#ccc] rounded outline-none text-[12px] focus:border-[#3B82F6]"
-            />
+          <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
+            <div className="flex items-center gap-1.5">
+              <label className="text-[12px] font-bold text-[#1F2937] hidden sm:block">Payment Mode:</label>
+              <select
+                value={paymentModeFilter}
+                onChange={(e) => {
+                  setPaymentModeFilter(e.target.value);
+                  setCurrentPage(1);
+                }}
+                className="px-2 py-1.5 border border-[#ccc] rounded outline-none text-[12px] bg-white focus:border-[#3B82F6]"
+              >
+                <option value="">All Payment Modes</option>
+                {paymentModes.map((pm: any) => (
+                  <option key={pm.id} value={pm.id}>{pm.name}</option>
+                ))}
+              </select>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <label className="text-[12px] font-bold text-[#1F2937] hidden sm:block">Search:</label>
+              <input 
+                type="text" 
+                placeholder="Search invoices..."
+                value={searchTerm}
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
+                  setCurrentPage(1);
+                }}
+                className="w-full sm:w-64 px-3 py-1.5 border border-[#ccc] rounded outline-none text-[12px] focus:border-[#3B82F6]"
+              />
+            </div>
           </div>
         </div>
 
@@ -149,6 +178,15 @@ const SalesList = () => {
                         >
                           <Eye size={14} />
                         </button>
+                        {settings?.allowEditSaleInvoice && (
+                          <button type="button" 
+                            onClick={() => navigate(`/sales/pos?edit=${sale.id}`)}
+                            className="text-[#10B981] border border-[#10B981] rounded p-1 hover:bg-[#10B981] hover:text-white transition-colors"
+                            title="Edit Sales Invoice"
+                          >
+                            <Edit size={14} />
+                          </button>
+                        )}
                       </div>
                     </td>
                   </tr>

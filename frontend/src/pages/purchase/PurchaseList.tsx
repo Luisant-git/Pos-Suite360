@@ -11,6 +11,7 @@ const PurchaseList = () => {
   const { formatCurrency } = useSettings();
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
+  const [paymentModeFilter, setPaymentModeFilter] = useState('');
   const [viewId, setViewId] = useState<number | null>(null);
 
   // Fetch Purchases
@@ -22,11 +23,20 @@ const PurchaseList = () => {
     },
   });
 
+  // Fetch Payment Modes
+  const { data: paymentModes = [] } = useQuery({
+    queryKey: ['paymentModes'],
+    queryFn: async () => (await api.get('/payment-modes')).data,
+  });
+
   // Pagination & Filtering Logic
   const [entriesPerPage, setEntriesPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
 
   const filteredPurchases = purchases.filter((purchase: any) => {
+    if (paymentModeFilter && Number(purchase.paymentModeId) !== Number(paymentModeFilter)) {
+      return false;
+    }
     if (searchTerm) {
       const term = searchTerm.toLowerCase();
       const invoiceMatch = purchase.invoiceNo?.toLowerCase().includes(term);
@@ -80,18 +90,37 @@ const PurchaseList = () => {
             <span>entries</span>
           </div>
 
-          <div className="flex items-center gap-2 w-full sm:w-auto">
-            <label className="text-[12px] font-bold text-[#1F2937] hidden sm:block">Search:</label>
-            <input 
-              type="text" 
-              placeholder="Search invoices..."
-              value={searchTerm}
-              onChange={(e) => {
-                setSearchTerm(e.target.value);
-                setCurrentPage(1);
-              }}
-              className="w-full sm:w-64 px-3 py-1.5 border border-[#ccc] rounded outline-none text-[12px] focus:border-[#3B82F6]"
-            />
+          <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
+            <div className="flex items-center gap-1.5">
+              <label className="text-[12px] font-bold text-[#1F2937] hidden sm:block">Payment Mode:</label>
+              <select
+                value={paymentModeFilter}
+                onChange={(e) => {
+                  setPaymentModeFilter(e.target.value);
+                  setCurrentPage(1);
+                }}
+                className="px-2 py-1.5 border border-[#ccc] rounded outline-none text-[12px] bg-white focus:border-[#3B82F6]"
+              >
+                <option value="">All Payment Modes</option>
+                {paymentModes.map((pm: any) => (
+                  <option key={pm.id} value={pm.id}>{pm.name}</option>
+                ))}
+              </select>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <label className="text-[12px] font-bold text-[#1F2937] hidden sm:block">Search:</label>
+              <input 
+                type="text" 
+                placeholder="Search invoices..."
+                value={searchTerm}
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
+                  setCurrentPage(1);
+                }}
+                className="w-full sm:w-64 px-3 py-1.5 border border-[#ccc] rounded outline-none text-[12px] focus:border-[#3B82F6]"
+              />
+            </div>
           </div>
         </div>
 

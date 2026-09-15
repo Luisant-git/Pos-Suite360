@@ -39,6 +39,8 @@ export class SettingsService {
         invoiceNotes: data.invoiceNotes,
         signatureImage: data.signatureImage,
         yearlyInvoiceReset: data.yearlyInvoiceReset,
+        allowEditSaleInvoice: data.allowEditSaleInvoice,
+        enableCustomerRates: data.enableCustomerRates,
       },
       create: {
         id: 1,
@@ -52,6 +54,8 @@ export class SettingsService {
         invoiceNotes: data.invoiceNotes,
         signatureImage: data.signatureImage,
         yearlyInvoiceReset: data.yearlyInvoiceReset || false,
+        allowEditSaleInvoice: data.allowEditSaleInvoice || false,
+        enableCustomerRates: data.enableCustomerRates || false,
       },
     });
   }

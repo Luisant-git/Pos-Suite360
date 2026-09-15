@@ -1,10 +1,10 @@
 import { useState, useEffect, useRef } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Plus, Trash2, Save, X, Printer, RefreshCw, List, UserPlus, AlertTriangle, FileText } from 'lucide-react';
+import { Plus, Trash2, Save, X, Printer, RefreshCw, List, UserPlus, AlertTriangle, FileText, DollarSign } from 'lucide-react';
 import { useSettings } from '../../contexts/SettingsContext';
 import toast from 'react-hot-toast';
 import api from '../../services/api';
@@ -128,25 +128,98 @@ const POS = () => {
     name: "items"
   });
 
+  const [searchParams] = useSearchParams();
+  const editId = searchParams.get('edit');
+
+  // Watch selected customer
+  const selectedCustomerId = watch('customerId');
+
+  // Customer fixed product rates query
+  const { data: customerRates = [] } = useQuery({
+    queryKey: ['customer-rates', selectedCustomerId],
+    queryFn: async () => {
+      if (!selectedCustomerId) return [];
+      const res = await api.get(`/customers/${selectedCustomerId}/rates`);
+      return res.data;
+    },
+    enabled: !!selectedCustomerId && !!settings?.enableCustomerRates,
+  });
+
+  // Mutation to quickly save custom fixed rate for customer from POS
+  const saveCustomerRateMutation = useMutation({
+    mutationFn: async ({ productId, rate }: { productId: number; rate: number }) => {
+      if (!selectedCustomerId) return;
+      await api.post(`/customers/${selectedCustomerId}/rates`, {
+        rates: [{ productId, rate }]
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['customer-rates', selectedCustomerId] });
+      toast.success('Customer fixed rate saved!');
+    },
+    onError: () => {
+      toast.error('Failed to save customer rate.');
+    }
+  });
+
   // Fetch Masters & Next Invoice
   const { data: customers = [] } = useQuery({ queryKey: ['customers'], queryFn: async () => (await api.get('/customers')).data });
   const { data: products = [] } = useQuery({ queryKey: ['products'], queryFn: async () => (await api.get('/products')).data });
   const { data: paymentModes = [] } = useQuery({ queryKey: ['paymentModes'], queryFn: async () => (await api.get('/payment-modes')).data });
   const { data: nextInvoiceData } = useQuery({ queryKey: ['nextInvoiceNo'], queryFn: async () => (await api.get('/sales/next-invoice-no')).data });
 
-  // Update default invoice no
+  // Fetch existing sale data if editing
+  const { data: editSaleData } = useQuery({
+    queryKey: ['sale-edit', editId],
+    queryFn: async () => (await api.get(`/sales/${editId}`)).data,
+    enabled: !!editId,
+  });
+
+  // Populate form if editing
   useEffect(() => {
-    if (nextInvoiceData?.invoiceNo) {
+    if (editSaleData && editId) {
+      reset({
+        invoiceNo: editSaleData.invoiceNo,
+        date: new Date(editSaleData.date).toISOString().split('T')[0],
+        customerId: editSaleData.customerId,
+        rateType: 'Wholesale Rate',
+        paymentModeId: editSaleData.paymentModeId,
+        items: editSaleData.items?.map((item: any) => {
+          const prod = products.find((p: any) => p.id === item.productId);
+          const currentStockNum = prod ? Number(prod.currentStock) : 0;
+          return {
+            productId: item.productId,
+            quantity: item.quantity,
+            noOfBirds: item.noOfBirds || '',
+            stock: currentStockNum + Number(item.quantity),
+            rate: item.rate,
+            unit: item.product?.unit?.shortCode || item.product?.unit?.name || 'Nos',
+            discPercent: item.discount && item.rate && item.quantity ? Number(((item.discount / (item.rate * item.quantity)) * 100).toFixed(2)) : 0,
+            discAmt: item.discount || 0,
+            total: item.amount,
+          };
+        }) || [],
+        grossAmount: editSaleData.subtotal,
+        totalDiscountPercent: '' as any,
+        totalDiscount: editSaleData.discount || '' as any,
+        roundOff: '' as any,
+        netAmount: editSaleData.grandTotal,
+      });
+    }
+  }, [editSaleData, editId, products, reset]);
+
+  // Update default invoice no for new sale
+  useEffect(() => {
+    if (!editId && nextInvoiceData?.invoiceNo) {
       setValue('invoiceNo', nextInvoiceData.invoiceNo);
     }
-  }, [nextInvoiceData, setValue]);
+  }, [nextInvoiceData, editId, setValue]);
 
 
   // Watch values
   const items = watch('items');
   const watchTotalDiscount = watch('totalDiscount');
   const watchRoundOff = watch('roundOff');
-  const selectedCustomerId = watch('customerId');
 
   const selectedCustomer = customers.find((c: any) => c.id === Number(selectedCustomerId));
 
@@ -194,36 +267,45 @@ const POS = () => {
     if (product) {
       setValue(`items.${index}.stock`, product.currentStock || 0);
       setValue(`items.${index}.unit`, product.unit?.shortCode || product.unit?.name || 'Nos');
-      // Do not auto-fetch rate; leave empty for manual entry
-      setValue(`items.${index}.rate`, '' as any);
+      
+      let rateToUse: any = '';
+      if (settings?.enableCustomerRates && selectedCustomerId && customerRates.length > 0) {
+        const customRate = customerRates.find((r: any) => r.productId === product.id);
+        if (customRate && Number(customRate.rate) > 0) {
+          rateToUse = customRate.rate;
+        }
+      }
+      setValue(`items.${index}.rate`, rateToUse);
     }
   };
 
   const createMutation = useMutation({
-    mutationFn: (data: SaleFormValues) => api.post('/sales', data),
+    mutationFn: (data: SaleFormValues) => editId ? api.put(`/sales/${editId}`, data) : api.post('/sales', data),
     onSuccess: () => {
-      toast.success('Sale recorded successfully!');
+      toast.success(editId ? 'Sale invoice updated successfully!' : 'Sale recorded successfully!');
       
-      // Conditionally print the bill
       setTimeout(async () => {
         if (printAfterSaveRef.current) {
           window.print();
         }
-        reset();
-        
-        // Manually fetch and inject the new invoice number for the next sale
-        const res = await api.get('/sales/next-invoice-no');
-        if (res.data?.invoiceNo) {
-           setValue('invoiceNo', res.data.invoiceNo);
+        if (editId) {
+          queryClient.invalidateQueries({ queryKey: ['sales'] });
+          queryClient.invalidateQueries({ queryKey: ['products'] });
+          navigate('/sales');
+        } else {
+          reset();
+          const res = await api.get('/sales/next-invoice-no');
+          if (res.data?.invoiceNo) {
+             setValue('invoiceNo', res.data.invoiceNo);
+          }
+          queryClient.invalidateQueries({ queryKey: ['products'] });
+          queryClient.invalidateQueries({ queryKey: ['nextInvoiceNo'] });
         }
-        
-        queryClient.invalidateQueries({ queryKey: ['products'] });
-        queryClient.invalidateQueries({ queryKey: ['nextInvoiceNo'] });
       }, 100);
     },
     onError: (error) => {
       console.error(error);
-      toast.error('Failed to record sale. Please check your inputs.');
+      toast.error('Failed to save sale. Please check your inputs.');
     }
   });
 
@@ -380,7 +462,7 @@ const POS = () => {
             onClick={handleSubmit(onSubmit as any, onError)}
             className="bg-[#10B981] hover:bg-[#059669] text-white px-4 py-1.5 rounded flex items-center gap-2 font-bold text-[13px] transition-colors"
           >
-            <Printer size={16} /> SAVE & PRINT (F10)
+            <Printer size={16} /> {editId ? 'UPDATE SALE (F10)' : 'SAVE & PRINT (F10)'}
           </button>
         </div>
         <button 
@@ -541,35 +623,51 @@ const POS = () => {
                   <td data-label="Qty" className="px-2 py-1 border-r border-[#E5E7EB]">
                     <input 
                       {...register(`items.${index}.quantity`)} 
-                      type="number" step="any" min="1" placeholder="0" 
+                      type="number" step="any" min="0.001" placeholder="0" 
                       onFocus={(e) => e.target.select()}
                       className={`w-full px-2 py-1 border rounded text-[13px] outline-none text-center transition-colors ${watch(`items.${index}.quantity`) > watch(`items.${index}.stock`) ? 'border-red-500 focus:border-red-500 bg-red-100 text-red-700 font-bold' : 'border-[#D1D5DB] focus:border-[#3B82F6] focus:ring-1 focus:ring-[#3B82F6] focus:bg-blue-50'}`} 
                     />
                   </td>
                   <td data-label="Rate" className="px-2 py-1 border-r border-[#E5E7EB]">
-                    <input 
-                      {...register(`items.${index}.rate`)} 
-                      type="number" step="0.01" placeholder="0.00" 
-                      onFocus={(e) => e.target.select()}
-                      className={`w-full px-2 py-1 border rounded text-[13px] outline-none text-right font-bold transition-colors ${(() => {
-                        const pId = watch(`items.${index}.productId`);
-                        const prod = products.find((p: any) => p.id === Number(pId));
-                        const currentRate = Number(watch(`items.${index}.rate`)) || 0;
-                        if (prod && currentRate > 0 && currentRate <= Number(prod.purchaseRate)) {
-                          return 'border-red-500 focus:border-red-500 focus:ring-1 focus:ring-red-500 bg-red-100 text-red-700';
-                        }
-                        return 'border-[#CBD5E1] bg-white focus:border-[#3B82F6] focus:ring-1 focus:ring-[#3B82F6] focus:bg-blue-50 text-[#1E293B]';
-                      })()}`}
-                      onBlur={(e) => {
-                        const enteredRate = Number(e.target.value);
-                        const pId = watch(`items.${index}.productId`);
-                        const product = products.find((p: any) => p.id === Number(pId));
-                        if (product && enteredRate > 0 && enteredRate <= Number(product.purchaseRate)) {
-                          toast.error(`Loss Warning: Selling below purchase rate (${formatCurrency(product.purchaseRate)})!`, { duration: 4000 });
-                        }
-                        register(`items.${index}.rate`).onBlur(e);
-                      }}
-                    />
+                    <div className="flex items-center gap-1">
+                      <input 
+                        {...register(`items.${index}.rate`)} 
+                        type="number" step="0.01" placeholder="0.00" 
+                        onFocus={(e) => e.target.select()}
+                        className={`w-full px-2 py-1 border rounded text-[13px] outline-none text-right font-bold transition-colors ${(() => {
+                          const pId = watch(`items.${index}.productId`);
+                          const prod = products.find((p: any) => p.id === Number(pId));
+                          const currentRate = Number(watch(`items.${index}.rate`)) || 0;
+                          if (prod && currentRate > 0 && currentRate <= Number(prod.purchaseRate)) {
+                            return 'border-red-500 focus:border-red-500 focus:ring-1 focus:ring-red-500 bg-red-100 text-red-700';
+                          }
+                          return 'border-[#CBD5E1] bg-white focus:border-[#3B82F6] focus:ring-1 focus:ring-[#3B82F6] focus:bg-blue-50 text-[#1E293B]';
+                        })()}`}
+                        onBlur={(e) => {
+                          const enteredRate = Number(e.target.value);
+                          const pId = watch(`items.${index}.productId`);
+                          const product = products.find((p: any) => p.id === Number(pId));
+                          if (product && enteredRate > 0 && enteredRate <= Number(product.purchaseRate)) {
+                            toast.error(`Loss Warning: Selling below purchase rate (${formatCurrency(product.purchaseRate)})!`, { duration: 4000 });
+                          }
+                          register(`items.${index}.rate`).onBlur(e);
+                        }}
+                      />
+                      {settings?.enableCustomerRates && !!selectedCustomerId && Number(watch(`items.${index}.productId`)) > 0 && Number(watch(`items.${index}.rate`)) > 0 && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const pId = Number(watch(`items.${index}.productId`));
+                            const rVal = Number(watch(`items.${index}.rate`));
+                            saveCustomerRateMutation.mutate({ productId: pId, rate: rVal });
+                          }}
+                          className="p-1 bg-green-50 text-green-600 border border-green-300 rounded hover:bg-green-600 hover:text-white transition-colors shrink-0"
+                          title="Save this rate as customer fixed rate"
+                        >
+                          <DollarSign size={11} />
+                        </button>
+                      )}
+                    </div>
                   </td>
                   <td data-label="Disc %" className="px-2 py-1 border-r border-[#E5E7EB]">
                     <input 

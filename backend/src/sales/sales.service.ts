@@ -222,4 +222,99 @@ export class SalesService {
       });
     });
   }
+
+  async update(id: number, createSaleDto: CreateSaleDto, userId: number) {
+    return this.prisma.$transaction(async (tx) => {
+      const existingSale = await tx.sale.findUnique({
+        where: { id },
+        include: { items: true },
+      });
+
+      if (!existingSale) {
+        throw new BadRequestException(`Sale invoice not found: ${id}`);
+      }
+
+      // 1. Reverse stock from old items
+      for (const oldItem of existingSale.items) {
+        const updatedProduct = await tx.product.update({
+          where: { id: oldItem.productId },
+          data: {
+            currentStock: { increment: oldItem.quantity },
+          },
+        });
+
+        await tx.stockTransaction.create({
+          data: {
+            date: new Date(),
+            productId: oldItem.productId,
+            type: TransactionType.SALE_RETURN,
+            quantityIn: oldItem.quantity,
+            quantityOut: 0,
+            balance: updatedProduct.currentStock,
+            reference: `Reverted for Edit ${existingSale.invoiceNo}`,
+          },
+        });
+      }
+
+      // 2. Delete old Sale items
+      await tx.saleItem.deleteMany({
+        where: { saleId: id },
+      });
+
+      // 3. Update Sale and insert new items
+      const updatedSale = await tx.sale.update({
+        where: { id },
+        data: {
+          invoiceNo: createSaleDto.invoiceNo || existingSale.invoiceNo,
+          date: new Date(createSaleDto.date),
+          customerId: createSaleDto.customerId,
+          userId: userId,
+          paymentModeId: createSaleDto.paymentModeId,
+          subtotal: createSaleDto.subtotal,
+          tax: createSaleDto.tax || 0,
+          discount: createSaleDto.discount || 0,
+          grandTotal: createSaleDto.grandTotal,
+          items: {
+            create: createSaleDto.items.map((item) => ({
+              productId: item.productId,
+              quantity: item.quantity,
+              noOfBirds: item.noOfBirds || 0,
+              rate: item.rate,
+              discount: item.discount || 0,
+              tax: item.tax || 0,
+              amount: item.amount,
+            })),
+          },
+        },
+        include: { items: true },
+      });
+
+      // 4. Update stock and ledger for new items
+      for (const item of createSaleDto.items) {
+        const updatedProduct = await tx.product.update({
+          where: { id: item.productId },
+          data: {
+            currentStock: { decrement: item.quantity },
+          },
+        });
+
+        await tx.stockTransaction.create({
+          data: {
+            date: new Date(createSaleDto.date),
+            productId: item.productId,
+            type: TransactionType.SALE,
+            quantityIn: 0,
+            quantityOut: item.quantity,
+            balance: updatedProduct.currentStock,
+            reference: updatedSale.invoiceNo,
+          },
+        });
+      }
+
+      return updatedSale;
+    }).catch(err => {
+      console.error('PRISMA ERROR IN SALE UPDATE:', err);
+      throw new BadRequestException(err.message || 'Error updating sale');
+    });
+  }
 }

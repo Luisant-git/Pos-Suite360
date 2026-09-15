@@ -491,7 +491,7 @@ const PurchaseEntry = () => {
                   <td data-label="Stock" className="px-2 py-1 border-r border-[#E5E7EB]">
                     <input 
                       {...register(`items.${index}.quantity`)} 
-                      type="number" step="any" min="1" placeholder="0" 
+                      type="number" step="any" min="0.001" placeholder="0" 
                       onFocus={(e) => e.target.select()}
                       className="w-full px-2 py-1 border border-[#D1D5DB] rounded text-[13px] outline-none focus:border-[#3B82F6] focus:ring-1 focus:ring-[#3B82F6] focus:bg-blue-50 transition-colors text-center" 
                     />

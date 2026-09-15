@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Edit, Trash2, CheckCircle, Users, Grid, Maximize, Minimize } from 'lucide-react';
+import { Edit, Trash2, CheckCircle, Users, Grid, Maximize, Minimize, DollarSign } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import DeleteConfirmationModal from '../../components/DeleteConfirmationModal';
+import CustomerRatesModal from '../../components/CustomerRatesModal';
+import { useSettings } from '../../contexts/SettingsContext';
 import api from '../../services/api';
 
 const customerSchema = z.object({
@@ -24,7 +26,9 @@ type CustomerFormValues = z.infer<typeof customerSchema>;
 
 const Customers = () => {
   const queryClient = useQueryClient();
+  const { settings } = useSettings();
   const [itemToDelete, setItemToDelete] = useState<any>(null);
+  const [selectedCustomerForRates, setSelectedCustomerForRates] = useState<any>(null);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [isFullTable, setIsFullTable] = useState(false);
@@ -315,6 +319,15 @@ const Customers = () => {
                     </td>
                     <td data-label="Actions" className="px-3 py-3 text-center">
                       <div className="flex justify-center gap-2">
+                        {settings?.enableCustomerRates && (
+                          <button type="button"
+                            onClick={() => setSelectedCustomerForRates(customer)}
+                            className="text-[#059669] border border-[#059669] rounded px-1.5 py-1 hover:bg-[#059669] hover:text-white transition-colors text-[11px] font-bold flex items-center gap-1"
+                            title="Fix Product Rates"
+                          >
+                            <DollarSign size={12} /> Rates
+                          </button>
+                        )}
                         <button type="button" 
                           onClick={() => handleEdit(customer)}
                           className="text-[#3B82F6] border border-[#3B82F6] rounded p-1 hover:bg-[#3B82F6] hover:text-white transition-colors"
@@ -350,6 +363,13 @@ const Customers = () => {
         }}
         onCancel={() => setItemToDelete(null)}
       />
+      {/* Customer Fixed Rates Modal */}
+      {selectedCustomerForRates && (
+        <CustomerRatesModal 
+          customer={selectedCustomerForRates}
+          onClose={() => setSelectedCustomerForRates(null)}
+        />
+      )}
     </div>
   );
 };

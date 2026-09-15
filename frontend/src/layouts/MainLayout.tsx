@@ -234,6 +234,7 @@ const MainLayout = () => {
             {hasAnyPerm(['sales_pos', 'sales_return', 'sales_receipts']) && (
               <MobileNavDropdown title="Sales" icon="fa-shopping-cart" isActive={isSalesActive}>
                 {hasPerm('sales_pos') && <MobileDropdownItem to="/sales/pos" icon="fa-th-large" title="Sales Entry (POS)" />}
+                {hasPerm('sales_pos') && <MobileDropdownItem to="/sales" icon="fa-list-alt" title="Sales List" />}
                 {hasPerm('sales_return') && <MobileDropdownItem to="/sales/return" icon="fa-reply" title="Sales Return" isDanger />}
                 {hasPerm('sales_receipts') && <MobileDropdownItem to="/sales/receipts" icon="fa-money" title="Customer Receipts" />}
               </MobileNavDropdown>
@@ -327,6 +328,7 @@ const MainLayout = () => {
             {hasAnyPerm(['sales_pos', 'sales_return', 'sales_receipts']) && (
               <NavDropdown title="Sales" icon="fa-shopping-cart" isActive={isSalesActive}>
                 {hasPerm('sales_pos') && <DropdownItem to="/sales/pos" icon="fa-th-large" title="Sales Entry (POS)" />}
+                {hasPerm('sales_pos') && <DropdownItem to="/sales" icon="fa-list-alt" title="Sales List" />}
                 {hasPerm('sales_return') && <DropdownItem to="/sales/return" icon="fa-reply" title="Sales Return" isDanger />}
                 <div className="h-px bg-gray-100 my-1 mx-4"></div>
                 {hasPerm('sales_receipts') && <DropdownItem to="/sales/receipts" icon="fa-money" title="Customer Receipts" />}

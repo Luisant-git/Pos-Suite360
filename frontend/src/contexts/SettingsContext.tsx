@@ -12,6 +12,9 @@ interface Settings {
   invoicePrefix: string;
   invoiceNotes?: string;
   signatureImage?: string;
+  yearlyInvoiceReset?: boolean;
+  allowEditSaleInvoice?: boolean;
+  enableCustomerRates?: boolean;
 }
 
 interface SettingsContextType {

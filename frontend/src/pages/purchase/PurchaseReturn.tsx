@@ -74,7 +74,7 @@ const PurchaseReturn = () => {
   }, [purchaseDetails]);
 
   const handleReturnQtyChange = (index: number, val: string) => {
-    const qty = val === '' ? '' : parseInt(val) || 0;
+    const qty = val === '' ? '' : parseFloat(val) || 0;
     const newItems = [...returnItems];
     // prevent returning more than purchased
     if (typeof qty === 'number' && qty > newItems[index].quantity) return;

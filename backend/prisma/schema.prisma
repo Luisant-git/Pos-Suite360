@@ -113,6 +113,7 @@ model Customer {
   sales              Sale[]
   salesReturns       SalesReturn[]
   receipts           CustomerReceipt[]
+  customRates        CustomerProductRate[]
   
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
@@ -189,6 +190,7 @@ model Product {
   saleItems           SaleItem[]
   salesReturnItems    SalesReturnItem[]
   stockLedger         StockTransaction[]
+  customerRates       CustomerProductRate[]
   
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
@@ -476,7 +478,27 @@ model Settings {
   invoiceNotes     String?
   signatureImage   String?
   yearlyInvoiceReset Boolean @default(false)
+  allowEditSaleInvoice Boolean @default(false)
+  enableCustomerRates Boolean @default(false)
 
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
+}
+
+// ------------------------------------------------------
+// Customer-wise Fixed Product Rates Model
+// ------------------------------------------------------
+
+model CustomerProductRate {
+  id         Int      @id @default(autoincrement())
+  customerId Int
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  productId  Int
+  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  rate       Decimal  @default(0)
+
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([customerId, productId])
 }

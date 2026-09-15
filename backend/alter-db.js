@@ -23,7 +23,17 @@ async function run() {
       
       'ALTER TABLE "StockTransaction" ALTER COLUMN "quantityIn" TYPE DECIMAL(65,30) USING "quantityIn"::numeric',
       'ALTER TABLE "StockTransaction" ALTER COLUMN "quantityOut" TYPE DECIMAL(65,30) USING "quantityOut"::numeric',
-      'ALTER TABLE "StockTransaction" ALTER COLUMN "balance" TYPE DECIMAL(65,30) USING "balance"::numeric',
+      'ALTER TABLE "Settings" ADD COLUMN IF NOT EXISTS "allowEditSaleInvoice" BOOLEAN NOT NULL DEFAULT false',
+      'ALTER TABLE "Settings" ADD COLUMN IF NOT EXISTS "enableCustomerRates" BOOLEAN NOT NULL DEFAULT false',
+      `CREATE TABLE IF NOT EXISTS "CustomerProductRate" (
+        "id" SERIAL PRIMARY KEY,
+        "customerId" INTEGER NOT NULL REFERENCES "Customer"("id") ON DELETE CASCADE,
+        "productId" INTEGER NOT NULL REFERENCES "Product"("id") ON DELETE CASCADE,
+        "rate" DECIMAL(65,30) NOT NULL DEFAULT 0,
+        "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        CONSTRAINT "CustomerProductRate_customerId_productId_key" UNIQUE ("customerId", "productId")
+      )`,
     ];
 
     for (const query of queries) {

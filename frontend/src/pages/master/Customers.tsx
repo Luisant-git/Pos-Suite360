@@ -226,6 +226,19 @@ const Customers = () => {
             </div>
           </div>
 
+          {settings?.enableCustomerRates && editingId && (
+            <button
+              type="button"
+              onClick={() => {
+                const cust = customers.find((c: any) => c.id === editingId);
+                if (cust) setSelectedCustomerForRates(cust);
+              }}
+              className="w-full bg-[#059669] hover:bg-[#047857] text-white font-bold py-2 rounded flex justify-center items-center gap-2 text-[13px] transition-colors shadow-sm mt-1"
+            >
+              <DollarSign size={15} /> FIX / EDIT PRODUCT RATES FOR THIS CUSTOMER
+            </button>
+          )}
+
           <button 
             type="submit" 
             disabled={mutation.isPending}

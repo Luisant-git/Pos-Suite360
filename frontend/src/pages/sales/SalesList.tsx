@@ -135,19 +135,20 @@ const SalesList = () => {
                 <th className="px-3 py-2.5 border-r border-[#444] relative">Date</th>
                 <th className="px-3 py-2.5 border-r border-[#444] relative">Invoice No</th>
                 <th className="px-3 py-2.5 border-r border-[#444] relative">Customer</th>
-                <th className="px-3 py-2.5 border-r border-[#444] relative text-right">Total Amount (₹)</th>
-                <th className="px-3 py-2.5 border-r border-[#444] relative text-center">Payment</th>
+                <th className="px-3 py-2.5 border-r border-[#444] relative text-right">Total Amount ({settings?.currencySymbol || 'RM'})</th>
+                <th className="px-3 py-2.5 border-r border-[#444] relative text-center">Payment Mode</th>
+                <th className="px-3 py-2.5 border-r border-[#444] relative text-center">Status</th>
                 <th className="px-3 py-2.5 text-center w-32">Actions</th>
               </tr>
             </thead>
             <tbody>
               {isLoading ? (
                 <tr>
-                  <td colSpan={6} className="px-3 py-4 text-center text-[#73879C]">Loading...</td>
+                  <td colSpan={7} className="px-3 py-4 text-center text-[#73879C]">Loading...</td>
                 </tr>
               ) : filteredSales.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-3 py-4 text-center text-[#73879C]">No sales invoices found matching your criteria.</td>
+                  <td colSpan={7} className="px-3 py-4 text-center text-[#73879C]">No sales invoices found matching your criteria.</td>
                 </tr>
               ) : (
                 paginatedSales.map((sale: any, index: number) => (
@@ -156,6 +157,15 @@ const SalesList = () => {
                     <td className="px-3 py-2.5 border-r border-[#E5E7EB] text-[#3B82F6] font-bold cursor-pointer hover:underline">{sale.invoiceNo}</td>
                     <td className="px-3 py-2.5 border-r border-[#E5E7EB] text-[#333] font-medium">{sale.customer?.name || 'Counter Sale'}</td>
                     <td className="px-3 py-2.5 border-r border-[#E5E7EB] text-[#333] font-bold text-right">{formatCurrency(sale.grandTotal)}</td>
+                    <td className="px-3 py-2.5 border-r border-[#E5E7EB] text-center">
+                      <span className={`px-2 py-0.5 rounded text-[11px] font-bold tracking-wide ${
+                        sale.paymentMode?.name === 'Cash' ? 'bg-[#06B6D4] text-white' : 
+                        sale.paymentMode?.name === 'Credit' ? 'bg-[#EC4899] text-white' :
+                        'bg-[#3B82F6] text-white'
+                      }`}>
+                        {sale.paymentMode?.name?.toUpperCase() || 'CASH'}
+                      </span>
+                    </td>
                     <td className="px-3 py-2.5 border-r border-[#E5E7EB] text-center">
                       <span className="bg-[#22C55E] text-white px-2 py-0.5 rounded text-[11px] font-bold tracking-wide">PAID</span>
                     </td>

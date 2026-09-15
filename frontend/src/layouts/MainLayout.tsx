@@ -180,7 +180,7 @@ const MainLayout = () => {
     return () => window.removeEventListener('keydown', handleGlobalKeyDown);
   }, [navigate]);
 
-  const formattedDate = `${currentDate.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })} ${currentDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true })}`;
+  const formattedDate = `${currentDate.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', timeZone: 'Asia/Kuala_Lumpur' })} ${currentDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true, timeZone: 'Asia/Kuala_Lumpur' })}`;
 
   const isMasterActive = location.pathname.startsWith('/master');
   const isSalesActive = location.pathname.startsWith('/sales');

@@ -77,9 +77,9 @@ const PurchaseEntry = () => {
     defaultValues: {
       entryNo: 'Generating...',
       invoiceNo: '',
-      invoiceDate: new Date().toISOString().split('T')[0],
+      invoiceDate: new Date().toLocaleDateString('sv-SE', { timeZone: 'Asia/Kuala_Lumpur' }),
       supplierId: 0,
-      date: new Date().toISOString().split('T')[0],
+      date: new Date().toLocaleDateString('sv-SE', { timeZone: 'Asia/Kuala_Lumpur' }),
       paymentModeId: 0,
       items: [{ productId: 0, quantity: '' as any, unit: 'Nos', pRate: '' as any, wRate: '' as any, sRate: '' as any, mrp: '' as any, discPercent: '' as any, discAmt: '' as any, total: 0 }],
       totalAmount: 0,

@@ -109,7 +109,7 @@ const POS = () => {
   const { register, control, handleSubmit, watch, setValue, reset } = useForm<SaleFormValues>({
     resolver: zodResolver(saleSchema) as any,
     defaultValues: {
-      date: new Date().toISOString().split('T')[0],
+      date: new Date().toLocaleDateString('sv-SE', { timeZone: 'Asia/Kuala_Lumpur' }),
       invoiceNo: 'Generating...',
       customerId: 0,
       rateType: 'Wholesale Rate',

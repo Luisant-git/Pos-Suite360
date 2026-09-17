@@ -36,6 +36,16 @@ const CustomerReceiptsReport = () => {
     if (searchTerm && !item.customerName.toLowerCase().includes(searchTerm.toLowerCase()) && !item.phone.includes(searchTerm)) {
       return false;
     }
+    
+    // Hide customers with zero balance and no activity
+    const hasActivity = Number(item.openingBalance || 0) !== 0 || 
+                        Number(item.totalSales || 0) !== 0 || 
+                        Number(item.totalReceipts || 0) !== 0 || 
+                        Number(item.totalReturns || 0) !== 0 || 
+                        Number(item.netPending || 0) !== 0;
+                        
+    if (!hasActivity) return false;
+    
     return true;
   });
 

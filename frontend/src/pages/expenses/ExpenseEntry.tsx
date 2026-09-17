@@ -1,19 +1,35 @@
 import { useState } from 'react';
-import { X, Briefcase, PlusSquare } from 'lucide-react';
+import { X, Briefcase, PlusSquare, Download, Filter, RefreshCw, Calendar, FileText } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 import api from '../../services/api';
+import { exportTableToPdf } from '../../utils/exportPdf';
+import { exportToExcel } from '../../utils/exportExcel';
+import { useSettings } from '../../contexts/SettingsContext';
 
 const ExpenseEntry = () => {
+  const { formatCurrency, settings } = useSettings();
+  const queryClient = useQueryClient();
+
+  // New Expense Form State
   const [expenseDate, setExpenseDate] = useState(new Date().toISOString().split('T')[0]);
   const [categoryId, setCategoryId] = useState('');
   const [amount, setAmount] = useState('');
   const [paymentModeId, setPaymentModeId] = useState('');
   const [notes, setNotes] = useState('');
   
-  const queryClient = useQueryClient();
+  // Date-wise Filter & Search State for History
+  const [filterStartDate, setFilterStartDate] = useState(() => {
+    const d = new Date();
+    d.setDate(1);
+    return d.toISOString().split('T')[0];
+  });
+  const [filterEndDate, setFilterEndDate] = useState(() => new Date().toISOString().split('T')[0]);
+  const [filterCategoryId, setFilterCategoryId] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
 
+  // Fetch Master Data
   const { data: categories = [] } = useQuery({
     queryKey: ['expenseCategories'],
     queryFn: async () => (await api.get('/expense-categories')).data
@@ -24,10 +40,23 @@ const ExpenseEntry = () => {
     queryFn: async () => (await api.get('/payment-modes')).data
   });
 
-  const { data: expenses = [] } = useQuery({
-    queryKey: ['expenses'],
-    queryFn: async () => (await api.get('/expenses')).data
+  // Fetch Expenses List with date filter
+  const { data: expenses = [], isLoading: historyLoading, refetch } = useQuery({
+    queryKey: ['expenses', filterStartDate, filterEndDate, filterCategoryId, searchQuery],
+    queryFn: async () => {
+      const res = await api.get('/expenses', {
+        params: {
+          startDate: filterStartDate || undefined,
+          endDate: filterEndDate || undefined,
+          categoryId: filterCategoryId || undefined,
+          search: searchQuery || undefined,
+        }
+      });
+      return res.data;
+    }
   });
+
+  const totalExpenseAmount = expenses.reduce((sum: number, e: any) => sum + Number(e.amount || 0), 0);
 
   const createMutation = useMutation({
     mutationFn: async (payload: any) => {
@@ -36,6 +65,7 @@ const ExpenseEntry = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['expenses'] });
+      toast.success('Expense saved successfully!');
       setAmount('');
       setNotes('');
       setCategoryId('');
@@ -61,17 +91,68 @@ const ExpenseEntry = () => {
     });
   };
 
+  const setQuickDate = (type: 'today' | 'thisMonth' | 'all') => {
+    const now = new Date();
+    if (type === 'today') {
+      const todayStr = now.toISOString().split('T')[0];
+      setFilterStartDate(todayStr);
+      setFilterEndDate(todayStr);
+    } else if (type === 'thisMonth') {
+      const firstDay = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
+      const todayStr = now.toISOString().split('T')[0];
+      setFilterStartDate(firstDay);
+      setFilterEndDate(todayStr);
+    } else if (type === 'all') {
+      setFilterStartDate('');
+      setFilterEndDate('');
+    }
+  };
+
+  const handlePdfExport = () => {
+    exportTableToPdf('daily-expenses-export', 'Daily_Expenses_Report');
+  };
+
+  const handleExcelExport = () => {
+    const exportData = expenses.map((e: any, index: number) => ({
+      'S.No': index + 1,
+      'Date': new Date(e.date).toLocaleDateString(),
+      'Category': e.category?.name || '-',
+      'Payment Mode': e.paymentMode?.name || '-',
+      'Description': e.notes || '-',
+      'Amount': Number(e.amount),
+    }));
+    exportToExcel(exportData, 'Daily_Expenses_Report');
+  };
+
   return (
     <div className="flex flex-col h-full bg-[#F3F4F6]">
+      
       {/* Header */}
-      <div className="bg-[#0f172a] text-white px-4 py-3 flex items-center justify-between shadow-md">
+      <div className="bg-[#0f172a] text-white px-4 py-3 flex flex-col sm:flex-row items-start sm:items-center justify-between shadow-md gap-3">
         <div className="flex items-center gap-2">
           <Briefcase size={20} className="text-blue-400" />
-          <h2 className="text-base font-bold tracking-wide">DAILY EXPENSES MANAGEMENT</h2>
+          <h2 className="text-base font-bold tracking-wide uppercase">DAILY EXPENSES MANAGEMENT</h2>
         </div>
-        <Link to="/dashboard" className="bg-red-500 hover:bg-red-600 text-white py-1.5 px-4 rounded text-sm flex items-center gap-2 shadow-sm">
-          <X size={16} /> Close (Esc)
-        </Link>
+        
+        <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto justify-end">
+          <button 
+            type="button" 
+            onClick={handleExcelExport}
+            className="bg-[#10B981] hover:bg-[#059669] text-white text-[12px] font-bold px-3 py-1.5 rounded flex items-center gap-1.5 transition-colors shadow-sm"
+          >
+            <Download size={14} /> Export Excel
+          </button>
+          <button 
+            type="button" 
+            onClick={handlePdfExport}
+            className="bg-[#EF4444] hover:bg-[#DC2626] text-white text-[12px] font-bold px-3 py-1.5 rounded flex items-center gap-1.5 transition-colors shadow-sm"
+          >
+            <Download size={14} /> Export PDF
+          </button>
+          <Link to="/dashboard" className="bg-red-500 hover:bg-red-600 text-white py-1.5 px-3 rounded text-[12px] font-bold flex items-center gap-1.5 shadow-sm">
+            <X size={14} /> Close (Esc)
+          </Link>
+        </div>
       </div>
 
       {/* Main Content */}
@@ -79,9 +160,9 @@ const ExpenseEntry = () => {
         <div className="flex flex-col lg:flex-row gap-6 h-full">
           
           {/* Left Panel - Log New Expense */}
-          <div className="w-full lg:w-1/3 bg-white rounded-lg shadow-sm border border-gray-200 flex flex-col">
+          <div className="w-full lg:w-1/3 bg-white rounded-lg shadow-sm border border-gray-200 flex flex-col self-start">
             <div className="px-4 py-3 border-b border-gray-200 bg-gray-50 rounded-t-lg">
-              <h3 className="font-bold text-[#0f172a] text-sm flex items-center gap-2">
+              <h3 className="font-bold text-[#0f172a] text-sm flex items-center gap-2 uppercase">
                 LOG NEW EXPENSE
               </h3>
             </div>
@@ -93,7 +174,7 @@ const ExpenseEntry = () => {
                   type="date" 
                   value={expenseDate} 
                   onChange={(e) => setExpenseDate(e.target.value)}
-                  className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500" 
+                  className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 bg-white" 
                 />
               </div>
               
@@ -134,11 +215,12 @@ const ExpenseEntry = () => {
                   rows={3}
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
+                  placeholder="Additional details..."
                   className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 resize-none" 
                 ></textarea>
               </div>
 
-              <div className="mt-auto pt-4">
+              <div className="pt-2">
                 <button onClick={handleSave} disabled={createMutation.isPending} className="w-full bg-[#0f172a] hover:bg-gray-800 text-white font-bold py-2.5 px-4 rounded shadow-md flex justify-center items-center gap-2 transition-colors disabled:opacity-50">
                   <PlusSquare size={18} /> {createMutation.isPending ? 'Saving...' : 'Save Expense'}
                 </button>
@@ -146,43 +228,135 @@ const ExpenseEntry = () => {
             </div>
           </div>
 
-          {/* Right Panel - Expense Log History */}
+          {/* Right Panel - Expense Log History with Date Wise Filter */}
           <div className="w-full lg:w-2/3 bg-white rounded-lg shadow-sm border border-gray-200 flex flex-col">
-            <div className="px-4 py-3 border-b border-gray-200 bg-gray-50 rounded-t-lg">
-              <h3 className="font-bold text-[#0f172a] text-sm">
-                EXPENSE LOG HISTORY
+            <div className="px-4 py-3 border-b border-gray-200 bg-gray-50 rounded-t-lg flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+              <h3 className="font-bold text-[#0f172a] text-sm uppercase">
+                EXPENSE LOG HISTORY & DATE WISE FILTER
               </h3>
+              <span className="text-xs font-bold text-gray-500">{expenses.length} Records</span>
             </div>
 
-            <div className="p-4 flex-1 overflow-auto overflow-x-auto">
-              <div className="overflow-x-auto rounded-lg border border-gray-200">
-                <table className="w-full text-sm text-left whitespace-nowrap">
+            {/* Date Wise Filter Controls Bar */}
+            <div className="p-4 border-b border-gray-200 bg-[#F8FAFC]">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 items-end mb-2">
+                <div>
+                  <label className="block text-[11px] font-bold text-gray-600 mb-1">From Date</label>
+                  <input 
+                    type="date" 
+                    value={filterStartDate} 
+                    onChange={(e) => setFilterStartDate(e.target.value)}
+                    className="w-full border border-gray-300 rounded px-2.5 py-1.5 text-xs focus:outline-none focus:border-blue-500 bg-white" 
+                  />
+                </div>
+                <div>
+                  <label className="block text-[11px] font-bold text-gray-600 mb-1">To Date</label>
+                  <input 
+                    type="date" 
+                    value={filterEndDate} 
+                    onChange={(e) => setFilterEndDate(e.target.value)}
+                    className="w-full border border-gray-300 rounded px-2.5 py-1.5 text-xs focus:outline-none focus:border-blue-500 bg-white" 
+                  />
+                </div>
+                <div>
+                  <label className="block text-[11px] font-bold text-gray-600 mb-1">Category</label>
+                  <select 
+                    value={filterCategoryId} 
+                    onChange={(e) => setFilterCategoryId(e.target.value)}
+                    className="w-full border border-gray-300 rounded px-2.5 py-1.5 text-xs focus:outline-none focus:border-blue-500 bg-white"
+                  >
+                    <option value="">All Categories</option>
+                    {categories.map((c: any) => (
+                      <option key={c.id} value={c.id}>{c.name}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-[11px] font-bold text-gray-600 mb-1">Search Description</label>
+                  <input 
+                    type="text" 
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Search notes..."
+                    className="w-full border border-gray-300 rounded px-2.5 py-1.5 text-xs focus:outline-none focus:border-blue-500 bg-white" 
+                  />
+                </div>
+              </div>
+
+              <div className="flex flex-wrap items-center justify-between pt-2 gap-2">
+                <div className="flex items-center gap-2">
+                  <button type="button" onClick={() => refetch()} className="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-3 py-1 rounded flex items-center gap-1 transition-colors">
+                    <Filter size={12} /> Apply Filter
+                  </button>
+                  <button type="button" onClick={() => setQuickDate('today')} className="bg-gray-200 hover:bg-gray-300 text-gray-700 text-xs font-bold px-2.5 py-1 rounded transition-colors">
+                    Today
+                  </button>
+                  <button type="button" onClick={() => setQuickDate('thisMonth')} className="bg-gray-200 hover:bg-gray-300 text-gray-700 text-xs font-bold px-2.5 py-1 rounded transition-colors">
+                    This Month
+                  </button>
+                  <button type="button" onClick={() => { setFilterStartDate(''); setFilterEndDate(''); setFilterCategoryId(''); setSearchQuery(''); }} className="text-gray-500 hover:text-gray-700 text-xs font-bold px-2 py-1 flex items-center gap-1">
+                    <RefreshCw size={11} /> Reset
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* PDF Printable & Export Container */}
+            <div id="daily-expenses-export" className="p-4 flex-1 flex flex-col min-h-0 overflow-hidden">
+              
+              {/* Hidden PDF Printable Header */}
+              <div className="pdf-header hidden mb-4 border-b border-black pb-3">
+                <div className="text-center">
+                  <h1 className="text-xl font-bold uppercase">{settings?.shopName || 'MY SHOP'}</h1>
+                  <h2 className="text-sm font-semibold uppercase">DAILY EXPENSES REPORT</h2>
+                  <p className="text-xs text-gray-600">Date Range: {filterStartDate || 'All Time'} to {filterEndDate || 'All Time'}</p>
+                </div>
+              </div>
+
+              <div className="flex-1 overflow-auto overflow-x-auto rounded-lg border border-gray-200">
+                <table className="w-full text-sm text-left whitespace-nowrap min-w-[600px]">
                   <thead className="text-xs text-white uppercase bg-[#0f172a]">
                     <tr>
-                      <th className="px-4 py-3 font-semibold text-center w-32 border-r border-gray-600">Date</th>
-                      <th className="px-4 py-3 font-semibold border-r border-gray-600 text-center w-64">Category</th>
-                      <th className="px-4 py-3 font-semibold border-r border-gray-600 text-center w-48">Mode</th>
-                      <th className="px-4 py-3 font-semibold text-right w-40">Amount</th>
+                      <th className="px-4 py-3 font-semibold text-center w-28 border-r border-gray-600">Date</th>
+                      <th className="px-4 py-3 font-semibold border-r border-gray-600 text-left">Category</th>
+                      <th className="px-4 py-3 font-semibold border-r border-gray-600 text-center w-36">Mode</th>
+                      <th className="px-4 py-3 font-semibold border-r border-gray-600 text-left">Notes / Remarks</th>
+                      <th className="px-4 py-3 font-semibold text-right w-36">Amount (RM)</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {expenses.length === 0 ? (
+                    {historyLoading ? (
+                      <tr><td colSpan={5} className="text-center py-4 text-gray-500">Loading expenses...</td></tr>
+                    ) : expenses.length === 0 ? (
                       <tr>
-                        <td colSpan={4} className="text-center py-4 text-gray-500">No expenses logged yet.</td>
+                        <td colSpan={5} className="text-center py-4 text-gray-500">No expenses found for selected criteria.</td>
                       </tr>
                     ) : (
-                      expenses.map((exp: any) => (
-                        <tr key={exp.id} className="border-b border-gray-200 hover:bg-gray-50 transition-colors">
-                          <td className="px-4 py-2.5 text-center text-gray-700">{new Date(exp.date).toISOString().split('T')[0]}</td>
-                          <td className="px-4 py-2.5 font-medium text-gray-900">{exp.category?.name}</td>
-                          <td className="px-4 py-2.5 text-gray-600">{exp.paymentMode?.name}</td>
-                          <td className="px-4 py-2.5 text-right font-bold text-red-600">₹{Number(exp.amount).toFixed(2)}</td>
+                      expenses.map((exp: any, idx: number) => (
+                        <tr key={exp.id} className={`border-b border-gray-200 ${idx % 2 === 0 ? 'bg-white' : 'bg-gray-50'} hover:bg-blue-50 transition-colors`}>
+                          <td className="px-4 py-2.5 text-center text-gray-700 font-medium">{new Date(exp.date).toLocaleDateString()}</td>
+                          <td className="px-4 py-2.5 font-bold text-[#16A34A]">{exp.category?.name || '-'}</td>
+                          <td className="px-4 py-2.5 text-center text-gray-600">{exp.paymentMode?.name || '-'}</td>
+                          <td className="px-4 py-2.5 text-gray-600 text-xs">{exp.notes || '-'}</td>
+                          <td className="px-4 py-2.5 text-right font-bold text-red-600">{formatCurrency(exp.amount)}</td>
                         </tr>
                       ))
                     )}
                   </tbody>
                 </table>
               </div>
+
+              {/* Total Expenses Summary Footer */}
+              <div className="mt-4 pt-3 border-t-2 border-[#0f172a] flex justify-between items-center bg-[#F0F7FF] px-4 py-3 rounded">
+                <span className="font-bold text-[13px] text-[#0f172a] uppercase">Total Expenses ({expenses.length} Records)</span>
+                <span className="font-bold text-[15px] text-red-600">{formatCurrency(totalExpenseAmount)}</span>
+              </div>
+
+              {/* Hidden PDF Printable Footer */}
+              <div className="pdf-footer hidden mt-6 pt-2 border-t border-black text-right">
+                <p className="text-xs text-gray-500">Printed on: {new Date().toLocaleString()}</p>
+              </div>
+
             </div>
           </div>
 

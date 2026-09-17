@@ -17,6 +17,11 @@ export class CustomerReceiptsController {
     return this.customerReceiptsService.getBalance(Number(id));
   }
 
+  @Get('consolidation-report')
+  async getConsolidationReport() {
+    return this.customerReceiptsService.getConsolidationReport();
+  }
+
   @Get('unpaid-bills/:id')
   async getUnpaidBills(@Param('id') id: string) {
     return this.customerReceiptsService.getUnpaidBills(Number(id));
@@ -24,7 +29,7 @@ export class CustomerReceiptsController {
 
   @Post()
   async create(@Body() createCustomerReceiptDto: any, @Request() req: any) {
-    const userId = (req.user?.userId && req.user.userId > 0) ? req.user.userId : 1;
+    const userId = req.user?.userId;
     return this.customerReceiptsService.create(createCustomerReceiptDto, userId);
   }
 

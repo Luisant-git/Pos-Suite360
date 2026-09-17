@@ -52,6 +52,8 @@ import StockReport from '../pages/reports/StockReport';
 import StockLedgerReport from '../pages/reports/StockLedgerReport';
 import ExpenseReport from '../pages/reports/ExpenseReport';
 import ProfitLossReport from '../pages/reports/ProfitLossReport';
+import CustomerReceiptsReport from '../pages/reports/CustomerReceiptsReport';
+import SupplierPaymentsReport from '../pages/reports/SupplierPaymentsReport';
 
 // Settings
 import Settings from '../pages/Settings';
@@ -118,6 +120,8 @@ const AppRoutes = () => {
         <Route element={<ProtectedRoute requiredPerms="reports_financial" />}><Route path="/reports/profit-ledger" element={<ProfitLossReport />} /></Route>
         <Route element={<ProtectedRoute requiredPerms="reports_financial" />}><Route path="/reports/expenses" element={<ExpenseReport />} /></Route>
         <Route element={<ProtectedRoute requiredPerms="reports_financial" />}><Route path="/reports/stock-ledger" element={<StockLedgerReport />} /></Route>
+        <Route element={<ProtectedRoute requiredPerms="reports_financial" />}><Route path="/reports/customer-receipts" element={<CustomerReceiptsReport />} /></Route>
+        <Route element={<ProtectedRoute requiredPerms="reports_financial" />}><Route path="/reports/supplier-payments" element={<SupplierPaymentsReport />} /></Route>
 
         {/* Settings */}
         <Route element={<ProtectedRoute requiredPerms="master_store_settings" />}><Route path="/settings" element={<Settings />} /></Route>

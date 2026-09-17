@@ -229,4 +229,57 @@ export class CustomerReceiptsService {
 
     return bills;
   }
+
+  async getConsolidationReport() {
+    const customers = await this.prisma.customer.findMany({
+      orderBy: { name: 'asc' },
+    });
+
+    const creditMode = await this.prisma.paymentMode.findFirst({
+      where: { name: { equals: 'Credit', mode: 'insensitive' } }
+    });
+    const creditModeId = creditMode?.id || -1;
+
+    const report = [];
+
+    for (const c of customers) {
+      const sales = await this.prisma.sale.aggregate({
+        where: { customerId: c.id, paymentModeId: creditModeId },
+        _sum: { grandTotal: true },
+      });
+      const receipts = await this.prisma.customerReceipt.aggregate({
+        where: { customerId: c.id },
+        _sum: { amount: true },
+      });
+      const returns = await this.prisma.salesReturn.aggregate({
+        where: { customerId: c.id },
+        _sum: { totalAmount: true },
+      });
+
+      const openingBal = Number(c.openingBalance) || 0;
+      const totalSales = Number(sales._sum.grandTotal) || 0;
+      const totalReceipts = Number(receipts._sum.amount) || 0;
+      const totalReturns = Number(returns._sum.totalAmount) || 0;
+
+      let netOwed = 0;
+      if (c.openingBalanceType === 'Dr') netOwed += openingBal;
+      if (c.openingBalanceType === 'Cr') netOwed -= openingBal;
+
+      const netPending = netOwed + totalSales - totalReceipts - totalReturns;
+
+      report.push({
+        customerId: c.id,
+        customerName: c.name,
+        phone: c.phone || '-',
+        openingBalance: openingBal,
+        openingBalanceType: c.openingBalanceType,
+        totalSales,
+        totalReceipts,
+        totalReturns,
+        netPending,
+      });
+    }
+
+    return report;
+  }
 }

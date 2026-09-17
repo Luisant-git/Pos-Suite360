@@ -43,7 +43,7 @@ function oklchToRgb(oklchStr: string): string {
     const gamma = (c: number) => (c <= 0.0031308 ? 12.92 * c : 1.055 * Math.pow(c, 1 / 2.4) - 0.055);
     const R = Math.round(Math.min(1, Math.max(0, gamma(rLinear))) * 255);
     const G = Math.round(Math.min(1, Math.max(0, gamma(gLinear))) * 255);
-    const B = Math.round(Math.min(1, Math.max(0, gamma(bLinear))) * 255);
+    const B = Math.round(Math.min(1, Math.max(0, gamma(BLinear || bLinear))) * 255);
 
     if (aStr !== undefined) {
       const A = aStr.endsWith('%') ? parseFloat(aStr) / 100 : parseFloat(aStr);
@@ -62,13 +62,13 @@ function sanitizeOklchInText(text: string): string {
 
 export const exportTableToPdf = async (elementId: string, filename: string) => {
   try {
-    const element = document.getElementById(elementId);
-    if (!element) {
+    const liveElement = document.getElementById(elementId);
+    if (!liveElement) {
       alert("Element not found: " + elementId);
       return;
     }
 
-    // 1. Temporarily replace <style> tags containing oklch with sanitized style tags
+    // 1. Temporarily sanitize live <style> tags in document.head (non-visual CSS text)
     const liveStyleEls = Array.from(document.querySelectorAll('style'));
     const styleReplacements: { original: HTMLStyleElement; temp: HTMLStyleElement }[] = [];
     liveStyleEls.forEach((styleEl) => {
@@ -81,7 +81,7 @@ export const exportTableToPdf = async (elementId: string, filename: string) => {
       }
     });
 
-    // 2. Temporarily replace <link rel="stylesheet"> tags containing oklch with sanitized inline style tags
+    // 2. Temporarily sanitize live <link rel="stylesheet"> tags containing oklch
     const linkEls = Array.from(document.querySelectorAll('link[rel="stylesheet"]')) as HTMLLinkElement[];
     const linkReplacements: { link: HTMLLinkElement; tempStyle: HTMLStyleElement }[] = [];
     linkEls.forEach((link) => {
@@ -101,46 +101,6 @@ export const exportTableToPdf = async (elementId: string, filename: string) => {
           }
         }
       } catch {}
-    });
-
-    // 3. Backup and sanitize inline style attributes on target element tree
-    const allTargetElements = [element, ...Array.from(element.querySelectorAll('*'))] as HTMLElement[];
-    const originalInlineStyles = allTargetElements.map((el) => el.getAttribute('style'));
-    allTargetElements.forEach((el) => {
-      const styleAttr = el.getAttribute('style');
-      if (styleAttr && styleAttr.includes('oklch')) {
-        el.setAttribute('style', sanitizeOklchInText(styleAttr));
-      }
-    });
-
-    const prev = { overflow: element.style.overflow, maxHeight: element.style.maxHeight, height: element.style.height, flex: element.style.flex };
-    element.style.overflow = 'visible';
-    element.style.maxHeight = 'none';
-    element.style.height = 'auto';
-    element.style.flex = 'none';
-
-    const innerTable = element.querySelector('table')?.parentElement;
-    const prevInner = innerTable ? { overflow: innerTable.style.overflow, maxHeight: innerTable.style.maxHeight, height: innerTable.style.height } : null;
-    if (innerTable) {
-      innerTable.style.overflow = 'visible';
-      innerTable.style.maxHeight = 'none';
-      innerTable.style.height = 'auto';
-    }
-
-    // Manipulate badges for PDF
-    const badges = element.querySelectorAll('.payment-badge') as NodeListOf<HTMLElement>;
-    const originalBadges = Array.from(badges).map(b => ({ el: b, cssText: b.style.cssText, className: b.className }));
-    badges.forEach((badge) => {
-      const color = badge.getAttribute('data-pdf-color') || '#000';
-      badge.style.cssText = `color: ${color}; font-weight: bold; font-size: 11px; text-align: center;`;
-      badge.className = '';
-    });
-
-    // Reveal headers and footers
-    const pdfHeaders = element.querySelectorAll('.pdf-header, .pdf-footer') as NodeListOf<HTMLElement>;
-    pdfHeaders.forEach(el => {
-      el.classList.remove('hidden');
-      el.style.display = 'block';
     });
 
     const colorProps = [
@@ -170,6 +130,38 @@ export const exportTableToPdf = async (elementId: string, filename: string) => {
             logging: false,
             scrollY: 0,
             onclone: (clonedDoc: Document) => {
+              // Perform ALL visual layout adjustments ONLY inside the cloned document (invisible iframe)
+              const clonedElement = clonedDoc.getElementById(elementId);
+              if (clonedElement) {
+                // Reveal headers and footers ONLY in cloned document
+                const pdfHeaders = clonedElement.querySelectorAll('.pdf-header, .pdf-footer') as NodeListOf<HTMLElement>;
+                pdfHeaders.forEach((el) => {
+                  el.classList.remove('hidden');
+                  el.style.display = 'block';
+                });
+
+                // Format payment badges ONLY in cloned document
+                const badges = clonedElement.querySelectorAll('.payment-badge') as NodeListOf<HTMLElement>;
+                badges.forEach((badge) => {
+                  const color = badge.getAttribute('data-pdf-color') || '#000';
+                  badge.style.cssText = `color: ${color}; font-weight: bold; font-size: 11px; text-align: center;`;
+                  badge.className = '';
+                });
+
+                // Expand container overflow & height ONLY in cloned document
+                clonedElement.style.overflow = 'visible';
+                clonedElement.style.maxHeight = 'none';
+                clonedElement.style.height = 'auto';
+                clonedElement.style.flex = 'none';
+
+                const innerTable = clonedElement.querySelector('table')?.parentElement;
+                if (innerTable) {
+                  innerTable.style.overflow = 'visible';
+                  innerTable.style.maxHeight = 'none';
+                  innerTable.style.height = 'auto';
+                }
+              }
+
               // Sanitize style tags in clonedDoc
               const styleTags = clonedDoc.querySelectorAll('style');
               styleTags.forEach((styleTag) => {
@@ -200,7 +192,7 @@ export const exportTableToPdf = async (elementId: string, filename: string) => {
           },
           jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' },
         } as any)
-        .from(element)
+        .from(liveElement)
         .save();
     } finally {
       // Restore live style tags
@@ -215,39 +207,6 @@ export const exportTableToPdf = async (elementId: string, filename: string) => {
         if (tempStyle.parentNode) {
           tempStyle.replaceWith(link);
         }
-      });
-
-      // Restore live inline styles
-      allTargetElements.forEach((el, i) => {
-        if (originalInlineStyles[i] !== null) {
-          el.setAttribute('style', originalInlineStyles[i]!);
-        } else {
-          el.removeAttribute('style');
-        }
-      });
-
-      // Restore layout
-      element.style.overflow = prev.overflow;
-      element.style.maxHeight = prev.maxHeight;
-      element.style.height = prev.height;
-      element.style.flex = prev.flex;
-
-      if (innerTable && prevInner) {
-        innerTable.style.overflow = prevInner.overflow;
-        innerTable.style.maxHeight = prevInner.maxHeight;
-        innerTable.style.height = prevInner.height;
-      }
-
-      // Restore badges
-      originalBadges.forEach(({ el, cssText, className }) => {
-        el.style.cssText = cssText;
-        el.className = className;
-      });
-
-      // Restore headers
-      pdfHeaders.forEach(el => {
-        el.classList.add('hidden');
-        el.style.display = '';
       });
     }
   } catch (e: any) {

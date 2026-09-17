@@ -10,6 +10,7 @@ import { exportTableToPdf } from '../../utils/exportPdf';
 import InvoicePrintModal from '../../components/InvoicePrintModal';
 import ViewSalesModal from '../sales/ViewSalesModal';
 import PaginationControls from '../../components/PaginationControls';
+import SearchableSelect from '../../components/SearchableSelect';
 
 const SalesReport = () => {
   const navigate = useNavigate();
@@ -134,19 +135,12 @@ const SalesReport = () => {
 
           <div>
             <label className="flex items-center gap-1 text-[12px] text-[#64748B] mb-1 font-bold"><Users size={12} /> Customer Name</label>
-            <div className="relative">
-              <Search size={14} className="absolute left-2.5 top-2.5 text-[#9CA3AF]" />
-              <select
-                value={customerId}
-                onChange={(e) => setCustomerId(e.target.value)}
-                className="w-full pl-8 pr-3 py-1.5 border border-[#CBD5E1] rounded outline-none text-[13px] text-[#334155] bg-white focus:border-[#3B82F6]"
-              >
-                <option value="">Type or select customer...</option>
-                {customers.map((c: any) => (
-                  <option key={c.id} value={c.id}>{c.name}</option>
-                ))}
-              </select>
-            </div>
+            <SearchableSelect
+              options={[{ value: '', label: 'All Customers' }, ...customers.map((c: any) => ({ value: c.id, label: `${c.name} - ${c.phone || ''}` }))]}
+              value={customerId}
+              onChange={(val) => setCustomerId(val || '')}
+              placeholder="All Customers"
+            />
           </div>
 
           <div>

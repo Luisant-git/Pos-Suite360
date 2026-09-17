@@ -7,6 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import DeleteConfirmationModal from '../../components/DeleteConfirmationModal';
 import api from '../../services/api';
+import SearchableSelect from '../../components/SearchableSelect';
 
 const productSchema = z.object({
   code: z.string().min(1, 'Product Code is required'),
@@ -35,7 +36,7 @@ const Products = () => {
   const [isFullTable, setIsFullTable] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<any>(null);
 
-  const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm<ProductFormValues>({
+  const { register, handleSubmit, reset, setValue, watch, formState: { errors } } = useForm<ProductFormValues>({
     resolver: zodResolver(productSchema) as any,
     defaultValues: {
       code: '',
@@ -193,13 +194,12 @@ const Products = () => {
             </div>
             <div>
               <label className="block text-[12px] font-bold text-[#1F2937] mb-1">Unit *</label>
-              <select 
-                {...register('unitId')}
-                className="w-full px-3 py-1.5 border border-[#ccc] rounded shadow-inner focus:border-[#3B82F6] outline-none text-[13px] bg-white"
-              >
-                <option value="">-- Select --</option>
-                {units.map((u: any) => <option key={u.id} value={u.id}>{u.name}</option>)}
-              </select>
+              <SearchableSelect
+                options={units.map((u: any) => ({ value: u.id, label: u.name }))}
+                value={watch('unitId')}
+                onChange={(val) => setValue('unitId', String(val || ''), { shouldValidate: true })}
+                placeholder="-- Select Unit --"
+              />
               {errors.unitId && <span className="text-red-500 text-xs mt-1 block">{errors.unitId.message}</span>}
             </div>
           </div>
@@ -218,35 +218,32 @@ const Products = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <div>
               <label className="block text-[11px] font-bold text-gray-700 mb-1">Category</label>
-              <select 
-                {...register('categoryId')}
-                className="w-full px-3 py-1.5 border border-[#ccc] rounded shadow-inner focus:border-[#3B82F6] outline-none text-[13px] bg-white"
-              >
-                <option value="">-- Select Category --</option>
-                {categories.map((c: any) => <option key={c.id} value={c.id}>{c.name}</option>)}
-              </select>
+              <SearchableSelect
+                options={[{ value: '', label: '-- Select Category --' }, ...categories.map((c: any) => ({ value: c.id, label: c.name }))]}
+                value={watch('categoryId')}
+                onChange={(val) => setValue('categoryId', String(val || ''))}
+                placeholder="-- Select Category --"
+              />
             </div>
             <div>
               <label className="block text-[12px] font-bold text-[#1F2937] mb-1">Brand</label>
-              <select 
-                {...register('brandId')}
-                className="w-full px-3 py-1.5 border border-[#ccc] rounded shadow-inner focus:border-[#3B82F6] outline-none text-[13px] bg-white"
-              >
-                <option value="">-- Select Brand --</option>
-                {brands.map((b: any) => <option key={b.id} value={b.id}>{b.name}</option>)}
-              </select>
+              <SearchableSelect
+                options={[{ value: '', label: '-- Select Brand --' }, ...brands.map((b: any) => ({ value: b.id, label: b.name }))]}
+                value={watch('brandId')}
+                onChange={(val) => setValue('brandId', String(val || ''))}
+                placeholder="-- Select Brand --"
+              />
             </div>
           </div>
 
           <div>
             <label className="block text-[12px] font-bold text-[#1F2937] mb-1">Default Supplier</label>
-            <select 
-              {...register('supplierId')}
-              className="w-full px-3 py-1.5 border border-[#ccc] rounded shadow-inner focus:border-[#3B82F6] outline-none text-[13px] bg-white"
-            >
-              <option value="">-- Select Supplier --</option>
-              {suppliers.map((s: any) => <option key={s.id} value={s.id}>{s.name}</option>)}
-            </select>
+            <SearchableSelect
+              options={[{ value: '', label: '-- Select Supplier --' }, ...suppliers.map((s: any) => ({ value: s.id, label: s.name }))]}
+              value={watch('supplierId')}
+              onChange={(val) => setValue('supplierId', String(val || ''))}
+              placeholder="-- Select Supplier --"
+            />
           </div>
 
           <h3 className="font-bold text-[13px] text-gray-500 mt-2 uppercase">Pricing Matrix</h3>

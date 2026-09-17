@@ -6,6 +6,7 @@ import { exportTableToPdf } from '../../utils/exportPdf';
 import { exportToExcel } from '../../utils/exportExcel';
 import { useSettings } from '../../contexts/SettingsContext';
 import api from '../../services/api';
+import SearchableSelect from '../../components/SearchableSelect';
 
 const ExpenseList = () => {
   const { formatCurrency, settings } = useSettings();
@@ -121,16 +122,12 @@ const ExpenseList = () => {
           </div>
           <div>
             <label className="block text-[12px] font-bold text-[#374151] mb-1">Category Filter</label>
-            <select
+            <SearchableSelect
+              options={[{ value: '', label: 'All Categories' }, ...categories.map((c: any) => ({ value: c.id, label: c.name }))]}
               value={categoryId}
-              onChange={(e) => setCategoryId(e.target.value)}
-              className="w-full px-3 py-1.5 border border-[#ccc] rounded text-[13px] outline-none focus:border-[#3B82F6] bg-white"
-            >
-              <option value="">All Categories</option>
-              {categories.map((c: any) => (
-                <option key={c.id} value={c.id}>{c.name}</option>
-              ))}
-            </select>
+              onChange={(val) => setCategoryId(val || '')}
+              placeholder="All Categories"
+            />
           </div>
           <div className="flex items-center gap-2">
             <button 

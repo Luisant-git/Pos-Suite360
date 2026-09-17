@@ -7,6 +7,7 @@ import { useSettings } from '../../contexts/SettingsContext';
 import api from '../../services/api';
 import ReportTabs from '../../components/ReportTabs';
 import PaginationControls from '../../components/PaginationControls';
+import SearchableSelect from '../../components/SearchableSelect';
 
 const ExpenseReport = () => {
   const { formatCurrency, settings } = useSettings();
@@ -112,16 +113,12 @@ const ExpenseReport = () => {
           </div>
           <div>
             <label className="flex items-center gap-1 text-[12px] text-[#64748B] mb-1 font-bold">Expense Category</label>
-            <select
+            <SearchableSelect
+              options={[{ value: '', label: 'All Categories' }, ...categories.map((c: any) => ({ value: c.id, label: c.name }))]}
               value={categoryId}
-              onChange={(e) => setCategoryId(e.target.value)}
-              className="w-full px-3 py-1.5 border border-[#CBD5E1] rounded outline-none text-[13px] text-[#334155] bg-white focus:border-[#3B82F6]"
-            >
-              <option value="">All Categories</option>
-              {categories.map((c: any) => (
-                <option key={c.id} value={c.id}>{c.name}</option>
-              ))}
-            </select>
+              onChange={(val) => setCategoryId(val || '')}
+              placeholder="All Categories"
+            />
           </div>
           <div>
             <label className="flex items-center gap-1 text-[12px] text-[#64748B] mb-1 font-bold">Search Notes / Description</label>

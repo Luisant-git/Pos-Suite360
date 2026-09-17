@@ -7,6 +7,7 @@ import api from '../../services/api';
 import { exportTableToPdf } from '../../utils/exportPdf';
 import { exportToExcel } from '../../utils/exportExcel';
 import { useSettings } from '../../contexts/SettingsContext';
+import SearchableSelect from '../../components/SearchableSelect';
 
 const ExpenseEntry = () => {
   const { formatCurrency, settings } = useSettings();
@@ -180,12 +181,12 @@ const ExpenseEntry = () => {
               
               <div>
                 <label className="block text-[12px] font-medium text-gray-700 mb-1">Expense Category *</label>
-                <select value={categoryId} onChange={(e) => setCategoryId(e.target.value)} className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 bg-white">
-                  <option value="">Select Category...</option>
-                  {categories.map((c: any) => (
-                    <option key={c.id} value={c.id}>{c.name}</option>
-                  ))}
-                </select>
+                <SearchableSelect
+                  options={categories.map((c: any) => ({ value: c.id, label: c.name }))}
+                  value={categoryId}
+                  onChange={(val) => setCategoryId(val || '')}
+                  placeholder="Search Category..."
+                />
               </div>
 
               <div>
@@ -201,12 +202,12 @@ const ExpenseEntry = () => {
 
               <div>
                 <label className="block text-[12px] font-medium text-gray-700 mb-1">Payment Mode *</label>
-                <select value={paymentModeId} onChange={(e) => setPaymentModeId(e.target.value)} className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 bg-white">
-                  <option value="">Select Payment Mode...</option>
-                  {paymentModes.map((m: any) => (
-                    <option key={m.id} value={m.id}>{m.name}</option>
-                  ))}
-                </select>
+                <SearchableSelect
+                  options={paymentModes.map((m: any) => ({ value: m.id, label: m.name }))}
+                  value={paymentModeId}
+                  onChange={(val) => setPaymentModeId(val || '')}
+                  placeholder="Search Payment Mode..."
+                />
               </div>
 
               <div>
@@ -260,16 +261,12 @@ const ExpenseEntry = () => {
                 </div>
                 <div>
                   <label className="block text-[11px] font-bold text-gray-600 mb-1">Category</label>
-                  <select 
-                    value={filterCategoryId} 
-                    onChange={(e) => setFilterCategoryId(e.target.value)}
-                    className="w-full border border-gray-300 rounded px-2.5 py-1.5 text-xs focus:outline-none focus:border-blue-500 bg-white"
-                  >
-                    <option value="">All Categories</option>
-                    {categories.map((c: any) => (
-                      <option key={c.id} value={c.id}>{c.name}</option>
-                    ))}
-                  </select>
+                  <SearchableSelect
+                    options={[{ value: '', label: 'All Categories' }, ...categories.map((c: any) => ({ value: c.id, label: c.name }))]}
+                    value={filterCategoryId}
+                    onChange={(val) => setFilterCategoryId(val || '')}
+                    placeholder="All Categories"
+                  />
                 </div>
                 <div>
                   <label className="block text-[11px] font-bold text-gray-600 mb-1">Search Description</label>

@@ -7,6 +7,7 @@ import ReportTabs from '../../components/ReportTabs';
 import { exportToExcel } from '../../utils/exportExcel';
 import { useSettings } from '../../contexts/SettingsContext';
 import PaginationControls from '../../components/PaginationControls';
+import SearchableSelect from '../../components/SearchableSelect';
 
 const StockReport = () => {
   const { formatCurrency } = useSettings();
@@ -60,29 +61,21 @@ const StockReport = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end mb-4">
           <div>
             <label className="flex items-center gap-1 text-[12px] text-[#64748B] mb-1 font-bold">Category</label>
-            <select
+            <SearchableSelect
+              options={[{ value: '', label: 'All Categories' }, ...categories.map((c: any) => ({ value: c.id, label: c.name }))]}
               value={categoryId}
-              onChange={(e) => setCategoryId(e.target.value)}
-              className="w-full px-3 py-1.5 border border-[#CBD5E1] rounded outline-none text-[13px] text-[#334155] bg-white focus:border-[#3B82F6]"
-            >
-              <option value="">All Categories</option>
-              {categories.map((c: any) => (
-                <option key={c.id} value={c.id}>{c.name}</option>
-              ))}
-            </select>
+              onChange={(val) => setCategoryId(val || '')}
+              placeholder="All Categories"
+            />
           </div>
           <div>
             <label className="flex items-center gap-1 text-[12px] text-[#64748B] mb-1 font-bold">Brand</label>
-            <select
+            <SearchableSelect
+              options={[{ value: '', label: 'All Brands' }, ...brands.map((b: any) => ({ value: b.id, label: b.name }))]}
               value={brandId}
-              onChange={(e) => setBrandId(e.target.value)}
-              className="w-full px-3 py-1.5 border border-[#CBD5E1] rounded outline-none text-[13px] text-[#334155] bg-white focus:border-[#3B82F6]"
-            >
-              <option value="">All Brands</option>
-              {brands.map((b: any) => (
-                <option key={b.id} value={b.id}>{b.name}</option>
-              ))}
-            </select>
+              onChange={(val) => setBrandId(val || '')}
+              placeholder="All Brands"
+            />
           </div>
           <div>
             <label className="flex items-center gap-1 text-[12px] text-[#64748B] mb-1 font-bold">Search Product</label>

@@ -9,6 +9,7 @@ import { exportToExcel } from '../../utils/exportExcel';
 import { exportTableToPdf } from '../../utils/exportPdf';
 import ViewPurchaseModal from '../purchase/ViewPurchaseModal';
 import PaginationControls from '../../components/PaginationControls';
+import SearchableSelect from '../../components/SearchableSelect';
 
 const PurchaseReport = () => {
   const navigate = useNavigate();
@@ -133,19 +134,12 @@ const PurchaseReport = () => {
 
           <div>
             <label className="flex items-center gap-1 text-[12px] text-[#64748B] mb-1 font-bold"><Truck size={12} /> Supplier Name</label>
-            <div className="relative">
-              <Search size={14} className="absolute left-2.5 top-2.5 text-[#9CA3AF]" />
-              <select
-                value={supplierId}
-                onChange={(e) => setSupplierId(e.target.value)}
-                className="w-full pl-8 pr-3 py-1.5 border border-[#CBD5E1] rounded outline-none text-[13px] text-[#334155] bg-white focus:border-[#3B82F6]"
-              >
-                <option value="">Type or select supplier...</option>
-                {suppliers.map((s: any) => (
-                  <option key={s.id} value={s.id}>{s.name}</option>
-                ))}
-              </select>
-            </div>
+            <SearchableSelect
+              options={[{ value: '', label: 'All Suppliers' }, ...suppliers.map((s: any) => ({ value: s.id, label: `${s.name} - ${s.phone || ''}` }))]}
+              value={supplierId}
+              onChange={(val) => setSupplierId(val || '')}
+              placeholder="All Suppliers"
+            />
           </div>
 
           <div>

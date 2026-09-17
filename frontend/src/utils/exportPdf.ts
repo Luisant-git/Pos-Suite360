@@ -8,8 +8,9 @@ function oklchToRgb(oklchStr: string): string {
     if (ctx) {
       ctx.fillStyle = '#000000';
       ctx.fillStyle = oklchStr;
-      if (ctx.fillStyle !== '#000000' && ctx.fillStyle !== 'rgb(0, 0, 0)') {
-        return ctx.fillStyle;
+      const res = ctx.fillStyle;
+      if (res && res !== '#000000' && res !== 'rgb(0, 0, 0)') {
+        return res;
       }
     }
   } catch {}
@@ -17,10 +18,10 @@ function oklchToRgb(oklchStr: string): string {
   // Math fallback parser for OKLCH -> sRGB
   try {
     const match = oklchStr.match(/oklch\(\s*([\d.%]+)\s+([\d.%]+)\s+([\d.%]+)(?:\s*\/\s*([\d.%]+))?\s*\)/i);
-    if (!match) return '#64748b';
+    if (!match) return 'rgb(100, 116, 139)';
     const [, lStr, cStr, hStr, aStr] = match;
     const L = lStr.endsWith('%') ? parseFloat(lStr) / 100 : parseFloat(lStr);
-    const C = parseFloat(cStr);
+    const C = cStr.endsWith('%') ? parseFloat(cStr) / 100 : parseFloat(cStr);
     const H = parseFloat(hStr);
 
     const hRad = (H * Math.PI) / 180;
@@ -50,7 +51,7 @@ function oklchToRgb(oklchStr: string): string {
     }
     return `rgb(${R}, ${G}, ${B})`;
   } catch {
-    return '#64748b';
+    return 'rgb(100, 116, 139)';
   }
 }
 
@@ -66,6 +67,52 @@ export const exportTableToPdf = async (elementId: string, filename: string) => {
       alert("Element not found: " + elementId);
       return;
     }
+
+    // 1. Backup and sanitize live style tags in document.head
+    const styleEls = Array.from(document.querySelectorAll('style'));
+    const originalStyleTexts = styleEls.map((el) => el.textContent || '');
+    styleEls.forEach((el) => {
+      if (el.textContent && el.textContent.includes('oklch')) {
+        el.textContent = sanitizeOklchInText(el.textContent);
+      }
+    });
+
+    // 2. Backup and sanitize inline style attributes on element tree
+    const allTargetElements = [element, ...Array.from(element.querySelectorAll('*'))] as HTMLElement[];
+    const originalInlineStyles = allTargetElements.map((el) => el.getAttribute('style'));
+    allTargetElements.forEach((el) => {
+      const styleAttr = el.getAttribute('style');
+      if (styleAttr && styleAttr.includes('oklch')) {
+        el.setAttribute('style', sanitizeOklchInText(styleAttr));
+      }
+    });
+
+    // 3. Monkey-patch window.getComputedStyle to intercept any returning oklch string
+    const originalGetComputedStyle = window.getComputedStyle;
+    window.getComputedStyle = function (elt: Element, pseudoElt?: string | null) {
+      const style = originalGetComputedStyle.call(window, elt, pseudoElt);
+      return new Proxy(style, {
+        get(target, prop, receiver) {
+          if (prop === 'getPropertyValue') {
+            return (propertyName: string) => {
+              const val = target.getPropertyValue(propertyName);
+              if (typeof val === 'string' && val.includes('oklch')) {
+                return sanitizeOklchInText(val);
+              }
+              return val;
+            };
+          }
+          const val = Reflect.get(target, prop, receiver);
+          if (typeof val === 'function') {
+            return val.bind(target);
+          }
+          if (typeof val === 'string' && val.includes('oklch')) {
+            return sanitizeOklchInText(val);
+          }
+          return val;
+        }
+      });
+    };
 
     const prev = { overflow: element.style.overflow, maxHeight: element.style.maxHeight, height: element.style.height, flex: element.style.flex };
     element.style.overflow = 'visible';
@@ -109,15 +156,12 @@ export const exportTableToPdf = async (elementId: string, filename: string) => {
             logging: false,
             scrollY: 0,
             onclone: (clonedDoc: Document) => {
-              // 1. Convert oklch colors in style tags
               const styleTags = clonedDoc.querySelectorAll('style');
               styleTags.forEach((styleTag) => {
                 if (styleTag.textContent && styleTag.textContent.includes('oklch')) {
                   styleTag.textContent = sanitizeOklchInText(styleTag.textContent);
                 }
               });
-
-              // 2. Convert oklch colors on cloned elements inside target
               const target = clonedDoc.getElementById(elementId);
               if (target) {
                 const allEls = [target, ...Array.from(target.querySelectorAll('*'))] as HTMLElement[];
@@ -125,16 +169,6 @@ export const exportTableToPdf = async (elementId: string, filename: string) => {
                   if (el.style && el.style.cssText && el.style.cssText.includes('oklch')) {
                     el.style.cssText = sanitizeOklchInText(el.style.cssText);
                   }
-                  try {
-                    const comp = window.getComputedStyle(el);
-                    const colorProps = ['color', 'backgroundColor', 'borderColor', 'outlineColor', 'fill', 'stroke'];
-                    colorProps.forEach((prop) => {
-                      const val = comp.getPropertyValue(prop);
-                      if (val && val.includes('oklch')) {
-                        (el.style as any)[prop] = oklchToRgb(val);
-                      }
-                    });
-                  } catch {}
                 });
               }
             }
@@ -144,6 +178,23 @@ export const exportTableToPdf = async (elementId: string, filename: string) => {
         .from(element)
         .save();
     } finally {
+      // Restore window.getComputedStyle
+      window.getComputedStyle = originalGetComputedStyle;
+
+      // Restore live style tags
+      styleEls.forEach((el, i) => {
+        el.textContent = originalStyleTexts[i];
+      });
+
+      // Restore live inline styles
+      allTargetElements.forEach((el, i) => {
+        if (originalInlineStyles[i] !== null) {
+          el.setAttribute('style', originalInlineStyles[i]!);
+        } else {
+          el.removeAttribute('style');
+        }
+      });
+
       // Restore layout
       element.style.overflow = prev.overflow;
       element.style.maxHeight = prev.maxHeight;

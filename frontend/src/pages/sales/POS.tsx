@@ -9,31 +9,10 @@ import { useSettings } from '../../contexts/SettingsContext';
 import toast from 'react-hot-toast';
 import api from '../../services/api';
 import SearchableSelect from '../../components/SearchableSelect';
+import InvoicePrintModal from '../../components/InvoicePrintModal';
 // @ts-ignore
 import html2pdf from 'html2pdf.js';
 
-const numberToWords = (num: number): string => {
-  if (!num || num === 0) return "ZERO";
-  const a = ["", "ONE ", "TWO ", "THREE ", "FOUR ", "FIVE ", "SIX ", "SEVEN ", "EIGHT ", "NINE ", "TEN ", "ELEVEN ", "TWELVE ", "THIRTEEN ", "FOURTEEN ", "FIFTEEN ", "SIXTEEN ", "SEVENTEEN ", "EIGHTEEN ", "NINETEEN "];
-  const b = ["", "", "TWENTY ", "THIRTY ", "FORTY ", "FIFTY ", "SIXTY ", "SEVENTY ", "EIGHTY ", "NINETY "];
-
-  const convertWhole = (n: number): string => {
-    if (n < 20) return a[n];
-    if (n < 100) return b[Math.floor(n / 10)] + (n % 10 !== 0 ? a[n % 10] : "");
-    if (n < 1000) return a[Math.floor(n / 100)] + "HUNDRED " + (n % 100 !== 0 ? convertWhole(n % 100) : "");
-    if (n < 1000000) return convertWhole(Math.floor(n / 1000)) + "THOUSAND " + (n % 1000 !== 0 ? convertWhole(n % 1000) : "");
-    return n.toString(); // Fallback for very large numbers
-  };
-
-  const wholePart = Math.floor(Number(num));
-  const cents = Math.round((Number(num) - wholePart) * 100);
-  
-  let res = convertWhole(wholePart) || "";
-  if (cents > 0) {
-    res += `AND CENTS ${convertWhole(cents) || ""}`;
-  }
-  return res ? res.trim() : "";
-};
 
 const saleItemSchema = z.object({
   productId: z.coerce.number().min(0),
@@ -105,6 +84,8 @@ const POS = () => {
   const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
   const [pendingSavePayload, setPendingSavePayload] = useState<any>(null);
   const printAfterSaveRef = useRef(false);
+  const [isPrintModalOpen, setIsPrintModalOpen] = useState(false);
+  const [saleToPrint, setSaleToPrint] = useState<any>(null);
 
   const { register, control, handleSubmit, watch, setValue, reset } = useForm<SaleFormValues>({
     resolver: zodResolver(saleSchema) as any,
@@ -223,16 +204,6 @@ const POS = () => {
 
   const selectedCustomer = customers.find((c: any) => c.id === Number(selectedCustomerId));
 
-  const { data: customerBalance } = useQuery({
-    queryKey: ['customerBalance', selectedCustomerId],
-    queryFn: async () => (await api.get(`/customer-receipts/balance/${selectedCustomerId}`)).data,
-    enabled: !!selectedCustomerId && Number(selectedCustomerId) > 0,
-  });
-
-  const pendingAmount = customerBalance?.balance !== undefined 
-    ? customerBalance.balance 
-    : (Number(selectedCustomer?.openingBalance || 0));
-
   // Calculations
   useEffect(() => {
     let grossAmount = 0;
@@ -268,7 +239,7 @@ const POS = () => {
       setValue(`items.${index}.stock`, product.currentStock || 0);
       setValue(`items.${index}.unit`, product.unit?.shortCode || product.unit?.name || 'Nos');
       
-      let rateToUse: any = '';
+      let rateToUse: any = product.sellingRate ? Number(product.sellingRate) : '';
       if (settings?.enableCustomerRates && selectedCustomerId && customerRates.length > 0) {
         const customRate = customerRates.find((r: any) => r.productId === product.id);
         if (customRate && Number(customRate.rate) > 0) {
@@ -281,22 +252,25 @@ const POS = () => {
 
   const createMutation = useMutation({
     mutationFn: (data: SaleFormValues) => editId ? api.put(`/sales/${editId}`, data) : api.post('/sales', data),
-    onSuccess: () => {
+    onSuccess: (res) => {
       toast.success(editId ? 'Sale invoice updated successfully!' : 'Sale recorded successfully!');
       
       setTimeout(async () => {
         if (printAfterSaveRef.current) {
-          window.print();
+          setSaleToPrint(res.data);
+          setIsPrintModalOpen(true);
         }
         if (editId) {
           queryClient.invalidateQueries({ queryKey: ['sales'] });
           queryClient.invalidateQueries({ queryKey: ['products'] });
-          navigate('/sales');
+          if (!printAfterSaveRef.current) {
+            navigate('/sales');
+          }
         } else {
           reset();
-          const res = await api.get('/sales/next-invoice-no');
-          if (res.data?.invoiceNo) {
-             setValue('invoiceNo', res.data.invoiceNo);
+          const resNext = await api.get('/sales/next-invoice-no');
+          if (resNext.data?.invoiceNo) {
+             setValue('invoiceNo', resNext.data.invoiceNo);
           }
           queryClient.invalidateQueries({ queryKey: ['products'] });
           queryClient.invalidateQueries({ queryKey: ['nextInvoiceNo'] });
@@ -911,111 +885,18 @@ const POS = () => {
         </div>
       )}
 
-      {/* Printable Receipt */}
-      <div id="printable-receipt" className="hidden print:flex flex-col bg-white text-black font-sans text-[12px] w-full max-w-[800px] mx-auto p-8 print:h-[257mm] box-border">
-        <div className="text-center mb-4 print:pt-4">
-          <div className="text-xl font-bold uppercase">NASA FRESH MART <span className="text-base font-normal">(001634825-A)</span></div>
-          <p className="mt-1">NO 8G, JLN 3/2 PANDAN JAYA, 55100 KUALA LUMPUR.</p>
-          <p>Tel : 0392856786</p>
-        </div>
-        
-        <div className="border-t border-b border-black py-2 mb-4 text-center font-bold text-lg uppercase tracking-wider">
-          INVOICE
-        </div>
-        
-        <div className="flex justify-between mb-6">
-          {/* Left Column */}
-          <div className="w-1/2 pr-4">
-             <div className="flex">
-               <span className="w-16">Bill To:</span>
-               <div>
-                 <p className="font-bold">{selectedCustomer?.id ? `CUST-${selectedCustomer.id}` : ''}</p>
-                 <p className="font-bold">{selectedCustomer?.name || ''}</p>
-                 <p>{selectedCustomer?.address || ''}</p>
-               </div>
-             </div>
-             <div className="mt-4 flex gap-4">
-               <span>TEL: {selectedCustomer?.phone || ''}</span>
-               <span>FAX: </span>
-             </div>
-             <p>Attn:</p>
-          </div>
-          
-          {/* Right Column */}
-          <div className="w-1/2 pl-12">
-             <div className="grid grid-cols-[100px_10px_1fr] gap-y-1">
-               <span className="font-bold">NO.</span><span>:</span><span>{watch('invoiceNo')}</span>
-               <span>DATE</span><span>:</span><span>{watch('date')}</span>
-               {/* <span>YOUR P/O NO.</span><span>:</span><span></span> */}
-               {/* <span>SALESMAN</span><span>:</span><span></span> */}
-               {/* <span>TERMS</span><span>:</span><span>C.O.D.</span> */}
-               <span>PAY TYPE</span><span>:</span><span>{paymentModes.find((p: any) => p.id === Number(watch('paymentModeId')))?.name || ''}</span>
-               <span>PENDING AMT</span><span>:</span><span>{Number(pendingAmount).toFixed(2)}</span>
-               <span>PAGE</span><span>:</span><span>1 of 1</span>
-             </div>
-          </div>
-        </div>
-        
-        <table className="w-full text-left border-y border-black mb-4 whitespace-nowrap">
-          <thead>
-            <tr className="border-b border-black text-xs uppercase">
-              <th className="py-2 w-[15%]">Code</th>
-              <th className="py-2 w-[35%]">Description</th>
-              <th className="py-2 w-[10%] text-right">Birds</th>
-              <th className="py-2 w-[10%] text-right">Qty</th>
-              <th className="py-2 w-[10%] text-center">UOM</th>
-              <th className="py-2 w-[10%] text-right">U.Price</th>
-              <th className="py-2 w-[10%] text-right">Amount</th>
-            </tr>
-          </thead>
-          <tbody className="align-top">
-            {watch('items').filter((i: any) => i.productId > 0).map((item: any, idx: number) => {
-              const product = products.find((p: any) => p.id === item.productId);
-              return (
-                <tr key={idx}>
-                  <td className="py-1">{product?.code || ''}</td>
-                  <td className="py-1">{product?.name || ''}</td>
-                  <td className="py-1 text-right">{item.noOfBirds || 0}</td>
-                  <td className="py-1 text-right">{item.quantity}</td>
-                  <td className="py-1 text-center">{item.unit || ''}</td>
-                  <td className="py-1 text-right">{Number(item.rate || 0).toFixed(2)}</td>
-                  <td className="py-1 text-right">{Number(item.total || 0).toFixed(2)}</td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-        
-        <div className="flex-1"></div>
-
-        <div>
-          <p className="uppercase mb-4">RINGGIT MALAYSIA {numberToWords(watch('netAmount'))} ONLY</p>
-          
-          <div className="flex justify-between items-start border-t border-black pt-2">
-            <div 
-              className="w-2/3 text-[10px] text-black pr-4 html-content"
-              dangerouslySetInnerHTML={{ __html: settings?.invoiceNotes || '' }}
-            />
-            <div className="w-1/3 flex justify-between font-bold text-sm">
-              <span>TOTAL : RM</span>
-              <span className="border-b-2 border-black border-double min-w-[100px] text-right">{Number(watch('netAmount') || 0).toFixed(2)}</span>
-            </div>
-          </div>
-          
-          <div className="flex justify-end mt-8">
-            <div className="text-center w-64 border-t border-black pt-1 relative">
-              {settings?.signatureImage && (
-                <img 
-                  src={settings.signatureImage} 
-                  alt="Authorised Signature" 
-                  className="absolute bottom-6 left-1/2 -translate-x-1/2 h-16 object-contain"
-                />
-              )}
-              Authorised Signature
-            </div>
-          </div>
-        </div>
-      </div>
+      {/* Visual Modal for Printing */}
+      <InvoicePrintModal 
+        isOpen={isPrintModalOpen} 
+        onClose={() => {
+          setIsPrintModalOpen(false);
+          if (editId) {
+            navigate('/sales');
+          }
+        }} 
+        sale={saleToPrint}
+        hiddenRenderer={true}
+      />
 
       {/* Loss Warning Modal */}
       {showLossWarning && (

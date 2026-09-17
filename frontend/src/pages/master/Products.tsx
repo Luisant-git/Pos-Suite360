@@ -148,18 +148,18 @@ const Products = () => {
 
   const handleEdit = (product: any) => {
     setEditingId(product.id);
-    setValue('code', product.code);
-    setValue('name', product.name);
-    setValue('categoryId', product.categoryId.toString());
-    setValue('brandId', product.brandId ? product.brandId.toString() : '');
-    setValue('unitId', product.unitId.toString());
-    setValue('supplierId', product.supplierId ? product.supplierId.toString() : '');
-    setValue('currentStock', Number(product.currentStock));
-    setValue('purchaseRate', Number(product.purchaseRate));
-    setValue('wholesaleRate', Number(product.wholesaleRate));
-    setValue('sellingRate', Number(product.sellingRate));
-    setValue('minStock', Number(product.minStock));
-    setValue('reorderLevel', Number(product.reorderLevel));
+    setValue('code', product.code || '');
+    setValue('name', product.name || '');
+    setValue('categoryId', product.categoryId != null ? String(product.categoryId) : (product.category?.id != null ? String(product.category.id) : ''));
+    setValue('brandId', product.brandId != null ? String(product.brandId) : (product.brand?.id != null ? String(product.brand.id) : ''));
+    setValue('unitId', product.unitId != null ? String(product.unitId) : (product.unit?.id != null ? String(product.unit.id) : ''));
+    setValue('supplierId', product.supplierId != null ? String(product.supplierId) : (product.supplier?.id != null ? String(product.supplier.id) : ''));
+    setValue('currentStock', product.currentStock != null ? Number(product.currentStock) : 0);
+    setValue('purchaseRate', product.purchaseRate != null ? Number(product.purchaseRate) : 0);
+    setValue('wholesaleRate', product.wholesaleRate != null ? Number(product.wholesaleRate) : 0);
+    setValue('sellingRate', product.sellingRate != null ? Number(product.sellingRate) : 0);
+    setValue('minStock', product.minStock != null ? Number(product.minStock) : 0);
+    setValue('reorderLevel', product.reorderLevel != null ? Number(product.reorderLevel) : 0);
   };
 
   return (

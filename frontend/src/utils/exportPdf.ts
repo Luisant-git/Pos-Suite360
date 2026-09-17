@@ -43,7 +43,7 @@ function oklchToRgb(oklchStr: string): string {
     const gamma = (c: number) => (c <= 0.0031308 ? 12.92 * c : 1.055 * Math.pow(c, 1 / 2.4) - 0.055);
     const R = Math.round(Math.min(1, Math.max(0, gamma(rLinear))) * 255);
     const G = Math.round(Math.min(1, Math.max(0, gamma(gLinear))) * 255);
-    const B = Math.round(Math.min(1, Math.max(0, gamma(BLinear || bLinear))) * 255);
+    const B = Math.round(Math.min(1, Math.max(0, gamma(bLinear))) * 255);
 
     if (aStr !== undefined) {
       const A = aStr.endsWith('%') ? parseFloat(aStr) / 100 : parseFloat(aStr);

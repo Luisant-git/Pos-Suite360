@@ -69,22 +69,6 @@ export const exportTableToPdf = async (elementId: string, filename: string) => {
     // --- Step 1: Hide all overlay elements that float above the page ---
     // These include nav dropdowns, user menus, react portals, tooltips, modals
     // html2canvas screenshots the ENTIRE viewport, so any visible overlay will appear in PDF
-    const overlaySelectors = [
-      // Dropdowns and menus (positioned outside the report container)
-      '[data-radix-popper-content-wrapper]',
-      '[data-radix-dropdown-menu-content]',
-      '[data-radix-select-content]',
-      '.dropdown-menu',
-      '.nav-dropdown',
-      '.mobile-menu',
-      // React Select portals
-      '[class*="menu-portal"]',
-      '[class*="MenuPortal"]',
-      // Fixed header/sidebar elements outside report
-      'nav',
-      'header',
-      // Any element that is fixed/absolute positioned and NOT inside the target
-    ];
 
     // Collect all elements outside the target that are positional overlays
     const hiddenOverlays: { el: HTMLElement; prevVisibility: string }[] = [];

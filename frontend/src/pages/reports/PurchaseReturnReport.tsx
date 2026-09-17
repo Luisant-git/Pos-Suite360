@@ -4,7 +4,7 @@ import { CornerDownLeft, Package, Search, Filter, Download } from 'lucide-react'
 import api from '../../services/api';
 import ReportTabs from '../../components/ReportTabs';
 import { useSettings } from '../../contexts/SettingsContext';
-import { exportTableToPdf } from '../../utils/exportPdf';
+import { exportTableToPdf, type PdfColumn } from '../../utils/exportPdf';
 import PaginationControls from '../../components/PaginationControls';
 
 const PurchaseReturnReport = () => {
@@ -64,7 +64,25 @@ const PurchaseReturnReport = () => {
                 {returns.length} Returns
               </div>
               <button type="button"
-                onClick={() => exportTableToPdf('purchase-return-export', 'Purchase_Return_Report')}
+                onClick={() => {
+                  const cols: PdfColumn[] = [
+                    { header: 'S.No', dataKey: '_sno' },
+                    { header: 'Return No', dataKey: 'returnNo' },
+                    { header: 'Return Date', dataKey: '_date' },
+                    { header: 'Supplier Name', dataKey: '_supplier' },
+                    { header: 'Remarks', dataKey: 'remarks' },
+                    { header: 'Claim Amount', dataKey: '_amount' },
+                  ];
+                  const rows = filteredReturns.map((ret: any, i: number) => ({
+                    _sno: i + 1,
+                    returnNo: ret.returnNo,
+                    _date: new Date(ret.date).toISOString().split('T')[0],
+                    _supplier: ret.supplier?.name || 'Unknown',
+                    remarks: ret.remarks || '-',
+                    _amount: formatCurrency(ret.totalAmount),
+                  }));
+                  exportTableToPdf(cols, rows, 'Purchase_Return_Report', 'Purchase Return Report');
+                }}
                 className="bg-[#EF4444] hover:bg-[#DC2626] text-white px-3 py-1 rounded flex items-center justify-center gap-1.5 text-[12px] font-bold whitespace-nowrap transition-colors shrink-0"
               >
                 <Download size={13} /> Export PDF

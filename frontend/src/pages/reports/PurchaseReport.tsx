@@ -6,7 +6,7 @@ import { useSettings } from '../../contexts/SettingsContext';
 import api from '../../services/api';
 import ReportTabs from '../../components/ReportTabs';
 import { exportToExcel } from '../../utils/exportExcel';
-import { exportTableToPdf } from '../../utils/exportPdf';
+import { exportTableToPdf, type PdfColumn } from '../../utils/exportPdf';
 import ViewPurchaseModal from '../purchase/ViewPurchaseModal';
 import PaginationControls from '../../components/PaginationControls';
 import SearchableSelect from '../../components/SearchableSelect';
@@ -241,7 +241,19 @@ const PurchaseReport = () => {
               <Download size={14} /> Export Excel
             </button>
             <button type="button"
-              onClick={() => exportTableToPdf('purchase-report-export', `Purchase_Report_${fromDate}_to_${toDate}`)}
+              onClick={() => {
+                const cols: PdfColumn[] = [
+                  { header: 'Entry No', dataKey: 'entryNo' },
+                  { header: 'Supp. Inv. No', dataKey: 'invoiceNo' },
+                  { header: 'Date', dataKey: 'date' },
+                  { header: 'Supplier Name', dataKey: 'supplierName' },
+                  { header: 'Mode', dataKey: 'mode' },
+                  { header: 'Total Amount', dataKey: 'totalAmount' },
+                  { header: 'Tax Amount', dataKey: 'taxAmount' },
+                  { header: 'Net Amount', dataKey: 'netAmount' },
+                ];
+                exportTableToPdf(cols, filteredPurchases, `Purchase_Report_${fromDate}_to_${toDate}`, 'Purchase Report');
+              }}
               className="bg-[#EF4444] hover:bg-[#DC2626] text-white px-3 py-1.5 rounded flex items-center justify-center gap-1.5 text-[12px] font-bold whitespace-nowrap transition-colors"
             >
               <Download size={14} /> Export PDF

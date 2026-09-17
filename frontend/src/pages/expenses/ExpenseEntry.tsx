@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 import api from '../../services/api';
-import { exportTableToPdf } from '../../utils/exportPdf';
+import { exportTableToPdf, type PdfColumn } from '../../utils/exportPdf';
 import { exportToExcel } from '../../utils/exportExcel';
 import { useSettings } from '../../contexts/SettingsContext';
 import SearchableSelect from '../../components/SearchableSelect';
@@ -110,7 +110,23 @@ const ExpenseEntry = () => {
   };
 
   const handlePdfExport = () => {
-    exportTableToPdf('daily-expenses-export', 'Daily_Expenses_Report');
+    const cols: PdfColumn[] = [
+      { header: 'S.No', dataKey: '_sno' },
+      { header: 'Date', dataKey: '_date' },
+      { header: 'Category', dataKey: '_category' },
+      { header: 'Payment Mode', dataKey: '_mode' },
+      { header: 'Description', dataKey: '_notes' },
+      { header: 'Amount', dataKey: '_amount' },
+    ];
+    const rows = expenses.map((e: any, i: number) => ({
+      _sno: i + 1,
+      _date: new Date(e.date).toLocaleDateString(),
+      _category: e.category?.name || '-',
+      _mode: e.paymentMode?.name || '-',
+      _notes: e.notes || '-',
+      _amount: Number(e.amount),
+    }));
+    exportTableToPdf(cols, rows, 'Daily_Expenses_Report', 'Daily Expenses Report');
   };
 
   const handleExcelExport = () => {

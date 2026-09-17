@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Download, Users, FileText, RefreshCw, DollarSign, AlertCircle, CheckCircle2 } from 'lucide-react';
-import { exportTableToPdf } from '../../utils/exportPdf';
+import { exportTableToPdf, type PdfColumn } from '../../utils/exportPdf';
 import { exportToExcel } from '../../utils/exportExcel';
 import { useSettings } from '../../contexts/SettingsContext';
 import api from '../../services/api';
@@ -63,8 +63,49 @@ const CustomerReceiptsReport = () => {
   const paginatedList = activeList.slice((currentPage - 1) * entriesPerPage, currentPage * entriesPerPage);
 
   const handlePdfExport = () => {
-    const filename = reportMode === 'consolidation' ? 'Customer_Dues_Consolidation_Report' : 'Customer_Receipts_History_Report';
-    exportTableToPdf('customer-receipts-report-export', filename);
+    if (reportMode === 'consolidation') {
+      const cols: PdfColumn[] = [
+        { header: 'S.No', dataKey: '_sno' },
+        { header: 'Customer Name', dataKey: 'customerName' },
+        { header: 'Phone', dataKey: 'phone' },
+        { header: 'Opening Balance', dataKey: '_opening' },
+        { header: 'Total Invoiced', dataKey: 'totalSales' },
+        { header: 'Total Collected', dataKey: 'totalReceipts' },
+        { header: 'Total Returns', dataKey: 'totalReturns' },
+        { header: 'Net Pending Due', dataKey: 'netPending' },
+      ];
+      const rows = filteredConsolidation.map((c: any, idx: number) => ({
+        _sno: idx + 1,
+        customerName: c.customerName,
+        phone: c.phone,
+        _opening: `${c.openingBalance} (${c.openingBalanceType})`,
+        totalSales: c.totalSales,
+        totalReceipts: c.totalReceipts,
+        totalReturns: c.totalReturns,
+        netPending: c.netPending,
+      }));
+      exportTableToPdf(cols, rows, 'Customer_Dues_Consolidation_Report', 'Customer Dues Consolidation Report');
+    } else {
+      const cols: PdfColumn[] = [
+        { header: 'S.No', dataKey: '_sno' },
+        { header: 'Receipt No', dataKey: 'receiptNo' },
+        { header: 'Date', dataKey: '_date' },
+        { header: 'Customer', dataKey: '_customer' },
+        { header: 'Payment Mode', dataKey: '_mode' },
+        { header: 'Reference', dataKey: 'reference' },
+        { header: 'Amount Collected', dataKey: 'amount' },
+      ];
+      const rows = filteredHistory.map((r: any, idx: number) => ({
+        _sno: idx + 1,
+        receiptNo: r.receiptNo,
+        _date: new Date(r.date).toLocaleDateString(),
+        _customer: r.customer?.name || '-',
+        _mode: r.paymentType?.name || r.paymentMode?.name || '-',
+        reference: r.reference || '-',
+        amount: r.amount,
+      }));
+      exportTableToPdf(cols, rows, 'Customer_Receipts_History_Report', 'Customer Receipts History Report');
+    }
   };
 
   const handleExcelExport = () => {

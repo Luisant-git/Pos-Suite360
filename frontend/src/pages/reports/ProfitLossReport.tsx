@@ -6,7 +6,7 @@ import { format, startOfMonth, startOfYear } from 'date-fns';
 import { useSettings } from '../../contexts/SettingsContext';
 import api from '../../services/api';
 import ReportTabs from '../../components/ReportTabs';
-import { exportTableToPdf } from '../../utils/exportPdf';
+import { exportTableToPdf, type PdfColumn } from '../../utils/exportPdf';
 
 const ProfitLossReport = () => {
   const { formatCurrency } = useSettings();
@@ -173,7 +173,31 @@ const ProfitLossReport = () => {
             <Download size={14} /> Export CSV
           </button>
           <button
-            onClick={() => exportTableToPdf('pnl-report-content', `PNL_${fromDate}_to_${toDate}`)}
+            onClick={() => {
+              const cols: PdfColumn[] = [
+                { header: 'Particulars', dataKey: 'label' },
+                { header: 'Amount', dataKey: 'value' },
+              ];
+              const rows = [
+                { label: 'I. OPERATING REVENUE', value: '' },
+                { label: 'Gross Sales', value: formatCurrency(safePnl.grossSales) },
+                { label: 'Sales Returns', value: `-${formatCurrency(safePnl.totalSalesReturns)}` },
+                { label: 'NET OPERATING REVENUE', value: formatCurrency(safePnl.netOperatingRevenue) },
+                { label: '', value: '' },
+                { label: 'II. COST OF GOODS SOLD', value: '' },
+                { label: 'Gross Purchases', value: formatCurrency(safePnl.grossPurchases) },
+                { label: 'Purchase Returns', value: `-${formatCurrency(safePnl.totalPurchaseReturns)}` },
+                { label: 'NET COST OF GOODS SOLD', value: formatCurrency(safePnl.netCogs) },
+                { label: 'GROSS PROFIT', value: formatCurrency(safePnl.grossProfit) },
+                { label: '', value: '' },
+                { label: 'III. OPERATING EXPENSES', value: '' },
+                ...safePnl.itemizedExpenses.map((exp: any) => ({ label: exp.name, value: formatCurrency(exp.amount) })),
+                { label: 'TOTAL OPERATING EXPENSES', value: formatCurrency(safePnl.totalExpenses) },
+                { label: '', value: '' },
+                { label: 'NET PROFIT FOR PERIOD', value: formatCurrency(safePnl.netProfit) },
+              ];
+              exportTableToPdf(cols, rows, `PNL_${fromDate}_to_${toDate}`, `Profit & Loss Statement: ${fromDate} to ${toDate}`);
+            }}
             className="bg-[#EF4444] hover:bg-[#DC2626] text-white px-3 py-1.5 rounded flex items-center justify-center gap-1 font-bold text-[12px] whitespace-nowrap transition-colors shadow-sm"
           >
             <Download size={14} /> Export PDF

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Download, Box, Activity } from 'lucide-react';
-import { exportTableToPdf } from '../../utils/exportPdf';
+import { exportTableToPdf, type PdfColumn } from '../../utils/exportPdf';
 import api from '../../services/api';
 import ReportTabs from '../../components/ReportTabs';
 import { exportToExcel } from '../../utils/exportExcel';
@@ -135,7 +135,18 @@ const StockReport = () => {
               <Download size={14} /> Export Excel
             </button>
             <button type="button"
-              onClick={() => exportTableToPdf('stock-report-export', 'Stock_Report')}
+              onClick={() => {
+                const cols: PdfColumn[] = [
+                  { header: 'Item Code', dataKey: 'code' },
+                  { header: 'Product Name', dataKey: 'name' },
+                  { header: 'Brand', dataKey: 'brandName' },
+                  { header: 'Category', dataKey: 'categoryName' },
+                  { header: 'Current Qty', dataKey: 'currentQty' },
+                  { header: 'Pur Rate', dataKey: 'purRate' },
+                  { header: 'Stock Value', dataKey: 'stockValue' },
+                ];
+                exportTableToPdf(cols, products, 'Stock_Report', 'Stock Report');
+              }}
               className="bg-[#EF4444] hover:bg-[#DC2626] text-white px-3 py-1.5 rounded flex items-center justify-center gap-1.5 text-[12px] font-bold whitespace-nowrap transition-colors"
             >
               <Download size={14} /> Export PDF

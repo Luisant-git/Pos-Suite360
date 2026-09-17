@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Download, Truck, FileText, RefreshCw, DollarSign, AlertCircle, CheckCircle2 } from 'lucide-react';
-import { exportTableToPdf } from '../../utils/exportPdf';
+import { exportTableToPdf, type PdfColumn } from '../../utils/exportPdf';
 import { exportToExcel } from '../../utils/exportExcel';
 import { useSettings } from '../../contexts/SettingsContext';
 import api from '../../services/api';
@@ -63,8 +63,49 @@ const SupplierPaymentsReport = () => {
   const paginatedList = activeList.slice((currentPage - 1) * entriesPerPage, currentPage * entriesPerPage);
 
   const handlePdfExport = () => {
-    const filename = reportMode === 'consolidation' ? 'Supplier_Payables_Consolidation_Report' : 'Supplier_Payments_History_Report';
-    exportTableToPdf('supplier-payments-report-export', filename);
+    if (reportMode === 'consolidation') {
+      const cols: PdfColumn[] = [
+        { header: 'S.No', dataKey: '_sno' },
+        { header: 'Supplier Name', dataKey: 'supplierName' },
+        { header: 'Phone', dataKey: 'phone' },
+        { header: 'Opening Balance', dataKey: '_opening' },
+        { header: 'Total Purchases', dataKey: 'totalPurchases' },
+        { header: 'Total Paid', dataKey: 'totalPayments' },
+        { header: 'Total Returns', dataKey: 'totalReturns' },
+        { header: 'Net Pending Payable', dataKey: 'netPending' },
+      ];
+      const rows = filteredConsolidation.map((s: any, idx: number) => ({
+        _sno: idx + 1,
+        supplierName: s.supplierName,
+        phone: s.phone,
+        _opening: `${s.openingBalance} (${s.openingBalanceType})`,
+        totalPurchases: s.totalPurchases,
+        totalPayments: s.totalPayments,
+        totalReturns: s.totalReturns,
+        netPending: s.netPending,
+      }));
+      exportTableToPdf(cols, rows, 'Supplier_Payables_Consolidation_Report', 'Supplier Payables Consolidation Report');
+    } else {
+      const cols: PdfColumn[] = [
+        { header: 'S.No', dataKey: '_sno' },
+        { header: 'Payment No', dataKey: 'paymentNo' },
+        { header: 'Date', dataKey: '_date' },
+        { header: 'Supplier', dataKey: '_supplier' },
+        { header: 'Payment Mode', dataKey: '_mode' },
+        { header: 'Reference', dataKey: 'reference' },
+        { header: 'Amount Paid', dataKey: 'amount' },
+      ];
+      const rows = filteredHistory.map((p: any, idx: number) => ({
+        _sno: idx + 1,
+        paymentNo: p.paymentNo,
+        _date: new Date(p.date).toLocaleDateString(),
+        _supplier: p.supplier?.name || '-',
+        _mode: p.paymentType?.name || p.paymentMode?.name || '-',
+        reference: p.reference || '-',
+        amount: p.amount,
+      }));
+      exportTableToPdf(cols, rows, 'Supplier_Payments_History_Report', 'Supplier Payments History Report');
+    }
   };
 
   const handleExcelExport = () => {

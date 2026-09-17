@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import { Download, Plus, Filter, DollarSign } from 'lucide-react';
-import { exportTableToPdf } from '../../utils/exportPdf';
+import { exportTableToPdf, type PdfColumn } from '../../utils/exportPdf';
 import { exportToExcel } from '../../utils/exportExcel';
 import { useSettings } from '../../contexts/SettingsContext';
 import api from '../../services/api';
@@ -45,7 +45,23 @@ const ExpenseList = () => {
   const totalExpenseAmount = expenses.reduce((sum: number, e: any) => sum + Number(e.amount || 0), 0);
 
   const handlePdfExport = () => {
-    exportTableToPdf('expense-list-export', 'Expense_History');
+    const cols: PdfColumn[] = [
+      { header: 'S.No', dataKey: '_sno' },
+      { header: 'Date', dataKey: '_date' },
+      { header: 'Category', dataKey: '_category' },
+      { header: 'Payment Mode', dataKey: '_mode' },
+      { header: 'Notes', dataKey: '_notes' },
+      { header: 'Amount', dataKey: '_amount' },
+    ];
+    const rows = expenses.map((e: any, i: number) => ({
+      _sno: i + 1,
+      _date: new Date(e.date).toLocaleDateString(),
+      _category: e.category?.name || '-',
+      _mode: e.paymentMode?.name || '-',
+      _notes: e.notes || '-',
+      _amount: Number(e.amount),
+    }));
+    exportTableToPdf(cols, rows, 'Expense_History', 'Expense History');
   };
 
   const handleExcelExport = () => {

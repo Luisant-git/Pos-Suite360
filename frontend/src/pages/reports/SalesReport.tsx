@@ -6,7 +6,7 @@ import { useSettings } from '../../contexts/SettingsContext';
 import api from '../../services/api';
 import ReportTabs from '../../components/ReportTabs';
 import { exportToExcel } from '../../utils/exportExcel';
-import { exportTableToPdf } from '../../utils/exportPdf';
+import { exportTableToPdf, type PdfColumn } from '../../utils/exportPdf';
 import InvoicePrintModal from '../../components/InvoicePrintModal';
 import ViewSalesModal from '../sales/ViewSalesModal';
 import PaginationControls from '../../components/PaginationControls';
@@ -241,7 +241,18 @@ const SalesReport = () => {
               <Download size={14} /> Export Excel
             </button>
             <button type="button"
-              onClick={() => exportTableToPdf('sales-report-export', `Sales_Report_${fromDate}_to_${toDate}`)}
+              onClick={() => {
+                const cols: PdfColumn[] = [
+                  { header: 'Invoice No', dataKey: 'invoiceNo' },
+                  { header: 'Date', dataKey: 'date' },
+                  { header: 'Customer Name', dataKey: 'customerName' },
+                  { header: 'Payment Mode', dataKey: 'paymentMode' },
+                  { header: 'No. of Items', dataKey: 'noOfItems' },
+                  { header: 'Total Birds', dataKey: 'totalBirds' },
+                  { header: 'Total Amount', dataKey: 'netPayable' },
+                ];
+                exportTableToPdf(cols, filteredSales, `Sales_Report_${fromDate}_to_${toDate}`, 'Sales Report');
+              }}
               className="bg-[#EF4444] hover:bg-[#DC2626] text-white px-3 py-1.5 rounded flex items-center gap-1.5 text-[12px] font-bold transition-colors"
             >
               <Download size={14} /> Export PDF

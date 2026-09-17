@@ -87,33 +87,6 @@ export const exportTableToPdf = async (elementId: string, filename: string) => {
       }
     });
 
-    // 3. Monkey-patch window.getComputedStyle to intercept any returning oklch string
-    const originalGetComputedStyle = window.getComputedStyle;
-    window.getComputedStyle = function (elt: Element, pseudoElt?: string | null) {
-      const style = originalGetComputedStyle.call(window, elt, pseudoElt);
-      return new Proxy(style, {
-        get(target, prop, receiver) {
-          if (prop === 'getPropertyValue') {
-            return (propertyName: string) => {
-              const val = target.getPropertyValue(propertyName);
-              if (typeof val === 'string' && val.includes('oklch')) {
-                return sanitizeOklchInText(val);
-              }
-              return val;
-            };
-          }
-          const val = Reflect.get(target, prop, receiver);
-          if (typeof val === 'function') {
-            return val.bind(target);
-          }
-          if (typeof val === 'string' && val.includes('oklch')) {
-            return sanitizeOklchInText(val);
-          }
-          return val;
-        }
-      });
-    };
-
     const prev = { overflow: element.style.overflow, maxHeight: element.style.maxHeight, height: element.style.height, flex: element.style.flex };
     element.style.overflow = 'visible';
     element.style.maxHeight = 'none';
@@ -144,6 +117,21 @@ export const exportTableToPdf = async (elementId: string, filename: string) => {
       el.style.display = 'block';
     });
 
+    const colorProps = [
+      'color',
+      'background-color',
+      'border-color',
+      'border-top-color',
+      'border-right-color',
+      'border-bottom-color',
+      'border-left-color',
+      'outline-color',
+      'box-shadow',
+      'text-shadow',
+      'fill',
+      'stroke'
+    ];
+
     try {
       await html2pdf()
         .set({
@@ -156,21 +144,32 @@ export const exportTableToPdf = async (elementId: string, filename: string) => {
             logging: false,
             scrollY: 0,
             onclone: (clonedDoc: Document) => {
+              // Sanitize style tags in clonedDoc
               const styleTags = clonedDoc.querySelectorAll('style');
               styleTags.forEach((styleTag) => {
                 if (styleTag.textContent && styleTag.textContent.includes('oklch')) {
                   styleTag.textContent = sanitizeOklchInText(styleTag.textContent);
                 }
               });
-              const target = clonedDoc.getElementById(elementId);
-              if (target) {
-                const allEls = [target, ...Array.from(target.querySelectorAll('*'))] as HTMLElement[];
-                allEls.forEach((el) => {
-                  if (el.style && el.style.cssText && el.style.cssText.includes('oklch')) {
-                    el.style.cssText = sanitizeOklchInText(el.style.cssText);
-                  }
-                });
-              }
+
+              // Sanitize computed colors on cloned elements
+              const allEls = Array.from(clonedDoc.querySelectorAll('*')) as HTMLElement[];
+              const win = clonedDoc.defaultView || window;
+              allEls.forEach((el) => {
+                const styleAttr = el.getAttribute('style');
+                if (styleAttr && styleAttr.includes('oklch')) {
+                  el.setAttribute('style', sanitizeOklchInText(styleAttr));
+                }
+                try {
+                  const comp = win.getComputedStyle(el);
+                  colorProps.forEach((prop) => {
+                    const val = comp.getPropertyValue(prop);
+                    if (val && val.includes('oklch')) {
+                      el.style.setProperty(prop, sanitizeOklchInText(val), 'important');
+                    }
+                  });
+                } catch {}
+              });
             }
           },
           jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' },
@@ -178,9 +177,6 @@ export const exportTableToPdf = async (elementId: string, filename: string) => {
         .from(element)
         .save();
     } finally {
-      // Restore window.getComputedStyle
-      window.getComputedStyle = originalGetComputedStyle;
-
       // Restore live style tags
       styleEls.forEach((el, i) => {
         el.textContent = originalStyleTexts[i];

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { X, Briefcase, PlusSquare, Download, Filter, RefreshCw, Calendar, FileText } from 'lucide-react';
+import { X, Briefcase, PlusSquare, Download, Filter, RefreshCw } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';

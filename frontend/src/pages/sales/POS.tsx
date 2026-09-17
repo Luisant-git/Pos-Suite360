@@ -126,6 +126,12 @@ const POS = () => {
     enabled: !!selectedCustomerId && !!settings?.enableCustomerRates,
   });
 
+  // Fetch Masters & Next Invoice
+  const { data: customers = [] } = useQuery({ queryKey: ['customers'], queryFn: async () => (await api.get('/customers')).data });
+  const { data: products = [] } = useQuery({ queryKey: ['products'], queryFn: async () => (await api.get('/products')).data });
+  const { data: paymentModes = [] } = useQuery({ queryKey: ['paymentModes'], queryFn: async () => (await api.get('/payment-modes')).data });
+  const { data: nextInvoiceData } = useQuery({ queryKey: ['nextInvoiceNo'], queryFn: async () => (await api.get('/sales/next-invoice-no')).data });
+
   // Automatically sync item rates whenever customer or customerRates change
   useEffect(() => {
     if (!settings?.enableCustomerRates || !selectedCustomerId || !products || products.length === 0) return;
@@ -169,12 +175,6 @@ const POS = () => {
       toast.error('Failed to save customer rate.');
     }
   });
-
-  // Fetch Masters & Next Invoice
-  const { data: customers = [] } = useQuery({ queryKey: ['customers'], queryFn: async () => (await api.get('/customers')).data });
-  const { data: products = [] } = useQuery({ queryKey: ['products'], queryFn: async () => (await api.get('/products')).data });
-  const { data: paymentModes = [] } = useQuery({ queryKey: ['paymentModes'], queryFn: async () => (await api.get('/payment-modes')).data });
-  const { data: nextInvoiceData } = useQuery({ queryKey: ['nextInvoiceNo'], queryFn: async () => (await api.get('/sales/next-invoice-no')).data });
 
   // Fetch existing sale data if editing
   const { data: editSaleData } = useQuery({

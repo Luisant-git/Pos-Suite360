@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Download, FileText, Filter, RefreshCw, Calendar, DollarSign } from 'lucide-react';
+import { Download, FileText, Filter, RefreshCw } from 'lucide-react';
 import { exportTableToPdf } from '../../utils/exportPdf';
 import { exportToExcel } from '../../utils/exportExcel';
 import { useSettings } from '../../contexts/SettingsContext';
@@ -47,7 +47,6 @@ const ExpenseReport = () => {
 
   const totalExpenseAmount = expenses.reduce((sum: number, e: any) => sum + Number(e.amount || 0), 0);
   const totalEntries = expenses.length;
-  const avgExpense = totalEntries > 0 ? totalExpenseAmount / totalEntries : 0;
 
   const totalPages = Math.ceil(expenses.length / entriesPerPage);
   const paginatedExpenses = expenses.slice((currentPage - 1) * entriesPerPage, currentPage * entriesPerPage);

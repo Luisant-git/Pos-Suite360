@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Download, Users, FileText, Filter, RefreshCw, DollarSign, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { Download, Users, FileText, RefreshCw, DollarSign, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { exportTableToPdf } from '../../utils/exportPdf';
 import { exportToExcel } from '../../utils/exportExcel';
 import { useSettings } from '../../contexts/SettingsContext';
@@ -213,6 +213,22 @@ const CustomerReceiptsReport = () => {
               </div>
             </>
           )}
+          <div>
+            <label className="block text-[12px] font-bold text-[#64748B] mb-1">Entries Per Page</label>
+            <select
+              value={entriesPerPage}
+              onChange={(e) => {
+                setEntriesPerPage(Number(e.target.value));
+                setCurrentPage(1);
+              }}
+              className="w-full px-3 py-1.5 border border-[#CBD5E1] rounded text-[13px] outline-none focus:border-[#3B82F6] bg-white"
+            >
+              <option value={10}>10 Entries</option>
+              <option value={25}>25 Entries</option>
+              <option value={50}>50 Entries</option>
+              <option value={100}>100 Entries</option>
+            </select>
+          </div>
           <div className="flex items-center gap-2">
             <button
               type="button"

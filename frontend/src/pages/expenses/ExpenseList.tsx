@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
-import { Download, Plus, Filter, Calendar, DollarSign, FileText } from 'lucide-react';
+import { Download, Plus, Filter, DollarSign } from 'lucide-react';
 import { exportTableToPdf } from '../../utils/exportPdf';
 import { exportToExcel } from '../../utils/exportExcel';
 import { useSettings } from '../../contexts/SettingsContext';

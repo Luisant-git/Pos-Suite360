@@ -1,7 +1,6 @@
 import html2pdf from 'html2pdf.js';
 
 function oklchToRgb(oklchStr: string): string {
-  // 1. Try browser Canvas 2D conversion first
   try {
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
@@ -15,7 +14,6 @@ function oklchToRgb(oklchStr: string): string {
     }
   } catch {}
 
-  // 2. Math fallback parser for OKLCH -> sRGB
   try {
     const match = oklchStr.match(/oklch\(\s*([\d.%]+)\s+([\d.%]+)\s+([\d.%]+)(?:\s*\/\s*([\d.%]+))?\s*\)/i);
     if (!match) return 'rgb(100, 116, 139)';
@@ -68,7 +66,61 @@ export const exportTableToPdf = async (elementId: string, filename: string) => {
       return;
     }
 
-    // 1. Temporarily sanitize live <style> tags in document.head
+    // --- Step 1: Hide all overlay elements that float above the page ---
+    // These include nav dropdowns, user menus, react portals, tooltips, modals
+    // html2canvas screenshots the ENTIRE viewport, so any visible overlay will appear in PDF
+    const overlaySelectors = [
+      // Dropdowns and menus (positioned outside the report container)
+      '[data-radix-popper-content-wrapper]',
+      '[data-radix-dropdown-menu-content]',
+      '[data-radix-select-content]',
+      '.dropdown-menu',
+      '.nav-dropdown',
+      '.mobile-menu',
+      // React Select portals
+      '[class*="menu-portal"]',
+      '[class*="MenuPortal"]',
+      // Fixed header/sidebar elements outside report
+      'nav',
+      'header',
+      // Any element that is fixed/absolute positioned and NOT inside the target
+    ];
+
+    // Collect all elements outside the target that are positional overlays
+    const hiddenOverlays: { el: HTMLElement; prevVisibility: string }[] = [];
+
+    // Find any element that is fixed positioned in the entire document (navbars, modals, popovers)
+    const allDocEls = Array.from(document.querySelectorAll('*')) as HTMLElement[];
+    allDocEls.forEach((el) => {
+      // Skip elements inside the target report element
+      if (liveElement.contains(el)) return;
+      const style = window.getComputedStyle(el);
+      // Hide fixed, absolute or sticky positioned elements outside target (nav dropdowns, overlays)
+      if (
+        style.position === 'fixed' ||
+        (style.position === 'absolute' && !liveElement.contains(el)) ||
+        style.position === 'sticky'
+      ) {
+        if (style.display !== 'none' && style.visibility !== 'hidden') {
+          hiddenOverlays.push({ el, prevVisibility: el.style.visibility });
+          el.style.visibility = 'hidden';
+        }
+      }
+    });
+
+    // Additionally hide nav, header siblings outside report via selector
+    const navEls = Array.from(document.querySelectorAll('nav, header')) as HTMLElement[];
+    navEls.forEach((el) => {
+      if (!liveElement.contains(el)) {
+        const style = window.getComputedStyle(el);
+        if (style.display !== 'none' && style.visibility !== 'hidden') {
+          hiddenOverlays.push({ el, prevVisibility: el.style.visibility });
+          el.style.visibility = 'hidden';
+        }
+      }
+    });
+
+    // --- Step 2: Sanitize live <style> tags with oklch ---
     const liveStyleEls = Array.from(document.querySelectorAll('style'));
     const styleReplacements: { original: HTMLStyleElement; temp: HTMLStyleElement }[] = [];
     liveStyleEls.forEach((styleEl) => {
@@ -81,7 +133,7 @@ export const exportTableToPdf = async (elementId: string, filename: string) => {
       }
     });
 
-    // 2. Temporarily sanitize live <link rel="stylesheet"> tags containing oklch
+    // --- Step 3: Sanitize live <link rel="stylesheet"> tags ---
     const linkEls = Array.from(document.querySelectorAll('link[rel="stylesheet"]')) as HTMLLinkElement[];
     const linkReplacements: { link: HTMLLinkElement; tempStyle: HTMLStyleElement }[] = [];
     linkEls.forEach((link) => {
@@ -104,18 +156,9 @@ export const exportTableToPdf = async (elementId: string, filename: string) => {
     });
 
     const colorProps = [
-      'color',
-      'background-color',
-      'border-color',
-      'border-top-color',
-      'border-right-color',
-      'border-bottom-color',
-      'border-left-color',
-      'outline-color',
-      'box-shadow',
-      'text-shadow',
-      'fill',
-      'stroke'
+      'color', 'background-color', 'border-color', 'border-top-color',
+      'border-right-color', 'border-bottom-color', 'border-left-color',
+      'outline-color', 'box-shadow', 'text-shadow', 'fill', 'stroke'
     ];
 
     try {
@@ -138,39 +181,49 @@ export const exportTableToPdf = async (elementId: string, filename: string) => {
                 }
               });
 
-              // Perform visual layout adjustments strictly inside target cloned element
-              const clonedElement = clonedDoc.getElementById(elementId);
-              if (clonedElement) {
-                // Reveal headers and footers ONLY inside target container
-                const pdfHeaders = clonedElement.querySelectorAll('.pdf-header, .pdf-footer') as NodeListOf<HTMLElement>;
+              // In the cloned document: hide all overlays outside target
+              const clonedAllEls = Array.from(clonedDoc.querySelectorAll('*')) as HTMLElement[];
+              const clonedTarget = clonedDoc.getElementById(elementId);
+              clonedAllEls.forEach((el) => {
+                if (clonedTarget && clonedTarget.contains(el)) return;
+                const style = clonedDoc.defaultView?.getComputedStyle(el);
+                if (
+                  style &&
+                  (style.position === 'fixed' || style.position === 'absolute' || style.position === 'sticky') &&
+                  style.display !== 'none'
+                ) {
+                  el.style.visibility = 'hidden';
+                }
+              });
+
+              // Apply layout + color sanitization strictly on the target element
+              if (clonedTarget) {
+                const pdfHeaders = clonedTarget.querySelectorAll('.pdf-header, .pdf-footer') as NodeListOf<HTMLElement>;
                 pdfHeaders.forEach((el) => {
                   el.classList.remove('hidden');
                   el.style.display = 'block';
                 });
 
-                // Format payment badges ONLY inside target container
-                const badges = clonedElement.querySelectorAll('.payment-badge') as NodeListOf<HTMLElement>;
+                const badges = clonedTarget.querySelectorAll('.payment-badge') as NodeListOf<HTMLElement>;
                 badges.forEach((badge) => {
                   const color = badge.getAttribute('data-pdf-color') || '#000';
                   badge.style.cssText = `color: ${color}; font-weight: bold; font-size: 11px; text-align: center;`;
                   badge.className = '';
                 });
 
-                // Expand container overflow & height ONLY inside target container
-                clonedElement.style.overflow = 'visible';
-                clonedElement.style.maxHeight = 'none';
-                clonedElement.style.height = 'auto';
-                clonedElement.style.flex = 'none';
+                clonedTarget.style.overflow = 'visible';
+                clonedTarget.style.maxHeight = 'none';
+                clonedTarget.style.height = 'auto';
+                clonedTarget.style.flex = 'none';
 
-                const innerTable = clonedElement.querySelector('table')?.parentElement;
+                const innerTable = clonedTarget.querySelector('table')?.parentElement;
                 if (innerTable) {
                   innerTable.style.overflow = 'visible';
                   innerTable.style.maxHeight = 'none';
                   innerTable.style.height = 'auto';
                 }
 
-                // Sanitize computed colors ONLY on target element and its children (ignore navbar, sidebars, dropdowns)
-                const targetEls = [clonedElement, ...Array.from(clonedElement.querySelectorAll('*'))] as HTMLElement[];
+                const targetEls = [clonedTarget, ...Array.from(clonedTarget.querySelectorAll('*'))] as HTMLElement[];
                 const win = clonedDoc.defaultView || window;
                 targetEls.forEach((el) => {
                   const styleAttr = el.getAttribute('style');
@@ -195,18 +248,19 @@ export const exportTableToPdf = async (elementId: string, filename: string) => {
         .from(liveElement)
         .save();
     } finally {
-      // Restore live style tags
-      styleReplacements.forEach(({ original, temp }) => {
-        if (temp.parentNode) {
-          temp.replaceWith(original);
-        }
+      // Restore hidden overlays
+      hiddenOverlays.forEach(({ el, prevVisibility }) => {
+        el.style.visibility = prevVisibility;
       });
 
-      // Restore live link tags
+      // Restore style tags
+      styleReplacements.forEach(({ original, temp }) => {
+        if (temp.parentNode) temp.replaceWith(original);
+      });
+
+      // Restore link tags
       linkReplacements.forEach(({ link, tempStyle }) => {
-        if (tempStyle.parentNode) {
-          tempStyle.replaceWith(link);
-        }
+        if (tempStyle.parentNode) tempStyle.replaceWith(link);
       });
     }
   } catch (e: any) {

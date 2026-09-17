@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { ExpenseCategoriesService } from './expense-categories.service';
 import { CreateExpenseCategoryDto } from './dto/create-expense-category.dto';
 import { UpdateExpenseCategoryDto } from './dto/update-expense-category.dto';
@@ -13,8 +13,8 @@ export class ExpenseCategoriesController {
   }
 
   @Get()
-  findAll() {
-    return this.expenseCategoriesService.findAll();
+  findAll(@Query() query: any) {
+    return this.expenseCategoriesService.findAll(query);
   }
 
   @Get(':id')

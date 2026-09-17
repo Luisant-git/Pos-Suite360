@@ -23,6 +23,7 @@ const ReportTabs = () => {
     { name: 'Monthly Movement', path: '/reports/monthly-movement', icon: <RefreshCw size={14} /> },
     { name: 'Fast Moving Chart', path: '/reports/fast-moving', icon: <TrendingUp size={14} /> },
     { name: 'Profit & Ledger', path: '/reports/profit-ledger', icon: <PieChart size={14} /> },
+    { name: 'Expense Report', path: '/reports/expenses', icon: <FileText size={14} /> },
     { name: 'Customer Receipts & Dues Report', path: '/reports/customer-receipts', icon: <Users size={14} /> },
     { name: 'Supplier Payments & Payables Report', path: '/reports/supplier-payments', icon: <Truck size={14} /> },
   ];

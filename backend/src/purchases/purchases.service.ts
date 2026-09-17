@@ -50,7 +50,7 @@ export class PurchasesService {
 
         if (item.rate && item.rate > newPurchaseRate) newPurchaseRate = item.rate;
         if (item.wRate && item.wRate > newWholesaleRate) newWholesaleRate = item.wRate;
-        if (item.sRate && item.sRate > newSellingRate) newSellingRate = item.sRate;
+        if (item.sRate !== undefined && item.sRate > 0) newSellingRate = item.sRate;
         if (item.mrp && item.mrp > newMrp) newMrp = item.mrp;
 
         // Increment current stock and update rates

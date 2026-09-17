@@ -68,6 +68,7 @@ export class SalesService {
           where: { id: item.productId },
           data: {
             currentStock: { decrement: item.quantity },
+            ...(item.rate > 0 && { sellingRate: item.rate }),
           },
         });
 
@@ -295,6 +296,7 @@ export class SalesService {
           where: { id: item.productId },
           data: {
             currentStock: { decrement: item.quantity },
+            ...(item.rate > 0 && { sellingRate: item.rate }),
           },
         });
 

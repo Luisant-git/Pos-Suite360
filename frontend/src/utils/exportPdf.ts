@@ -68,7 +68,7 @@ export const exportTableToPdf = async (elementId: string, filename: string) => {
       return;
     }
 
-    // 1. Temporarily sanitize live <style> tags in document.head (non-visual CSS text)
+    // 1. Temporarily sanitize live <style> tags in document.head
     const liveStyleEls = Array.from(document.querySelectorAll('style'));
     const styleReplacements: { original: HTMLStyleElement; temp: HTMLStyleElement }[] = [];
     liveStyleEls.forEach((styleEl) => {
@@ -130,17 +130,25 @@ export const exportTableToPdf = async (elementId: string, filename: string) => {
             logging: false,
             scrollY: 0,
             onclone: (clonedDoc: Document) => {
-              // Perform ALL visual layout adjustments ONLY inside the cloned document (invisible iframe)
+              // Sanitize style tags in clonedDoc
+              const styleTags = clonedDoc.querySelectorAll('style');
+              styleTags.forEach((styleTag) => {
+                if (styleTag.textContent && styleTag.textContent.includes('oklch')) {
+                  styleTag.textContent = sanitizeOklchInText(styleTag.textContent);
+                }
+              });
+
+              // Perform visual layout adjustments strictly inside target cloned element
               const clonedElement = clonedDoc.getElementById(elementId);
               if (clonedElement) {
-                // Reveal headers and footers ONLY in cloned document
+                // Reveal headers and footers ONLY inside target container
                 const pdfHeaders = clonedElement.querySelectorAll('.pdf-header, .pdf-footer') as NodeListOf<HTMLElement>;
                 pdfHeaders.forEach((el) => {
                   el.classList.remove('hidden');
                   el.style.display = 'block';
                 });
 
-                // Format payment badges ONLY in cloned document
+                // Format payment badges ONLY inside target container
                 const badges = clonedElement.querySelectorAll('.payment-badge') as NodeListOf<HTMLElement>;
                 badges.forEach((badge) => {
                   const color = badge.getAttribute('data-pdf-color') || '#000';
@@ -148,7 +156,7 @@ export const exportTableToPdf = async (elementId: string, filename: string) => {
                   badge.className = '';
                 });
 
-                // Expand container overflow & height ONLY in cloned document
+                // Expand container overflow & height ONLY inside target container
                 clonedElement.style.overflow = 'visible';
                 clonedElement.style.maxHeight = 'none';
                 clonedElement.style.height = 'auto';
@@ -160,34 +168,26 @@ export const exportTableToPdf = async (elementId: string, filename: string) => {
                   innerTable.style.maxHeight = 'none';
                   innerTable.style.height = 'auto';
                 }
+
+                // Sanitize computed colors ONLY on target element and its children (ignore navbar, sidebars, dropdowns)
+                const targetEls = [clonedElement, ...Array.from(clonedElement.querySelectorAll('*'))] as HTMLElement[];
+                const win = clonedDoc.defaultView || window;
+                targetEls.forEach((el) => {
+                  const styleAttr = el.getAttribute('style');
+                  if (styleAttr && styleAttr.includes('oklch')) {
+                    el.setAttribute('style', sanitizeOklchInText(styleAttr));
+                  }
+                  try {
+                    const comp = win.getComputedStyle(el);
+                    colorProps.forEach((prop) => {
+                      const val = comp.getPropertyValue(prop);
+                      if (val && val.includes('oklch')) {
+                        el.style.setProperty(prop, sanitizeOklchInText(val), 'important');
+                      }
+                    });
+                  } catch {}
+                });
               }
-
-              // Sanitize style tags in clonedDoc
-              const styleTags = clonedDoc.querySelectorAll('style');
-              styleTags.forEach((styleTag) => {
-                if (styleTag.textContent && styleTag.textContent.includes('oklch')) {
-                  styleTag.textContent = sanitizeOklchInText(styleTag.textContent);
-                }
-              });
-
-              // Sanitize computed colors on cloned elements
-              const allEls = Array.from(clonedDoc.querySelectorAll('*')) as HTMLElement[];
-              const win = clonedDoc.defaultView || window;
-              allEls.forEach((el) => {
-                const styleAttr = el.getAttribute('style');
-                if (styleAttr && styleAttr.includes('oklch')) {
-                  el.setAttribute('style', sanitizeOklchInText(styleAttr));
-                }
-                try {
-                  const comp = win.getComputedStyle(el);
-                  colorProps.forEach((prop) => {
-                    const val = comp.getPropertyValue(prop);
-                    if (val && val.includes('oklch')) {
-                      el.style.setProperty(prop, sanitizeOklchInText(val), 'important');
-                    }
-                  });
-                } catch {}
-              });
             }
           },
           jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' },

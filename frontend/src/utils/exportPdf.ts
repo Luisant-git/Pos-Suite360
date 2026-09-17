@@ -1,7 +1,7 @@
 import html2pdf from 'html2pdf.js';
 
 function oklchToRgb(oklchStr: string): string {
-  // Try browser Canvas 2D conversion first
+  // 1. Try browser Canvas 2D conversion first
   try {
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
@@ -9,13 +9,13 @@ function oklchToRgb(oklchStr: string): string {
       ctx.fillStyle = '#000000';
       ctx.fillStyle = oklchStr;
       const res = ctx.fillStyle;
-      if (res && res !== '#000000' && res !== 'rgb(0, 0, 0)') {
+      if (res && res !== '#000000' && res !== 'rgb(0, 0, 0)' && !res.includes('oklch')) {
         return res;
       }
     }
   } catch {}
 
-  // Math fallback parser for OKLCH -> sRGB
+  // 2. Math fallback parser for OKLCH -> sRGB
   try {
     const match = oklchStr.match(/oklch\(\s*([\d.%]+)\s+([\d.%]+)\s+([\d.%]+)(?:\s*\/\s*([\d.%]+))?\s*\)/i);
     if (!match) return 'rgb(100, 116, 139)';
@@ -68,16 +68,42 @@ export const exportTableToPdf = async (elementId: string, filename: string) => {
       return;
     }
 
-    // 1. Backup and sanitize live style tags in document.head
-    const styleEls = Array.from(document.querySelectorAll('style'));
-    const originalStyleTexts = styleEls.map((el) => el.textContent || '');
-    styleEls.forEach((el) => {
-      if (el.textContent && el.textContent.includes('oklch')) {
-        el.textContent = sanitizeOklchInText(el.textContent);
+    // 1. Temporarily replace <style> tags containing oklch with sanitized style tags
+    const liveStyleEls = Array.from(document.querySelectorAll('style'));
+    const styleReplacements: { original: HTMLStyleElement; temp: HTMLStyleElement }[] = [];
+    liveStyleEls.forEach((styleEl) => {
+      if (styleEl.textContent && styleEl.textContent.includes('oklch')) {
+        const tempStyle = document.createElement('style');
+        tempStyle.textContent = sanitizeOklchInText(styleEl.textContent);
+        Array.from(styleEl.attributes).forEach((attr) => tempStyle.setAttribute(attr.name, attr.value));
+        styleEl.replaceWith(tempStyle);
+        styleReplacements.push({ original: styleEl, temp: tempStyle });
       }
     });
 
-    // 2. Backup and sanitize inline style attributes on element tree
+    // 2. Temporarily replace <link rel="stylesheet"> tags containing oklch with sanitized inline style tags
+    const linkEls = Array.from(document.querySelectorAll('link[rel="stylesheet"]')) as HTMLLinkElement[];
+    const linkReplacements: { link: HTMLLinkElement; tempStyle: HTMLStyleElement }[] = [];
+    linkEls.forEach((link) => {
+      try {
+        const sheet = link.sheet;
+        if (sheet && sheet.cssRules) {
+          let cssText = '';
+          const rules = Array.from(sheet.cssRules);
+          for (const r of rules) {
+            cssText += r.cssText + '\n';
+          }
+          if (cssText.includes('oklch')) {
+            const tempStyle = document.createElement('style');
+            tempStyle.textContent = sanitizeOklchInText(cssText);
+            link.replaceWith(tempStyle);
+            linkReplacements.push({ link, tempStyle });
+          }
+        }
+      } catch {}
+    });
+
+    // 3. Backup and sanitize inline style attributes on target element tree
     const allTargetElements = [element, ...Array.from(element.querySelectorAll('*'))] as HTMLElement[];
     const originalInlineStyles = allTargetElements.map((el) => el.getAttribute('style'));
     allTargetElements.forEach((el) => {
@@ -178,8 +204,17 @@ export const exportTableToPdf = async (elementId: string, filename: string) => {
         .save();
     } finally {
       // Restore live style tags
-      styleEls.forEach((el, i) => {
-        el.textContent = originalStyleTexts[i];
+      styleReplacements.forEach(({ original, temp }) => {
+        if (temp.parentNode) {
+          temp.replaceWith(original);
+        }
+      });
+
+      // Restore live link tags
+      linkReplacements.forEach(({ link, tempStyle }) => {
+        if (tempStyle.parentNode) {
+          tempStyle.replaceWith(link);
+        }
       });
 
       // Restore live inline styles

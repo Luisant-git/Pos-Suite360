@@ -94,7 +94,7 @@ const CustomerReceiptsReport = () => {
         totalReturns: c.totalReturns,
         netPending: c.netPending,
       }));
-      exportTableToPdf(cols, rows, 'Customer_Dues_Consolidation_Report', 'Customer Dues Consolidation Report');
+      exportTableToPdf(cols, rows, 'Customer_Dues_Consolidation_Report', 'Customer Dues Consolidation Report', settings?.shopName);
     } else {
       const cols: PdfColumn[] = [
         { header: 'S.No', dataKey: '_sno' },
@@ -114,7 +114,7 @@ const CustomerReceiptsReport = () => {
         reference: r.reference || '-',
         amount: r.amount,
       }));
-      exportTableToPdf(cols, rows, 'Customer_Receipts_History_Report', 'Customer Receipts History Report');
+      exportTableToPdf(cols, rows, 'Customer_Receipts_History_Report', 'Customer Receipts History Report', settings?.shopName);
     }
   };
 

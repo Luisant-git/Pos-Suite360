@@ -94,7 +94,7 @@ const SupplierPaymentsReport = () => {
         totalReturns: s.totalReturns,
         netPending: s.netPending,
       }));
-      exportTableToPdf(cols, rows, 'Supplier_Payables_Consolidation_Report', 'Supplier Payables Consolidation Report');
+      exportTableToPdf(cols, rows, 'Supplier_Payables_Consolidation_Report', 'Supplier Payables Consolidation Report', settings?.shopName);
     } else {
       const cols: PdfColumn[] = [
         { header: 'S.No', dataKey: '_sno' },
@@ -114,7 +114,7 @@ const SupplierPaymentsReport = () => {
         reference: p.reference || '-',
         amount: p.amount,
       }));
-      exportTableToPdf(cols, rows, 'Supplier_Payments_History_Report', 'Supplier Payments History Report');
+      exportTableToPdf(cols, rows, 'Supplier_Payments_History_Report', 'Supplier Payments History Report', settings?.shopName);
     }
   };
 

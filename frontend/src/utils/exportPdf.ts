@@ -7,27 +7,41 @@ export const exportTableToPdf = (
   columns: PdfColumn[],
   rows: Record<string, any>[],
   filename: string,
-  title?: string
+  title?: string,
+  shopName?: string
 ) => {
   try {
     const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
 
+    let currentY = 14;
+
+    // Shop Name
+    if (shopName) {
+      doc.setFontSize(16);
+      doc.setFont('helvetica', 'bold');
+      doc.text(shopName, 14, currentY);
+      currentY += 8;
+    }
+
     // Title
     if (title) {
-      doc.setFontSize(13);
+      doc.setFontSize(12);
       doc.setFont('helvetica', 'bold');
-      doc.text(title, 14, 14);
+      doc.text(title, 14, currentY);
+      currentY += 6;
+      
       doc.setFontSize(9);
       doc.setFont('helvetica', 'normal');
       doc.setTextColor(100);
-      doc.text(`Generated: ${new Date().toLocaleString()}`, 14, 20);
+      doc.text(`Generated: ${new Date().toLocaleString()}`, 14, currentY);
+      currentY += 8;
       doc.setTextColor(0);
     }
 
     autoTable(doc, {
       columns,
       body: rows,
-      startY: title ? 25 : 10,
+      startY: currentY,
       styles: {
         fontSize: 9,
         cellPadding: 3,

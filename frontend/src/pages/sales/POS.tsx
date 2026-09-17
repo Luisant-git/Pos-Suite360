@@ -87,7 +87,7 @@ const POS = () => {
   const [isPrintModalOpen, setIsPrintModalOpen] = useState(false);
   const [saleToPrint, setSaleToPrint] = useState<any>(null);
 
-  const { register, control, handleSubmit, watch, setValue, reset } = useForm<SaleFormValues>({
+  const { register, control, handleSubmit, watch, setValue, getValues, reset } = useForm<SaleFormValues>({
     resolver: zodResolver(saleSchema) as any,
     defaultValues: {
       date: new Date().toLocaleDateString('sv-SE', { timeZone: 'Asia/Kuala_Lumpur' }),
@@ -125,6 +125,33 @@ const POS = () => {
     },
     enabled: !!selectedCustomerId && !!settings?.enableCustomerRates,
   });
+
+  // Automatically sync item rates whenever customer or customerRates change
+  useEffect(() => {
+    if (!settings?.enableCustomerRates || !selectedCustomerId || !products || products.length === 0) return;
+
+    const currentItems = getValues('items');
+    if (!currentItems || currentItems.length === 0) return;
+
+    currentItems.forEach((item: any, index: number) => {
+      if (item.productId && Number(item.productId) > 0) {
+        const prod = products.find((p: any) => p.id === Number(item.productId));
+        if (prod) {
+          const customRate = customerRates.find((r: any) => r.productId === prod.id);
+          let targetRate: any = '';
+          if (customRate && Number(customRate.rate) > 0) {
+            targetRate = Number(customRate.rate);
+          } else if (prod.sellingRate && Number(prod.sellingRate) > 0) {
+            targetRate = Number(prod.sellingRate);
+          }
+          
+          if (targetRate !== '' && Number(item.rate) !== Number(targetRate)) {
+            setValue(`items.${index}.rate`, targetRate);
+          }
+        }
+      }
+    });
+  }, [customerRates, selectedCustomerId, settings?.enableCustomerRates, products, getValues, setValue]);
 
   // Mutation to quickly save custom fixed rate for customer from POS
   const saveCustomerRateMutation = useMutation({

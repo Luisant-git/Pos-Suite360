@@ -109,17 +109,19 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
   const handleShare = useCallback(async () => {
     const performShare = async (blob: Blob) => {
       const file = new File([blob], `Invoice_${invoiceNo}.pdf`, { type: 'application/pdf' });
-      if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+      if (navigator.share) {
         try {
           await navigator.share({ files: [file], title: `Invoice ${invoiceNo}` });
           toast.success('Shared successfully');
         } catch (err: any) {
           if (err.name !== 'AbortError') {
-            console.error('Share error:', err);
+            console.error('Share with file error:', err);
+            toast.error('Could not share file directly, downloading instead.');
             downloadFallback(blob);
           }
         }
       } else {
+        toast.error('Native share not supported (requires HTTPS or modern browser).');
         downloadFallback(blob);
       }
     };

@@ -114,11 +114,9 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
       if (navigator.share) {
         try {
           await navigator.share({ files: [file], title: `Invoice ${invoiceNo}` });
-          toast.success('Shared successfully');
         } catch (err: any) {
           if (err.name !== 'AbortError') {
             console.error('Share with file error:', err);
-            toast.error('Could not share file directly, downloading instead.');
             downloadFallback(blob);
           }
         }
@@ -229,6 +227,13 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
 
   const modalContent = (
     <div className={hiddenRenderer ? "hidden print:block print:absolute print:top-0 print:left-0 print:bg-transparent print:m-0 print:p-0 print-invoice-container" : "fixed inset-0 z-50 flex items-center justify-center bg-black/60 print:absolute print:top-0 print:left-0 print:block print:bg-transparent print:m-0 print:p-0 print-invoice-container"}>
+      {isSharing && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60">
+          <div className="bg-[#FFFFFF] p-6 rounded-md shadow-lg font-bold text-blue-900 flex items-center gap-3">
+            <Loader2 className="animate-spin" size={24} /> Preparing Share...
+          </div>
+        </div>
+      )}
         <div className={`bg-[#FFFFFF] flex flex-col relative print:w-full print:shadow-none print:h-auto print:min-h-[250mm] ${hiddenRenderer ? 'w-full' : 'w-[210mm] h-[97vh] rounded-md shadow-2xl'}`}>
         
         {/* Header - Screen Only */}

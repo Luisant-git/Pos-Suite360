@@ -82,7 +82,7 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
         element.style.height = 'auto';
         
         try {
-          const blob = await html2pdf()
+          const worker = html2pdf()
             .set({
               margin: 0,
               filename: `Invoice_${invoiceNo}.pdf`,
@@ -90,8 +90,10 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
               html2canvas: { scale: 2, useCORS: true, logging: false, scrollY: 0 },
               jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
             })
-            .from(element)
-            .output('blob');
+            .from(element);
+          
+          const pdf = await worker.toPdf().get('pdf');
+          const blob = pdf.output('blob');
           setPregeneratedBlob(blob);
         } catch (e) {
           console.error('Pre-generation failed', e);
@@ -159,7 +161,7 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
     element.style.height = 'auto';
     
     try {
-      const blob: Blob = await html2pdf()
+      const worker = html2pdf()
         .set({
           margin: 0,
           filename: `Invoice_${invoiceNo}.pdf`,
@@ -167,8 +169,10 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
           html2canvas: { scale: 2, useCORS: true, logging: false, scrollY: 0 },
           jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
         })
-        .from(element)
-        .output('blob');
+        .from(element);
+      
+      const pdf = await worker.toPdf().get('pdf');
+      const blob: Blob = pdf.output('blob');
         
       element.style.overflow = prevOverflow;
       element.style.maxHeight = prevMaxHeight;
@@ -179,8 +183,8 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
       element.style.overflow = prevOverflow;
       element.style.maxHeight = prevMaxHeight;
       element.style.height = prevHeight;
-      toast.error('Failed to generate invoice PDF.');
-      console.error(err);
+      toast.error(`Failed to generate invoice PDF: ${err instanceof Error ? err.message : String(err)}`);
+      console.error('PDF Generation Error:', err);
     } finally {
       setIsSharing(false);
     }

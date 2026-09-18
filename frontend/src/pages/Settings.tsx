@@ -256,7 +256,7 @@ const Settings = () => {
                   </span>
                 </label>
               </div>
-              <p className="text-[11px] text-[#64748B] mt-1 ml-[48px]">Automatically adds the current year to invoices (e.g. <span className="text-[#2563EB] font-bold">{settings?.invoicePrefix || 'INV-'}{new Date().getFullYear()}-00001</span>), causing the sequence to reset back to 1 every year.</p>
+              <p className="text-[11px] text-[#64748B] mt-1 ml-[48px]">Automatically resets the invoice numbering sequence back to 1 at the start of every year, while keeping your format exactly the same (e.g. <span className="text-[#2563EB] font-bold">{settings?.invoicePrefix || 'INV-'}00001</span>).</p>
               
               <div className="flex items-center mt-3">
                 <label className="relative inline-flex items-center cursor-pointer">

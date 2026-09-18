@@ -160,7 +160,7 @@ const SalesList = () => {
                     <td className="px-3 py-2.5 border-r border-[#E5E7EB] text-center">
                       <span className={`px-2 py-0.5 rounded text-[11px] font-bold tracking-wide ${
                         sale.paymentMode?.name === 'Cash' ? 'bg-[#06B6D4] text-white' : 
-                        sale.paymentMode?.name === 'Credit' ? 'bg-[#EC4899] text-white' :
+                        sale.paymentMode?.name === 'Credit' ? 'bg-[#22C55E] text-white' :
                         'bg-[#3B82F6] text-white'
                       }`}>
                         {sale.paymentMode?.name?.toUpperCase() || 'CASH'}

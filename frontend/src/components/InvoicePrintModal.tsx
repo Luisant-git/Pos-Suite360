@@ -256,10 +256,10 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
             
             <div className="flex justify-between items-start border-t border-black pt-2">
               <div 
-                className="w-[48%] text-[10px] text-black pr-4 html-content leading-tight whitespace-pre-line"
+                className="w-[55%] text-[11px] text-black pr-4 html-content leading-tight whitespace-pre-line"
                 dangerouslySetInnerHTML={{ __html: settings?.invoiceNotes || `Note:<br/>All Cheques should be crossed and made payable to NASA WORLD SDN BHD<br/>ACCOUNT DETAILS:<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NASA FRESH MART<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ACCOUNT NO- 21419200030833, BANK NAME:   RHB bank<br/>Goods sold are neither returnable nor refundable. Otherwise a cancellation fee of 20% on the purchase price will be imposed` }}
               />
-              <div className="w-[50%] flex flex-col items-end gap-2 font-bold text-sm whitespace-nowrap">
+              <div className="w-[45%] flex flex-col items-end gap-2 font-bold text-sm whitespace-nowrap">
                 {totalBirds > 0 && (
                   <div className="flex items-center gap-4">
                     <span>TOTAL BIRDS :</span>
@@ -270,7 +270,7 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
                   <span>TOTAL : RM</span>
                   <span className="border-b-2 border-black min-w-[100px] text-right inline-block pb-1">{Number(grandTotal).toFixed(2)}</span>
                 </div>
-                <div className="flex items-center gap-4 border-2 border-black px-2.5 py-1 rounded-sm mt-1 bg-gray-50/50 print:bg-transparent">
+                <div className="flex items-center gap-4 border-2 border-black px-2.5 py-1 rounded-sm mt-6 bg-gray-50/50 print:bg-transparent">
                   <span>PENDING AMT : RM</span>
                   <span className="min-w-[100px] text-right inline-block font-bold">{Number(pendingAmount).toFixed(2)}</span>
                 </div>

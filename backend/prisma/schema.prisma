@@ -278,7 +278,7 @@ model PurchaseReturnItem {
 
 model Sale {
   id            Int      @id @default(autoincrement())
-  invoiceNo     String   @unique
+  invoiceNo     String
   date          DateTime @default(now())
   
   customerId    Int

@@ -373,7 +373,8 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
           </div>
         </div>
 
-      </div>
+      )}
+</div>
     </div>
   );
 

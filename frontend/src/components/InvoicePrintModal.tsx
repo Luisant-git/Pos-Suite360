@@ -340,7 +340,7 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
                   <span>TOTAL : RM</span>
                   <span className="border-b-2 border-[#000000] min-w-[100px] text-right inline-block pb-1">{Number(grandTotal).toFixed(2)}</span>
                 </div>
-                <div className="flex items-center gap-4 border-2 border-[#000000] px-2.5 py-1 rounded-sm mt-6 bg-[#F9FAFB]/50 print:bg-transparent">
+                <div className="flex items-center gap-4 border-2 border-[#000000] px-2.5 py-1 rounded-sm mt-6 bg-[#F9FAFB] print:bg-transparent">
                   <span>PENDING AMT : RM</span>
                   <span className="min-w-[100px] text-right inline-block font-bold">{Number(pendingAmount).toFixed(2)}</span>
                 </div>

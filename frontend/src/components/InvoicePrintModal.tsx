@@ -187,15 +187,15 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
         <div id="printable-invoice" className="flex-1 overflow-auto flex flex-col p-8 font-sans text-black print:p-6 bg-white">
           <div className="text-center mb-3 print:pt-4">
             <div className="text-lg font-bold uppercase">NASA FRESH MART <span className="text-xs font-normal">(001634825-A)</span></div>
-            <p className="mt-1 text-[11px]">NO 8G, JLN 3/2 PANDAN JAYA, 55100 KUALA LUMPUR.</p>
-            <p className="text-[11px]">Tel : 0392856786</p>
+            <p className="mt-1 text-[12px]">NO 8G, JLN 3/2 PANDAN JAYA, 55100 KUALA LUMPUR.</p>
+            <p className="text-[12px]">Tel : 0392856786</p>
           </div>
           
           <div className="border-t border-b border-black py-2 mb-4 text-center font-bold text-base uppercase tracking-wider">
             INVOICE
           </div>
           
-          <div className="flex justify-between mb-6 text-[11px]">
+          <div className="flex justify-between mb-6 text-[12px]">
             <div className="w-1/2 pr-4">
                <div className="flex">
                  <span className="w-16 font-bold">Bill To:</span>
@@ -212,7 +212,7 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
                <p className="font-bold">Attn:</p>
             </div>
             
-            <div className="w-1/2 pl-12 text-[11px]">
+            <div className="w-1/2 pl-12 text-[12px]">
                <div className="grid grid-cols-[100px_10px_1fr] gap-y-1">
                  <span className="font-bold">NO.</span><span className="font-bold">:</span><span className="font-bold">{invoiceNo}</span>
                  <span className="font-bold">DATE</span><span className="font-bold">:</span><span className="font-bold">{date}</span>
@@ -222,7 +222,7 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
             </div>
           </div>
           
-          <table className="w-full text-left border-y border-black mb-4 text-[11px]">
+          <table className="w-full text-left border-y border-black mb-4 text-[12px]">
             <thead>
               <tr className="border-b border-black uppercase">
                 <th className="py-2 w-[15%] font-bold">Code</th>
@@ -252,14 +252,14 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
           <div className="flex-1"></div>
 
           <div>
-            <p className="uppercase mb-4">RINGGIT MALAYSIA {numberToWords(grandTotal)} ONLY</p>
+            <p className="uppercase mb-4 text-[13px] font-semibold">RINGGIT MALAYSIA {numberToWords(grandTotal)} ONLY</p>
             
             <div className="flex justify-between items-start border-t border-black pt-2">
               <div 
-                className="w-[45%] text-[9px] text-black pr-4 html-content leading-tight"
-                dangerouslySetInnerHTML={{ __html: settings?.invoiceNotes || '' }}
+                className="w-[48%] text-[10px] text-black pr-4 html-content leading-tight whitespace-pre-line"
+                dangerouslySetInnerHTML={{ __html: settings?.invoiceNotes || `Note:<br/>All Cheques should be crossed and made payable to NASA WORLD SDN BHD<br/>ACCOUNT DETAILS:<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NASA FRESH MART<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ACCOUNT NO- 21419200030833, BANK NAME:   RHB bank<br/>Goods sold are neither returnable nor refundable. Otherwise a cancellation fee of 20% on the purchase price will be imposed` }}
               />
-              <div className="w-[60%] flex flex-col items-end gap-2 font-bold text-sm whitespace-nowrap">
+              <div className="w-[50%] flex flex-col items-end gap-2 font-bold text-sm whitespace-nowrap">
                 {totalBirds > 0 && (
                   <div className="flex items-center gap-4">
                     <span>TOTAL BIRDS :</span>
@@ -270,9 +270,9 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
                   <span>TOTAL : RM</span>
                   <span className="border-b-2 border-black min-w-[100px] text-right inline-block pb-1">{Number(grandTotal).toFixed(2)}</span>
                 </div>
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-4 border-2 border-black px-2.5 py-1 rounded-sm mt-1 bg-gray-50/50 print:bg-transparent">
                   <span>PENDING AMT : RM</span>
-                  <span className="min-w-[100px] text-right inline-block">{Number(pendingAmount).toFixed(2)}</span>
+                  <span className="min-w-[100px] text-right inline-block font-bold">{Number(pendingAmount).toFixed(2)}</span>
                 </div>
               </div>
             </div>

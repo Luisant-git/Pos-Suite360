@@ -65,20 +65,97 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
   const grandTotal = sale?.grandTotal || 0;
   const totalBirds = items.reduce((sum: number, item: any) => sum + (Number(item.noOfBirds) || 0), 0);
 
+  const [pregeneratedBlob, setPregeneratedBlob] = useState<Blob | null>(null);
+
+  // Pre-generate PDF for instant sharing to preserve user gesture
+  useEffect(() => {
+    if (isOpen && !hiddenRenderer && !pregeneratedBlob) {
+      const timer = setTimeout(async () => {
+        const element = document.getElementById('printable-invoice');
+        if (!element) return;
+        
+        const prevOverflow = element.style.overflow;
+        const prevMaxHeight = element.style.maxHeight;
+        const prevHeight = element.style.height;
+        element.style.overflow = 'visible';
+        element.style.maxHeight = 'none';
+        element.style.height = 'auto';
+        
+        try {
+          const blob = await html2pdf()
+            .set({
+              margin: 0,
+              filename: `Invoice_${invoiceNo}.pdf`,
+              image: { type: 'jpeg', quality: 0.98 },
+              html2canvas: { scale: 2, useCORS: true, logging: false, scrollY: 0 },
+              jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+            })
+            .from(element)
+            .outputPdf('blob');
+          setPregeneratedBlob(blob);
+        } catch (e) {
+          console.error('Pre-generation failed', e);
+        }
+        
+        element.style.overflow = prevOverflow;
+        element.style.maxHeight = prevMaxHeight;
+        element.style.height = prevHeight;
+      }, 1000);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [isOpen, hiddenRenderer, invoiceNo, pregeneratedBlob]);
+
   const handleShare = useCallback(async () => {
+    const performShare = async (blob: Blob) => {
+      const file = new File([blob], `Invoice_${invoiceNo}.pdf`, { type: 'application/pdf' });
+      if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+        try {
+          await navigator.share({ files: [file], title: `Invoice ${invoiceNo}` });
+          toast.success('Shared successfully');
+        } catch (err: any) {
+          if (err.name !== 'AbortError') {
+            console.error('Share error:', err);
+            downloadFallback(blob);
+          }
+        }
+      } else {
+        downloadFallback(blob);
+      }
+    };
+
+    const downloadFallback = (blob: Blob) => {
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `Invoice_${invoiceNo}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      toast.success('Invoice PDF saved.');
+    };
+
+    if (pregeneratedBlob) {
+      await performShare(pregeneratedBlob);
+      return;
+    }
+
+    // Fallback if not pre-generated yet
     const element = document.getElementById('printable-invoice');
     if (!element) {
       toast.error('Invoice content not found.');
       return;
     }
     setIsSharing(true);
-    // Temporarily expand element to full height for capture
+    
     const prevOverflow = element.style.overflow;
     const prevMaxHeight = element.style.maxHeight;
     const prevHeight = element.style.height;
     element.style.overflow = 'visible';
     element.style.maxHeight = 'none';
     element.style.height = 'auto';
+    
     try {
       const blob: Blob = await html2pdf()
         .set({
@@ -87,30 +164,15 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
           image: { type: 'jpeg', quality: 0.98 },
           html2canvas: { scale: 2, useCORS: true, logging: false, scrollY: 0 },
           jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-        } as any)
+        })
         .from(element)
         .outputPdf('blob');
-
-      // Restore element styles
+        
       element.style.overflow = prevOverflow;
       element.style.maxHeight = prevMaxHeight;
       element.style.height = prevHeight;
-
-      const file = new File([blob], `Invoice_${invoiceNo}.pdf`, { type: 'application/pdf' });
-
-      if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
-        await navigator.share({ files: [file], title: `Invoice ${invoiceNo}` }).catch(() => {});
-      } else {
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = `Invoice_${invoiceNo}.pdf`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(url);
-        toast.success('Invoice PDF saved.');
-      }
+      
+      await performShare(blob);
     } catch (err) {
       element.style.overflow = prevOverflow;
       element.style.maxHeight = prevMaxHeight;
@@ -120,7 +182,7 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
     } finally {
       setIsSharing(false);
     }
-  }, [invoiceNo]);
+  }, [invoiceNo, pregeneratedBlob]);
 
   // Auto-trigger share once data is loaded
   useEffect(() => {

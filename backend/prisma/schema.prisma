@@ -202,7 +202,7 @@ model Product {
 
 model Purchase {
   id            Int      @id @default(autoincrement())
-  invoiceNo     String   @unique
+  invoiceNo     String
   date          DateTime @default(now())
   supplierInvoiceNo String?
   invoiceDate   DateTime?

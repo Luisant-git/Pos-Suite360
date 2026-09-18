@@ -13,14 +13,20 @@ export class SalesService {
       
       // 0. Auto-generate the correct invoice number safely inside the transaction
       const settings = await tx.settings.findUnique({ where: { id: 1 } });
-      let prefix = settings?.invoicePrefix || 'INV-';
+      const prefix = settings?.invoicePrefix || 'INV-';
+      
+      let whereCondition: any = {};
       if (settings?.yearlyInvoiceReset) {
-        const cleanPrefix = prefix.endsWith('-') ? prefix.slice(0, -1) : prefix;
-        prefix = `${cleanPrefix}-${new Date().getFullYear()}-`;
+        const startOfYear = new Date(new Date().getFullYear(), 0, 1);
+        whereCondition = { date: { gte: startOfYear } };
       }
       
       const lastSale = await tx.sale.findFirst({
-        orderBy: { invoiceNo: 'desc' },
+        where: {
+          ...whereCondition,
+          invoiceNo: { startsWith: prefix }
+        },
+        orderBy: { id: 'desc' },
         select: { invoiceNo: true },
       });
 
@@ -155,14 +161,20 @@ export class SalesService {
 
   async getNextInvoiceNo() {
     const settings = await this.prisma.settings.findUnique({ where: { id: 1 } });
-    let prefix = settings?.invoicePrefix || 'INV-';
+    const prefix = settings?.invoicePrefix || 'INV-';
+    
+    let whereCondition: any = {};
     if (settings?.yearlyInvoiceReset) {
-      const cleanPrefix = prefix.endsWith('-') ? prefix.slice(0, -1) : prefix;
-      prefix = `${cleanPrefix}-${new Date().getFullYear()}-`;
+      const startOfYear = new Date(new Date().getFullYear(), 0, 1);
+      whereCondition = { date: { gte: startOfYear } };
     }
 
     const lastSale = await this.prisma.sale.findFirst({
-      orderBy: { invoiceNo: 'desc' },
+      where: {
+        ...whereCondition,
+        invoiceNo: { startsWith: prefix }
+      },
+      orderBy: { id: 'desc' },
       select: { invoiceNo: true },
     });
 

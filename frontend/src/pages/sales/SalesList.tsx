@@ -144,11 +144,11 @@ const SalesList = () => {
             <tbody>
               {isLoading ? (
                 <tr>
-                  <td colSpan={7} className="px-3 py-4 text-center text-[#73879C]">Loading...</td>
+                  <td colSpan={6} className="px-2 py-4 text-center text-[#73879C]">Loading...</td>
                 </tr>
               ) : filteredSales.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="px-3 py-4 text-center text-[#73879C]">No sales invoices found matching your criteria.</td>
+                  <td colSpan={6} className="px-2 py-4 text-center text-[#73879C]">No sales invoices found matching your criteria.</td>
                 </tr>
               ) : (
                 paginatedSales.map((sale: any, index: number) => (

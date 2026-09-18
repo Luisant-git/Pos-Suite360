@@ -206,27 +206,12 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
 
   if (isLoading && !hiddenRenderer) {
     return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
-        <div className="bg-white p-6 rounded-md shadow-lg font-bold text-blue-900 flex items-center gap-3">
-          <Loader2 className="animate-spin" size={20} /> Loading invoice data...
-        </div>
-      </div>
-    );
-  }
-
-  const handlePrint = () => {
-    const prev = document.title;
-    document.title = `Invoice_${invoiceNo}`;
-    window.print();
-    document.title = prev;
-  };
-
-  const modalContent = (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 print:absolute print:top-0 print:left-0 print:block print:bg-transparent print:m-0 print:p-0 print-invoice-container">
-      <div className="bg-white w-[210mm] h-[97vh] flex flex-col rounded-md shadow-2xl relative print:w-full print:shadow-none print:h-auto print:min-h-[250mm]">
+      <div className={hiddenRenderer ? "hidden print:block print:absolute print:top-0 print:left-0 print:bg-transparent print:m-0 print:p-0 print-invoice-container" : "fixed inset-0 z-50 flex items-center justify-center bg-black/60 print:absolute print:top-0 print:left-0 print:block print:bg-transparent print:m-0 print:p-0 print-invoice-container"}>
+        <div className={`bg-white flex flex-col relative print:w-full print:shadow-none print:h-auto print:min-h-[250mm] ${hiddenRenderer ? 'w-full' : 'w-[210mm] h-[97vh] rounded-md shadow-2xl'}`}>
         
         {/* Header - Screen Only */}
-        <div className="flex justify-between items-center bg-[#111827] text-white p-3 rounded-t-md print:hidden">
+          {!hiddenRenderer && (
+            <div className="flex justify-between items-center bg-[#111827] text-white p-3 rounded-t-md print:hidden">
           <div className="flex items-center gap-2 font-bold text-sm">
             <Printer size={16} />
             <span>Invoice - {invoiceNo}</span>
@@ -242,10 +227,11 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
             <button type="button" onClick={onClose} className="hover:text-red-400 transition-colors ml-2">
               <X size={20} />
             </button>
+            </div>
           </div>
-        </div>
+          )}
 
-        {/* Printable Area */}
+          {/* Printable Area */}
         <div id="printable-invoice" className="flex-1 overflow-auto flex flex-col p-8 font-sans text-black print:p-6 bg-white">
           <div className="text-center mb-3 print:pt-4">
             <div className="text-lg font-bold uppercase">NASA FRESH MART <span className="text-xs font-normal">(001634825-A)</span></div>
@@ -356,7 +342,8 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
         </div>
 
         {/* Footer Actions - Screen Only */}
-        <div className="flex justify-between items-center p-4 bg-gray-50 border-t border-gray-200 rounded-b-md print:hidden">
+          {!hiddenRenderer && (
+            <div className="flex justify-between items-center p-4 bg-gray-50 border-t border-gray-200 rounded-b-md print:hidden">
           <button 
             type="button"
             onClick={handleShare}

@@ -206,7 +206,23 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
 
   if (isLoading && !hiddenRenderer) {
     return (
-      <div className={hiddenRenderer ? "hidden print:block print:absolute print:top-0 print:left-0 print:bg-transparent print:m-0 print:p-0 print-invoice-container" : "fixed inset-0 z-50 flex items-center justify-center bg-black/60 print:absolute print:top-0 print:left-0 print:block print:bg-transparent print:m-0 print:p-0 print-invoice-container"}>
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
+        <div className="bg-white p-6 rounded-md shadow-lg font-bold text-blue-900 flex items-center gap-3">
+          <Loader2 className="animate-spin" size={20} /> Loading invoice data...
+        </div>
+      </div>
+    );
+  }
+
+  const handlePrint = () => {
+    const prev = document.title;
+    document.title = `Invoice_${invoiceNo}`;
+    window.print();
+    document.title = prev;
+  };
+
+  const modalContent = (
+    <div className={hiddenRenderer ? "hidden print:block print:absolute print:top-0 print:left-0 print:bg-transparent print:m-0 print:p-0 print-invoice-container" : "fixed inset-0 z-50 flex items-center justify-center bg-black/60 print:absolute print:top-0 print:left-0 print:block print:bg-transparent print:m-0 print:p-0 print-invoice-container"}>
         <div className={`bg-white flex flex-col relative print:w-full print:shadow-none print:h-auto print:min-h-[250mm] ${hiddenRenderer ? 'w-full' : 'w-[210mm] h-[97vh] rounded-md shadow-2xl'}`}>
         
         {/* Header - Screen Only */}
@@ -373,8 +389,9 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
           </div>
         </div>
 
-      )}
-</div>
+        )}
+
+      </div>
     </div>
   );
 

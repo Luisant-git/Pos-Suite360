@@ -181,6 +181,8 @@ const Settings = () => {
                   <label className="block text-[12px] font-bold text-[#334155] mb-1">Support Email</label>
                   <input
                     {...registerStore('email')}
+                    autoComplete="off"
+                    data-lpignore="true"
                     className="w-full px-2 py-1.5 border border-[#CBD5E1] rounded text-[13px] outline-none focus:border-[#3B82F6]"
                   />
                 </div>

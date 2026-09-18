@@ -437,7 +437,7 @@ const MainLayout = () => {
                     {desktopLayout === 'topbar' ? 'Switch to Sidebar' : 'Switch to Topbar'}
                   </button> */}
                   <button 
-                    onClick={() => { localStorage.removeItem('token'); navigate('/login'); }}
+                    onClick={() => { localStorage.removeItem('token'); window.location.href = '/login'; }}
                     className="w-full flex items-center gap-3 px-3 py-2.5 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors font-bold mt-1"
                   >
                     <div className="w-8 h-8 rounded-md bg-red-100 flex items-center justify-center text-red-500">

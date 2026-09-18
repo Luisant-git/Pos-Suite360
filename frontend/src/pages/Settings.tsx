@@ -183,6 +183,8 @@ const Settings = () => {
                     {...registerStore('email')}
                     autoComplete="off"
                     data-lpignore="true"
+                    readOnly
+                    onFocus={(e) => e.target.removeAttribute('readonly')}
                     className="w-full px-2 py-1.5 border border-[#CBD5E1] rounded text-[13px] outline-none focus:border-[#3B82F6]"
                   />
                 </div>

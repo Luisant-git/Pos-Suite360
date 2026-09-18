@@ -91,7 +91,7 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
               jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
             })
             .from(element)
-            .outputPdf('blob');
+            .output('blob');
           setPregeneratedBlob(blob);
         } catch (e) {
           console.error('Pre-generation failed', e);
@@ -168,7 +168,7 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
           jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
         })
         .from(element)
-        .outputPdf('blob');
+        .output('blob');
         
       element.style.overflow = prevOverflow;
       element.style.maxHeight = prevMaxHeight;

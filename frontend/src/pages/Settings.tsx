@@ -171,7 +171,7 @@ const Settings = () => {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-[12px] font-bold text-[#334155] mb-1">Contact Phone Number</label>
+                  <label className="block text-[12px] font-bold text-[#334155] mb-1">Contact Phone Number(s) <span className="text-[10px] font-normal text-gray-500">(comma separated)</span></label>
                   <input
                     {...registerStore('phone')}
                     className="w-full px-2 py-1.5 border border-[#CBD5E1] rounded text-[13px] outline-none focus:border-[#3B82F6]"

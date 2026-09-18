@@ -236,7 +236,7 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
           <div className="text-center mb-3 print:pt-4">
             <div className="text-lg font-bold uppercase">NASA FRESH MART <span className="text-xs font-normal">(001634825-A)</span></div>
             <p className="mt-1 text-[12px]">NO 8G, JLN 3/2 PANDAN JAYA, 55100 KUALA LUMPUR.</p>
-            <p className="text-[12px]">Tel : 0392856786</p>
+            <p className="text-[12px]">Tel : {settings?.phone || '0392856786'}</p>
           </div>
           
           <div className="border-t border-b border-black py-2 mb-4 text-center font-bold text-base uppercase tracking-wider">

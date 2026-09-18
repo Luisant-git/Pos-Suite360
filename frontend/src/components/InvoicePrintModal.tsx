@@ -213,7 +213,7 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
   if (isLoading && !hiddenRenderer) {
     return (
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
-        <div className="bg-white p-6 rounded-md shadow-lg font-bold text-blue-900 flex items-center gap-3">
+        <div className="bg-[#FFFFFF] p-6 rounded-md shadow-lg font-bold text-blue-900 flex items-center gap-3">
           <Loader2 className="animate-spin" size={20} /> Loading invoice data...
         </div>
       </div>
@@ -229,7 +229,7 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
 
   const modalContent = (
     <div className={hiddenRenderer ? "hidden print:block print:absolute print:top-0 print:left-0 print:bg-transparent print:m-0 print:p-0 print-invoice-container" : "fixed inset-0 z-50 flex items-center justify-center bg-black/60 print:absolute print:top-0 print:left-0 print:block print:bg-transparent print:m-0 print:p-0 print-invoice-container"}>
-        <div className={`bg-white flex flex-col relative print:w-full print:shadow-none print:h-auto print:min-h-[250mm] ${hiddenRenderer ? 'w-full' : 'w-[210mm] h-[97vh] rounded-md shadow-2xl'}`}>
+        <div className={`bg-[#FFFFFF] flex flex-col relative print:w-full print:shadow-none print:h-auto print:min-h-[250mm] ${hiddenRenderer ? 'w-full' : 'w-[210mm] h-[97vh] rounded-md shadow-2xl'}`}>
         
         {/* Header - Screen Only */}
           {!hiddenRenderer && (
@@ -254,14 +254,14 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
           )}
 
           {/* Printable Area */}
-        <div id="printable-invoice" className="flex-1 overflow-auto flex flex-col p-8 font-sans text-black print:p-6 bg-white">
+        <div id="printable-invoice" className="flex-1 overflow-auto flex flex-col p-8 font-sans text-[#000000] print:p-6 bg-[#FFFFFF]">
           <div className="text-center mb-3 print:pt-4">
             <div className="text-lg font-bold uppercase">NASA FRESH MART <span className="text-xs font-normal">(001634825-A)</span></div>
             <p className="mt-1 text-[12px]">NO 8G, JLN 3/2 PANDAN JAYA, 55100 KUALA LUMPUR.</p>
             <p className="text-[12px]">Tel : {settings?.phone || '0392856786'}</p>
           </div>
           
-          <div className="border-t border-b border-black py-2 mb-4 text-center font-bold text-base uppercase tracking-wider">
+          <div className="border-t border-b border-[#000000] py-2 mb-4 text-center font-bold text-base uppercase tracking-wider">
             INVOICE
           </div>
           
@@ -292,9 +292,9 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
             </div>
           </div>
           
-          <table className="w-full text-left border-y border-black mb-4 text-[12px]">
+          <table className="w-full text-left border-y border-[#000000] mb-4 text-[12px]">
             <thead>
-              <tr className="border-b border-black uppercase">
+              <tr className="border-b border-[#000000] uppercase">
                 <th className="py-2 w-[15%] font-bold">Code</th>
                 <th className="py-2 w-[35%] font-bold">Description</th>
                 <th className="py-2 w-[10%] text-center font-bold">Birds</th>
@@ -324,9 +324,9 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
           <div>
             <p className="uppercase mb-4 text-[13px] font-semibold">RINGGIT MALAYSIA {numberToWords(grandTotal)} ONLY</p>
             
-            <div className="flex justify-between items-start border-t border-black pt-2">
+            <div className="flex justify-between items-start border-t border-[#000000] pt-2">
               <div 
-                className="w-[55%] text-[11px] text-black pr-4 html-content leading-tight whitespace-pre-line"
+                className="w-[55%] text-[11px] text-[#000000] pr-4 html-content leading-tight whitespace-pre-line"
                 dangerouslySetInnerHTML={{ __html: settings?.invoiceNotes || `Note:<br/>All Cheques should be crossed and made payable to NASA WORLD SDN BHD<br/>ACCOUNT DETAILS:<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NASA FRESH MART<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ACCOUNT NO- 21419200030833, BANK NAME:   RHB bank<br/>Goods sold are neither returnable nor refundable. Otherwise a cancellation fee of 20% on the purchase price will be imposed` }}
               />
               <div className="w-[45%] flex flex-col items-end gap-2 font-bold text-sm whitespace-nowrap">
@@ -338,9 +338,9 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
                 )}
                 <div className="flex items-center gap-4">
                   <span>TOTAL : RM</span>
-                  <span className="border-b-2 border-black min-w-[100px] text-right inline-block pb-1">{Number(grandTotal).toFixed(2)}</span>
+                  <span className="border-b-2 border-[#000000] min-w-[100px] text-right inline-block pb-1">{Number(grandTotal).toFixed(2)}</span>
                 </div>
-                <div className="flex items-center gap-4 border-2 border-black px-2.5 py-1 rounded-sm mt-6 bg-gray-50/50 print:bg-transparent">
+                <div className="flex items-center gap-4 border-2 border-[#000000] px-2.5 py-1 rounded-sm mt-6 bg-[#F9FAFB]/50 print:bg-transparent">
                   <span>PENDING AMT : RM</span>
                   <span className="min-w-[100px] text-right inline-block font-bold">{Number(pendingAmount).toFixed(2)}</span>
                 </div>
@@ -348,7 +348,7 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
             </div>
             
             {/* <div className="flex justify-end mt-24">
-              <div className="text-center w-64 border-t border-black pt-2 relative">
+              <div className="text-center w-64 border-t border-[#000000] pt-2 relative">
                 {settings?.signatureImage && (
                   <img 
                     src={settings.signatureImage} 
@@ -365,7 +365,7 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
 
         {/* Footer Actions - Screen Only */}
           {!hiddenRenderer && (
-            <div className="flex justify-between items-center p-4 bg-gray-50 border-t border-gray-200 rounded-b-md print:hidden">
+            <div className="flex justify-between items-center p-4 bg-[#F9FAFB] border-t border-[#E5E7EB] rounded-b-md print:hidden">
           <button 
             type="button"
             onClick={handleShare}
@@ -388,7 +388,7 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
             <button 
               type="button"
               onClick={onClose}
-              className="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded transition-colors shadow-sm"
+              className="bg-[#F9FAFB]0 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded transition-colors shadow-sm"
             >
               Close
             </button>
@@ -405,3 +405,4 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
 };
 
 export default InvoicePrintModal;
+

@@ -18,6 +18,11 @@
 }
 
 @layer base {
+  *, ::before, ::after {
+    border-color: #E5E7EB;
+    outline-color: transparent;
+  }
+
   body {
     background-color: var(--color-background);
     color: var(--color-text);

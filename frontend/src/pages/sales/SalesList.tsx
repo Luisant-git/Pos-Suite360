@@ -166,9 +166,9 @@ const SalesList = () => {
                         {sale.paymentMode?.name?.toUpperCase() || 'CASH'}
                       </span>
                     </td>
-                    <td className="px-2 py-1.5 border-r border-[#E5E7EB] text-center">
+                    {/* <td className="px-2 py-1.5 border-r border-[#E5E7EB] text-center">
                       <span className="bg-[#22C55E] text-white px-2 py-0.5 rounded text-[11px] font-bold tracking-wide">PAID</span>
-                    </td>
+                    </td> */}
                     <td className="px-2 py-1.5 text-center">
                       <div className="flex justify-center gap-2">
                         <button type="button" 

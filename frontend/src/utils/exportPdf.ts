@@ -29,22 +29,24 @@ export const exportTableToPdf = (
       doc.setFontSize(12);
       doc.setFont('helvetica', 'bold');
       doc.text(title, 14, currentY);
-      currentY += 6;
-      
-      doc.setFontSize(9);
-      doc.setFont('helvetica', 'normal');
-      doc.setTextColor(100);
-      doc.text(`Generated: ${new Date().toLocaleString()}`, 14, currentY);
       currentY += 8;
-      doc.setTextColor(0);
     }
 
+    // Generated Date (Right Aligned)
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(100);
+    doc.text(`Generated: ${new Date().toLocaleString()}`, 287, currentY, { align: 'right' });
+    doc.setTextColor(0);
+
+    // Total Count (Left Aligned on same row)
     if (totalCount !== undefined) {
       doc.setFontSize(10);
       doc.setFont('helvetica', 'bold');
       doc.text(`Total Count: ${totalCount}`, 14, currentY);
-      currentY += 8;
     }
+    
+    currentY += 8;
 
     const bodyRows = rows.slice(0, -1);
     const footRows = rows.length > 0 ? [rows[rows.length - 1]] : [];

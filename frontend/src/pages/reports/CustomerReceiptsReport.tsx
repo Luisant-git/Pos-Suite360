@@ -336,8 +336,6 @@ const CustomerReceiptsReport = () => {
               className="w-full"
             />
           </div>
-          {reportMode === 'history' && (
-            <>
               <div>
                 <label className="block text-[12px] font-bold text-[#64748B] mb-1">From Date</label>
                 <input
@@ -356,8 +354,6 @@ const CustomerReceiptsReport = () => {
                   className="w-full px-3 py-1.5 border border-[#CBD5E1] rounded text-[13px] outline-none focus:border-[#3B82F6] bg-white"
                 />
               </div>
-            </>
-          )}
           <div>
             <label className="block text-[12px] font-bold text-[#64748B] mb-1">Entries Per Page</label>
             <select

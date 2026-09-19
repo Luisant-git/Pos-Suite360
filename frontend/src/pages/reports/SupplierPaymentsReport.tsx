@@ -116,6 +116,23 @@ const SupplierPaymentsReport = () => {
 
   const isReset = !searchTerm && !startDate && !endDate;
 
+  const handleDatePreset = (preset: 'today' | 'thisMonth' | 'clear') => {
+    const today = new Date();
+    if (preset === 'today') {
+      const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+      setStartDate(todayStr);
+      setEndDate(todayStr);
+    } else if (preset === 'thisMonth') {
+      const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
+      const lastDay = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+      setStartDate(`${firstDay.getFullYear()}-${String(firstDay.getMonth() + 1).padStart(2, '0')}-01`);
+      setEndDate(`${lastDay.getFullYear()}-${String(lastDay.getMonth() + 1).padStart(2, '0')}-${String(lastDay.getDate()).padStart(2, '0')}`);
+    } else if (preset === 'clear') {
+      setStartDate('');
+      setEndDate('');
+    }
+  };
+
   const handlePdfExport = () => {
     if (reportMode === 'consolidation') {
       const cols: PdfColumn[] = [
@@ -383,6 +400,11 @@ const SupplierPaymentsReport = () => {
               <RefreshCw size={12} /> Reset Filters
             </button>
           </div>
+        </div>
+        <div className="flex gap-2 mt-2 pt-2 border-t border-dashed border-[#E2E8F0]">
+          <button type="button" onClick={() => handleDatePreset('today')} className="text-[11px] font-bold bg-[#EFF6FF] hover:bg-[#DBEAFE] text-[#1E40AF] px-3 py-1 rounded transition-colors">Today</button>
+          <button type="button" onClick={() => handleDatePreset('thisMonth')} className="text-[11px] font-bold bg-[#EFF6FF] hover:bg-[#DBEAFE] text-[#1E40AF] px-3 py-1 rounded transition-colors">This Month</button>
+          <button type="button" onClick={() => handleDatePreset('clear')} className="text-[11px] font-bold bg-[#FEF2F2] hover:bg-[#FEE2E2] text-[#991B1B] px-3 py-1 rounded transition-colors">Clear Dates</button>
         </div>
       </div>
 

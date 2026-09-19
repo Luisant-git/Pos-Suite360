@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Download, Users, FileText, RefreshCw, DollarSign, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { exportTableToPdf, type PdfColumn } from '../../utils/exportPdf';
@@ -7,6 +7,7 @@ import { useSettings } from '../../contexts/SettingsContext';
 import api from '../../services/api';
 import ReportTabs from '../../components/ReportTabs';
 import PaginationControls from '../../components/PaginationControls';
+import SearchableSelect from '../../components/SearchableSelect';
 
 const CustomerReceiptsReport = () => {
   const { formatCurrency, settings } = useSettings();
@@ -30,6 +31,25 @@ const CustomerReceiptsReport = () => {
     queryKey: ['customerReceiptsHistory'],
     queryFn: async () => (await api.get('/customer-receipts')).data
   });
+
+  // Build search options
+  const searchOptions = React.useMemo(() => {
+    const optionsMap = new Map();
+    consolidationData.forEach((item: any) => {
+      if (item.customerName && !optionsMap.has(item.customerName)) {
+        optionsMap.set(item.customerName, { value: item.customerName, label: `Customer: ${item.customerName} ${item.phone ? `(${item.phone})` : ''}` });
+      }
+      if (item.phone && !optionsMap.has(item.phone)) {
+        optionsMap.set(item.phone, { value: item.phone, label: `Phone: ${item.phone} (${item.customerName})` });
+      }
+    });
+    receiptsHistory.forEach((item: any) => {
+      if (item.receiptNo && !optionsMap.has(item.receiptNo)) {
+        optionsMap.set(item.receiptNo, { value: item.receiptNo, label: `Receipt No: ${item.receiptNo}` });
+      }
+    });
+    return [{ value: '', label: 'All / Clear Search' }, ...Array.from(optionsMap.values())];
+  }, [consolidationData, receiptsHistory]);
 
   // Filter Consolidation List
   const filteredConsolidation = consolidationData.filter((item: any) => {
@@ -72,6 +92,8 @@ const CustomerReceiptsReport = () => {
   const totalPages = Math.ceil(activeList.length / entriesPerPage);
   const paginatedList = activeList.slice((currentPage - 1) * entriesPerPage, currentPage * entriesPerPage);
 
+  const isReset = !searchTerm && !startDate && !endDate;
+
   const handlePdfExport = () => {
     if (reportMode === 'consolidation') {
       const cols: PdfColumn[] = [
@@ -94,6 +116,16 @@ const CustomerReceiptsReport = () => {
         totalReturns: c.totalReturns,
         netPending: c.netPending,
       }));
+      rows.push({
+        _sno: `Total Count: ${filteredConsolidation.length}`,
+        customerName: '',
+        phone: '',
+        _opening: '',
+        totalSales: formatCurrency(totalSales),
+        totalReceipts: formatCurrency(totalCollected),
+        totalReturns: 'TOTAL:',
+        netPending: formatCurrency(totalPendingDues),
+      });
       const title = `Customer Dues Consolidation Report${startDate || endDate ? ` (${startDate || 'Start'} to ${endDate || 'End'})` : ''}`;
       exportTableToPdf(cols, rows, 'Customer_Dues_Consolidation_Report', title, settings?.shopName);
     } else {
@@ -115,6 +147,16 @@ const CustomerReceiptsReport = () => {
         reference: r.reference || '-',
         amount: r.amount,
       }));
+      const historyTotalAmount = filteredHistory.reduce((sum: number, r: any) => sum + Number(r.amount || 0), 0);
+      rows.push({
+        _sno: `Total Count: ${filteredHistory.length}`,
+        receiptNo: '',
+        _date: '',
+        _customer: '',
+        _mode: '',
+        reference: 'TOTAL AMOUNT:',
+        amount: formatCurrency(historyTotalAmount),
+      });
       const title = `Customer Receipts History Report${startDate || endDate ? ` (${startDate || 'Start'} to ${endDate || 'End'})` : ''}`;
       exportTableToPdf(cols, rows, 'Customer_Receipts_History_Report', title, settings?.shopName);
     }
@@ -132,6 +174,16 @@ const CustomerReceiptsReport = () => {
         'Total Returns': c.totalReturns,
         'Net Pending Due': c.netPending,
       }));
+      exportData.push({
+        'S.No': `Total Count: ${filteredConsolidation.length}`,
+        'Customer Name': '',
+        'Phone': '',
+        'Opening Balance': '',
+        'Total Invoiced': formatCurrency(totalSales) as any,
+        'Total Collected': formatCurrency(totalCollected) as any,
+        'Total Returns': 'TOTAL:',
+        'Net Pending Due': formatCurrency(totalPendingDues) as any,
+      });
       exportToExcel(exportData, 'Customer_Dues_Consolidation');
     } else {
       const exportData = filteredHistory.map((r: any, idx: number) => ({
@@ -143,6 +195,16 @@ const CustomerReceiptsReport = () => {
         'Reference': r.reference || '-',
         'Amount Collected': r.amount,
       }));
+      const historyTotalAmount = filteredHistory.reduce((sum: number, r: any) => sum + Number(r.amount || 0), 0);
+      exportData.push({
+        'S.No': `Total Count: ${filteredHistory.length}`,
+        'Receipt No': '',
+        'Date': '',
+        'Customer': '',
+        'Payment Mode': '',
+        'Reference': 'TOTAL AMOUNT:',
+        'Amount Collected': formatCurrency(historyTotalAmount) as any,
+      });
       exportToExcel(exportData, 'Customer_Receipts_History');
     }
   };
@@ -236,12 +298,12 @@ const CustomerReceiptsReport = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-3 items-end pt-2 border-t border-dashed border-[#E2E8F0]">
           <div>
             <label className="block text-[12px] font-bold text-[#64748B] mb-1">Search Customer / Phone / Receipt</label>
-            <input
-              type="text"
+            <SearchableSelect
+              options={searchOptions}
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={(val) => setSearchTerm(val || '')}
               placeholder="Search..."
-              className="w-full px-3 py-1.5 border border-[#CBD5E1] rounded text-[13px] outline-none focus:border-[#3B82F6] bg-white"
+              className="w-full"
             />
           </div>
           {reportMode === 'history' && (
@@ -286,7 +348,11 @@ const CustomerReceiptsReport = () => {
             <button
               type="button"
               onClick={() => { setSearchTerm(''); setStartDate(''); setEndDate(''); }}
-              className="px-3 py-1.5 border border-[#CBD5E1] rounded bg-white text-gray-700 text-[12px] font-bold hover:bg-gray-100 flex items-center gap-1"
+              className={`px-3 py-1.5 border rounded text-[12px] font-bold flex items-center gap-1 transition-colors ${
+                !isReset 
+                  ? 'bg-white text-red-600 border-red-200 hover:bg-red-50' 
+                  : 'bg-white text-gray-700 border-[#CBD5E1] hover:bg-gray-100'
+              }`}
             >
               <RefreshCw size={12} /> Reset Filters
             </button>

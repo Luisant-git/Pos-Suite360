@@ -48,6 +48,7 @@ const ExpenseReport = () => {
 
   const totalExpenseAmount = expenses.reduce((sum: number, e: any) => sum + Number(e.amount || 0), 0);
   const totalEntries = expenses.length;
+  const isReset = !startDate && !endDate && !categoryId && !searchQuery;
 
   const totalPages = Math.ceil(expenses.length / entriesPerPage);
   const paginatedExpenses = expenses.slice((currentPage - 1) * entriesPerPage, currentPage * entriesPerPage);
@@ -86,6 +87,14 @@ const ExpenseReport = () => {
       _notes: e.notes || '-',
       _amount: Number(e.amount),
     }));
+    rows.push({
+      _sno: `Total Count: ${expenses.length}`,
+      _date: '',
+      _category: '',
+      _mode: '',
+      _notes: 'TOTAL AMOUNT:',
+      _amount: formatCurrency(totalExpenseAmount)
+    });
     exportTableToPdf(cols, rows, 'Expense_Report', 'Expense Report');
   };
 
@@ -98,6 +107,14 @@ const ExpenseReport = () => {
       'Notes': e.notes || '-',
       'Amount': Number(e.amount),
     }));
+    exportData.push({
+      'S.No': `Total Count: ${expenses.length}`,
+      'Date': '',
+      'Category': '',
+      'Payment Mode': '',
+      'Notes': 'TOTAL AMOUNT:',
+      'Amount': formatCurrency(totalExpenseAmount) as any
+    });
     exportToExcel(exportData, 'Expense_Report');
   };
 
@@ -176,11 +193,10 @@ const ExpenseReport = () => {
               This Month
             </button>
             <button type="button" onClick={() => {
-              setStartDate('');
               setEndDate('');
               setCategoryId('');
               setSearchQuery('');
-            }} className="text-[#64748B] hover:text-[#334155] flex items-center gap-1 text-[13px] font-bold transition-colors">
+            }} className={`flex items-center gap-1 px-3 py-1.5 rounded-md text-[12px] font-bold transition-colors shadow-sm border ${!isReset ? 'bg-white text-red-600 border-red-200 hover:bg-red-50' : 'bg-white text-gray-700 border-[#CBD5E1] hover:bg-gray-100'}`}>
               <RefreshCw size={12} /> Reset Filters
             </button>
           </div>

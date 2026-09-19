@@ -36,7 +36,8 @@ const SupplierPayments = () => {
   const [unpaidBills, setUnpaidBills] = useState<any[]>([]);
   const [showBreakdown, setShowBreakdown] = useState(false);
   const [isTableExpanded, setIsTableExpanded] = useState(false);
-  const [billFilter, setBillFilter] = useState<'Unpaid' | 'Cleared' | 'All'>('Unpaid');
+  const [billFilter, setBillFilter] = useState<'Unpaid' | 'Paid' | 'All'>('Unpaid');
+  const [allocations, setAllocations] = useState<Record<string, number>>({});
 
   const { register, control, handleSubmit, watch, setValue, reset, formState: { errors } } = useForm<PaymentFormValues>({
     resolver: zodResolver(paymentSchema) as any,
@@ -85,11 +86,13 @@ const SupplierPayments = () => {
           console.error(error);
           setCurrentBalance(0);
           setUnpaidBills([]);
+          setAllocations({});
         }
       } else {
         setCurrentBalance(0);
         setUnpaidBills([]);
         setShowBreakdown(false);
+        setAllocations({});
       }
     };
     fetchBalance();
@@ -103,6 +106,7 @@ const SupplierPayments = () => {
       queryClient.invalidateQueries({ queryKey: ['nextPaymentNo'] });
       reset();
       setCurrentBalance(0);
+      setAllocations({});
     },
     onError: (error) => {
       console.error(error);
@@ -111,7 +115,14 @@ const SupplierPayments = () => {
   });
 
   const onSubmit = (data: PaymentFormValues) => {
-    createMutation.mutate(data);
+    const payload = {
+      ...data,
+      allocations: Object.entries(allocations).map(([purchaseId, amount]) => ({
+        purchaseId: purchaseId === 'OB' ? null : purchaseId,
+        amount
+      }))
+    };
+    createMutation.mutate(payload as any);
   };
 
   const onError = (errors: any) => {
@@ -301,11 +312,11 @@ const SupplierPayments = () => {
                           className="text-[#E11D48] bg-white rounded px-2 py-0.5 outline-none text-[10px]"
                         >
                           <option value="Unpaid">Unpaid Bills</option>
-                          <option value="Cleared">Cleared Bills</option>
+                          <option value="Paid">Paid Bills</option>
                           <option value="All">All Bills</option>
                         </select>
                         <span className="bg-white text-[#E11D48] px-2 py-0.5 rounded-full text-[10px]">
-                          {unpaidBills.filter(b => billFilter === 'All' ? true : billFilter === 'Cleared' ? b.pending < 0.01 : b.pending >= 0.01).length} Bills
+                          {unpaidBills.filter(b => billFilter === 'All' ? true : billFilter === 'Paid' ? b.pending < 0.01 : b.pending >= 0.01).length} Bills
                         </span>
                         <button 
                           type="button" 
@@ -333,18 +344,16 @@ const SupplierPayments = () => {
                         </thead>
                         <tbody>
                           {(() => {
-                            let remainingForBills = amountToPay;
-                            const displayedBills = unpaidBills.filter(b => billFilter === 'All' ? true : billFilter === 'Cleared' ? b.pending < 0.01 : b.pending >= 0.01);
+                            const displayedBills = unpaidBills.filter(b => billFilter === 'All' ? true : billFilter === 'Paid' ? b.pending < 0.01 : b.pending >= 0.01);
                             
                             return displayedBills.length > 0 ? displayedBills.map((bill, idx) => {
                               const currentPending = bill.pending;
-                              const payingNow = currentPending > 0 ? Math.min(currentPending, remainingForBills) : 0;
-                              remainingForBills = Math.max(0, remainingForBills - payingNow);
+                              const payingNow = allocations[bill.id] || 0;
                               const balanceAfter = currentPending - payingNow;
                               const isCleared = currentPending === 0;
                               
                               return (
-                                <tr key={idx} className={`border-b border-[#E2E8F0] hover:bg-[#F8FAFC] ${isCleared ? 'bg-[#ECFDF5]' : ''}`}>
+                                <tr key={bill.id || idx} className={`border-b border-[#E2E8F0] hover:bg-[#F8FAFC] ${isCleared ? 'bg-[#ECFDF5]' : ''}`}>
                                   <td className="px-3 py-2 font-bold text-[#1E293B]">
                                     {bill.entryNo}
                                   </td>
@@ -353,7 +362,27 @@ const SupplierPayments = () => {
                                   <td className="px-3 py-2 text-right text-[#10B981]">{formatCurrency(bill.returned || 0)}</td>
                                   <td className="px-3 py-2 text-right text-[#10B981]">{formatCurrency(bill.received)}</td>
                                   <td className="px-3 py-2 text-right font-bold text-[#E11D48]">{formatCurrency(bill.pending)}</td>
-                                  <td className="px-3 py-2 text-right font-bold text-[#3B82F6] print:hidden">{formatCurrency(payingNow)}</td>
+                                  <td className="px-2 py-1 text-right print:hidden">
+                                    <input
+                                      type="number"
+                                      step="0.01"
+                                      min="0"
+                                      max={currentPending}
+                                      value={allocations[bill.id] || ''}
+                                      disabled={isCleared}
+                                      onChange={(e) => {
+                                        let val = parseFloat(e.target.value);
+                                        if (isNaN(val)) val = 0;
+                                        if (val > currentPending) val = currentPending;
+                                        const newAllocations = { ...allocations, [bill.id]: val };
+                                        setAllocations(newAllocations);
+                                        const newTotal = (Object.values(newAllocations) as number[]).reduce((sum: number, curr: number) => sum + (curr || 0), 0);
+                                        setValue('amount', newTotal as any, { shouldValidate: true });
+                                      }}
+                                      placeholder="0.00"
+                                      className={`w-[100px] text-right px-2 py-1 border rounded text-[13px] font-bold outline-none focus:border-[#3B82F6] ${payingNow > 0 ? 'bg-[#EFF6FF] border-[#3B82F6] text-[#2563EB]' : 'bg-white border-[#CBD5E1]'}`}
+                                    />
+                                  </td>
                                   <td className="px-3 py-2 text-right font-bold text-[#059669] print:hidden">{formatCurrency(balanceAfter)}</td>
                                 </tr>
                               );

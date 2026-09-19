@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { CornerDownLeft, Package, Search, Filter, Download } from 'lucide-react';
+import { CornerDownLeft, Package, Search, Filter, Download, RefreshCw } from 'lucide-react';
 import api from '../../services/api';
 import ReportTabs from '../../components/ReportTabs';
 import { useSettings } from '../../contexts/SettingsContext';
 import { exportTableToPdf, type PdfColumn } from '../../utils/exportPdf';
+import { exportToExcel } from '../../utils/exportExcel';
 import PaginationControls from '../../components/PaginationControls';
 
 const SalesReturnReport = () => {
@@ -41,6 +42,7 @@ const SalesReturnReport = () => {
   });
 
   const totalReturnsAmount = filteredReturns.reduce((sum: number, ret: any) => sum + (Number(ret.totalAmount) || 0), 0);
+  const isReset = !search && !filterFromDate && !filterToDate;
 
   const [entriesPerPage, setEntriesPerPage] = useState(25);
   const [currentPage, setCurrentPage] = useState(1);
@@ -84,11 +86,46 @@ const SalesReturnReport = () => {
                     remarks: ret.remarks || '-',
                     _amount: formatCurrency(ret.totalAmount),
                   }));
+                  rows.push({
+                    _sno: `Total Count: ${filteredReturns.length}`,
+                    returnNo: '',
+                    _date: '',
+                    _invoiceNo: '',
+                    _customer: '',
+                    remarks: 'TOTAL AMOUNT:',
+                    _amount: formatCurrency(totalReturnsAmount)
+                  });
                   exportTableToPdf(cols, rows, 'Sales_Return_Report', 'Sales Return Report');
                 }}
                 className="bg-[#EF4444] hover:bg-[#DC2626] text-white px-3 py-1 rounded flex items-center justify-center gap-1.5 text-[12px] font-bold whitespace-nowrap transition-colors shrink-0"
               >
                 <Download size={13} /> Export PDF
+              </button>
+              <button type="button"
+                onClick={() => {
+                  const exportData = filteredReturns.map((ret: any, i: number) => ({
+                    'S.No': i + 1,
+                    'Return No': ret.returnNo,
+                    'Return Date': new Date(ret.date).toISOString().split('T')[0],
+                    'Invoice No': ret.sale?.invoiceNo || '-',
+                    'Customer Name': ret.customer?.name || 'Unknown',
+                    'Remarks': ret.remarks || '-',
+                    'Refund Amount': Number(ret.totalAmount) || 0,
+                  }));
+                  exportData.push({
+                    'S.No': `Total Count: ${filteredReturns.length}`,
+                    'Return No': '',
+                    'Return Date': '',
+                    'Invoice No': '',
+                    'Customer Name': '',
+                    'Remarks': 'TOTAL AMOUNT:',
+                    'Refund Amount': formatCurrency(totalReturnsAmount) as any,
+                  });
+                  exportToExcel(exportData, 'Sales_Return_Report');
+                }}
+                className="bg-[#10B981] hover:bg-[#059669] text-white px-3 py-1 rounded flex items-center justify-center gap-1.5 text-[12px] font-bold whitespace-nowrap transition-colors shrink-0 ml-2"
+              >
+                <Download size={13} /> Export Excel
               </button>
             </div>
           </div>
@@ -124,6 +161,18 @@ const SalesReturnReport = () => {
               />
               <button className="bg-[#EF4444] text-white px-3 rounded flex items-center justify-center hover:bg-red-600 transition-colors">
                 <Filter size={14} />
+              </button>
+              <button 
+                type="button" 
+                onClick={() => {
+                  setSearch('');
+                  setFilterFromDate('');
+                  setFilterToDate('');
+                }}
+                className={`px-3 py-2 rounded flex items-center justify-center transition-colors border shadow-sm text-[12px] font-bold ${!isReset ? 'bg-white text-red-600 border-red-200 hover:bg-red-50' : 'bg-white text-gray-700 border-[#E5E7EB] hover:bg-gray-50'}`}
+                title="Reset Filters"
+              >
+                <RefreshCw size={14} className="mr-1" /> Reset
               </button>
             </div>
             <div>

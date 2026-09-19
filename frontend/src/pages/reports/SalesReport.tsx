@@ -234,6 +234,15 @@ const SalesReport = () => {
                   'Total Birds': s.totalBirds,
                   'Total Amount': s.netPayable
                 }));
+                exportData.push({
+                  'Invoice No': `Total Count: ${filteredSales.length}`,
+                  'Date': '',
+                  'Customer Name': '',
+                  'Payment Mode': '',
+                  'No. of Items': '',
+                  'Total Birds': 'TOTAL AMOUNT:',
+                  'Total Amount': formatCurrency(totalSalesAmount)
+                });
                 exportToExcel(exportData, `Sales_Report_${fromDate}_to_${toDate}`);
               }}
               className="bg-[#10B981] hover:bg-[#059669] text-white px-3 py-1.5 rounded flex items-center gap-1.5 text-[12px] font-bold transition-colors"
@@ -251,7 +260,16 @@ const SalesReport = () => {
                   { header: 'Total Birds', dataKey: 'totalBirds' },
                   { header: 'Total Amount', dataKey: 'netPayable' },
                 ];
-                exportTableToPdf(cols, filteredSales, `Sales_Report_${fromDate}_to_${toDate}`, 'Sales Report');
+                const pdfData = [...filteredSales, {
+                  invoiceNo: `Total Count: ${filteredSales.length}`,
+                  date: '',
+                  customerName: '',
+                  paymentMode: '',
+                  noOfItems: '',
+                  totalBirds: 'TOTAL AMOUNT:',
+                  netPayable: formatCurrency(totalSalesAmount)
+                }];
+                exportTableToPdf(cols, pdfData, `Sales_Report_${fromDate}_to_${toDate}`, 'Sales Report');
               }}
               className="bg-[#EF4444] hover:bg-[#DC2626] text-white px-3 py-1.5 rounded flex items-center gap-1.5 text-[12px] font-bold transition-colors"
             >

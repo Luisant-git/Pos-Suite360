@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Download, Truck, FileText, RefreshCw, DollarSign, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { exportTableToPdf, type PdfColumn } from '../../utils/exportPdf';
@@ -7,6 +7,7 @@ import { useSettings } from '../../contexts/SettingsContext';
 import api from '../../services/api';
 import ReportTabs from '../../components/ReportTabs';
 import PaginationControls from '../../components/PaginationControls';
+import SearchableSelect from '../../components/SearchableSelect';
 
 const SupplierPaymentsReport = () => {
   const { formatCurrency, settings } = useSettings();
@@ -30,6 +31,25 @@ const SupplierPaymentsReport = () => {
     queryKey: ['supplierPaymentsHistory'],
     queryFn: async () => (await api.get('/supplier-payments')).data
   });
+
+  // Build search options
+  const searchOptions = React.useMemo(() => {
+    const optionsMap = new Map();
+    consolidationData.forEach((item: any) => {
+      if (item.supplierName && !optionsMap.has(item.supplierName)) {
+        optionsMap.set(item.supplierName, { value: item.supplierName, label: `Supplier: ${item.supplierName} ${item.phone ? `(${item.phone})` : ''}` });
+      }
+      if (item.phone && !optionsMap.has(item.phone)) {
+        optionsMap.set(item.phone, { value: item.phone, label: `Phone: ${item.phone} (${item.supplierName})` });
+      }
+    });
+    paymentsHistory.forEach((item: any) => {
+      if (item.paymentNo && !optionsMap.has(item.paymentNo)) {
+        optionsMap.set(item.paymentNo, { value: item.paymentNo, label: `Payment No: ${item.paymentNo}` });
+      }
+    });
+    return [{ value: '', label: 'All / Clear Search' }, ...Array.from(optionsMap.values())];
+  }, [consolidationData, paymentsHistory]);
 
   // Filter Consolidation List
   const filteredConsolidation = consolidationData.filter((item: any) => {
@@ -72,6 +92,8 @@ const SupplierPaymentsReport = () => {
   const totalPages = Math.ceil(activeList.length / entriesPerPage);
   const paginatedList = activeList.slice((currentPage - 1) * entriesPerPage, currentPage * entriesPerPage);
 
+  const isReset = !searchTerm && !startDate && !endDate;
+
   const handlePdfExport = () => {
     if (reportMode === 'consolidation') {
       const cols: PdfColumn[] = [
@@ -94,6 +116,16 @@ const SupplierPaymentsReport = () => {
         totalReturns: s.totalReturns,
         netPending: s.netPending,
       }));
+      rows.push({
+        _sno: `Total Count: ${filteredConsolidation.length}`,
+        supplierName: '',
+        phone: '',
+        _opening: '',
+        totalPurchases: formatCurrency(totalPurchases),
+        totalPayments: formatCurrency(totalPaid),
+        totalReturns: 'TOTAL:',
+        netPending: formatCurrency(totalPendingPayables),
+      });
       const title = `Supplier Payables Consolidation Report${startDate || endDate ? ` (${startDate || 'Start'} to ${endDate || 'End'})` : ''}`;
       exportTableToPdf(cols, rows, 'Supplier_Payables_Consolidation_Report', title, settings?.shopName);
     } else {
@@ -115,6 +147,16 @@ const SupplierPaymentsReport = () => {
         reference: p.reference || '-',
         amount: p.amount,
       }));
+      const historyTotal = filteredHistory.reduce((sum: number, p: any) => sum + Number(p.amount || 0), 0);
+      rows.push({
+        _sno: `Total Count: ${filteredHistory.length}`,
+        paymentNo: '',
+        _date: '',
+        _supplier: '',
+        _mode: '',
+        reference: 'TOTAL AMOUNT:',
+        amount: formatCurrency(historyTotal),
+      });
       const title = `Supplier Payments History Report${startDate || endDate ? ` (${startDate || 'Start'} to ${endDate || 'End'})` : ''}`;
       exportTableToPdf(cols, rows, 'Supplier_Payments_History_Report', title, settings?.shopName);
     }
@@ -132,6 +174,16 @@ const SupplierPaymentsReport = () => {
         'Total Returns': s.totalReturns,
         'Net Pending Payable': s.netPending,
       }));
+      exportData.push({
+        'S.No': `Total Count: ${filteredConsolidation.length}`,
+        'Supplier Name': '',
+        'Phone': '',
+        'Opening Balance': '',
+        'Total Purchases': formatCurrency(totalPurchases) as any,
+        'Total Paid': formatCurrency(totalPaid) as any,
+        'Total Returns': 'TOTAL:',
+        'Net Pending Payable': formatCurrency(totalPendingPayables) as any,
+      });
       exportToExcel(exportData, 'Supplier_Payables_Consolidation');
     } else {
       const exportData = filteredHistory.map((p: any, idx: number) => ({
@@ -143,6 +195,16 @@ const SupplierPaymentsReport = () => {
         'Reference': p.reference || '-',
         'Amount Paid': p.amount,
       }));
+      const historyTotal = filteredHistory.reduce((sum: number, p: any) => sum + Number(p.amount || 0), 0);
+      exportData.push({
+        'S.No': `Total Count: ${filteredHistory.length}`,
+        'Payment No': '',
+        'Date': '',
+        'Supplier': '',
+        'Payment Mode': '',
+        'Reference': 'TOTAL AMOUNT:',
+        'Amount Paid': formatCurrency(historyTotal) as any,
+      });
       exportToExcel(exportData, 'Supplier_Payments_History');
     }
   };
@@ -236,12 +298,12 @@ const SupplierPaymentsReport = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-3 items-end pt-2 border-t border-dashed border-[#E2E8F0]">
           <div>
             <label className="block text-[12px] font-bold text-[#64748B] mb-1">Search Supplier / Phone / Payment</label>
-            <input
-              type="text"
+            <SearchableSelect
+              options={searchOptions}
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={(val) => setSearchTerm(val || '')}
               placeholder="Search..."
-              className="w-full px-3 py-1.5 border border-[#CBD5E1] rounded text-[13px] outline-none focus:border-[#3B82F6] bg-white"
+              className="w-full"
             />
           </div>
           {reportMode === 'history' && (
@@ -286,7 +348,11 @@ const SupplierPaymentsReport = () => {
             <button
               type="button"
               onClick={() => { setSearchTerm(''); setStartDate(''); setEndDate(''); }}
-              className="px-3 py-1.5 border border-[#CBD5E1] rounded bg-white text-gray-700 text-[12px] font-bold hover:bg-gray-100 flex items-center gap-1"
+              className={`px-3 py-1.5 border rounded text-[12px] font-bold flex items-center gap-1 transition-colors ${
+                !isReset 
+                  ? 'bg-white text-red-600 border-red-200 hover:bg-red-50' 
+                  : 'bg-white text-gray-700 border-[#CBD5E1] hover:bg-gray-100'
+              }`}
             >
               <RefreshCw size={12} /> Reset Filters
             </button>

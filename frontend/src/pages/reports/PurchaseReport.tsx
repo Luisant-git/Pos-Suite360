@@ -224,7 +224,7 @@ const PurchaseReport = () => {
             </div>
             <button type="button" 
               onClick={() => {
-                const exportData = purchases.map((p: any) => ({
+                const exportData = filteredPurchases.map((p: any) => ({
                   'Entry No': p.entryNo,
                   'Supplier Invoice No': p.invoiceNo,
                   'Date': p.date,
@@ -234,6 +234,16 @@ const PurchaseReport = () => {
                   'Tax Amount': p.taxAmount,
                   'Net Amount': p.netAmount
                 }));
+                exportData.push({
+                  'Entry No': `Total Count: ${filteredPurchases.length}`,
+                  'Supplier Invoice No': '',
+                  'Date': '',
+                  'Supplier Name': '',
+                  'Payment Mode': '',
+                  'Total Amount': '',
+                  'Tax Amount': 'TOTAL AMOUNT:',
+                  'Net Amount': formatCurrency(totalPurchasesAmount)
+                });
                 exportToExcel(exportData, `Purchase_Report_${fromDate}_to_${toDate}`);
               }}
               className="bg-[#10B981] hover:bg-[#059669] text-white px-3 py-1.5 rounded flex items-center justify-center gap-1.5 text-[12px] font-bold whitespace-nowrap transition-colors"
@@ -252,7 +262,17 @@ const PurchaseReport = () => {
                   { header: 'Tax Amount', dataKey: 'taxAmount' },
                   { header: 'Net Amount', dataKey: 'netAmount' },
                 ];
-                exportTableToPdf(cols, filteredPurchases, `Purchase_Report_${fromDate}_to_${toDate}`, 'Purchase Report');
+                const pdfData = [...filteredPurchases, {
+                  entryNo: `Total Count: ${filteredPurchases.length}`,
+                  invoiceNo: '',
+                  date: '',
+                  supplierName: '',
+                  mode: '',
+                  totalAmount: '',
+                  taxAmount: 'TOTAL AMOUNT:',
+                  netAmount: formatCurrency(totalPurchasesAmount)
+                }];
+                exportTableToPdf(cols, pdfData, `Purchase_Report_${fromDate}_to_${toDate}`, 'Purchase Report');
               }}
               className="bg-[#EF4444] hover:bg-[#DC2626] text-white px-3 py-1.5 rounded flex items-center justify-center gap-1.5 text-[12px] font-bold whitespace-nowrap transition-colors"
             >

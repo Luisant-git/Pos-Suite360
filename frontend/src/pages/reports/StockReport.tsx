@@ -48,6 +48,8 @@ const StockReport = () => {
 
   const totalStockValue = products.reduce((sum: number, p: any) => sum + (Number(p.rawStockValue) || 0), 0);
 
+  const isReset = !categoryId && !brandId && !quickSearch;
+
   const totalPages = Math.ceil(products.length / entriesPerPage);
   const paginatedProducts = products.slice((currentPage - 1) * entriesPerPage, currentPage * entriesPerPage);
 
@@ -113,7 +115,7 @@ const StockReport = () => {
               setCategoryId('');
               setBrandId('');
               setQuickSearch('');
-            }} className="text-[#64748B] hover:text-[#334155] flex items-center gap-1 text-[13px] font-bold transition-colors">
+            }} className={`flex items-center gap-1 px-3 py-1.5 rounded-md text-[12px] font-bold transition-colors shadow-sm border ${!isReset ? 'bg-white text-red-600 border-red-200 hover:bg-red-50' : 'bg-white text-gray-700 border-[#CBD5E1] hover:bg-gray-100'}`}>
               Reset Filters
             </button>
           </div>
@@ -129,7 +131,27 @@ const StockReport = () => {
           </div>
           <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
             <button type="button" 
-              onClick={() => exportToExcel(products, 'Stock_Report')}
+              onClick={() => {
+                const exportData = products.map((p: any) => ({
+                  'Item Code': p.code,
+                  'Product Name': p.name,
+                  'Brand': p.brandName,
+                  'Category': p.categoryName,
+                  'Current Qty': p.currentQty,
+                  'Pur Rate': p.purRate,
+                  'Stock Value': p.stockValue,
+                }));
+                exportData.push({
+                  'Item Code': `Total Count: ${products.length}`,
+                  'Product Name': '',
+                  'Brand': '',
+                  'Category': '',
+                  'Current Qty': '',
+                  'Pur Rate': 'TOTAL VALUE:',
+                  'Stock Value': formatCurrency(totalStockValue) as any,
+                });
+                exportToExcel(exportData, 'Stock_Report');
+              }}
               className="bg-[#10B981] hover:bg-[#059669] text-white px-3 py-1.5 rounded flex items-center justify-center gap-1.5 text-[12px] font-bold whitespace-nowrap transition-colors"
             >
               <Download size={14} /> Export Excel
@@ -145,7 +167,16 @@ const StockReport = () => {
                   { header: 'Pur Rate', dataKey: 'purRate' },
                   { header: 'Stock Value', dataKey: 'stockValue' },
                 ];
-                exportTableToPdf(cols, products, 'Stock_Report', 'Stock Report');
+                const pdfData = [...products, {
+                  code: `Total Count: ${products.length}`,
+                  name: '',
+                  brandName: '',
+                  categoryName: '',
+                  currentQty: '',
+                  purRate: 'TOTAL VALUE:',
+                  stockValue: formatCurrency(totalStockValue)
+                }];
+                exportTableToPdf(cols, pdfData, 'Stock_Report', 'Stock Report');
               }}
               className="bg-[#EF4444] hover:bg-[#DC2626] text-white px-3 py-1.5 rounded flex items-center justify-center gap-1.5 text-[12px] font-bold whitespace-nowrap transition-colors"
             >

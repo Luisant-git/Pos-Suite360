@@ -53,6 +53,7 @@ export const exportTableToPdf = (
       columns,
       body: bodyRows,
       foot: footRows,
+      showFoot: 'lastPage',
       startY: currentY,
       styles: {
         fontSize: 9,

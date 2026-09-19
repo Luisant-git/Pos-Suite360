@@ -35,21 +35,28 @@ const CustomerReceiptsReport = () => {
   // Build search options
   const searchOptions = React.useMemo(() => {
     const optionsMap = new Map();
-    consolidationData.forEach((item: any) => {
-      if (item.customerName && !optionsMap.has(item.customerName)) {
-        optionsMap.set(item.customerName, { value: item.customerName, label: `Customer: ${item.customerName} ${item.phone ? `(${item.phone})` : ''}` });
-      }
-      if (item.phone && !optionsMap.has(item.phone)) {
-        optionsMap.set(item.phone, { value: item.phone, label: `Phone: ${item.phone} (${item.customerName})` });
-      }
-    });
-    receiptsHistory.forEach((item: any) => {
-      if (item.receiptNo && !optionsMap.has(item.receiptNo)) {
-        optionsMap.set(item.receiptNo, { value: item.receiptNo, label: `Receipt No: ${item.receiptNo}` });
-      }
-    });
+    if (reportMode === 'consolidation') {
+      consolidationData.forEach((item: any) => {
+        if (item.customerName) {
+          const label = item.phone ? `${item.customerName} - ${item.phone}` : item.customerName;
+          optionsMap.set(item.customerName, { value: item.customerName, label });
+          if (item.phone) {
+            optionsMap.set(item.phone, { value: item.phone, label });
+          }
+        }
+      });
+    } else {
+      receiptsHistory.forEach((item: any) => {
+        if (item.receiptNo) {
+          const name = item.customer?.name || 'Unknown';
+          const label = `${name} - ${item.receiptNo}`;
+          optionsMap.set(item.receiptNo, { value: item.receiptNo, label });
+          optionsMap.set(name, { value: name, label });
+        }
+      });
+    }
     return [{ value: '', label: 'All / Clear Search' }, ...Array.from(optionsMap.values())];
-  }, [consolidationData, receiptsHistory]);
+  }, [consolidationData, receiptsHistory, reportMode]);
 
   // Filter Consolidation List
   const filteredConsolidation = consolidationData.filter((item: any) => {

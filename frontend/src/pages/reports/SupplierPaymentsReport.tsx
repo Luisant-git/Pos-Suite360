@@ -35,21 +35,28 @@ const SupplierPaymentsReport = () => {
   // Build search options
   const searchOptions = React.useMemo(() => {
     const optionsMap = new Map();
-    consolidationData.forEach((item: any) => {
-      if (item.supplierName && !optionsMap.has(item.supplierName)) {
-        optionsMap.set(item.supplierName, { value: item.supplierName, label: `Supplier: ${item.supplierName} ${item.phone ? `(${item.phone})` : ''}` });
-      }
-      if (item.phone && !optionsMap.has(item.phone)) {
-        optionsMap.set(item.phone, { value: item.phone, label: `Phone: ${item.phone} (${item.supplierName})` });
-      }
-    });
-    paymentsHistory.forEach((item: any) => {
-      if (item.paymentNo && !optionsMap.has(item.paymentNo)) {
-        optionsMap.set(item.paymentNo, { value: item.paymentNo, label: `Payment No: ${item.paymentNo}` });
-      }
-    });
+    if (reportMode === 'consolidation') {
+      consolidationData.forEach((item: any) => {
+        if (item.supplierName) {
+          const label = item.phone ? `${item.supplierName} - ${item.phone}` : item.supplierName;
+          optionsMap.set(item.supplierName, { value: item.supplierName, label });
+          if (item.phone) {
+            optionsMap.set(item.phone, { value: item.phone, label });
+          }
+        }
+      });
+    } else {
+      paymentsHistory.forEach((item: any) => {
+        if (item.paymentNo) {
+          const name = item.supplier?.name || 'Unknown';
+          const label = `${name} - ${item.paymentNo}`;
+          optionsMap.set(item.paymentNo, { value: item.paymentNo, label });
+          optionsMap.set(name, { value: name, label });
+        }
+      });
+    }
     return [{ value: '', label: 'All / Clear Search' }, ...Array.from(optionsMap.values())];
-  }, [consolidationData, paymentsHistory]);
+  }, [consolidationData, paymentsHistory, reportMode]);
 
   // Filter Consolidation List
   const filteredConsolidation = consolidationData.filter((item: any) => {

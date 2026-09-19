@@ -21,7 +21,7 @@ export const exportToExcel = (
   const origin = headers.length > 0 ? `A${headers.length + 1}` : "A1";
 
   // Convert JSON to worksheet
-  const ws = XLSX.utils.json_to_sheet(data, { origin });
+  const ws = XLSX.utils.json_to_sheet(data, { origin } as any);
   
   if (headers.length > 0) {
     XLSX.utils.sheet_add_aoa(ws, headers, { origin: "A1" });

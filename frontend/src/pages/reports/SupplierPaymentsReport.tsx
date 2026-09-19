@@ -35,28 +35,36 @@ const SupplierPaymentsReport = () => {
   // Build search options
   const searchOptions = React.useMemo(() => {
     const optionsMap = new Map();
-    if (reportMode === 'consolidation') {
-      consolidationData.forEach((item: any) => {
-        if (item.supplierName) {
-          const label = item.phone ? `${item.supplierName} - ${item.phone}` : item.supplierName;
-          optionsMap.set(item.supplierName, { value: item.supplierName, label });
-          if (item.phone) {
-            optionsMap.set(item.phone, { value: item.phone, label });
-          }
-        }
-      });
-    } else {
-      paymentsHistory.forEach((item: any) => {
-        if (item.paymentNo) {
-          const name = item.supplier?.name || 'Unknown';
-          const label = `${name} - ${item.paymentNo}`;
-          optionsMap.set(item.paymentNo, { value: item.paymentNo, label });
-          optionsMap.set(name, { value: name, label });
-        }
-      });
-    }
+    
+    // Add all suppliers and phones from consolidation data
+    consolidationData.forEach((item: any) => {
+      if (item.supplierName) {
+        optionsMap.set(`supp_${item.supplierName}`, { 
+          value: item.supplierName, 
+          label: `Supplier: ${item.supplierName}${item.phone ? ` - ${item.phone}` : ''}` 
+        });
+      }
+      if (item.phone) {
+        optionsMap.set(`phone_${item.phone}`, { 
+          value: item.phone, 
+          label: `Phone: ${item.phone}${item.supplierName ? ` - ${item.supplierName}` : ''}` 
+        });
+      }
+    });
+
+    // Add all payment numbers from history data
+    paymentsHistory.forEach((item: any) => {
+      if (item.paymentNo) {
+        const suppName = item.supplier?.name || 'Unknown';
+        optionsMap.set(`pay_${item.paymentNo}`, { 
+          value: item.paymentNo, 
+          label: `Payment No: ${item.paymentNo} - ${suppName}` 
+        });
+      }
+    });
+
     return [{ value: '', label: 'All / Clear Search' }, ...Array.from(optionsMap.values())];
-  }, [consolidationData, paymentsHistory, reportMode]);
+  }, [consolidationData, paymentsHistory]);
 
   // Filter Consolidation List
   const filteredConsolidation = consolidationData.filter((item: any) => {

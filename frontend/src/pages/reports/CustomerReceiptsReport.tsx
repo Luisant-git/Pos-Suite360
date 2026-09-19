@@ -35,28 +35,36 @@ const CustomerReceiptsReport = () => {
   // Build search options
   const searchOptions = React.useMemo(() => {
     const optionsMap = new Map();
-    if (reportMode === 'consolidation') {
-      consolidationData.forEach((item: any) => {
-        if (item.customerName) {
-          const label = item.phone ? `${item.customerName} - ${item.phone}` : item.customerName;
-          optionsMap.set(item.customerName, { value: item.customerName, label });
-          if (item.phone) {
-            optionsMap.set(item.phone, { value: item.phone, label });
-          }
-        }
-      });
-    } else {
-      receiptsHistory.forEach((item: any) => {
-        if (item.receiptNo) {
-          const name = item.customer?.name || 'Unknown';
-          const label = `${name} - ${item.receiptNo}`;
-          optionsMap.set(item.receiptNo, { value: item.receiptNo, label });
-          optionsMap.set(name, { value: name, label });
-        }
-      });
-    }
+    
+    // Add all customers and phones from consolidation data
+    consolidationData.forEach((item: any) => {
+      if (item.customerName) {
+        optionsMap.set(`cust_${item.customerName}`, { 
+          value: item.customerName, 
+          label: `Customer: ${item.customerName}${item.phone ? ` - ${item.phone}` : ''}` 
+        });
+      }
+      if (item.phone) {
+        optionsMap.set(`phone_${item.phone}`, { 
+          value: item.phone, 
+          label: `Phone: ${item.phone}${item.customerName ? ` - ${item.customerName}` : ''}` 
+        });
+      }
+    });
+
+    // Add all receipt numbers from history data
+    receiptsHistory.forEach((item: any) => {
+      if (item.receiptNo) {
+        const custName = item.customer?.name || 'Unknown';
+        optionsMap.set(`rec_${item.receiptNo}`, { 
+          value: item.receiptNo, 
+          label: `Receipt No: ${item.receiptNo} - ${custName}` 
+        });
+      }
+    });
+
     return [{ value: '', label: 'All / Clear Search' }, ...Array.from(optionsMap.values())];
-  }, [consolidationData, receiptsHistory, reportMode]);
+  }, [consolidationData, receiptsHistory]);
 
   // Filter Consolidation List
   const filteredConsolidation = consolidationData.filter((item: any) => {

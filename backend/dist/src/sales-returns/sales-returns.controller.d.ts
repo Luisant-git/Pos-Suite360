@@ -20,8 +20,8 @@ export declare class SalesReturnsController {
         customerId: number;
         remarks: string | null;
         userId: number;
-        totalAmount: import("@prisma/client-runtime-utils").Decimal;
         saleId: number | null;
+        totalAmount: import("@prisma/client-runtime-utils").Decimal;
         returnNo: string;
     }>;
     getNextCode(): Promise<string>;
@@ -92,8 +92,8 @@ export declare class SalesReturnsController {
         customerId: number;
         remarks: string | null;
         userId: number;
-        totalAmount: import("@prisma/client-runtime-utils").Decimal;
         saleId: number | null;
+        totalAmount: import("@prisma/client-runtime-utils").Decimal;
         returnNo: string;
     })[]>;
     findOne(id: string): import("@prisma/client").Prisma.Prisma__SalesReturnClient<({
@@ -163,8 +163,8 @@ export declare class SalesReturnsController {
         customerId: number;
         remarks: string | null;
         userId: number;
-        totalAmount: import("@prisma/client-runtime-utils").Decimal;
         saleId: number | null;
+        totalAmount: import("@prisma/client-runtime-utils").Decimal;
         returnNo: string;
     }) | null, null, import("@prisma/client/runtime/client").DefaultArgs, import("@prisma/client").Prisma.PrismaClientOptions>;
 }

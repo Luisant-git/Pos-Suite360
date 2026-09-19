@@ -22,8 +22,15 @@ const CustomerReceiptsReport = () => {
 
   // Fetch Consolidation Data
   const { data: consolidationData = [], isLoading: consolidationLoading } = useQuery({
-    queryKey: ['customerReceiptsConsolidation'],
-    queryFn: async () => (await api.get('/customer-receipts/consolidation-report')).data
+    queryKey: ['customerReceiptsConsolidation', startDate, endDate],
+    queryFn: async () => {
+      let url = '/customer-receipts/consolidation-report';
+      const params = new URLSearchParams();
+      if (startDate) params.append('startDate', startDate);
+      if (endDate) params.append('endDate', endDate);
+      if (params.toString()) url += `?${params.toString()}`;
+      return (await api.get(url)).data;
+    }
   });
 
   // Fetch Receipts History Data

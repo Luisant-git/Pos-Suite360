@@ -9,8 +9,8 @@ export declare class ExpensesController {
         paymentModeId: number;
         createdAt: Date;
         updatedAt: Date;
-        amount: import("@prisma/client-runtime-utils").Decimal;
         expenseCategoryId: number;
+        amount: import("@prisma/client-runtime-utils").Decimal;
         notes: string | null;
     }, never, import("@prisma/client/runtime/client").DefaultArgs, import("@prisma/client").Prisma.PrismaClientOptions>;
     findAll(query: any): import("@prisma/client").Prisma.PrismaPromise<({
@@ -33,8 +33,8 @@ export declare class ExpensesController {
         paymentModeId: number;
         createdAt: Date;
         updatedAt: Date;
-        amount: import("@prisma/client-runtime-utils").Decimal;
         expenseCategoryId: number;
+        amount: import("@prisma/client-runtime-utils").Decimal;
         notes: string | null;
     })[]>;
     findOne(id: string): import("@prisma/client").Prisma.Prisma__ExpenseClient<({
@@ -57,8 +57,8 @@ export declare class ExpensesController {
         paymentModeId: number;
         createdAt: Date;
         updatedAt: Date;
-        amount: import("@prisma/client-runtime-utils").Decimal;
         expenseCategoryId: number;
+        amount: import("@prisma/client-runtime-utils").Decimal;
         notes: string | null;
     }) | null, null, import("@prisma/client/runtime/client").DefaultArgs, import("@prisma/client").Prisma.PrismaClientOptions>;
 }

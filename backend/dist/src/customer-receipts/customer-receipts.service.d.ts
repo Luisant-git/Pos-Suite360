@@ -32,8 +32,8 @@ export declare class CustomerReceiptsService {
         createdAt: Date;
         updatedAt: Date;
         customerId: number;
-        receiptNo: string;
         amount: import("@prisma/client-runtime-utils").Decimal;
+        receiptNo: string;
         reference: string | null;
         remarks: string | null;
         paymentTypeId: number | null;
@@ -76,8 +76,8 @@ export declare class CustomerReceiptsService {
         createdAt: Date;
         updatedAt: Date;
         customerId: number;
-        receiptNo: string;
         amount: import("@prisma/client-runtime-utils").Decimal;
+        receiptNo: string;
         reference: string | null;
         remarks: string | null;
         paymentTypeId: number | null;
@@ -89,4 +89,15 @@ export declare class CustomerReceiptsService {
     }>;
     generateReceiptNo(): Promise<string>;
     getUnpaidBills(customerId: number): Promise<any[]>;
+    getConsolidationReport(startDate?: string, endDate?: string): Promise<{
+        customerId: number;
+        customerName: string;
+        phone: string;
+        openingBalance: number;
+        openingBalanceType: string;
+        totalSales: number;
+        totalReceipts: number;
+        totalReturns: number;
+        netPending: number;
+    }[]>;
 }

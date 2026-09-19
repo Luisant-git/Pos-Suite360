@@ -22,8 +22,32 @@ let ExpenseCategoriesService = class ExpenseCategoriesService {
             data: createExpenseCategoryDto,
         });
     }
-    findAll() {
-        return this.prisma.expenseCategory.findMany();
+    findAll(query) {
+        const expenseWhere = {};
+        if (query?.startDate || query?.endDate) {
+            expenseWhere.date = {};
+            if (query.startDate)
+                expenseWhere.date.gte = new Date(query.startDate);
+            if (query.endDate) {
+                const end = new Date(query.endDate);
+                end.setHours(23, 59, 59, 999);
+                expenseWhere.date.lte = end;
+            }
+        }
+        return this.prisma.expenseCategory.findMany({
+            include: {
+                expenses: {
+                    where: expenseWhere,
+                    select: {
+                        id: true,
+                        amount: true,
+                        date: true,
+                        notes: true,
+                    },
+                },
+            },
+            orderBy: { id: 'asc' },
+        });
     }
     findOne(id) {
         return this.prisma.expenseCategory.findUnique({ where: { id } });

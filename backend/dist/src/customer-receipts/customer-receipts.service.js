@@ -32,6 +32,12 @@ let CustomerReceiptsService = class CustomerReceiptsService {
                     reference: data.reference,
                     remarks: data.remarks,
                     userId: userId,
+                    allocations: data.allocations && Array.isArray(data.allocations) ? {
+                        create: data.allocations.filter((a) => Number(a.amount) > 0).map((a) => ({
+                            saleId: a.saleId ? Number(a.saleId) : null,
+                            amount: Number(a.amount)
+                        }))
+                    } : undefined,
                 },
                 include: {
                     customer: true,
@@ -117,11 +123,21 @@ let CustomerReceiptsService = class CustomerReceiptsService {
         if (!customer) {
             throw new common_1.BadRequestException('Customer not found');
         }
-        const receipts = await this.prisma.customerReceipt.aggregate({
+        const allReceipts = await this.prisma.customerReceipt.findMany({
             where: { customerId },
-            _sum: { amount: true },
+            include: { allocations: true }
         });
-        let totalCollected = Number(receipts._sum.amount) || 0;
+        let totalOldUnallocatedCollected = 0;
+        allReceipts.forEach(r => {
+            const receiptAmount = Number(r.amount) || 0;
+            if (!r.allocations || r.allocations.length === 0) {
+                totalOldUnallocatedCollected += receiptAmount;
+            }
+            else {
+                const allocatedToBills = r.allocations.reduce((sum, a) => sum + (a.saleId ? Number(a.amount) : 0), 0);
+                totalOldUnallocatedCollected += (receiptAmount - allocatedToBills);
+            }
+        });
         const salesReturns = await this.prisma.salesReturn.findMany({
             where: { customerId },
         });
@@ -136,23 +152,37 @@ let CustomerReceiptsService = class CustomerReceiptsService {
                 unmappedReturns += amt;
             }
         });
-        totalCollected += unmappedReturns;
+        totalOldUnallocatedCollected += unmappedReturns;
+        const allAllocations = await this.prisma.customerReceiptAllocation.findMany({
+            where: {
+                customerReceipt: { customerId }
+            }
+        });
+        const mappedAllocations = {};
+        allAllocations.forEach(a => {
+            if (a.saleId) {
+                mappedAllocations[a.saleId] = (mappedAllocations[a.saleId] || 0) + Number(a.amount);
+            }
+        });
         const openingBalance = Number(customer.openingBalance) || 0;
         const isOpeningDebit = customer.openingBalanceType === 'Dr';
         const isOpeningCredit = customer.openingBalanceType === 'Cr';
         let bills = [];
         if (isOpeningDebit && openingBalance > 0) {
             bills.push({
+                id: 'OB',
                 entryNo: 'Opening Balance',
                 date: customer.createdAt,
                 total: openingBalance,
                 returned: 0,
+                allocated: 0,
                 received: 0,
-                pending: openingBalance
+                pending: openingBalance,
+                isOpeningBalance: true
             });
         }
         else if (isOpeningCredit && openingBalance > 0) {
-            totalCollected += openingBalance;
+            totalOldUnallocatedCollected += openingBalance;
         }
         const creditMode = await this.prisma.paymentMode.findFirst({
             where: { name: { equals: 'Credit', mode: 'insensitive' } }
@@ -168,39 +198,124 @@ let CustomerReceiptsService = class CustomerReceiptsService {
         for (const sale of sales) {
             const billTotal = Number(sale.grandTotal) || 0;
             const returnedAmt = mappedReturns[sale.id] || 0;
+            const allocatedAmt = mappedAllocations[sale.id] || 0;
             bills.push({
+                id: sale.id,
                 entryNo: sale.invoiceNo,
                 date: sale.date,
                 total: billTotal,
                 returned: returnedAmt,
+                allocated: allocatedAmt,
                 received: 0,
-                pending: billTotal - returnedAmt
+                pending: billTotal - returnedAmt - allocatedAmt,
+                isOpeningBalance: false
             });
         }
         for (const bill of bills) {
-            const netBillTotal = Number((bill.total - (bill.returned || 0)).toFixed(2));
-            const currentTotalCollected = Number(totalCollected.toFixed(2));
-            if (netBillTotal <= 0) {
-                bill.received = 0;
+            const remainingPending = bill.pending;
+            const currentTotalCollected = Number(totalOldUnallocatedCollected.toFixed(2));
+            bill.received = bill.allocated;
+            if (remainingPending <= 0) {
                 bill.pending = 0;
                 continue;
             }
-            if (currentTotalCollected >= netBillTotal) {
-                bill.received = netBillTotal;
+            if (currentTotalCollected >= remainingPending) {
+                bill.received += remainingPending;
                 bill.pending = 0;
-                totalCollected -= netBillTotal;
+                totalOldUnallocatedCollected -= remainingPending;
             }
-            else if (currentTotalCollected > 0 && currentTotalCollected < netBillTotal) {
-                bill.received = currentTotalCollected;
-                bill.pending = Number((netBillTotal - currentTotalCollected).toFixed(2));
-                totalCollected = 0;
-            }
-            else {
-                bill.received = 0;
-                bill.pending = netBillTotal;
+            else if (currentTotalCollected > 0 && currentTotalCollected < remainingPending) {
+                bill.received += currentTotalCollected;
+                bill.pending = Number((remainingPending - currentTotalCollected).toFixed(2));
+                totalOldUnallocatedCollected = 0;
             }
         }
         return bills;
+    }
+    async getConsolidationReport(startDate, endDate) {
+        const customers = await this.prisma.customer.findMany({
+            orderBy: { name: 'asc' },
+        });
+        const creditMode = await this.prisma.paymentMode.findFirst({
+            where: { name: { equals: 'Credit', mode: 'insensitive' } }
+        });
+        const creditModeId = creditMode?.id || -1;
+        const report = [];
+        const start = startDate ? new Date(startDate) : null;
+        const end = endDate ? new Date(endDate) : null;
+        if (end)
+            end.setHours(23, 59, 59, 999);
+        for (const c of customers) {
+            let forwardingBalance = 0;
+            const openingBal = Number(c.openingBalance) || 0;
+            if (c.openingBalanceType === 'Dr')
+                forwardingBalance += openingBal;
+            if (c.openingBalanceType === 'Cr')
+                forwardingBalance -= openingBal;
+            if (start) {
+                const preSales = await this.prisma.sale.aggregate({
+                    where: { customerId: c.id, paymentModeId: creditModeId, date: { lt: start } },
+                    _sum: { grandTotal: true },
+                });
+                const preReceipts = await this.prisma.customerReceipt.aggregate({
+                    where: { customerId: c.id, date: { lt: start } },
+                    _sum: { amount: true },
+                });
+                const preReturns = await this.prisma.salesReturn.aggregate({
+                    where: { customerId: c.id, date: { lt: start } },
+                    _sum: { totalAmount: true },
+                });
+                forwardingBalance += (Number(preSales._sum.grandTotal) || 0);
+                forwardingBalance -= (Number(preReceipts._sum.amount) || 0);
+                forwardingBalance -= (Number(preReturns._sum.totalAmount) || 0);
+            }
+            const displayOpeningBalance = Math.abs(forwardingBalance);
+            const displayOpeningBalanceType = forwardingBalance >= 0 ? 'Dr' : 'Cr';
+            const dateFilter = {};
+            if (start)
+                dateFilter.gte = start;
+            if (end)
+                dateFilter.lte = end;
+            const hasDateFilter = start || end;
+            const sales = await this.prisma.sale.aggregate({
+                where: {
+                    customerId: c.id,
+                    paymentModeId: creditModeId,
+                    ...(hasDateFilter ? { date: dateFilter } : {})
+                },
+                _sum: { grandTotal: true },
+            });
+            const receipts = await this.prisma.customerReceipt.aggregate({
+                where: {
+                    customerId: c.id,
+                    ...(hasDateFilter ? { date: dateFilter } : {})
+                },
+                _sum: { amount: true },
+            });
+            const returns = await this.prisma.salesReturn.aggregate({
+                where: {
+                    customerId: c.id,
+                    ...(hasDateFilter ? { date: dateFilter } : {})
+                },
+                _sum: { totalAmount: true },
+            });
+            const totalSales = Number(sales._sum.grandTotal) || 0;
+            const totalReceipts = Number(receipts._sum.amount) || 0;
+            const totalReturns = Number(returns._sum.totalAmount) || 0;
+            const netPending = forwardingBalance + totalSales - totalReceipts - totalReturns;
+            report.push({
+                customerId: c.id,
+                customerName: c.name,
+                phone: c.phone || '-',
+                openingBalance: Number(displayOpeningBalance.toFixed(2)),
+                openingBalanceType: displayOpeningBalanceType,
+                totalSales: Number(totalSales.toFixed(2)),
+                totalReceipts: Number(totalReceipts.toFixed(2)),
+                totalReturns: Number(totalReturns.toFixed(2)),
+                netPending: Number(netPending.toFixed(2)),
+            });
+        }
+        return report;
     }
 };
 exports.CustomerReceiptsService = CustomerReceiptsService;

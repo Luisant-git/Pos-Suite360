@@ -266,7 +266,7 @@ export class SupplierPaymentsService {
     return bills;
   }
 
-  async getConsolidationReport() {
+  async getConsolidationReport(startDate?: string, endDate?: string) {
     const suppliers = await this.prisma.supplier.findMany({
       orderBy: { name: 'asc' },
     });
@@ -278,41 +278,82 @@ export class SupplierPaymentsService {
 
     const report = [];
 
+    const start = startDate ? new Date(startDate) : null;
+    const end = endDate ? new Date(endDate) : null;
+    if (end) end.setHours(23, 59, 59, 999);
+
     for (const s of suppliers) {
+      let forwardingBalance = 0;
+      const openingBal = Number(s.openingBalance) || 0;
+      if (s.openingBalanceType === 'Cr') forwardingBalance += openingBal;
+      if (s.openingBalanceType === 'Dr') forwardingBalance -= openingBal;
+
+      if (start) {
+        const prePurchases = await this.prisma.purchase.aggregate({
+          where: { supplierId: s.id, paymentModeId: creditModeId, date: { lt: start } },
+          _sum: { grandTotal: true },
+        });
+        const prePayments = await this.prisma.supplierPayment.aggregate({
+          where: { supplierId: s.id, date: { lt: start } },
+          _sum: { amount: true },
+        });
+        const preReturns = await this.prisma.purchaseReturn.aggregate({
+          where: { supplierId: s.id, date: { lt: start } },
+          _sum: { totalAmount: true },
+        });
+
+        forwardingBalance += (Number(prePurchases._sum.grandTotal) || 0);
+        forwardingBalance -= (Number(prePayments._sum.amount) || 0);
+        forwardingBalance -= (Number(preReturns._sum.totalAmount) || 0);
+      }
+
+      const displayOpeningBalance = Math.abs(forwardingBalance);
+      const displayOpeningBalanceType = forwardingBalance >= 0 ? 'Cr' : 'Dr';
+
+      const dateFilter: any = {};
+      if (start) dateFilter.gte = start;
+      if (end) dateFilter.lte = end;
+      const hasDateFilter = start || end;
+
       const purchases = await this.prisma.purchase.aggregate({
-        where: { supplierId: s.id, paymentModeId: creditModeId },
+        where: { 
+          supplierId: s.id, 
+          paymentModeId: creditModeId,
+          ...(hasDateFilter ? { date: dateFilter } : {})
+        },
         _sum: { grandTotal: true },
       });
       const payments = await this.prisma.supplierPayment.aggregate({
-        where: { supplierId: s.id },
+        where: { 
+          supplierId: s.id,
+          ...(hasDateFilter ? { date: dateFilter } : {})
+        },
         _sum: { amount: true },
       });
       const returns = await this.prisma.purchaseReturn.aggregate({
-        where: { supplierId: s.id },
+        where: { 
+          supplierId: s.id,
+          ...(hasDateFilter ? { date: dateFilter } : {})
+        },
         _sum: { totalAmount: true },
       });
 
-      const openingBal = Number(s.openingBalance) || 0;
       const totalPurchases = Number(purchases._sum.grandTotal) || 0;
       const totalPayments = Number(payments._sum.amount) || 0;
       const totalReturns = Number(returns._sum.totalAmount) || 0;
 
-      let netOwed = 0;
-      if (s.openingBalanceType === 'Cr') netOwed += openingBal;
-      if (s.openingBalanceType === 'Dr') netOwed -= openingBal;
-
-      const netPending = netOwed + totalPurchases - totalPayments - totalReturns;
+      const netPending = forwardingBalance + totalPurchases - totalPayments - totalReturns;
 
       report.push({
         supplierId: s.id,
         supplierName: s.name,
         phone: s.phone || '-',
-        openingBalance: openingBal,
-        openingBalanceType: s.openingBalanceType,
-        totalPurchases,
-        totalPayments,
-        totalReturns,
-        netPending,
+        openingBalance: Number(displayOpeningBalance.toFixed(2)),
+        openingBalanceType: displayOpeningBalanceType,
+        totalPurchases: Number(totalPurchases.toFixed(2)),
+        totalPayments: Number(totalPayments.toFixed(2)),
+        totalReturns: Number(totalReturns.toFixed(2)),
+        netPending: Number(netPending.toFixed(2)),
       });
     }
 

@@ -25,8 +25,8 @@ let ExpenseCategoriesController = class ExpenseCategoriesController {
     create(createExpenseCategoryDto) {
         return this.expenseCategoriesService.create(createExpenseCategoryDto);
     }
-    findAll() {
-        return this.expenseCategoriesService.findAll();
+    findAll(query) {
+        return this.expenseCategoriesService.findAll(query);
     }
     findOne(id) {
         return this.expenseCategoriesService.findOne(+id);
@@ -48,8 +48,9 @@ __decorate([
 ], ExpenseCategoriesController.prototype, "create", null);
 __decorate([
     (0, common_1.Get)(),
+    __param(0, (0, common_1.Query)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", void 0)
 ], ExpenseCategoriesController.prototype, "findAll", null);
 __decorate([

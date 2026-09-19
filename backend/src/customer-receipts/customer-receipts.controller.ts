@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, UseGuards, Request, Param } from '@nestjs/common';
+import { Controller, Get, Post, Body, UseGuards, Request, Param, Query } from '@nestjs/common';
 import { CustomerReceiptsService } from './customer-receipts.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
@@ -18,8 +18,11 @@ export class CustomerReceiptsController {
   }
 
   @Get('consolidation-report')
-  async getConsolidationReport() {
-    return this.customerReceiptsService.getConsolidationReport();
+  async getConsolidationReport(
+    @Query('startDate') startDate?: string,
+    @Query('endDate') endDate?: string
+  ) {
+    return this.customerReceiptsService.getConsolidationReport(startDate, endDate);
   }
 
   @Get('unpaid-bills/:id')

@@ -9,6 +9,17 @@ export declare class CustomerReceiptsController {
         balance: number;
         totalReturns: number;
     }>;
+    getConsolidationReport(startDate?: string, endDate?: string): Promise<{
+        customerId: number;
+        customerName: string;
+        phone: string;
+        openingBalance: number;
+        openingBalanceType: string;
+        totalSales: number;
+        totalReceipts: number;
+        totalReturns: number;
+        netPending: number;
+    }[]>;
     getUnpaidBills(id: string): Promise<any[]>;
     create(createCustomerReceiptDto: any, req: any): Promise<{
         customer: {
@@ -40,8 +51,8 @@ export declare class CustomerReceiptsController {
         createdAt: Date;
         updatedAt: Date;
         customerId: number;
-        receiptNo: string;
         amount: import("@prisma/client-runtime-utils").Decimal;
+        receiptNo: string;
         reference: string | null;
         remarks: string | null;
         paymentTypeId: number | null;
@@ -84,8 +95,8 @@ export declare class CustomerReceiptsController {
         createdAt: Date;
         updatedAt: Date;
         customerId: number;
-        receiptNo: string;
         amount: import("@prisma/client-runtime-utils").Decimal;
+        receiptNo: string;
         reference: string | null;
         remarks: string | null;
         paymentTypeId: number | null;

@@ -10,12 +10,19 @@ export declare class ExpenseCategoriesService {
         updatedAt: Date;
         name: string;
     }, never, import("@prisma/client/runtime/client").DefaultArgs, import("@prisma/client").Prisma.PrismaClientOptions>;
-    findAll(): import("@prisma/client").Prisma.PrismaPromise<{
+    findAll(query?: any): import("@prisma/client").Prisma.PrismaPromise<({
+        expenses: {
+            id: number;
+            date: Date;
+            amount: import("@prisma/client-runtime-utils").Decimal;
+            notes: string | null;
+        }[];
+    } & {
         id: number;
         createdAt: Date;
         updatedAt: Date;
         name: string;
-    }[]>;
+    })[]>;
     findOne(id: number): import("@prisma/client").Prisma.Prisma__ExpenseCategoryClient<{
         id: number;
         createdAt: Date;

@@ -29,7 +29,28 @@ let ExpensesService = class ExpensesService {
         });
     }
     findAll(query) {
+        const where = {};
+        if (query?.startDate || query?.endDate) {
+            where.date = {};
+            if (query.startDate)
+                where.date.gte = new Date(query.startDate);
+            if (query.endDate) {
+                const end = new Date(query.endDate);
+                end.setHours(23, 59, 59, 999);
+                where.date.lte = end;
+            }
+        }
+        if (query?.categoryId) {
+            where.expenseCategoryId = Number(query.categoryId);
+        }
+        if (query?.search) {
+            where.OR = [
+                { notes: { contains: query.search, mode: 'insensitive' } },
+                { category: { name: { contains: query.search, mode: 'insensitive' } } },
+            ];
+        }
         return this.prisma.expense.findMany({
+            where,
             include: {
                 category: true,
                 paymentMode: true,

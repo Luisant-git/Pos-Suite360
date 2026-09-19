@@ -91,4 +91,15 @@ export declare class SupplierPaymentsService {
     }>;
     generatePaymentNo(): Promise<string>;
     getUnpaidBills(supplierId: number): Promise<any[]>;
+    getConsolidationReport(startDate?: string, endDate?: string): Promise<{
+        supplierId: number;
+        supplierName: string;
+        phone: string;
+        openingBalance: number;
+        openingBalanceType: string;
+        totalPurchases: number;
+        totalPayments: number;
+        totalReturns: number;
+        netPending: number;
+    }[]>;
 }

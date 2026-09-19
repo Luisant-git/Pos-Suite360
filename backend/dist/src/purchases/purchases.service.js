@@ -56,7 +56,7 @@ let PurchasesService = class PurchasesService {
                     newPurchaseRate = item.rate;
                 if (item.wRate && item.wRate > newWholesaleRate)
                     newWholesaleRate = item.wRate;
-                if (item.sRate && item.sRate > newSellingRate)
+                if (item.sRate !== undefined && item.sRate > 0)
                     newSellingRate = item.sRate;
                 if (item.mrp && item.mrp > newMrp)
                     newMrp = item.mrp;

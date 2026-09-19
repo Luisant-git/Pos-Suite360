@@ -22,8 +22,15 @@ const SupplierPaymentsReport = () => {
 
   // Fetch Consolidation Data
   const { data: consolidationData = [], isLoading: consolidationLoading } = useQuery({
-    queryKey: ['supplierPaymentsConsolidation'],
-    queryFn: async () => (await api.get('/supplier-payments/consolidation-report')).data
+    queryKey: ['supplierPaymentsConsolidation', startDate, endDate],
+    queryFn: async () => {
+      let url = '/supplier-payments/consolidation-report';
+      const params = new URLSearchParams();
+      if (startDate) params.append('startDate', startDate);
+      if (endDate) params.append('endDate', endDate);
+      if (params.toString()) url += `?${params.toString()}`;
+      return (await api.get(url)).data;
+    }
   });
 
   // Fetch Payments History Data

@@ -9,6 +9,17 @@ export declare class SupplierPaymentsController {
         balance: number;
         totalReturns: number;
     }>;
+    getConsolidationReport(startDate?: string, endDate?: string): Promise<{
+        supplierId: number;
+        supplierName: string;
+        phone: string;
+        openingBalance: number;
+        openingBalanceType: string;
+        totalPurchases: number;
+        totalPayments: number;
+        totalReturns: number;
+        netPending: number;
+    }[]>;
     getUnpaidBills(id: string): Promise<any[]>;
     create(createSupplierPaymentDto: any, req: any): Promise<{
         supplier: {

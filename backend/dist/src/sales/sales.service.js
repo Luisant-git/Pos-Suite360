@@ -21,13 +21,18 @@ let SalesService = class SalesService {
     async create(createSaleDto, userId) {
         return this.prisma.$transaction(async (tx) => {
             const settings = await tx.settings.findUnique({ where: { id: 1 } });
-            let prefix = settings?.invoicePrefix || 'INV-';
+            const prefix = settings?.invoicePrefix || 'INV-';
+            let whereCondition = {};
             if (settings?.yearlyInvoiceReset) {
-                const cleanPrefix = prefix.endsWith('-') ? prefix.slice(0, -1) : prefix;
-                prefix = `${cleanPrefix}-${new Date().getFullYear()}-`;
+                const startOfYear = new Date(new Date().getFullYear(), 0, 1);
+                whereCondition = { date: { gte: startOfYear } };
             }
             const lastSale = await tx.sale.findFirst({
-                orderBy: { invoiceNo: 'desc' },
+                where: {
+                    ...whereCondition,
+                    invoiceNo: { startsWith: prefix }
+                },
+                orderBy: { id: 'desc' },
                 select: { invoiceNo: true },
             });
             let nextNumber = 1;
@@ -69,6 +74,7 @@ let SalesService = class SalesService {
                     where: { id: item.productId },
                     data: {
                         currentStock: { decrement: item.quantity },
+                        ...(item.rate > 0 && { sellingRate: item.rate }),
                     },
                 });
                 await tx.stockTransaction.create({
@@ -150,13 +156,18 @@ let SalesService = class SalesService {
     }
     async getNextInvoiceNo() {
         const settings = await this.prisma.settings.findUnique({ where: { id: 1 } });
-        let prefix = settings?.invoicePrefix || 'INV-';
+        const prefix = settings?.invoicePrefix || 'INV-';
+        let whereCondition = {};
         if (settings?.yearlyInvoiceReset) {
-            const cleanPrefix = prefix.endsWith('-') ? prefix.slice(0, -1) : prefix;
-            prefix = `${cleanPrefix}-${new Date().getFullYear()}-`;
+            const startOfYear = new Date(new Date().getFullYear(), 0, 1);
+            whereCondition = { date: { gte: startOfYear } };
         }
         const lastSale = await this.prisma.sale.findFirst({
-            orderBy: { invoiceNo: 'desc' },
+            where: {
+                ...whereCondition,
+                invoiceNo: { startsWith: prefix }
+            },
+            orderBy: { id: 'desc' },
             select: { invoiceNo: true },
         });
         let nextNumber = 1;
@@ -267,6 +278,7 @@ let SalesService = class SalesService {
                     where: { id: item.productId },
                     data: {
                         currentStock: { decrement: item.quantity },
+                        ...(item.rate > 0 && { sellingRate: item.rate }),
                     },
                 });
                 await tx.stockTransaction.create({

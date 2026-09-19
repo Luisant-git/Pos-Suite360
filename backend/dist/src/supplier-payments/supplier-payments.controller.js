@@ -27,11 +27,14 @@ let SupplierPaymentsController = class SupplierPaymentsController {
     async getBalance(id) {
         return this.supplierPaymentsService.getBalance(Number(id));
     }
+    async getConsolidationReport(startDate, endDate) {
+        return this.supplierPaymentsService.getConsolidationReport(startDate, endDate);
+    }
     async getUnpaidBills(id) {
         return this.supplierPaymentsService.getUnpaidBills(Number(id));
     }
     async create(createSupplierPaymentDto, req) {
-        const userId = (req.user?.userId && req.user.userId > 0) ? req.user.userId : 1;
+        const userId = req.user?.userId;
         return this.supplierPaymentsService.create(createSupplierPaymentDto, userId);
     }
     async findAll() {
@@ -52,6 +55,14 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], SupplierPaymentsController.prototype, "getBalance", null);
+__decorate([
+    (0, common_1.Get)('consolidation-report'),
+    __param(0, (0, common_1.Query)('startDate')),
+    __param(1, (0, common_1.Query)('endDate')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String]),
+    __metadata("design:returntype", Promise)
+], SupplierPaymentsController.prototype, "getConsolidationReport", null);
 __decorate([
     (0, common_1.Get)('unpaid-bills/:id'),
     __param(0, (0, common_1.Param)('id')),

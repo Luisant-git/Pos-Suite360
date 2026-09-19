@@ -10,7 +10,7 @@ import PaginationControls from '../../components/PaginationControls';
 import SearchableSelect from '../../components/SearchableSelect';
 
 const StockReport = () => {
-  const { formatCurrency } = useSettings();
+  const { formatCurrency, settings } = useSettings();
   const { data: categories = [] } = useQuery({ queryKey: ['categories'], queryFn: async () => (await api.get('/categories')).data });
   const { data: brands = [] } = useQuery({ queryKey: ['brands'], queryFn: async () => (await api.get('/brands')).data });
 
@@ -142,7 +142,7 @@ const StockReport = () => {
                   'Stock Value': p.stockValue,
                 }));
                 exportData.push({
-                  'Item Code': `Total Count: ${products.length}`,
+                  'Item Code': '',
                   'Product Name': '',
                   'Brand': '',
                   'Category': '',
@@ -150,7 +150,11 @@ const StockReport = () => {
                   'Pur Rate': 'TOTAL VALUE:',
                   'Stock Value': formatCurrency(totalStockValue) as any,
                 });
-                exportToExcel(exportData, 'Stock_Report');
+                exportToExcel(exportData, 'Stock_Report', {
+                  shopName: settings?.shopName || 'MY SHOP',
+                  title: 'Stock Report',
+                  totalCount: products.length
+                });
               }}
               className="bg-[#10B981] hover:bg-[#059669] text-white px-3 py-1.5 rounded flex items-center justify-center gap-1.5 text-[12px] font-bold whitespace-nowrap transition-colors"
             >
@@ -168,7 +172,7 @@ const StockReport = () => {
                   { header: 'Stock Value', dataKey: 'stockValue' },
                 ];
                 const pdfData = [...products, {
-                  code: `Total Count: ${products.length}`,
+                  code: '',
                   name: '',
                   brandName: '',
                   categoryName: '',
@@ -176,7 +180,7 @@ const StockReport = () => {
                   purRate: 'TOTAL VALUE:',
                   stockValue: formatCurrency(totalStockValue)
                 }];
-                exportTableToPdf(cols, pdfData, 'Stock_Report', 'Stock Report');
+                exportTableToPdf(cols, pdfData, 'Stock_Report', 'Stock Report', settings?.shopName, products.length);
               }}
               className="bg-[#EF4444] hover:bg-[#DC2626] text-white px-3 py-1.5 rounded flex items-center justify-center gap-1.5 text-[12px] font-bold whitespace-nowrap transition-colors"
             >

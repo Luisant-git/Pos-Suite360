@@ -9,7 +9,7 @@ import { exportToExcel } from '../../utils/exportExcel';
 import PaginationControls from '../../components/PaginationControls';
 
 const SalesReturnReport = () => {
-  const { formatCurrency } = useSettings();
+  const { formatCurrency, settings } = useSettings();
 
   const { data: returns = [], isLoading } = useQuery({
     queryKey: ['sales-returns'],
@@ -87,7 +87,7 @@ const SalesReturnReport = () => {
                     _amount: formatCurrency(ret.totalAmount),
                   }));
                   rows.push({
-                    _sno: `Total Count: ${filteredReturns.length}`,
+                    _sno: '',
                     returnNo: '',
                     _date: '',
                     _invoiceNo: '',
@@ -95,7 +95,7 @@ const SalesReturnReport = () => {
                     remarks: 'TOTAL AMOUNT:',
                     _amount: formatCurrency(totalReturnsAmount)
                   });
-                  exportTableToPdf(cols, rows, 'Sales_Return_Report', 'Sales Return Report');
+                  exportTableToPdf(cols, rows, 'Sales_Return_Report', 'Sales Return Report', settings?.shopName, filteredReturns.length);
                 }}
                 className="bg-[#EF4444] hover:bg-[#DC2626] text-white px-3 py-1 rounded flex items-center justify-center gap-1.5 text-[12px] font-bold whitespace-nowrap transition-colors shrink-0"
               >
@@ -113,7 +113,7 @@ const SalesReturnReport = () => {
                     'Refund Amount': Number(ret.totalAmount) || 0,
                   }));
                   exportData.push({
-                    'S.No': `Total Count: ${filteredReturns.length}`,
+                    'S.No': '',
                     'Return No': '',
                     'Return Date': '',
                     'Invoice No': '',
@@ -121,7 +121,11 @@ const SalesReturnReport = () => {
                     'Remarks': 'TOTAL AMOUNT:',
                     'Refund Amount': formatCurrency(totalReturnsAmount) as any,
                   });
-                  exportToExcel(exportData, 'Sales_Return_Report');
+                  exportToExcel(exportData, 'Sales_Return_Report', {
+                    shopName: settings?.shopName || 'MY SHOP',
+                    title: 'Sales Return Report',
+                    totalCount: filteredReturns.length
+                  });
                 }}
                 className="bg-[#10B981] hover:bg-[#059669] text-white px-3 py-1 rounded flex items-center justify-center gap-1.5 text-[12px] font-bold whitespace-nowrap transition-colors shrink-0 ml-2"
               >

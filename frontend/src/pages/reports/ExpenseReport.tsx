@@ -88,14 +88,14 @@ const ExpenseReport = () => {
       _amount: Number(e.amount),
     }));
     rows.push({
-      _sno: `Total Count: ${expenses.length}`,
+      _sno: '',
       _date: '',
       _category: '',
       _mode: '',
       _notes: 'TOTAL AMOUNT:',
       _amount: formatCurrency(totalExpenseAmount)
     });
-    exportTableToPdf(cols, rows, 'Expense_Report', 'Expense Report');
+    exportTableToPdf(cols, rows, 'Expense_Report', 'Expense Report', settings?.shopName, expenses.length);
   };
 
   const handleExcelExport = () => {
@@ -108,14 +108,18 @@ const ExpenseReport = () => {
       'Amount': Number(e.amount),
     }));
     exportData.push({
-      'S.No': `Total Count: ${expenses.length}`,
+      'S.No': '',
       'Date': '',
       'Category': '',
       'Payment Mode': '',
       'Notes': 'TOTAL AMOUNT:',
       'Amount': formatCurrency(totalExpenseAmount) as any
     });
-    exportToExcel(exportData, 'Expense_Report');
+    exportToExcel(exportData, 'Expense_Report', {
+      shopName: settings?.shopName || 'MY SHOP',
+      title: 'Expense Report',
+      totalCount: expenses.length
+    });
   };
 
   return (

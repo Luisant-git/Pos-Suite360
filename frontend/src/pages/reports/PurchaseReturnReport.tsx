@@ -9,7 +9,7 @@ import { exportToExcel } from '../../utils/exportExcel';
 import PaginationControls from '../../components/PaginationControls';
 
 const PurchaseReturnReport = () => {
-  const { formatCurrency } = useSettings();
+  const { formatCurrency, settings } = useSettings();
 
   const { data: returns = [], isLoading } = useQuery({
     queryKey: ['purchase-returns'],
@@ -84,14 +84,14 @@ const PurchaseReturnReport = () => {
                     _amount: formatCurrency(ret.totalAmount),
                   }));
                   rows.push({
-                    _sno: `Total Count: ${filteredReturns.length}`,
+                    _sno: '',
                     returnNo: '',
                     _date: '',
                     _supplier: '',
                     remarks: 'TOTAL AMOUNT:',
                     _amount: formatCurrency(totalReturnsAmount)
                   });
-                  exportTableToPdf(cols, rows, 'Purchase_Return_Report', 'Purchase Return Report');
+                  exportTableToPdf(cols, rows, 'Purchase_Return_Report', 'Purchase Return Report', settings?.shopName, filteredReturns.length);
                 }}
                 className="bg-[#EF4444] hover:bg-[#DC2626] text-white px-3 py-1 rounded flex items-center justify-center gap-1.5 text-[12px] font-bold whitespace-nowrap transition-colors shrink-0"
               >
@@ -108,14 +108,18 @@ const PurchaseReturnReport = () => {
                     'Claim Amount': Number(ret.totalAmount) || 0,
                   }));
                   exportData.push({
-                    'S.No': `Total Count: ${filteredReturns.length}`,
+                    'S.No': '',
                     'Return No': '',
                     'Return Date': '',
                     'Supplier Name': '',
                     'Remarks': 'TOTAL AMOUNT:',
                     'Claim Amount': formatCurrency(totalReturnsAmount) as any,
                   });
-                  exportToExcel(exportData, 'Purchase_Return_Report');
+                  exportToExcel(exportData, 'Purchase_Return_Report', {
+                    shopName: settings?.shopName || 'MY SHOP',
+                    title: 'Purchase Return Report',
+                    totalCount: filteredReturns.length
+                  });
                 }}
                 className="bg-[#10B981] hover:bg-[#059669] text-white px-3 py-1 rounded flex items-center justify-center gap-1.5 text-[12px] font-bold whitespace-nowrap transition-colors shrink-0 ml-2"
               >

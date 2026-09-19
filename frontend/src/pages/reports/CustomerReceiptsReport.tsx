@@ -117,7 +117,7 @@ const CustomerReceiptsReport = () => {
         netPending: c.netPending,
       }));
       rows.push({
-        _sno: `Total Count: ${filteredConsolidation.length}`,
+        _sno: '',
         customerName: '',
         phone: '',
         _opening: '',
@@ -127,7 +127,7 @@ const CustomerReceiptsReport = () => {
         netPending: formatCurrency(totalPendingDues),
       });
       const title = `Customer Dues Consolidation Report${startDate || endDate ? ` (${startDate || 'Start'} to ${endDate || 'End'})` : ''}`;
-      exportTableToPdf(cols, rows, 'Customer_Dues_Consolidation_Report', title, settings?.shopName);
+      exportTableToPdf(cols, rows, 'Customer_Dues_Consolidation_Report', title, settings?.shopName, filteredConsolidation.length);
     } else {
       const cols: PdfColumn[] = [
         { header: 'S.No', dataKey: '_sno' },
@@ -149,7 +149,7 @@ const CustomerReceiptsReport = () => {
       }));
       const historyTotalAmount = filteredHistory.reduce((sum: number, r: any) => sum + Number(r.amount || 0), 0);
       rows.push({
-        _sno: `Total Count: ${filteredHistory.length}`,
+        _sno: '',
         receiptNo: '',
         _date: '',
         _customer: '',
@@ -158,7 +158,7 @@ const CustomerReceiptsReport = () => {
         amount: formatCurrency(historyTotalAmount),
       });
       const title = `Customer Receipts History Report${startDate || endDate ? ` (${startDate || 'Start'} to ${endDate || 'End'})` : ''}`;
-      exportTableToPdf(cols, rows, 'Customer_Receipts_History_Report', title, settings?.shopName);
+      exportTableToPdf(cols, rows, 'Customer_Receipts_History_Report', title, settings?.shopName, filteredHistory.length);
     }
   };
 
@@ -175,7 +175,7 @@ const CustomerReceiptsReport = () => {
         'Net Pending Due': c.netPending,
       }));
       exportData.push({
-        'S.No': `Total Count: ${filteredConsolidation.length}`,
+        'S.No': '',
         'Customer Name': '',
         'Phone': '',
         'Opening Balance': '',
@@ -184,7 +184,11 @@ const CustomerReceiptsReport = () => {
         'Total Returns': 'TOTAL:',
         'Net Pending Due': formatCurrency(totalPendingDues) as any,
       });
-      exportToExcel(exportData, 'Customer_Dues_Consolidation');
+      exportToExcel(exportData, 'Customer_Dues_Consolidation', {
+        shopName: settings?.shopName || 'MY SHOP',
+        title: 'Customer Dues Consolidation Report',
+        totalCount: filteredConsolidation.length
+      });
     } else {
       const exportData = filteredHistory.map((r: any, idx: number) => ({
         'S.No': idx + 1,
@@ -197,7 +201,7 @@ const CustomerReceiptsReport = () => {
       }));
       const historyTotalAmount = filteredHistory.reduce((sum: number, r: any) => sum + Number(r.amount || 0), 0);
       exportData.push({
-        'S.No': `Total Count: ${filteredHistory.length}`,
+        'S.No': '',
         'Receipt No': '',
         'Date': '',
         'Customer': '',
@@ -205,7 +209,11 @@ const CustomerReceiptsReport = () => {
         'Reference': 'TOTAL AMOUNT:',
         'Amount Collected': formatCurrency(historyTotalAmount) as any,
       });
-      exportToExcel(exportData, 'Customer_Receipts_History');
+      exportToExcel(exportData, 'Customer_Receipts_History', {
+        shopName: settings?.shopName || 'MY SHOP',
+        title: 'Customer Receipts History Report',
+        totalCount: filteredHistory.length
+      });
     }
   };
 

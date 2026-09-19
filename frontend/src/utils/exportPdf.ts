@@ -8,7 +8,8 @@ export const exportTableToPdf = (
   rows: Record<string, any>[],
   filename: string,
   title?: string,
-  shopName?: string
+  shopName?: string,
+  totalCount?: number | string
 ) => {
   try {
     const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
@@ -38,9 +39,20 @@ export const exportTableToPdf = (
       doc.setTextColor(0);
     }
 
+    if (totalCount !== undefined) {
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'bold');
+      doc.text(`Total Count: ${totalCount}`, 14, currentY);
+      currentY += 8;
+    }
+
+    const bodyRows = rows.slice(0, -1);
+    const footRows = rows.length > 0 ? [rows[rows.length - 1]] : [];
+
     autoTable(doc, {
       columns,
-      body: rows,
+      body: bodyRows,
+      foot: footRows,
       startY: currentY,
       styles: {
         fontSize: 9,
@@ -56,6 +68,12 @@ export const exportTableToPdf = (
       },
       alternateRowStyles: {
         fillColor: [248, 250, 252],
+      },
+      footStyles: {
+        fillColor: [241, 245, 249],
+        textColor: 0,
+        fontStyle: 'bold',
+        fontSize: 9,
       },
       margin: { top: 10, left: 10, right: 10 },
     });

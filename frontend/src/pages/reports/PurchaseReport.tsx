@@ -13,7 +13,7 @@ import SearchableSelect from '../../components/SearchableSelect';
 
 const PurchaseReport = () => {
   const navigate = useNavigate();
-  const { formatCurrency } = useSettings();
+  const { formatCurrency, settings } = useSettings();
   const [fromDate, setFromDate] = useState('');
   const [toDate, setToDate] = useState('');
   const [supplierId, setSupplierId] = useState('');
@@ -235,7 +235,7 @@ const PurchaseReport = () => {
                   'Net Amount': p.netAmount
                 }));
                 exportData.push({
-                  'Entry No': `Total Count: ${filteredPurchases.length}`,
+                  'Entry No': '',
                   'Supplier Invoice No': '',
                   'Date': '',
                   'Supplier Name': '',
@@ -244,7 +244,11 @@ const PurchaseReport = () => {
                   'Tax Amount': 'TOTAL AMOUNT:',
                   'Net Amount': formatCurrency(totalPurchasesAmount)
                 });
-                exportToExcel(exportData, `Purchase_Report_${fromDate}_to_${toDate}`);
+                exportToExcel(exportData, `Purchase_Report_${fromDate}_to_${toDate}`, {
+                  shopName: settings?.shopName || 'MY SHOP',
+                  title: 'Purchase Report',
+                  totalCount: filteredPurchases.length
+                });
               }}
               className="bg-[#10B981] hover:bg-[#059669] text-white px-3 py-1.5 rounded flex items-center justify-center gap-1.5 text-[12px] font-bold whitespace-nowrap transition-colors"
             >
@@ -263,7 +267,7 @@ const PurchaseReport = () => {
                   { header: 'Net Amount', dataKey: 'netAmount' },
                 ];
                 const pdfData = [...filteredPurchases, {
-                  entryNo: `Total Count: ${filteredPurchases.length}`,
+                  entryNo: '',
                   invoiceNo: '',
                   date: '',
                   supplierName: '',
@@ -272,7 +276,7 @@ const PurchaseReport = () => {
                   taxAmount: 'TOTAL AMOUNT:',
                   netAmount: formatCurrency(totalPurchasesAmount)
                 }];
-                exportTableToPdf(cols, pdfData, `Purchase_Report_${fromDate}_to_${toDate}`, 'Purchase Report');
+                exportTableToPdf(cols, pdfData, `Purchase_Report_${fromDate}_to_${toDate}`, 'Purchase Report', settings?.shopName, filteredPurchases.length);
               }}
               className="bg-[#EF4444] hover:bg-[#DC2626] text-white px-3 py-1.5 rounded flex items-center justify-center gap-1.5 text-[12px] font-bold whitespace-nowrap transition-colors"
             >

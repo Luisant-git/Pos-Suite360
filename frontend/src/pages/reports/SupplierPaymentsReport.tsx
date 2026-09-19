@@ -117,7 +117,7 @@ const SupplierPaymentsReport = () => {
         netPending: s.netPending,
       }));
       rows.push({
-        _sno: `Total Count: ${filteredConsolidation.length}`,
+        _sno: '',
         supplierName: '',
         phone: '',
         _opening: '',
@@ -127,7 +127,7 @@ const SupplierPaymentsReport = () => {
         netPending: formatCurrency(totalPendingPayables),
       });
       const title = `Supplier Payables Consolidation Report${startDate || endDate ? ` (${startDate || 'Start'} to ${endDate || 'End'})` : ''}`;
-      exportTableToPdf(cols, rows, 'Supplier_Payables_Consolidation_Report', title, settings?.shopName);
+      exportTableToPdf(cols, rows, 'Supplier_Payables_Consolidation_Report', title, settings?.shopName, filteredConsolidation.length);
     } else {
       const cols: PdfColumn[] = [
         { header: 'S.No', dataKey: '_sno' },
@@ -149,7 +149,7 @@ const SupplierPaymentsReport = () => {
       }));
       const historyTotal = filteredHistory.reduce((sum: number, p: any) => sum + Number(p.amount || 0), 0);
       rows.push({
-        _sno: `Total Count: ${filteredHistory.length}`,
+        _sno: '',
         paymentNo: '',
         _date: '',
         _supplier: '',
@@ -158,7 +158,7 @@ const SupplierPaymentsReport = () => {
         amount: formatCurrency(historyTotal),
       });
       const title = `Supplier Payments History Report${startDate || endDate ? ` (${startDate || 'Start'} to ${endDate || 'End'})` : ''}`;
-      exportTableToPdf(cols, rows, 'Supplier_Payments_History_Report', title, settings?.shopName);
+      exportTableToPdf(cols, rows, 'Supplier_Payments_History_Report', title, settings?.shopName, filteredHistory.length);
     }
   };
 
@@ -175,7 +175,7 @@ const SupplierPaymentsReport = () => {
         'Net Pending Payable': s.netPending,
       }));
       exportData.push({
-        'S.No': `Total Count: ${filteredConsolidation.length}`,
+        'S.No': '',
         'Supplier Name': '',
         'Phone': '',
         'Opening Balance': '',
@@ -184,7 +184,11 @@ const SupplierPaymentsReport = () => {
         'Total Returns': 'TOTAL:',
         'Net Pending Payable': formatCurrency(totalPendingPayables) as any,
       });
-      exportToExcel(exportData, 'Supplier_Payables_Consolidation');
+      exportToExcel(exportData, 'Supplier_Payables_Consolidation', {
+        shopName: settings?.shopName || 'MY SHOP',
+        title: 'Supplier Payables Consolidation Report',
+        totalCount: filteredConsolidation.length
+      });
     } else {
       const exportData = filteredHistory.map((p: any, idx: number) => ({
         'S.No': idx + 1,
@@ -197,7 +201,7 @@ const SupplierPaymentsReport = () => {
       }));
       const historyTotal = filteredHistory.reduce((sum: number, p: any) => sum + Number(p.amount || 0), 0);
       exportData.push({
-        'S.No': `Total Count: ${filteredHistory.length}`,
+        'S.No': '',
         'Payment No': '',
         'Date': '',
         'Supplier': '',
@@ -205,7 +209,11 @@ const SupplierPaymentsReport = () => {
         'Reference': 'TOTAL AMOUNT:',
         'Amount Paid': formatCurrency(historyTotal) as any,
       });
-      exportToExcel(exportData, 'Supplier_Payments_History');
+      exportToExcel(exportData, 'Supplier_Payments_History', {
+        shopName: settings?.shopName || 'MY SHOP',
+        title: 'Supplier Payments History Report',
+        totalCount: filteredHistory.length
+      });
     }
   };
 

@@ -14,7 +14,7 @@ import SearchableSelect from '../../components/SearchableSelect';
 
 const SalesReport = () => {
   const navigate = useNavigate();
-  const { formatCurrency } = useSettings();
+  const { formatCurrency, settings } = useSettings();
   const [fromDate, setFromDate] = useState('');
   const [toDate, setToDate] = useState('');
   const [customerId, setCustomerId] = useState('');
@@ -235,7 +235,7 @@ const SalesReport = () => {
                   'Total Amount': s.netPayable
                 }));
                 exportData.push({
-                  'Invoice No': `Total Count: ${filteredSales.length}`,
+                  'Invoice No': '',
                   'Date': '',
                   'Customer Name': '',
                   'Payment Mode': '',
@@ -243,7 +243,11 @@ const SalesReport = () => {
                   'Total Birds': 'TOTAL AMOUNT:',
                   'Total Amount': formatCurrency(totalSalesAmount)
                 });
-                exportToExcel(exportData, `Sales_Report_${fromDate}_to_${toDate}`);
+                exportToExcel(exportData, `Sales_Report_${fromDate}_to_${toDate}`, {
+                  shopName: settings?.shopName || 'MY SHOP',
+                  title: 'Sales Report',
+                  totalCount: filteredSales.length
+                });
               }}
               className="bg-[#10B981] hover:bg-[#059669] text-white px-3 py-1.5 rounded flex items-center gap-1.5 text-[12px] font-bold transition-colors"
             >
@@ -261,7 +265,7 @@ const SalesReport = () => {
                   { header: 'Total Amount', dataKey: 'netPayable' },
                 ];
                 const pdfData = [...filteredSales, {
-                  invoiceNo: `Total Count: ${filteredSales.length}`,
+                  invoiceNo: '',
                   date: '',
                   customerName: '',
                   paymentMode: '',
@@ -269,7 +273,7 @@ const SalesReport = () => {
                   totalBirds: 'TOTAL AMOUNT:',
                   netPayable: formatCurrency(totalSalesAmount)
                 }];
-                exportTableToPdf(cols, pdfData, `Sales_Report_${fromDate}_to_${toDate}`, 'Sales Report');
+                exportTableToPdf(cols, pdfData, `Sales_Report_${fromDate}_to_${toDate}`, 'Sales Report', settings?.shopName, filteredSales.length);
               }}
               className="bg-[#EF4444] hover:bg-[#DC2626] text-white px-3 py-1.5 rounded flex items-center gap-1.5 text-[12px] font-bold transition-colors"
             >

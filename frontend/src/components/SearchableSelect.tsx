@@ -83,8 +83,8 @@ export const SearchableSelect: React.FC<SearchableSelectProps> = ({
           ...base,
           fontSize: '13px',
           fontWeight: state.isSelected ? '700' : '500',
-          color: state.isSelected ? '#FFFFFF' : '#0F172A',
-          backgroundColor: state.isSelected ? '#2563EB' : state.isFocused ? '#F1F5F9' : '#FFFFFF',
+          color: state.isSelected || state.isFocused ? '#FFFFFF' : '#0F172A',
+          backgroundColor: state.isSelected ? '#2563EB' : state.isFocused ? '#3B82F6' : '#FFFFFF',
           cursor: 'pointer',
         }),
         menu: (base: any) => ({

@@ -342,9 +342,9 @@ const SupplierPaymentsReport = () => {
         </div>
 
         {/* Filter Controls */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-3 items-end pt-2 border-t border-dashed border-[#E2E8F0]">
-          <div>
-            <label className="block text-[12px] font-bold text-[#64748B] mb-1">Search Supplier / Phone / Payment</label>
+        <div className="flex flex-wrap 2xl:flex-nowrap items-end gap-3 pt-2 border-t border-dashed border-[#E2E8F0]">
+          <div className="flex-1 min-w-[200px]">
+            <label className="block text-[12px] font-bold text-[#64748B] mb-1 whitespace-nowrap">Search Supplier / Phone / Payment</label>
             <SearchableSelect
               options={searchOptions}
               value={searchTerm}
@@ -353,58 +353,55 @@ const SupplierPaymentsReport = () => {
               className="w-full"
             />
           </div>
-              <div>
-                <label className="block text-[12px] font-bold text-[#64748B] mb-1">From Date</label>
-                <input
-                  type="date"
-                  value={startDate}
-                  onChange={(e) => setStartDate(e.target.value)}
-                  className="w-full px-3 py-1.5 border border-[#CBD5E1] rounded text-[13px] outline-none focus:border-[#3B82F6] bg-white"
-                />
-              </div>
-              <div>
-                <label className="block text-[12px] font-bold text-[#64748B] mb-1">To Date</label>
-                <input
-                  type="date"
-                  value={endDate}
-                  onChange={(e) => setEndDate(e.target.value)}
-                  className="w-full px-3 py-1.5 border border-[#CBD5E1] rounded text-[13px] outline-none focus:border-[#3B82F6] bg-white"
-                />
-              </div>
-          <div>
-            <label className="block text-[12px] font-bold text-[#64748B] mb-1">Entries Per Page</label>
+          <div className="w-[130px] shrink-0">
+            <label className="block text-[12px] font-bold text-[#64748B] mb-1">From Date</label>
+            <input
+              type="date"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+              className="w-full px-2 py-1.5 border border-[#CBD5E1] rounded text-[13px] outline-none focus:border-[#3B82F6] bg-white h-[34px]"
+            />
+          </div>
+          <div className="w-[130px] shrink-0">
+            <label className="block text-[12px] font-bold text-[#64748B] mb-1">To Date</label>
+            <input
+              type="date"
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+              className="w-full px-2 py-1.5 border border-[#CBD5E1] rounded text-[13px] outline-none focus:border-[#3B82F6] bg-white h-[34px]"
+            />
+          </div>
+          <div className="w-[100px] shrink-0">
+            <label className="block text-[12px] font-bold text-[#64748B] mb-1">Entries</label>
             <select
               value={entriesPerPage}
               onChange={(e) => {
                 setEntriesPerPage(Number(e.target.value));
                 setCurrentPage(1);
               }}
-              className="w-full px-3 py-1.5 border border-[#CBD5E1] rounded text-[13px] outline-none focus:border-[#3B82F6] bg-white"
+              className="w-full px-2 py-1.5 border border-[#CBD5E1] rounded text-[13px] outline-none focus:border-[#3B82F6] bg-white h-[34px]"
             >
-              <option value={10}>10 Entries</option>
-              <option value={25}>25 Entries</option>
-              <option value={50}>50 Entries</option>
-              <option value={100}>100 Entries</option>
+              <option value={10}>10</option>
+              <option value={25}>25</option>
+              <option value={50}>50</option>
+              <option value={100}>100</option>
             </select>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 shrink-0 overflow-x-auto pb-1 sm:pb-0">
+            <button type="button" onClick={() => handleDatePreset('today')} className="text-[11px] font-bold bg-[#EFF6FF] hover:bg-[#DBEAFE] text-[#1E40AF] px-2.5 py-1.5 rounded transition-colors h-[34px] whitespace-nowrap">Today</button>
+            <button type="button" onClick={() => handleDatePreset('thisMonth')} className="text-[11px] font-bold bg-[#EFF6FF] hover:bg-[#DBEAFE] text-[#1E40AF] px-2.5 py-1.5 rounded transition-colors h-[34px] whitespace-nowrap">This Month</button>
             <button
               type="button"
               onClick={() => { setSearchTerm(''); setStartDate(''); setEndDate(''); }}
-              className={`px-3 py-1.5 border rounded text-[12px] font-bold flex items-center gap-1 transition-colors ${
+              className={`px-3 py-1.5 border rounded text-[12px] font-bold flex items-center gap-1 transition-colors h-[34px] whitespace-nowrap ${
                 !isReset 
                   ? 'bg-white text-red-600 border-red-200 hover:bg-red-50' 
                   : 'bg-white text-gray-700 border-[#CBD5E1] hover:bg-gray-100'
               }`}
             >
-              <RefreshCw size={12} /> Reset Filters
+              <RefreshCw size={12} /> Reset
             </button>
           </div>
-        </div>
-        <div className="flex gap-2 mt-2 pt-2 border-t border-dashed border-[#E2E8F0]">
-          <button type="button" onClick={() => handleDatePreset('today')} className="text-[11px] font-bold bg-[#EFF6FF] hover:bg-[#DBEAFE] text-[#1E40AF] px-3 py-1 rounded transition-colors">Today</button>
-          <button type="button" onClick={() => handleDatePreset('thisMonth')} className="text-[11px] font-bold bg-[#EFF6FF] hover:bg-[#DBEAFE] text-[#1E40AF] px-3 py-1 rounded transition-colors">This Month</button>
-          <button type="button" onClick={() => handleDatePreset('clear')} className="text-[11px] font-bold bg-[#FEF2F2] hover:bg-[#FEE2E2] text-[#991B1B] px-3 py-1 rounded transition-colors">Clear Dates</button>
         </div>
       </div>
 

@@ -390,7 +390,6 @@ const CustomerReceiptsReport = () => {
           <div className="flex items-center gap-1.5 shrink-0 overflow-x-auto pb-1 sm:pb-0">
             <button type="button" onClick={() => handleDatePreset('today')} className="text-[11px] font-bold bg-[#EFF6FF] hover:bg-[#DBEAFE] text-[#1E40AF] px-2.5 py-1.5 rounded transition-colors h-[34px] whitespace-nowrap">Today</button>
             <button type="button" onClick={() => handleDatePreset('thisMonth')} className="text-[11px] font-bold bg-[#EFF6FF] hover:bg-[#DBEAFE] text-[#1E40AF] px-2.5 py-1.5 rounded transition-colors h-[34px] whitespace-nowrap">This Month</button>
-            <button type="button" onClick={() => handleDatePreset('clear')} className="text-[11px] font-bold bg-[#FEF2F2] hover:bg-[#FEE2E2] text-[#991B1B] px-2.5 py-1.5 rounded transition-colors h-[34px] whitespace-nowrap">Clear Dates</button>
             <button
               type="button"
               onClick={() => { setSearchTerm(''); setStartDate(''); setEndDate(''); }}

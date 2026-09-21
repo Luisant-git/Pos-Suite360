@@ -7,7 +7,8 @@ import {
   PieChart, 
   Users, 
   Truck,
-  DollarSign
+  DollarSign,
+  Package
 } from 'lucide-react';
 
 const ReportTabs = () => {

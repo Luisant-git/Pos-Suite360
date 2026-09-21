@@ -22,6 +22,7 @@ const storeSettingsSchema = z.object({
   allowEditSaleInvoice: z.boolean().optional(),
   allowEditReceipts: z.boolean().optional(),
   enableCustomerRates: z.boolean().optional(),
+  yearlyInvoiceReset: z.boolean().optional(),
 });
 
 type StoreSettingsValues = z.infer<typeof storeSettingsSchema>;

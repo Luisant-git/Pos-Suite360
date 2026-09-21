@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { CornerDownLeft, Search, Filter, Download } from 'lucide-react';
+import { CornerDownLeft } from 'lucide-react';
 import api from '../../services/api';
 import ReportTabs from '../../components/ReportTabs';
 import { useSettings } from '../../contexts/SettingsContext';

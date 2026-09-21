@@ -466,15 +466,24 @@ const POS = () => {
   const handleCellKey = (e: React.KeyboardEvent, rowIndex: number, col: number, totalCols: number) => {
     if (e.key === 'Enter') {
       e.preventDefault();
+      const nextRow = rowIndex + 1;
+      if (nextRow < fields.length) {
+        setTimeout(() => {
+          const selectEl = document.querySelector<HTMLElement>(`[data-row-product="${nextRow}"] input`);
+          if (selectEl) selectEl.focus();
+        }, 80);
+      } else {
+        append({ productId: 0, quantity: '' as any, noOfBirds: '' as any, stock: 0, rate: '' as any, unit: 'Nos', discPercent: '' as any, discAmt: '' as any, total: 0 });
+        setTimeout(() => {
+          const selectEl = document.querySelector<HTMLElement>(`[data-row-product="${nextRow}"] input`);
+          if (selectEl) selectEl.focus();
+        }, 100);
+      }
+    } else if (e.key === 'Tab' && !e.shiftKey) {
+      e.preventDefault();
       const nextCol = col + 1;
       if (nextCol <= totalCols) {
         focusCell(rowIndex, nextCol);
-      } else {
-        append({ productId: 0, quantity: '' as any, stock: 0, rate: '' as any, unit: 'Nos', discPercent: '' as any, discAmt: '' as any, total: 0 });
-        setTimeout(() => {
-          const selectEl = document.querySelector<HTMLElement>(`[data-row-product="${rowIndex + 1}"] input`);
-          if (selectEl) selectEl.focus();
-        }, 100);
       }
     } else if (e.key === 'ArrowRight') {
       if ((e.target as HTMLInputElement).selectionStart === (e.target as HTMLInputElement).value.length) {
@@ -633,9 +642,7 @@ const POS = () => {
               onClick={() => navigate('/reports/sales')}
               className="border border-[#1E3A8A] text-[#1E3A8A] hover:bg-[#1E3A8A] hover:text-white px-3 py-1 rounded flex items-center gap-1 text-[12px] transition-colors font-bold"
             >
-              <FileText size={14} /> Sales Report
             </button>
-            </div>
           </div>
           <div className="flex-1 overflow-auto custom-scrollbar">
             <table className="w-full border-collapse border border-[#E5E7EB] min-w-[1000px] md:min-w-[1200px] whitespace-nowrap responsive-table">

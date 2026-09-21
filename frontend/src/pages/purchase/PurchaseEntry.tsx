@@ -306,15 +306,24 @@ const PurchaseEntry = () => {
   const handleCellKey = (e: React.KeyboardEvent, rowIndex: number, col: number, totalCols: number) => {
     if (e.key === 'Enter') {
       e.preventDefault();
-      const nextCol = col + 1;
-      if (nextCol <= totalCols) {
-        focusCell(rowIndex, nextCol);
+      const nextRow = rowIndex + 1;
+      if (nextRow < fields.length) {
+        setTimeout(() => {
+          const selectEl = document.querySelector<HTMLElement>(`[data-row-product="${nextRow}"] input`);
+          if (selectEl) selectEl.focus();
+        }, 80);
       } else {
         append({ productId: 0, quantity: '' as any, unit: 'Nos', pRate: '' as any, wRate: '' as any, sRate: '' as any, mrp: '' as any, discPercent: '' as any, discAmt: '' as any, total: 0 });
         setTimeout(() => {
-          const selectEl = document.querySelector<HTMLElement>(`[data-row-product="${rowIndex + 1}"] input`);
+          const selectEl = document.querySelector<HTMLElement>(`[data-row-product="${nextRow}"] input`);
           if (selectEl) selectEl.focus();
         }, 100);
+      }
+    } else if (e.key === 'Tab' && !e.shiftKey) {
+      e.preventDefault();
+      const nextCol = col + 1;
+      if (nextCol <= totalCols) {
+        focusCell(rowIndex, nextCol);
       }
     } else if (e.key === 'ArrowRight') {
       if ((e.target as HTMLInputElement).selectionStart === (e.target as HTMLInputElement).value.length) {

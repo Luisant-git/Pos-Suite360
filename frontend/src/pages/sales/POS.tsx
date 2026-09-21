@@ -1040,7 +1040,7 @@ const POS = () => {
       <InvoicePrintModal
         isOpen={isPrintModalOpen}
         onClose={() => setIsPrintModalOpen(false)}
-        invoiceData={saleToPrint}
+        sale={saleToPrint}
       />
 
       {/* Keyboard Shortcuts Help Modal */}

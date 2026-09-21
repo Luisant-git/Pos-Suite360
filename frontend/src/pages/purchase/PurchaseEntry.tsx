@@ -70,11 +70,11 @@ const PurchaseEntry = () => {
 
   const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
   const [pendingSavePayload, setPendingSavePayload] = useState<any>(null);
-  const [supplierSearchQuery, setSupplierSearchQuery] = useState('');
+
   const [isHelpModalOpen, setIsHelpModalOpen] = useState(false);
   const printAfterSaveRef = useRef(false);
 
-  const { register, control, handleSubmit, watch, setValue, getValues, reset } = useForm<PurchaseFormValues>({
+  const { register, control, handleSubmit, watch, setValue, reset } = useForm<PurchaseFormValues>({
     resolver: zodResolver(purchaseSchema) as any,
     defaultValues: {
       entryNo: 'Generating...',

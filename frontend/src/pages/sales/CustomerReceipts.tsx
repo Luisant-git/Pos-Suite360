@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import TableLoader from '../../components/TableLoader';
 import { useNavigate } from 'react-router-dom';
 import { useForm, Controller } from 'react-hook-form';
 import { z } from 'zod';
@@ -10,7 +11,6 @@ import Select from 'react-select';
 import * as XLSX from 'xlsx';
 import api from '../../services/api';
 import { useSettings } from '../../contexts/SettingsContext';
-import TableLoader from '../../components/TableLoader';
 
 const receiptSchema = z.object({
   receiptNo: z.string(),
@@ -411,7 +411,176 @@ const CustomerReceipts = () => {
                                 </tr>
                               );
                             }) : (
-                              <TableLoader columns={8} />
+                              <tr>
+                                <td colSpan={8} className="px-3 py-4 text-center text-black font-bold italic">No {billFilter.toLowerCase()} bills found.</td>
+                              </tr>
+                            );
+                          })()}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 print:hidden">
+              <div>
+                <label className="block text-[12px] font-bold text-[#059669] mb-1">Amount Collected Now *</label>
+                <input
+                  {...register('amount')}
+                  type="number" step="0.01"
+                  placeholder="0.00"
+                  className="w-full px-3 py-2 border border-[#CBD5E1] rounded text-[15px] font-bold outline-none focus:border-[#3B82F6]"
+                />
+              </div>
+              <div>
+                <label className="block text-[12px] font-bold text-black font-bold mb-1">Remaining Balance After Receipt</label>
+                <div className="w-full px-3 py-2 bg-[#F8FAFC] border border-[#E2E8F0] rounded text-[13px] font-bold text-black font-bold">
+                  {formatCurrency(currentBalance - amountCollected)}
+                </div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 print:hidden">
+              <div>
+                <label className="block text-[12px] font-bold text-black font-bold mb-1">PAYMENT TYPE *</label>
+                <select
+                  {...register('paymentTypeId')}
+                  className="w-full px-3 py-2 border border-[#CBD5E1] rounded shadow-sm focus:border-[#059669] outline-none text-[13px] bg-white"
+                >
+                  <option value={0}>Select Type</option>
+                  {paymentTypes.map((pt: any) => (
+                    <option key={pt.id} value={pt.id}>{pt.name}</option>
+                  ))}
+                </select>
+                {errors.paymentTypeId && <span className="text-red-500 text-[11px] mt-1 block">{errors.paymentTypeId.message}</span>}
+              </div>
+              <div>
+                <label className="block text-[12px] font-bold text-black font-bold mb-1">Reference / Cheque No (Optional for Cash)</label>
+                <input
+                  {...register('reference')}
+                  type="text"
+                  placeholder="Optional for Cash / Mandatory for UPI/Cheque..."
+                  className="w-full px-3 py-2 border border-[#CBD5E1] rounded text-[13px] outline-none focus:border-[#3B82F6]"
+                />
+              </div>
+            </div>
+
+            <div className="print:hidden">
+              <label className="block text-[12px] font-bold text-black font-bold mb-1">Remarks (Optional)</label>
+              <input
+                {...register('remarks')}
+                type="text"
+                placeholder="Optional remarks..."
+                className="w-full px-3 py-2 border border-[#CBD5E1] rounded text-[13px] outline-none focus:border-[#3B82F6]"
+              />
+            </div>
+
+            <div className="flex justify-end mt-2 print:hidden gap-2">
+              {editingId && (
+                <button 
+                  type="button" 
+                  onClick={() => {
+                    reset();
+                    setEditingId(null);
+                    setAllocations({});
+                    queryClient.invalidateQueries({ queryKey: ['nextReceiptNo'] });
+                  }}
+                  className="bg-[#F1F5F9] text-black hover:bg-[#E2E8F0] px-4 py-2 rounded font-bold text-[12px] md:text-[14px] flex items-center justify-center gap-2 transition-colors w-full md:w-auto border border-[#CBD5E1]"
+                >
+                  <X size={14} /> CANCEL
+                </button>
+              )}
+              <button 
+                type="submit" 
+                disabled={createMutation.isPending || updateMutation.isPending}
+                className="bg-[#059669] hover:bg-[#047857] text-white px-4 py-2 rounded font-bold text-[12px] md:text-[14px] flex items-center justify-center gap-2 transition-colors disabled:opacity-50 w-full md:w-auto"
+              >
+                <Save size={14} /> {editingId ? 'UPDATE RECEIPT (F10)' : 'SAVE RECEIPT (F10)'}
+              </button>
+            </div>
+
+          </form>
+        </div>
+
+        {/* Right Side - History Table */}
+        <div className={`bg-white border border-[#E2E8F0] shadow-sm flex flex-col ${isTableExpanded ? 'fixed inset-4 lg:inset-8 z-50 rounded-xl shadow-2xl' : 'rounded-lg overflow-hidden lg:col-span-1'} print:hidden`}>
+          <div className="bg-[#F8FAFC] border-b border-[#E2E8F0] px-4 py-3 flex justify-between items-center">
+            <div className="flex items-center gap-2">
+              <FileText size={16} className="text-black font-bold" />
+              <h2 className="font-bold text-[13px] text-black font-bold">RECEIPTS HISTORY</h2>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="bg-[#059669] text-white text-[11px] font-bold px-2 py-0.5 rounded-full">
+                {filteredHistory.length} Receipts
+              </div>
+              <button 
+                type="button" 
+                onClick={() => setIsTableExpanded(!isTableExpanded)}
+                className="text-black font-bold hover:text-[#059669] transition-colors ml-1"
+                title={isTableExpanded ? "Minimize Table" : "View Full Table"}
+              >
+                {isTableExpanded ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
+              </button>
+            </div>
+          </div>
+
+          <div className="p-3 border-b border-[#E2E8F0] grid grid-cols-1 md:grid-cols-3 gap-2">
+            <select
+              value={filterCustomer}
+              onChange={(e) => setFilterCustomer(e.target.value)}
+              className="w-full px-2 py-1.5 border border-[#CBD5E1] rounded text-[12px] outline-none focus:border-[#3B82F6]"
+            >
+              <option value="">-- All Customers --</option>
+              {customers.map((c: any) => (
+                <option key={c.id} value={c.id}>{c.name}</option>
+              ))}
+            </select>
+            <input
+              type="date"
+              value={filterFromDate}
+              onChange={(e) => setFilterFromDate(e.target.value)}
+              className="w-full px-2 py-1.5 border border-[#CBD5E1] rounded text-[12px] outline-none focus:border-[#3B82F6]"
+            />
+            <div className="flex gap-2">
+              <input
+                type="date"
+                value={filterToDate}
+                onChange={(e) => setFilterToDate(e.target.value)}
+                className="w-full px-2 py-1.5 border border-[#CBD5E1] rounded text-[12px] outline-none focus:border-[#3B82F6]"
+              />
+              <button type="button" className="bg-[#059669] hover:bg-[#047857] text-white px-3 rounded flex items-center justify-center transition-colors" title="Apply Filter">
+                <Filter size={14} />
+              </button>
+              {isTableExpanded && (
+                <button 
+                  type="button" 
+                  onClick={handleExportExcel}
+                  className="bg-[#1D4ED8] hover:bg-[#1E40AF] text-white px-3 rounded flex items-center justify-center transition-colors" 
+                  title="Export Excel"
+                >
+                  <Download size={14} />
+                </button>
+              )}
+            </div>
+          </div>
+
+          <div className="flex-1 overflow-auto bg-[#F8FAFC] overflow-x-auto">
+            <table className="w-full text-left text-[12px] whitespace-nowrap">
+              <thead>
+                <tr className="bg-[#1E293B] text-white font-bold">
+                  <th className="px-3 py-2 border-r border-[#334155]">Receipt No</th>
+                  <th className="px-3 py-2 border-r border-[#334155]">Date</th>
+                  <th className="px-3 py-2 border-r border-[#334155]">Customer</th>
+                  <th className="px-3 py-2 border-r border-[#444]">Payment Type</th>
+                  <th className="px-3 py-2 text-right border-r border-[#334155]">Amount Paid</th>
+                  {storeSettings?.allowEditReceipts && <th className="px-3 py-2 text-center w-20">Action</th>}
+                </tr>
+              </thead>
+              <tbody>
+                {historyLoading ? (
+                  <TableLoader columns={storeSettings?.allowEditReceipts ? 6 : 5} text="Loading history..." />
                 ) : filteredHistory.length === 0 ? (
                   <tr><td colSpan={storeSettings?.allowEditReceipts ? 6 : 5} className="text-center p-4 text-black font-bold">No receipt records found.</td></tr>
                 ) : (

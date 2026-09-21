@@ -134,7 +134,7 @@ export class ReportsService {
       }
 
       const qty = Number(item.quantity) || 0;
-      const value = Number(item.totalAmount) || 0;
+      const value = Number(item.amount) || 0;
 
       productGroups[productKey].items.push({
         invoiceNo: item.sale?.invoiceNo || '-',

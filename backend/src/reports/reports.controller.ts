@@ -19,7 +19,8 @@ export class ReportsController {
   async getProductWiseSales(
     @Query('fromDate') fromDate?: string,
     @Query('toDate') toDate?: string,
+    @Query('productId') productId?: string,
   ) {
-    return this.reportsService.getProductWiseSales(fromDate, toDate);
+    return this.reportsService.getProductWiseSales(fromDate, toDate, productId ? Number(productId) : undefined);
   }
 }

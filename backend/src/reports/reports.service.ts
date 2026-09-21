@@ -93,23 +93,26 @@ export class ReportsService {
     };
   }
 
-  async getProductWiseSales(fromDateStr?: string, toDateStr?: string) {
+  async getProductWiseSales(fromDate?: string, toDate?: string, productId?: number) {
     const whereDate: any = {};
-    if (fromDateStr || toDateStr) {
+    if (fromDate || toDate) {
       whereDate.date = {};
-      if (fromDateStr) {
-        whereDate.date.gte = new Date(fromDateStr);
+      if (fromDate) {
+        const fDate = new Date(fromDate);
+        fDate.setHours(0, 0, 0, 0);
+        whereDate.date.gte = fDate;
       }
-      if (toDateStr) {
-        const toDate = new Date(toDateStr);
-        toDate.setHours(23, 59, 59, 999);
-        whereDate.date.lte = toDate;
+      if (toDate) {
+        const tDate = new Date(toDate);
+        tDate.setHours(23, 59, 59, 999);
+        whereDate.date.lte = tDate;
       }
     }
 
     const saleItems = await this.prisma.saleItem.findMany({
       where: {
-        sale: whereDate
+        sale: whereDate,
+        ...(productId ? { productId } : {}),
       },
       include: {
         sale: true,

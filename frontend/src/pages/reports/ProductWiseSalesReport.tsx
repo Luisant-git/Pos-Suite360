@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { CornerDownLeft } from 'lucide-react';
+import { CornerDownLeft, Calendar, Package } from 'lucide-react';
 import api from '../../services/api';
 import ReportTabs from '../../components/ReportTabs';
 import { useSettings } from '../../contexts/SettingsContext';
+import SearchableSelect from '../../components/SearchableSelect';
 
 const ProductWiseSalesReport = () => {
   const { formatCurrency } = useSettings();
@@ -12,14 +13,21 @@ const ProductWiseSalesReport = () => {
   const today = new Date().toISOString().split('T')[0];
   const [filterFromDate, setFilterFromDate] = useState(today);
   const [filterToDate, setFilterToDate] = useState(today);
+  const [productId, setProductId] = useState<number | string>('');
+
+  const { data: products = [] } = useQuery({
+    queryKey: ['products'],
+    queryFn: async () => (await api.get('/products')).data
+  });
 
   const { data: reportData = [], isLoading } = useQuery({
-    queryKey: ['product-wise-sales', filterFromDate, filterToDate],
+    queryKey: ['product-wise-sales', filterFromDate, filterToDate, productId],
     queryFn: async () => {
       const { data } = await api.get('/reports/product-wise-sales', {
         params: {
           fromDate: filterFromDate,
-          toDate: filterToDate
+          toDate: filterToDate,
+          productId: productId || undefined
         }
       });
       return data;
@@ -43,24 +51,34 @@ const ProductWiseSalesReport = () => {
           </div>
 
           {/* Filters */}
-          <div className="bg-white p-3 border-b border-[#E6E9ED] flex flex-wrap gap-3 items-center">
-            <div className="flex items-center gap-2">
-              <label className="text-[12px] font-bold text-black font-bold">From Date:</label>
-              <input
-                type="date"
-                value={filterFromDate}
-                onChange={(e) => setFilterFromDate(e.target.value)}
-                className="px-3 py-2 border border-[#E5E7EB] rounded text-[13px] outline-none focus:border-[#2563EB]"
-              />
-            </div>
-            <div className="flex items-center gap-2">
-              <label className="text-[12px] font-bold text-black font-bold">To Date:</label>
-              <input
-                type="date"
-                value={filterToDate}
-                onChange={(e) => setFilterToDate(e.target.value)}
-                className="px-3 py-2 border border-[#E5E7EB] rounded text-[13px] outline-none focus:border-[#2563EB]"
-              />
+          <div className="bg-white border-b border-[#E2E8F0] shadow-sm mb-2 p-3">
+            <div className="grid grid-cols-1 md:grid-cols-6 gap-3 items-end">
+              <div>
+                <label className="flex items-center gap-1 text-[12px] text-black font-bold mb-1"><Calendar size={12} /> From Date</label>
+                <input
+                  type="date"
+                  value={filterFromDate}
+                  onChange={(e) => setFilterFromDate(e.target.value)}
+                  className="w-full px-3 py-1.5 border border-[#CBD5E1] rounded outline-none text-[13px] text-black font-bold focus:border-[#3B82F6]"
+                />
+              </div>
+              <div>
+                <label className="flex items-center gap-1 text-[12px] text-black font-bold mb-1"><Calendar size={12} /> To Date</label>
+                <input
+                  type="date"
+                  value={filterToDate}
+                  onChange={(e) => setFilterToDate(e.target.value)}
+                  className="w-full px-3 py-1.5 border border-[#CBD5E1] rounded outline-none text-[13px] text-black font-bold focus:border-[#3B82F6]"
+                />
+              </div>
+              <div className="md:col-span-2">
+                <label className="flex items-center gap-1 text-[12px] text-black font-bold mb-1"><Package size={12} /> Product Name</label>
+                <SearchableSelect
+                  options={[{ value: '', label: 'All Products' }, ...products.map((p: any) => ({ value: p.id, label: `${p.code} - ${p.name}` }))]}
+                  value={productId}
+                  onChange={(val) => setProductId(val)}
+                />
+              </div>
             </div>
           </div>
 
@@ -70,40 +88,40 @@ const ProductWiseSalesReport = () => {
               <div className="p-8 text-center text-black font-bold">Loading report data...</div>
             ) : (
               <table className="w-full text-left text-[12px] whitespace-nowrap border-collapse">
-                <thead>
-                  <tr className="bg-[#1E293B] text-white font-bold sticky top-0 z-10 shadow-sm">
-                    <th className="px-3 py-2 border-r border-[#334155] w-1/3">DOC #</th>
-                    <th className="px-3 py-2 border-r border-[#334155] text-right w-1/3">SALES QTY</th>
-                    <th className="px-3 py-2 text-right w-1/3">SALES VALUE</th>
+                <thead className="bg-[#1E293B] text-white">
+                  <tr>
+                    <th className="px-4 py-2 font-bold uppercase tracking-wider sticky top-0 z-10 bg-[#1E293B] text-[11px] whitespace-nowrap border-b border-[#334155] border-r w-1/3">DOC # / PRODUCT</th>
+                    <th className="px-4 py-2 font-bold uppercase tracking-wider sticky top-0 z-10 bg-[#1E293B] text-[11px] whitespace-nowrap border-b border-[#334155] border-r text-right w-1/3">SALES QTY</th>
+                    <th className="px-4 py-2 font-bold uppercase tracking-wider sticky top-0 z-10 bg-[#1E293B] text-[11px] whitespace-nowrap border-b border-[#334155] text-right w-1/3">SALES VALUE</th>
                   </tr>
                 </thead>
                 <tbody>
                   {reportData.length === 0 ? (
                     <tr>
-                      <td colSpan={3} className="px-3 py-6 text-center text-black font-bold border-b border-[#E6E9ED]">
-                        No sales found for the selected dates.
+                      <td colSpan={3} className="px-4 py-6 text-center text-black font-bold border-b border-[#E2E8F0]">
+                        No sales found for the selected dates and product.
                       </td>
                     </tr>
                   ) : (
                     reportData.map((group: any, idx: number) => (
                       <React.Fragment key={idx}>
                         {/* Group Header */}
-                        <tr className="bg-[#5EEAD4] border-y border-[#E6E9ED]">
-                          <td colSpan={3} className="px-3 py-2 font-bold text-[#0F766E] uppercase tracking-wider text-[11px]">
-                            STOCK CODE : {group.productName}
+                        <tr className="bg-[#F1F5F9] border-y border-[#CBD5E1]">
+                          <td colSpan={3} className="px-4 py-2 font-bold text-black uppercase tracking-wider text-[11px]">
+                            {group.productName}
                           </td>
                         </tr>
                         
                         {/* Group Items */}
                         {group.items.map((item: any, i: number) => (
                           <tr key={i} className="border-b border-[#F1F5F9] hover:bg-[#F8FAFC]">
-                            <td className="px-3 py-1.5 border-r border-[#F1F5F9] text-black font-bold pl-8">
-                              {item.invoiceNo}
+                            <td className="px-4 py-1.5 border-r border-[#E2E8F0] text-black pl-8">
+                              {item.invoiceNo} <span className="text-gray-400 text-[11px] ml-2">({new Date(item.date).toLocaleDateString()})</span>
                             </td>
-                            <td className="px-3 py-1.5 border-r border-[#F1F5F9] text-right text-black font-bold">
+                            <td className="px-4 py-1.5 border-r border-[#E2E8F0] text-right text-black font-bold">
                               {item.qty}
                             </td>
-                            <td className="px-3 py-1.5 text-right font-bold text-[#059669]">
+                            <td className="px-4 py-1.5 text-right font-bold text-[#059669]">
                               {formatCurrency(item.value)}
                             </td>
                           </tr>
@@ -111,13 +129,13 @@ const ProductWiseSalesReport = () => {
 
                         {/* Group Footer / Subtotal */}
                         <tr className="bg-[#F8FAFC] border-b-2 border-[#CBD5E1]">
-                          <td className="px-3 py-2 border-r border-[#E2E8F0] font-bold text-black font-bold text-right">
-                            
+                          <td className="px-4 py-2 border-r border-[#E2E8F0] font-bold text-black text-right uppercase text-[11px]">
+                            Subtotal
                           </td>
-                          <td className="px-3 py-2 border-r border-[#E2E8F0] font-bold text-[#2563EB] text-right">
+                          <td className="px-4 py-2 border-r border-[#E2E8F0] font-bold text-[#2563EB] text-right">
                             {group.totalQty}
                           </td>
-                          <td className="px-3 py-2 font-bold text-[#2563EB] text-right">
+                          <td className="px-4 py-2 font-bold text-[#2563EB] text-right">
                             {formatCurrency(group.totalValue)}
                           </td>
                         </tr>

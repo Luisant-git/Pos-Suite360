@@ -4,7 +4,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Plus, Trash2, Save, X, Printer, RefreshCw, List, UserPlus, AlertTriangle, DollarSign } from 'lucide-react';
+import { Plus, Trash2, Save, X, Printer, RefreshCw, List, UserPlus, AlertTriangle, DollarSign, FileText, Keyboard } from 'lucide-react';
 import { useSettings } from '../../contexts/SettingsContext';
 import toast from 'react-hot-toast';
 import api from '../../services/api';
@@ -85,6 +85,7 @@ const POS = () => {
   const [pendingSavePayload, setPendingSavePayload] = useState<any>(null);
   const printAfterSaveRef = useRef(false);
   const [isPrintModalOpen, setIsPrintModalOpen] = useState(false);
+  const [isHelpModalOpen, setIsHelpModalOpen] = useState(false);
   const [saleToPrint, setSaleToPrint] = useState<any>(null);
 
   const { register, control, handleSubmit, watch, setValue, getValues, reset } = useForm<SaleFormValues>({
@@ -642,6 +643,14 @@ const POS = () => {
               onClick={() => navigate('/reports/sales')}
               className="border border-[#1E3A8A] text-[#1E3A8A] hover:bg-[#1E3A8A] hover:text-white px-3 py-1 rounded flex items-center gap-1 text-[12px] transition-colors font-bold"
             >
+              <FileText size={14} /> Sales Report
+            </button>
+            <button 
+              type="button"
+              onClick={() => setIsHelpModalOpen(true)}
+              className="border border-[#0F766E] text-[#0F766E] hover:bg-[#0F766E] hover:text-white px-3 py-1 rounded flex items-center gap-1 text-[12px] transition-colors font-bold"
+            >
+              <Keyboard size={14} /> Shortcuts
             </button>
           </div>
           <div className="flex-1 overflow-auto custom-scrollbar">
@@ -668,9 +677,10 @@ const POS = () => {
                     {index + 1}
                   </td>
                   <td data-label="Product" className="px-2 py-1 border-r border-[#E5E7EB]">
-                    <div data-row-product={index} onKeyDown={(e) => {
+                    <div data-row-product={index} onKeyDownCapture={(e) => {
                       if (e.ctrlKey && e.key === 'Delete' && fields.length > 1) {
                         e.preventDefault();
+                        e.stopPropagation();
                         remove(index);
                         setTimeout(() => {
                           const selectEl = document.querySelector<HTMLElement>(`[data-row-product="${Math.max(0, index - 1)}"] input`);
@@ -1027,17 +1037,79 @@ const POS = () => {
       )}
 
       {/* Visual Modal for Printing */}
-      <InvoicePrintModal 
-        isOpen={isPrintModalOpen} 
-        onClose={() => {
-          setIsPrintModalOpen(false);
-          if (editId) {
-            navigate('/sales');
-          }
-        }} 
-        sale={saleToPrint}
-        hiddenRenderer={true}
+      <InvoicePrintModal
+        isOpen={isPrintModalOpen}
+        onClose={() => setIsPrintModalOpen(false)}
+        invoiceData={saleToPrint}
       />
+
+      {/* Keyboard Shortcuts Help Modal */}
+      {isHelpModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl w-full max-w-lg overflow-hidden flex flex-col">
+            <div className="flex justify-between items-center p-4 border-b border-[#E5E7EB] bg-[#F8FAFC]">
+              <h2 className="text-lg font-bold text-[#1E293B] flex items-center gap-2">
+                <Keyboard size={20} className="text-[#3B82F6]" /> Keyboard Shortcuts
+              </h2>
+              <button onClick={() => setIsHelpModalOpen(false)} className="text-gray-500 hover:text-red-500 transition-colors">
+                <X size={20} />
+              </button>
+            </div>
+            <div className="p-6 overflow-y-auto">
+              <div className="space-y-4">
+                <div className="flex justify-between items-center border-b border-[#F1F5F9] pb-3">
+                  <span className="text-sm font-bold text-gray-700">Add New Row</span>
+                  <div className="flex gap-1">
+                    <kbd className="px-2 py-1 bg-gray-100 border border-gray-300 rounded-md shadow-sm font-mono text-[11px] font-bold text-gray-800">F2</kbd>
+                  </div>
+                </div>
+                <div className="flex justify-between items-center border-b border-[#F1F5F9] pb-3">
+                  <span className="text-sm font-bold text-gray-700">Save Invoice</span>
+                  <div className="flex gap-1">
+                    <kbd className="px-2 py-1 bg-gray-100 border border-gray-300 rounded-md shadow-sm font-mono text-[11px] font-bold text-gray-800">F3</kbd>
+                  </div>
+                </div>
+                <div className="flex justify-between items-center border-b border-[#F1F5F9] pb-3">
+                  <span className="text-sm font-bold text-gray-700">Clear Form</span>
+                  <div className="flex gap-1">
+                    <kbd className="px-2 py-1 bg-gray-100 border border-gray-300 rounded-md shadow-sm font-mono text-[11px] font-bold text-gray-800">F4</kbd>
+                  </div>
+                </div>
+                <div className="flex justify-between items-center border-b border-[#F1F5F9] pb-3">
+                  <span className="text-sm font-bold text-gray-700">Go to Dashboard</span>
+                  <div className="flex gap-1">
+                    <kbd className="px-2 py-1 bg-gray-100 border border-gray-300 rounded-md shadow-sm font-mono text-[11px] font-bold text-gray-800">Esc</kbd>
+                  </div>
+                </div>
+                <div className="flex justify-between items-center border-b border-[#F1F5F9] pb-3">
+                  <span className="text-sm font-bold text-gray-700">Delete Current Row</span>
+                  <div className="flex gap-1">
+                    <kbd className="px-2 py-1 bg-gray-100 border border-gray-300 rounded-md shadow-sm font-mono text-[11px] font-bold text-gray-800">Ctrl</kbd>
+                    <span className="text-gray-400 font-bold">+</span>
+                    <kbd className="px-2 py-1 bg-gray-100 border border-gray-300 rounded-md shadow-sm font-mono text-[11px] font-bold text-gray-800">Del</kbd>
+                  </div>
+                </div>
+                <div className="flex justify-between items-center pb-1">
+                  <span className="text-sm font-bold text-gray-700">Move to Next Cell / Row</span>
+                  <div className="flex gap-1">
+                    <kbd className="px-2 py-1 bg-gray-100 border border-gray-300 rounded-md shadow-sm font-mono text-[11px] font-bold text-gray-800">Enter</kbd>
+                    <span className="text-gray-400 font-bold text-[12px] self-center">or</span>
+                    <kbd className="px-2 py-1 bg-gray-100 border border-gray-300 rounded-md shadow-sm font-mono text-[11px] font-bold text-gray-800">Tab</kbd>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="p-4 bg-[#F8FAFC] border-t border-[#E5E7EB] text-center">
+              <button
+                onClick={() => setIsHelpModalOpen(false)}
+                className="bg-[#3B82F6] hover:bg-[#2563EB] text-white px-6 py-2 rounded-md font-bold text-sm transition-colors shadow-sm"
+              >
+                Got it
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Loss Warning Modal */}
       {showLossWarning && (

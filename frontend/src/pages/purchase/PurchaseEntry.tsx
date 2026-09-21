@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { List, Plus, Trash2, CheckCircle, PlusCircle, X, RotateCcw, FileText, Save, ArrowLeft } from 'lucide-react';
+import { List, Plus, Trash2, CheckCircle, PlusCircle, X, RotateCcw, FileText, Save, ArrowLeft, Keyboard } from 'lucide-react';
 import toast from 'react-hot-toast';
 import api from '../../services/api';
 import { useSettings } from '../../contexts/SettingsContext';
@@ -70,9 +70,11 @@ const PurchaseEntry = () => {
 
   const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
   const [pendingSavePayload, setPendingSavePayload] = useState<any>(null);
+  const [supplierSearchQuery, setSupplierSearchQuery] = useState('');
+  const [isHelpModalOpen, setIsHelpModalOpen] = useState(false);
   const printAfterSaveRef = useRef(false);
 
-  const { register, control, handleSubmit, watch, setValue, reset } = useForm<PurchaseFormValues>({
+  const { register, control, handleSubmit, watch, setValue, getValues, reset } = useForm<PurchaseFormValues>({
     resolver: zodResolver(purchaseSchema) as any,
     defaultValues: {
       entryNo: 'Generating...',
@@ -270,19 +272,14 @@ const PurchaseEntry = () => {
         e.preventDefault();
         handleSubmit(onSubmit as any, onError)();
       } else if (e.key === 'Escape') {
-        if (isSupplierModalOpen || isSaveModalOpen || isLeaveModalOpen) {
+        if (isSupplierModalOpen || isSaveModalOpen || isLeaveModalOpen || isHelpModalOpen) {
           setIsSupplierModalOpen(false);
           setIsSaveModalOpen(false);
           setIsLeaveModalOpen(false);
+          setIsHelpModalOpen(false);
         } else {
           setIsLeaveModalOpen(true);
         }
-      } else if (e.key === 'F2') {
-        e.preventDefault();
-        append({ productId: 0, quantity: '' as any, unit: 'Nos', pRate: '' as any, wRate: '' as any, sRate: '' as any, mrp: '' as any, discPercent: '' as any, discAmt: '' as any, total: 0 });
-      } else if (e.key === 'F4') {
-        e.preventDefault();
-        handleClear();
       } else if (e.key === 'F2') {
         e.preventDefault();
         append({ productId: 0, quantity: '' as any, unit: 'Nos', pRate: '' as any, wRate: '' as any, sRate: '' as any, mrp: '' as any, discPercent: '' as any, discAmt: '' as any, total: 0 });
@@ -290,11 +287,14 @@ const PurchaseEntry = () => {
           const inputs = document.querySelectorAll<HTMLElement>('[data-row-product] input');
           if (inputs.length > 0) inputs[inputs.length - 1].focus();
         }, 100);
+      } else if (e.key === 'F4') {
+        e.preventDefault();
+        handleClear();
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [handleSubmit, isSupplierModalOpen, isSaveModalOpen, isLeaveModalOpen, append, navigate, onSubmit, onError, handleClear]);
+  }, [handleSubmit, isSupplierModalOpen, isSaveModalOpen, isLeaveModalOpen, isHelpModalOpen, append, navigate, onSubmit, onError, handleClear]);
 
   const focusCell = (row: number, col: number) => {
     setTimeout(() => {
@@ -400,12 +400,21 @@ const PurchaseEntry = () => {
             <CheckCircle size={16} /> SAVE PURCHASE (F10)
           </button>
         </div>
-        <button 
-          onClick={() => setIsLeaveModalOpen(true)}
-          className="text-white hover:text-white/80 transition-colors flex items-center gap-1.5"
-        >
-          <ArrowLeft size={16} /> Back (Esc)
-        </button>
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={() => setIsHelpModalOpen(true)}
+            className="bg-white/10 hover:bg-white/20 text-white px-3 py-1 rounded flex items-center gap-1.5 text-[13px] font-bold transition-colors"
+          >
+            <Keyboard size={16} /> Shortcuts (Help)
+          </button>
+          <button 
+            onClick={() => setIsLeaveModalOpen(true)}
+            className="text-white hover:text-white/80 transition-colors flex items-center gap-1.5"
+          >
+            <ArrowLeft size={16} /> Back (Esc)
+          </button>
+        </div>
       </div>
 
       <form className="flex flex-col flex-1 overflow-y-auto custom-scrollbar" onSubmit={handleSubmit(onSubmit as any, onError)}>
@@ -553,9 +562,10 @@ const PurchaseEntry = () => {
                 <tr key={field.id} className="border-b border-[#E5E7EB] hover:bg-[#F9FAFB]">
                   <td data-label="#" className="px-2 py-1 text-center text-[13px] border-r border-[#E5E7EB] relative group">{index + 1}</td>
                   <td data-label="Product" className="px-2 py-1 border-r border-[#E5E7EB]">
-                    <div data-row-product={index} onKeyDown={(e) => {
+                    <div data-row-product={index} onKeyDownCapture={(e) => {
                       if (e.ctrlKey && e.key === 'Delete' && fields.length > 1) {
                         e.preventDefault();
+                        e.stopPropagation();
                         remove(index);
                         setTimeout(() => {
                           const selectEl = document.querySelector<HTMLElement>(`[data-row-product="${Math.max(0, index - 1)}"] input`);
@@ -920,6 +930,74 @@ const PurchaseEntry = () => {
                   Leave
                 </button>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Keyboard Shortcuts Help Modal */}
+      {isHelpModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl w-full max-w-lg overflow-hidden flex flex-col">
+            <div className="flex justify-between items-center p-4 border-b border-[#E5E7EB] bg-[#F8FAFC]">
+              <h2 className="text-lg font-bold text-[#1E293B] flex items-center gap-2">
+                <Keyboard size={20} className="text-[#3B82F6]" /> Keyboard Shortcuts
+              </h2>
+              <button onClick={() => setIsHelpModalOpen(false)} className="text-gray-500 hover:text-red-500 transition-colors">
+                <X size={20} />
+              </button>
+            </div>
+            <div className="p-6 overflow-y-auto">
+              <div className="space-y-4">
+                <div className="flex justify-between items-center border-b border-[#F1F5F9] pb-3">
+                  <span className="text-sm font-bold text-gray-700">Add New Row</span>
+                  <div className="flex gap-1">
+                    <kbd className="px-2 py-1 bg-gray-100 border border-gray-300 rounded-md shadow-sm font-mono text-[11px] font-bold text-gray-800">F2</kbd>
+                  </div>
+                </div>
+                <div className="flex justify-between items-center border-b border-[#F1F5F9] pb-3">
+                  <span className="text-sm font-bold text-gray-700">Save Purchase</span>
+                  <div className="flex gap-1">
+                    <kbd className="px-2 py-1 bg-gray-100 border border-gray-300 rounded-md shadow-sm font-mono text-[11px] font-bold text-gray-800">F10</kbd>
+                  </div>
+                </div>
+                <div className="flex justify-between items-center border-b border-[#F1F5F9] pb-3">
+                  <span className="text-sm font-bold text-gray-700">Clear Form</span>
+                  <div className="flex gap-1">
+                    <kbd className="px-2 py-1 bg-gray-100 border border-gray-300 rounded-md shadow-sm font-mono text-[11px] font-bold text-gray-800">F4</kbd>
+                  </div>
+                </div>
+                <div className="flex justify-between items-center border-b border-[#F1F5F9] pb-3">
+                  <span className="text-sm font-bold text-gray-700">Go to Dashboard</span>
+                  <div className="flex gap-1">
+                    <kbd className="px-2 py-1 bg-gray-100 border border-gray-300 rounded-md shadow-sm font-mono text-[11px] font-bold text-gray-800">Esc</kbd>
+                  </div>
+                </div>
+                <div className="flex justify-between items-center border-b border-[#F1F5F9] pb-3">
+                  <span className="text-sm font-bold text-gray-700">Delete Current Row</span>
+                  <div className="flex gap-1">
+                    <kbd className="px-2 py-1 bg-gray-100 border border-gray-300 rounded-md shadow-sm font-mono text-[11px] font-bold text-gray-800">Ctrl</kbd>
+                    <span className="text-gray-400 font-bold">+</span>
+                    <kbd className="px-2 py-1 bg-gray-100 border border-gray-300 rounded-md shadow-sm font-mono text-[11px] font-bold text-gray-800">Del</kbd>
+                  </div>
+                </div>
+                <div className="flex justify-between items-center pb-1">
+                  <span className="text-sm font-bold text-gray-700">Move to Next Cell / Row</span>
+                  <div className="flex gap-1">
+                    <kbd className="px-2 py-1 bg-gray-100 border border-gray-300 rounded-md shadow-sm font-mono text-[11px] font-bold text-gray-800">Enter</kbd>
+                    <span className="text-gray-400 font-bold text-[12px] self-center">or</span>
+                    <kbd className="px-2 py-1 bg-gray-100 border border-gray-300 rounded-md shadow-sm font-mono text-[11px] font-bold text-gray-800">Tab</kbd>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="p-4 bg-[#F8FAFC] border-t border-[#E5E7EB] text-center">
+              <button
+                onClick={() => setIsHelpModalOpen(false)}
+                className="bg-[#3B82F6] hover:bg-[#2563EB] text-white px-6 py-2 rounded-md font-bold text-sm transition-colors shadow-sm"
+              >
+                Got it
+              </button>
             </div>
           </div>
         </div>

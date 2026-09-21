@@ -849,8 +849,9 @@ const POS = () => {
             </tbody>
           </table>
         </div>
+      </div>
 
-        {/* Tabs & Footer Calculation Area */}
+      {/* Tabs & Footer Calculation Area */}
         <div className="bg-[#F9FAFB] shrink-0">
           
           <div className="p-3 sm:p-4 bg-white border-b border-[#E5E7EB]">

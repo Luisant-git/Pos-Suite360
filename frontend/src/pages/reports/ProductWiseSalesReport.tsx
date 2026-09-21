@@ -5,9 +5,11 @@ import api from '../../services/api';
 import ReportTabs from '../../components/ReportTabs';
 import { useSettings } from '../../contexts/SettingsContext';
 import SearchableSelect from '../../components/SearchableSelect';
+import { useNavigate } from 'react-router-dom';
 
 const ProductWiseSalesReport = () => {
   const { formatCurrency } = useSettings();
+  const navigate = useNavigate();
   
   // Default to today
   const today = new Date().toISOString().split('T')[0];
@@ -114,9 +116,17 @@ const ProductWiseSalesReport = () => {
                         
                         {/* Group Items */}
                         {group.items.map((item: any, i: number) => (
-                          <tr key={i} className="border-b border-[#F1F5F9] hover:bg-[#F8FAFC]">
-                            <td className="px-4 py-1.5 border-r border-[#E2E8F0] text-black pl-8">
-                              {item.invoiceNo} <span className="text-gray-400 text-[11px] ml-2">({new Date(item.date).toLocaleDateString()})</span>
+                          <tr 
+                            key={i} 
+                            className="border-b border-[#F1F5F9] hover:bg-[#F8FAFC] cursor-pointer"
+                            onClick={() => {
+                              if (item.saleId) {
+                                navigate(`/sales?edit=${item.saleId}`);
+                              }
+                            }}
+                          >
+                            <td className="px-4 py-1.5 border-r border-[#E2E8F0] text-[#2563EB] font-bold pl-8 hover:underline">
+                              {item.invoiceNo} <span className="text-gray-500 font-bold text-[11px] ml-2">({new Date(item.date).toLocaleDateString()})</span>
                             </td>
                             <td className="px-4 py-1.5 border-r border-[#E2E8F0] text-right text-black font-bold">
                               {item.qty}

@@ -143,7 +143,8 @@ export class ReportsService {
         invoiceNo: item.sale?.invoiceNo || '-',
         date: item.sale?.date || new Date(),
         qty: qty,
-        value: value
+        value: value,
+        saleId: item.saleId
       });
       productGroups[productKey].totalQty += qty;
       productGroups[productKey].totalValue += value;

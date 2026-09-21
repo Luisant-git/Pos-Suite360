@@ -342,6 +342,10 @@ const PurchaseEntry = () => {
       e.preventDefault();
       if (fields.length > 1) {
         remove(rowIndex);
+        setTimeout(() => {
+          const selectEl = document.querySelector<HTMLElement>(`[data-row-product="${Math.max(0, rowIndex - 1)}"] input`);
+          if (selectEl) selectEl.focus();
+        }, 50);
       }
     }
   };
@@ -541,7 +545,14 @@ const PurchaseEntry = () => {
                   <td data-label="#" className="px-2 py-1 text-center text-[13px] border-r border-[#E5E7EB] relative group">{index + 1}</td>
                   <td data-label="Product" className="px-2 py-1 border-r border-[#E5E7EB]">
                     <div data-row-product={index} onKeyDown={(e) => {
-                      if (e.ctrlKey && e.key === 'Delete' && fields.length > 1) remove(index);
+                      if (e.ctrlKey && e.key === 'Delete' && fields.length > 1) {
+                        e.preventDefault();
+                        remove(index);
+                        setTimeout(() => {
+                          const selectEl = document.querySelector<HTMLElement>(`[data-row-product="${Math.max(0, index - 1)}"] input`);
+                          if (selectEl) selectEl.focus();
+                        }, 50);
+                      }
                     }}>
                       <SearchableSelect
                         value={watch(`items.${index}.productId`)}
@@ -549,7 +560,22 @@ const PurchaseEntry = () => {
                         onChange={(val) => {
                           setValue(`items.${index}.productId`, Number(val));
                           handleProductChange(index, String(val));
-                          setTimeout(() => focusCell(index, 1), 100);
+                          if (Number(val) === 0) {
+                            if (index === fields.length - 1) {
+                              append({ productId: 0, quantity: '' as any, unit: 'Nos', pRate: '' as any, wRate: '' as any, sRate: '' as any, mrp: '' as any, discPercent: '' as any, discAmt: '' as any, total: 0 });
+                              setTimeout(() => {
+                                const inputs = document.querySelectorAll<HTMLElement>('[data-row-product] input');
+                                if (inputs.length > 0) inputs[inputs.length - 1].focus();
+                              }, 100);
+                            } else {
+                              setTimeout(() => {
+                                const selectEl = document.querySelector<HTMLElement>(`[data-row-product="${index + 1}"] input`);
+                                if (selectEl) selectEl.focus();
+                              }, 100);
+                            }
+                          } else {
+                            setTimeout(() => focusCell(index, 1), 100);
+                          }
                         }}
                         options={[
                           { label: 'Type product name / code...', value: 0 },

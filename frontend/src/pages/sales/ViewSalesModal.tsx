@@ -77,27 +77,27 @@ export default function ViewSalesModal({ saleId, onClose }: Props) {
                 </div>
                 <div className="p-5 flex justify-between">
                   <div>
-                    <p className="text-[11px] font-bold text-gray-400 uppercase tracking-wide mb-1">Bill To</p>
-                    <p className="font-bold text-[15px] text-gray-800">{sale.customer?.name || 'Counter Sale'}</p>
-                    <p className="text-[13px] text-gray-600 mt-1">{sale.customer?.phone || 'No phone number'}</p>
-                    {sale.customer?.address && <p className="text-[13px] text-gray-600 mt-1 max-w-[250px]">{sale.customer.address}</p>}
+                    <p className="text-[11px] font-bold text-black font-bold uppercase tracking-wide mb-1">Bill To</p>
+                    <p className="font-bold text-[15px] text-black font-bold">{sale.customer?.name || 'Counter Sale'}</p>
+                    <p className="text-[13px] text-black font-bold mt-1">{sale.customer?.phone || 'No phone number'}</p>
+                    {sale.customer?.address && <p className="text-[13px] text-black font-bold mt-1 max-w-[250px]">{sale.customer.address}</p>}
                   </div>
                   <div className="text-right">
-                    <p className="text-[11px] font-bold text-gray-400 uppercase tracking-wide mb-1">Payment Details</p>
-                    <p className="font-bold text-[14px] text-gray-800">{sale.paymentMode?.name || 'CASH'}</p>
-                    <p className="text-[13px] text-gray-600 mt-1">Status: Paid</p>
+                    <p className="text-[11px] font-bold text-black font-bold uppercase tracking-wide mb-1">Payment Details</p>
+                    <p className="font-bold text-[14px] text-black font-bold">{sale.paymentMode?.name || 'CASH'}</p>
+                    <p className="text-[13px] text-black font-bold mt-1">Status: Paid</p>
                   </div>
                 </div>
               </div>
 
               <div className="bg-white rounded shadow-sm border border-gray-200 overflow-hidden">
                 <div className="bg-[#F8FAFC] px-4 py-2 border-b border-gray-200">
-                  <h3 className="font-bold text-[14px] text-gray-800">ITEMIZED BILLING</h3>
+                  <h3 className="font-bold text-[14px] text-black font-bold">ITEMIZED BILLING</h3>
                 </div>
                 <div className="overflow-x-auto p-4">
                   <table className="w-full text-left text-[13px] whitespace-nowrap">
                     <thead>
-                      <tr className="border-b-2 border-gray-200 text-gray-500">
+                      <tr className="border-b-2 border-gray-200 text-black font-bold">
                         <th className="py-2 px-2 font-bold">Code</th>
                         <th className="py-2 px-2 font-bold">Product</th>
                         <th className="py-2 px-2 font-bold text-right">Qty</th>
@@ -110,13 +110,13 @@ export default function ViewSalesModal({ saleId, onClose }: Props) {
                     <tbody>
                       {sale.items?.map((item: any, idx: number) => (
                         <tr key={idx} className="border-b border-gray-100 last:border-0 hover:bg-gray-50">
-                          <td className="py-3 px-2 font-medium text-gray-600">{item.product?.code || '-'}</td>
-                          <td className="py-3 px-2 font-bold text-gray-800">{item.product?.name}</td>
+                          <td className="py-3 px-2 font-bold text-black font-bold">{item.product?.code || '-'}</td>
+                          <td className="py-3 px-2 font-bold text-black font-bold">{item.product?.name}</td>
                           <td className="py-3 px-2 text-right">{item.quantity}</td>
-                          <td className="py-3 px-2 text-center text-gray-500">{item.product?.unit?.name || 'Nos'}</td>
-                          <td className="py-3 px-2 text-right font-medium">{formatCurrency(item.rate)}</td>
+                          <td className="py-3 px-2 text-center text-black font-bold">{item.product?.unit?.name || 'Nos'}</td>
+                          <td className="py-3 px-2 text-right font-bold">{formatCurrency(item.rate)}</td>
                           <td className="py-3 px-2 text-right text-red-500">{item.discount > 0 ? formatCurrency(item.discount) : '-'}</td>
-                          <td className="py-3 px-2 text-right font-bold text-gray-900">{formatCurrency(item.amount)}</td>
+                          <td className="py-3 px-2 text-right font-bold text-black font-bold">{formatCurrency(item.amount)}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -129,10 +129,10 @@ export default function ViewSalesModal({ saleId, onClose }: Props) {
             <div className="w-full md:w-[320px] shrink-0">
               <div className="bg-white rounded shadow-sm border border-gray-200 overflow-hidden">
                 <div className="bg-[#F8FAFC] px-4 py-2 border-b border-gray-200">
-                  <h3 className="font-bold text-[14px] text-gray-800">SUMMARY</h3>
+                  <h3 className="font-bold text-[14px] text-black font-bold">SUMMARY</h3>
                 </div>
                 <div className="p-4 space-y-3 text-[14px]">
-                  <div className="flex justify-between items-center text-gray-600">
+                  <div className="flex justify-between items-center text-black font-bold">
                     <span>Subtotal</span>
                     <span className="font-bold">{formatCurrency(sale.subtotal)}</span>
                   </div>
@@ -140,12 +140,12 @@ export default function ViewSalesModal({ saleId, onClose }: Props) {
                     <span>Discount</span>
                     <span className="font-bold">- {formatCurrency(sale.discount)}</span>
                   </div>
-                  {/* <div className="flex justify-between items-center text-gray-600">
+                  {/* <div className="flex justify-between items-center text-black font-bold">
                     <span>Tax</span>
                     <span className="font-bold">{formatCurrency(sale.tax || 0)}</span>
                   </div> */}
                   <div className="flex justify-between items-center pt-2">
-                    <span className="text-[16px] font-black text-gray-900">GRAND TOTAL</span>
+                    <span className="text-[16px] font-black text-black font-bold">GRAND TOTAL</span>
                     <span className="text-[20px] font-black text-[#2563EB]">{formatCurrency(sale.grandTotal)}</span>
                   </div>
                 </div>

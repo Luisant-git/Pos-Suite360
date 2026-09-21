@@ -21,7 +21,7 @@ const PaginationControls: React.FC<PaginationControlsProps> = ({
 
   return (
     <div className="mt-auto flex flex-col sm:flex-row justify-between items-center bg-white px-4 py-3 border-t border-[#E5E7EB] shrink-0 text-[13px]">
-      <div className="text-[#4B5563] mb-3 sm:mb-0">
+      <div className="text-black font-bold mb-3 sm:mb-0">
         Showing <span className="font-bold">{startEntry}</span> to <span className="font-bold">{endEntry}</span> of <span className="font-bold">{totalEntries}</span> entries
       </div>
       <div className="flex items-center gap-1">
@@ -29,7 +29,7 @@ const PaginationControls: React.FC<PaginationControlsProps> = ({
           type="button"
           onClick={() => onPageChange(currentPage - 1)}
           disabled={currentPage === 1}
-          className="flex items-center justify-center px-3 py-1.5 border border-[#D1D5DB] rounded hover:bg-gray-50 text-[#374151] disabled:opacity-50 disabled:cursor-not-allowed font-medium transition-colors"
+          className="flex items-center justify-center px-3 py-1.5 border border-[#D1D5DB] rounded hover:bg-gray-50 text-black font-bold disabled:opacity-50 disabled:cursor-not-allowed font-bold transition-colors"
         >
           <ChevronLeft size={16} /> Previous
         </button>
@@ -46,14 +46,14 @@ const PaginationControls: React.FC<PaginationControlsProps> = ({
                   className={`w-8 h-8 flex items-center justify-center border-y border-r border-[#D1D5DB] first:border-l first:rounded-l last:rounded-r font-bold transition-colors ${
                     page === currentPage
                       ? 'bg-[#3B82F6] text-white border-[#3B82F6]'
-                      : 'bg-white text-[#374151] hover:bg-gray-50'
+                      : 'bg-white text-black font-bold hover:bg-gray-50'
                   }`}
                 >
                   {page}
                 </button>
               );
             } else if (page === currentPage - 2 || page === currentPage + 2) {
-              return <span key={page} className="px-2 text-gray-500">...</span>;
+              return <span key={page} className="px-2 text-black font-bold">...</span>;
             }
             return null;
           })}
@@ -63,7 +63,7 @@ const PaginationControls: React.FC<PaginationControlsProps> = ({
           type="button"
           onClick={() => onPageChange(currentPage + 1)}
           disabled={currentPage >= totalPages || totalPages === 0}
-          className="flex items-center justify-center px-3 py-1.5 border border-[#D1D5DB] rounded hover:bg-gray-50 text-[#374151] disabled:opacity-50 disabled:cursor-not-allowed font-medium transition-colors sm:ml-1"
+          className="flex items-center justify-center px-3 py-1.5 border border-[#D1D5DB] rounded hover:bg-gray-50 text-black font-bold disabled:opacity-50 disabled:cursor-not-allowed font-bold transition-colors sm:ml-1"
         >
           Next <ChevronRight size={16} />
         </button>

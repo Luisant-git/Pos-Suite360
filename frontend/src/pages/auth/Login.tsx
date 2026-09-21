@@ -45,8 +45,8 @@ const Login = () => {  const [isLoading, setIsLoading] = useState(false);
       
       <div className="py-5 px-6 bg-white">
         <div className="text-center mb-4">
-          <h2 className="text-lg font-bold text-gray-800">Welcome Back</h2>
-          <p className="text-[12px] font-medium text-gray-500 mt-1">Sign in to manage your workspace</p>
+          <h2 className="text-lg font-bold text-black font-bold">Welcome Back</h2>
+          <p className="text-[12px] font-bold text-black font-bold mt-1">Sign in to manage your workspace</p>
         </div>
 
         {error && (
@@ -57,16 +57,16 @@ const Login = () => {  const [isLoading, setIsLoading] = useState(false);
         )}
         <form onSubmit={handleLogin} className="space-y-3">
           <div>
-            <label className="block text-xs font-semibold text-gray-500 mb-1.5 uppercase tracking-wider">Username</label>
+            <label className="block text-xs font-bold text-black font-bold mb-1.5 uppercase tracking-wider">Username</label>
             <div className="relative group">
-              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400 group-focus-within:text-blue-500 transition-colors">
+              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-black font-bold group-focus-within:text-blue-500 transition-colors">
                 <User size={18} />
               </div>
               <input
                 type="text"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                className="block w-full pl-10 pr-3 py-2 border border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all bg-gray-50 focus:bg-white text-[13px] font-semibold outline-none text-gray-800"
+                className="block w-full pl-10 pr-3 py-2 border border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all bg-gray-50 focus:bg-white text-[13px] font-bold outline-none text-black font-bold"
                 placeholder="Enter your username"
                 required
               />
@@ -74,16 +74,16 @@ const Login = () => {  const [isLoading, setIsLoading] = useState(false);
           </div>
           
           <div>
-            <label className="block text-xs font-semibold text-gray-500 mb-1.5 uppercase tracking-wider">Password</label>
+            <label className="block text-xs font-bold text-black font-bold mb-1.5 uppercase tracking-wider">Password</label>
             <div className="relative group">
-              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400 group-focus-within:text-blue-500 transition-colors">
+              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-black font-bold group-focus-within:text-blue-500 transition-colors">
                 <Lock size={18} />
               </div>
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="block w-full pl-10 pr-3 py-2 border border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all bg-gray-50 focus:bg-white text-[13px] font-semibold outline-none text-gray-800"
+                className="block w-full pl-10 pr-3 py-2 border border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all bg-gray-50 focus:bg-white text-[13px] font-bold outline-none text-black font-bold"
                 placeholder="Enter your password"
                 required
               />
@@ -101,8 +101,8 @@ const Login = () => {  const [isLoading, setIsLoading] = useState(false);
         </form>
         
         <div className="mt-6 text-center">
-          <p className="text-[10px] font-medium text-gray-400 uppercase tracking-widest">
-            Powered by <span className="font-semibold text-gray-500">Luisant Software Solutions</span>
+          <p className="text-[10px] font-bold text-black font-bold uppercase tracking-widest">
+            Powered by <span className="font-bold text-black font-bold">Luisant Software Solutions</span>
           </p>
         </div>
       </div>

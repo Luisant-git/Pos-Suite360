@@ -217,7 +217,7 @@ const MenuPermissions = () => {
             <Shield className="text-[#3B82F6]" size={16} /> 
             Menu Permissions
           </h1>
-          <p className="text-slate-400 text-xs">Control module access</p>
+          <p className="text-black font-bold text-xs">Control module access</p>
         </div>
         <div className="flex gap-2 items-center">
           <Link
@@ -226,7 +226,7 @@ const MenuPermissions = () => {
           >
             <Users size={14} /> Users & Roles
           </Link>
-          <button onClick={deselectAll} className="text-[#94A3B8] hover:text-white px-3 py-1.5 rounded font-bold text-xs transition-colors border border-[#334155] hover:bg-[#1E293B]">
+          <button onClick={deselectAll} className="text-black font-bold hover:text-white px-3 py-1.5 rounded font-bold text-xs transition-colors border border-[#334155] hover:bg-[#1E293B]">
             Uncheck All
           </button>
           <button onClick={selectAll} className="text-[#3B82F6] hover:text-white px-3 py-1.5 rounded font-bold text-xs transition-colors border border-[#3B82F6] hover:bg-[#3B82F6]">
@@ -252,11 +252,11 @@ const MenuPermissions = () => {
                 <Users size={24} />
               </div>
               <div className="flex-1 w-full max-w-md">
-                <label className="text-sm font-bold text-gray-500 block mb-1">Select Role to Modify</label>
+                <label className="text-sm font-bold text-black font-bold block mb-1">Select Role to Modify</label>
                 <select 
                   value={selectedRoleId || ''}
                   onChange={(e) => handleRoleChange(Number(e.target.value))}
-                  className="w-full border-0 bg-gray-50 px-4 py-2.5 rounded-lg font-bold text-gray-800 outline-none ring-1 ring-gray-200 focus:ring-2 focus:ring-blue-500 transition-all"
+                  className="w-full border-0 bg-gray-50 px-4 py-2.5 rounded-lg font-bold text-black font-bold outline-none ring-1 ring-gray-200 focus:ring-2 focus:ring-blue-500 transition-all"
                 >
                   {roles.map(r => (
                     <option key={r.id} value={r.id}>{r.name.toUpperCase()}</option>
@@ -273,11 +273,11 @@ const MenuPermissions = () => {
                     value={newRoleName}
                     onChange={(e) => setNewRoleName(e.target.value)}
                     placeholder="Role Name..."
-                    className="border-0 bg-gray-50 px-3 py-2 rounded-lg text-sm font-medium outline-none ring-1 ring-gray-200 focus:ring-2 focus:ring-blue-500 w-full md:w-40"
+                    className="border-0 bg-gray-50 px-3 py-2 rounded-lg text-sm font-bold outline-none ring-1 ring-gray-200 focus:ring-2 focus:ring-blue-500 w-full md:w-40"
                     autoFocus
                   />
                   <button onClick={handleCreateRole} className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg text-sm font-bold">Save</button>
-                  <button onClick={() => setIsCreatingRole(false)} className="bg-gray-200 hover:bg-gray-300 text-gray-700 px-3 py-2 rounded-lg text-sm font-bold">Cancel</button>
+                  <button onClick={() => setIsCreatingRole(false)} className="bg-gray-200 hover:bg-gray-300 text-black font-bold px-3 py-2 rounded-lg text-sm font-bold">Cancel</button>
                 </div>
               ) : (
                 <>
@@ -308,7 +308,7 @@ const MenuPermissions = () => {
               return (
                 <div key={module.id} className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden flex flex-col hover:border-blue-300 transition-colors">
                   <div className={`px-5 py-3 border-b flex items-center justify-between ${isAllChecked ? 'bg-blue-50 border-blue-100' : 'bg-slate-50 border-gray-200'}`}>
-                    <h3 className={`font-bold flex items-center gap-2 ${isAllChecked ? 'text-blue-700' : 'text-gray-700'}`}>
+                    <h3 className={`font-bold flex items-center gap-2 ${isAllChecked ? 'text-blue-700' : 'text-black font-bold'}`}>
                       {module.icon} {module.name}
                     </h3>
                     <label className="relative inline-flex items-center cursor-pointer">
@@ -340,7 +340,7 @@ const MenuPermissions = () => {
                           <div className={`w-5 h-5 rounded border flex items-center justify-center transition-colors ${isChecked ? 'bg-blue-600 border-blue-600' : 'bg-white border-gray-300'}`}>
                             {isChecked && <Check size={14} className="text-white" />}
                           </div>
-                          <span className={`text-sm font-medium ${isChecked ? 'text-gray-900' : 'text-gray-600'}`}>
+                          <span className={`text-sm font-bold ${isChecked ? 'text-black font-bold' : 'text-black font-bold'}`}>
                             {perm.name}
                           </span>
                         </label>
@@ -366,10 +366,10 @@ const MenuPermissions = () => {
               </h2>
             </div>
             <div className="p-6">
-              <p className="text-gray-700 text-sm mb-4 font-medium">
+              <p className="text-black font-bold text-sm mb-4 font-bold">
                 Are you sure you want to delete this role? This action cannot be undone and may affect users assigned to this role.
               </p>
-              <label className="block text-sm font-bold text-gray-700 mb-2">
+              <label className="block text-sm font-bold text-black font-bold mb-2">
                 Type <span className="text-red-600 font-mono bg-red-50 px-1 rounded border border-red-100">DELETE</span> to confirm
               </label>
               <input
@@ -382,7 +382,7 @@ const MenuPermissions = () => {
               <div className="mt-8 flex justify-end gap-3">
                 <button
                   onClick={() => setIsDeleteModalOpen(false)}
-                  className="px-5 py-2.5 text-gray-600 hover:bg-gray-100 rounded-xl font-bold transition-colors"
+                  className="px-5 py-2.5 text-black font-bold hover:bg-gray-100 rounded-xl font-bold transition-colors"
                 >
                   Cancel
                 </button>

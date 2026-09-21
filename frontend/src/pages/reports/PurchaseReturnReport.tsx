@@ -132,7 +132,7 @@ const PurchaseReturnReport = () => {
           <div className="bg-white p-3 border-b border-[#E6E9ED] grid grid-cols-1 md:grid-cols-4 gap-3">
             <div className="relative col-span-1 md:col-span-2">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Search size={14} className="text-[#9CA3AF]" />
+                <Search size={14} className="text-black font-bold" />
               </div>
               <input
                 type="text"
@@ -167,7 +167,7 @@ const PurchaseReturnReport = () => {
                   setFilterFromDate('');
                   setFilterToDate('');
                 }}
-                className={`px-3 py-2 rounded flex items-center justify-center transition-colors border shadow-sm text-[12px] font-bold ${!isReset ? 'bg-white text-red-600 border-red-200 hover:bg-red-50' : 'bg-white text-gray-700 border-[#E5E7EB] hover:bg-gray-50'}`}
+                className={`px-3 py-2 rounded flex items-center justify-center transition-colors border shadow-sm text-[12px] font-bold ${!isReset ? 'bg-white text-red-600 border-red-200 hover:bg-red-50' : 'bg-white text-black font-bold border-[#E5E7EB] hover:bg-gray-50'}`}
                 title="Reset Filters"
               >
                 <RefreshCw size={14} className="mr-1" /> Reset
@@ -194,8 +194,8 @@ const PurchaseReturnReport = () => {
           <div id="purchase-return-export" className="flex-1 flex flex-col min-h-0 overflow-hidden">
             <div className="pdf-header hidden mb-4">
               <div className="flex justify-between items-end">
-                <h2 className="text-base font-bold text-[#1E293B] uppercase tracking-wider">Purchase Return Report</h2>
-                <p className="text-[#475569] font-bold text-xs">Date: {filterFromDate || 'All Time'} to {filterToDate || 'All Time'}</p>
+                <h2 className="text-base font-bold text-black font-bold uppercase tracking-wider">Purchase Return Report</h2>
+                <p className="text-black font-bold text-xs">Date: {filterFromDate || 'All Time'} to {filterToDate || 'All Time'}</p>
               </div>
             </div>
             <div className="overflow-x-auto custom-scrollbar flex-1" id="purchase-return-table">
@@ -214,21 +214,21 @@ const PurchaseReturnReport = () => {
               <tbody>
                 {isLoading ? (
                   <tr>
-                    <td colSpan={7} className="px-4 py-8 text-center text-[#6B7280] font-medium">Loading report data...</td>
+                    <td colSpan={7} className="px-4 py-8 text-center text-black font-bold">Loading report data...</td>
                   </tr>
                 ) : filteredReturns.length === 0 ? (
                   <tr>
-                    <td colSpan={7} className="px-4 py-8 text-center text-[#6B7280] font-medium">No purchase returns found matching your filters.</td>
+                    <td colSpan={7} className="px-4 py-8 text-center text-black font-bold">No purchase returns found matching your filters.</td>
                   </tr>
                 ) : (
                   paginatedReturns.map((ret: any, index: number) => (
                     <tr key={ret.id} className={`border-b border-[#F3F4F6] ${index % 2 === 0 ? 'bg-white' : 'bg-[#FAFAFA]'}`}>
-                      <td className="px-4 py-3 border-r border-[#F3F4F6] text-center text-[#64748B] font-medium">{(currentPage - 1) * entriesPerPage + index + 1}</td>
+                      <td className="px-4 py-3 border-r border-[#F3F4F6] text-center text-black font-bold">{(currentPage - 1) * entriesPerPage + index + 1}</td>
                       <td className="px-4 py-3 border-r border-[#F3F4F6] font-bold text-[#F59E0B]">{ret.returnNo}</td>
-                      <td className="px-4 py-3 border-r border-[#F3F4F6] font-medium text-[#374151]">
+                      <td className="px-4 py-3 border-r border-[#F3F4F6] font-bold text-black font-bold">
                         {new Date(ret.date).toISOString().split('T')[0]}
                       </td>
-                      <td className="px-4 py-3 border-r border-[#F3F4F6] font-bold text-[#1F2937]">
+                      <td className="px-4 py-3 border-r border-[#F3F4F6] font-bold text-black font-bold">
                         {ret.supplier?.name || 'Unknown Supplier'}
                       </td>
                       <td className="px-4 py-3 border-r border-[#F3F4F6]">
@@ -236,16 +236,16 @@ const PurchaseReturnReport = () => {
                           {ret.items?.map((item: any) => (
                             <div key={item.id} className="bg-white border border-[#FDE68A] text-[#92400E] px-2 py-1 rounded flex items-center gap-1 text-[11px] font-bold shadow-sm">
                               <Package size={12} className="text-[#F59E0B]" />
-                              {item.product?.name} <span className="font-normal text-[#4B5563]">(Qty: {item.returnQty})</span>
+                              {item.product?.name} <span className="font-normal text-black font-bold">(Qty: {item.returnQty})</span>
                             </div>
                           ))}
-                          {(!ret.items || ret.items.length === 0) && <span className="text-[#9CA3AF] text-[11px]">No items</span>}
+                          {(!ret.items || ret.items.length === 0) && <span className="text-black font-bold text-[11px]">No items</span>}
                         </div>
                       </td>
-                      <td className="px-4 py-3 border-r border-[#F3F4F6] text-[#4B5563]">
+                      <td className="px-4 py-3 border-r border-[#F3F4F6] text-black font-bold">
                         {ret.remarks || '-'}
                       </td>
-                      <td className="px-4 py-3 text-right font-bold text-[#111827]">
+                      <td className="px-4 py-3 text-right font-bold text-black font-bold">
                         {formatCurrency(ret.totalAmount)}
                       </td>
                     </tr>
@@ -255,7 +255,7 @@ const PurchaseReturnReport = () => {
             </table>
           </div>
           <div className="pdf-footer hidden mt-6 text-right border-t-2 border-[#1E293B] pt-4 pb-8 pr-6">
-            <h3 className="text-xl font-bold text-[#1E293B] inline-block">Total Claim Amount: {formatCurrency(totalReturnsAmount)}</h3>
+            <h3 className="text-xl font-bold text-black font-bold inline-block">Total Claim Amount: {formatCurrency(totalReturnsAmount)}</h3>
           </div>
           </div>
           {!isLoading && (

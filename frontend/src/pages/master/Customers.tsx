@@ -124,7 +124,7 @@ const Customers = () => {
         <form onSubmit={handleSubmit(onSubmit as any)} className="p-4 flex flex-col gap-3">
           
           <div>
-            <label className="block text-[12px] font-bold text-[#1F2937] mb-1">Customer Name *</label>
+            <label className="block text-[12px] font-bold text-black font-bold mb-1">Customer Name *</label>
             <input 
               {...register('name')}
               type="text" 
@@ -136,7 +136,7 @@ const Customers = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <div>
-              <label className="block text-[12px] text-[#1F2937] mb-1">Contact Person</label>
+              <label className="block text-[12px] text-black font-bold mb-1">Contact Person</label>
               <input 
                 {...register('contactPerson')}
                 type="text" 
@@ -144,7 +144,7 @@ const Customers = () => {
               />
             </div>
             <div>
-              <label className="block text-[12px] font-bold text-[#1F2937] mb-1">Mobile Number *</label>
+              <label className="block text-[12px] font-bold text-black font-bold mb-1">Mobile Number *</label>
               <input 
                 {...register('phone')}
                 type="text" 
@@ -155,7 +155,7 @@ const Customers = () => {
           </div>
 
           <div>
-            <label className="block text-[12px] text-[#1F2937] mb-1">Email Address</label>
+            <label className="block text-[12px] text-black font-bold mb-1">Email Address</label>
             <input 
               {...register('email')}
               type="email" 
@@ -165,7 +165,7 @@ const Customers = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <div>
-              <label className="block text-[12px] text-[#1F2937] mb-1">Billing Address</label>
+              <label className="block text-[12px] text-black font-bold mb-1">Billing Address</label>
               <textarea 
                 {...register('address')}
                 rows={3}
@@ -173,7 +173,7 @@ const Customers = () => {
               ></textarea>
             </div>
             <div>
-              <label className="block text-[12px] text-[#1F2937] mb-1">Shipping Address</label>
+              <label className="block text-[12px] text-black font-bold mb-1">Shipping Address</label>
               <textarea 
                 {...register('shippingAddress')}
                 rows={3}
@@ -185,7 +185,7 @@ const Customers = () => {
           <div className="bg-[#F9FAFB] border border-[#E5E7EB] p-3 rounded-md">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
               <div>
-                <label className="block text-[12px] text-[#1F2937] mb-1">Opening Bal</label>
+                <label className="block text-[12px] text-black font-bold mb-1">Opening Bal</label>
                 <input 
                   {...register('openingBalance')}
                   type="number" step="any" 
@@ -194,7 +194,7 @@ const Customers = () => {
                 />
               </div>
               <div>
-                <label className="block text-[12px] text-[#1F2937] mb-1">Balance Type</label>
+                <label className="block text-[12px] text-black font-bold mb-1">Balance Type</label>
                 <select 
                   {...register('openingBalanceType')}
                   className="w-full px-3 py-1.5 border border-[#ccc] rounded shadow-inner focus:border-[#3B82F6] outline-none text-[13px] bg-white"
@@ -206,7 +206,7 @@ const Customers = () => {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               <div>
-                <label className="block text-[12px] text-[#1F2937] mb-1">Credit Limit</label>
+                <label className="block text-[12px] text-black font-bold mb-1">Credit Limit</label>
                 <input 
                   {...register('creditLimit')}
                   type="number" step="any" 
@@ -215,7 +215,7 @@ const Customers = () => {
                 />
               </div>
               <div>
-                <label className="block text-[12px] text-[#1F2937] mb-1">Credit Days</label>
+                <label className="block text-[12px] text-black font-bold mb-1">Credit Days</label>
                 <input 
                   {...register('creditDays')}
                   type="number" step="any" 
@@ -323,11 +323,11 @@ const Customers = () => {
               ) : (
                 filteredCustomers.map((customer: any, index: number) => (
                   <tr key={customer.id} className={`border-b border-[#E5E7EB] ${index % 2 === 0 ? 'bg-white' : 'bg-[#F9F9F9]'} hover:bg-blue-50`}>
-                    <td data-label="#" className="px-3 py-3 border-r border-[#E5E7EB] text-center font-bold text-gray-700">{index + 1}</td>
+                    <td data-label="#" className="px-3 py-3 border-r border-[#E5E7EB] text-center font-bold text-black font-bold">{index + 1}</td>
                     <td data-label="Customer Name" className="px-3 py-3 border-r border-[#E5E7EB] font-bold text-[#3B82F6]">{customer.name}</td>
-                    <td data-label="Mobile" className="px-3 py-3 border-r border-[#E5E7EB] text-center font-medium text-gray-700">{customer.phone || '-'}</td>
-                    <td data-label="Billing Address" className="px-3 py-3 border-r border-[#E5E7EB] text-gray-600 truncate max-w-[200px]">{customer.address || '-'}</td>
-                    <td data-label="Opening Bal" className="px-3 py-3 border-r border-[#E5E7EB] text-right font-bold text-gray-800">
+                    <td data-label="Mobile" className="px-3 py-3 border-r border-[#E5E7EB] text-center font-bold text-black font-bold">{customer.phone || '-'}</td>
+                    <td data-label="Billing Address" className="px-3 py-3 border-r border-[#E5E7EB] text-black font-bold truncate max-w-[200px]">{customer.address || '-'}</td>
+                    <td data-label="Opening Bal" className="px-3 py-3 border-r border-[#E5E7EB] text-right font-bold text-black font-bold">
                       RM {Number(customer.openingBalance).toFixed(2)} ({customer.openingBalanceType})
                     </td>
                     <td data-label="Actions" className="px-3 py-3 text-center">

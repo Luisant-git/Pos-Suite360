@@ -345,7 +345,7 @@ const PurchaseEntry = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:flex lg:flex-row gap-3 sm:gap-4">
             
             <div className="w-full lg:flex-1 lg:max-w-[200px]">
-              <label className="block text-[11px] font-bold text-[#1F2937] mb-1">Entry No *</label>
+              <label className="block text-[11px] font-bold text-black font-bold mb-1">Entry No *</label>
               <input
                 {...register('entryNo')}
                 type="text"
@@ -355,7 +355,7 @@ const PurchaseEntry = () => {
             </div>
             
             <div className="w-full lg:flex-1 lg:max-w-[250px]">
-              <label className="block text-[11px] font-bold text-[#1F2937] mb-1">Supplier Invoice number *</label>
+              <label className="block text-[11px] font-bold text-black font-bold mb-1">Supplier Invoice number *</label>
               <input
                 {...register('invoiceNo')}
                 type="text"
@@ -365,7 +365,7 @@ const PurchaseEntry = () => {
             </div>
 
             <div className="w-full lg:flex-[2]">
-              <label className="block text-[11px] font-bold text-[#1F2937] mb-1">Supplier Name (Searchable Dropdown) *</label>
+              <label className="block text-[11px] font-bold text-black font-bold mb-1">Supplier Name (Searchable Dropdown) *</label>
               <div className="flex flex-col gap-1">
                 <div className="flex-1 w-full">
                 <SearchableSelect
@@ -381,7 +381,7 @@ const PurchaseEntry = () => {
                   <button type="button" onClick={() => setIsSupplierModalOpen(true)} className="bg-[#059669] hover:bg-[#047857] text-white px-2 py-1 rounded transition-colors flex items-center gap-1 text-[11px] font-bold">
                     <Plus size={12} /> Add Supplier
                   </button>
-                  <span className="text-[11px] text-[#6B7280] text-right flex-1 ml-2">
+                  <span className="text-[11px] text-black font-bold text-right flex-1 ml-2">
                     {selectedSupplier ? `${selectedSupplier.address || 'Standard Vendor'}` : 'Standard Vendor'}
                   </span>
                 </div>
@@ -389,7 +389,7 @@ const PurchaseEntry = () => {
             </div>
 
             <div className="w-full lg:flex-1 lg:max-w-[200px]">
-              <label className="block text-[11px] font-bold text-[#1F2937] mb-1">Invoice date</label>
+              <label className="block text-[11px] font-bold text-black font-bold mb-1">Invoice date</label>
               <input
                 {...register('invoiceDate')}
                 type="date"
@@ -398,7 +398,7 @@ const PurchaseEntry = () => {
             </div>
 
             <div className="w-full lg:flex-1 lg:max-w-[200px]">
-              <label className="block text-[11px] font-bold text-[#1F2937] mb-1">Entry Date</label>
+              <label className="block text-[11px] font-bold text-black font-bold mb-1">Entry Date</label>
               <input
                 {...register('date')}
                 type="date"
@@ -407,7 +407,7 @@ const PurchaseEntry = () => {
             </div>
 
             <div className="w-full lg:flex-1 lg:max-w-[200px]">
-              <label className="block text-[11px] font-bold text-[#1F2937] mb-1">Mode</label>
+              <label className="block text-[11px] font-bold text-black font-bold mb-1">Mode</label>
               <select
                 {...register('paymentModeId')}
                 className="w-full px-2 py-1.5 border border-[#D1D5DB] rounded text-[13px] outline-none focus:border-[#3B82F6] bg-white"
@@ -457,18 +457,18 @@ const PurchaseEntry = () => {
           <table className="w-full border-collapse border border-[#E5E7EB] md:min-w-[1200px] whitespace-nowrap responsive-table">
             <thead>
               <tr className="bg-[#0F172A] text-white">
-                <th className="px-2 py-2 text-center text-[12px] font-medium border border-[#334155] w-10">#</th>
-                <th className="px-2 py-2 text-left text-[12px] font-medium border border-[#334155]">Item Code / Name (Searchable Dropdown)</th>
-                <th className="px-2 py-2 text-center text-[12px] font-medium border border-[#334155] w-20">Qty</th>
-                <th className="px-2 py-2 text-center text-[12px] font-medium border border-[#334155] w-20">Unit</th>
-                <th className="px-2 py-2 text-center text-[12px] font-medium border border-[#334155] w-24">PRate</th>
-                <th className="px-2 py-2 text-center text-[12px] font-medium border border-[#334155] w-24">WRate</th>
-                <th className="px-2 py-2 text-center text-[12px] font-medium border border-[#334155] w-24">SRate</th>
-                <th className="px-2 py-2 text-center text-[12px] font-medium border border-[#334155] w-24">MRP</th>
-                <th className="px-2 py-2 text-center text-[12px] font-medium border border-[#334155] w-20">Disc %</th>
-                <th className="px-2 py-2 text-center text-[12px] font-medium border border-[#334155] w-24">Disc Amt</th>
-                <th className="px-2 py-2 text-center text-[12px] font-medium border border-[#334155] w-28">Total</th>
-                <th className="px-2 py-2 text-center text-[12px] font-medium border border-[#334155] w-16">Act</th>
+                <th className="px-2 py-2 text-center text-[12px] font-bold border border-[#334155] w-10">#</th>
+                <th className="px-2 py-2 text-left text-[12px] font-bold border border-[#334155]">Item Code / Name (Searchable Dropdown)</th>
+                <th className="px-2 py-2 text-center text-[12px] font-bold border border-[#334155] w-20">Qty</th>
+                <th className="px-2 py-2 text-center text-[12px] font-bold border border-[#334155] w-20">Unit</th>
+                <th className="px-2 py-2 text-center text-[12px] font-bold border border-[#334155] w-24">PRate</th>
+                <th className="px-2 py-2 text-center text-[12px] font-bold border border-[#334155] w-24">WRate</th>
+                <th className="px-2 py-2 text-center text-[12px] font-bold border border-[#334155] w-24">SRate</th>
+                <th className="px-2 py-2 text-center text-[12px] font-bold border border-[#334155] w-24">MRP</th>
+                <th className="px-2 py-2 text-center text-[12px] font-bold border border-[#334155] w-20">Disc %</th>
+                <th className="px-2 py-2 text-center text-[12px] font-bold border border-[#334155] w-24">Disc Amt</th>
+                <th className="px-2 py-2 text-center text-[12px] font-bold border border-[#334155] w-28">Total</th>
+                <th className="px-2 py-2 text-center text-[12px] font-bold border border-[#334155] w-16">Act</th>
               </tr>
             </thead>
             <tbody>
@@ -593,17 +593,17 @@ const PurchaseEntry = () => {
           <div className="flex flex-col md:flex-row items-stretch md:items-center gap-4 md:gap-6">
             
             <div className="w-full md:flex-1 flex flex-col gap-1">
-              <label className="text-[14px] font-extrabold text-[#1F2937] uppercase">Total Amount:</label>
+              <label className="text-[14px] font-extrabold text-black font-bold uppercase">Total Amount:</label>
               <input
                 value={Number(watch('totalAmount') || 0).toFixed(2)}
                 readOnly
-                className="w-full px-3 py-2 border border-[#D1D5DB] bg-[#F9FAFB] rounded text-[20px] outline-none text-right font-black text-[#1F2937]"
+                className="w-full px-3 py-2 border border-[#D1D5DB] bg-[#F9FAFB] rounded text-[20px] outline-none text-right font-black text-black font-bold"
                 onChange={() => {}}
               />
             </div>
 
             <div className="w-full md:flex-1 flex flex-col gap-1">
-              <label className="text-[14px] font-extrabold text-[#1F2937] uppercase">Total Discount:</label>
+              <label className="text-[14px] font-extrabold text-black font-bold uppercase">Total Discount:</label>
               <div className="flex gap-2 w-full">
                 <div className="relative w-1/2">
                   <input
@@ -615,13 +615,13 @@ const PurchaseEntry = () => {
                       const amount = (watch('totalAmount') * percent) / 100;
                       setValue('totalDiscount', Number(amount.toFixed(2)));
                     }}
-                    className="w-full pl-2 pr-6 py-2 border border-[#D1D5DB] rounded text-[16px] outline-none focus:border-[#3B82F6] text-right font-black text-[#1F2937]"
+                    className="w-full pl-2 pr-6 py-2 border border-[#D1D5DB] rounded text-[16px] outline-none focus:border-[#3B82F6] text-right font-black text-black font-bold"
                     placeholder="0"
                   />
-                  <span className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-800 font-black text-[14px] pointer-events-none">%</span>
+                  <span className="absolute right-2 top-1/2 -translate-y-1/2 text-black font-bold font-black text-[14px] pointer-events-none">%</span>
                 </div>
                 <div className="relative w-1/2">
-                  <span className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-800 font-black text-[14px] pointer-events-none">{settings?.currencySymbol || 'RM'}</span>
+                  <span className="absolute left-2 top-1/2 -translate-y-1/2 text-black font-bold font-black text-[14px] pointer-events-none">{settings?.currencySymbol || 'RM'}</span>
                   <input
                     {...register('totalDiscount')}
                     type="number" step="0.01"
@@ -678,7 +678,7 @@ const PurchaseEntry = () => {
           </div>
           
           <div className="flex items-center gap-2 sm:gap-4 w-full md:w-auto justify-between md:justify-end border-t border-gray-200 md:border-none pt-3 md:pt-0">
-            <span className="text-[16px] sm:text-[20px] font-extrabold text-[#1F2937] uppercase tracking-wider">NET PURCHASE AMOUNT:</span>
+            <span className="text-[16px] sm:text-[20px] font-extrabold text-black font-bold uppercase tracking-wider">NET PURCHASE AMOUNT:</span>
             <span className="text-[28px] sm:text-[36px] font-black text-[#059669]">
               {formatCurrency(watch('netAmount') || 0)}
             </span>
@@ -695,13 +695,13 @@ const PurchaseEntry = () => {
               <div className="flex items-center gap-2 font-bold text-[15px]">
                 <Plus size={18} /> Quick Add New Supplier
               </div>
-              <button type="button" onClick={() => setIsSupplierModalOpen(false)} className="hover:text-gray-200">
+              <button type="button" onClick={() => setIsSupplierModalOpen(false)} className="hover:text-black hover:font-bold">
                 <X size={18} />
               </button>
             </div>
             <div className="p-4 flex flex-col gap-4">
               <div>
-                <label className="block text-[13px] font-bold text-[#1F2937] mb-1">Supplier Name *</label>
+                <label className="block text-[13px] font-bold text-black font-bold mb-1">Supplier Name *</label>
                 <input 
                   type="text" 
                   value={newSupplier.name}
@@ -710,7 +710,7 @@ const PurchaseEntry = () => {
                 />
               </div>
               <div>
-                <label className="block text-[13px] text-[#4B5563] mb-1">Mobile Number</label>
+                <label className="block text-[13px] text-black font-bold mb-1">Mobile Number</label>
                 <input 
                   type="text" 
                   value={newSupplier.phone}
@@ -719,7 +719,7 @@ const PurchaseEntry = () => {
                 />
               </div>
               <div>
-                <label className="block text-[13px] text-[#4B5563] mb-1">Address</label>
+                <label className="block text-[13px] text-black font-bold mb-1">Address</label>
                 <textarea 
                   value={newSupplier.address}
                   onChange={(e) => setNewSupplier({...newSupplier, address: e.target.value})}
@@ -759,7 +759,7 @@ const PurchaseEntry = () => {
                 <p className="font-bold text-[15px]">Net Amount: {formatCurrency(pendingSavePayload?.grandTotal || 0)}</p>
                 <p className="text-[13px] mt-1 text-blue-600">Supplier Invoice No: {pendingSavePayload?.supplierInvoiceNo}</p>
               </div>
-              <p className="text-[#334155] font-medium mb-2">How would you like to proceed?</p>
+              <p className="text-black font-bold mb-2">How would you like to proceed?</p>
             </div>
 
             <div className="px-6 pb-6 flex gap-3">
@@ -786,13 +786,13 @@ const PurchaseEntry = () => {
               </button>
             </div>
             <div className="p-5">
-              <p className="text-gray-700 font-medium mb-1 text-center">Are you sure you want to leave?</p>
-              <p className="text-gray-500 text-[13px] text-center mb-5">Any unsaved changes will be lost.</p>
+              <p className="text-black font-bold mb-1 text-center">Are you sure you want to leave?</p>
+              <p className="text-black font-bold text-[13px] text-center mb-5">Any unsaved changes will be lost.</p>
               <div className="flex gap-3">
                 <button
                   type="button"
                   onClick={() => setIsLeaveModalOpen(false)}
-                  className="flex-1 px-4 py-2 bg-gray-100 text-gray-700 font-bold rounded hover:bg-gray-200 transition-colors"
+                  className="flex-1 px-4 py-2 bg-gray-100 text-black font-bold rounded hover:bg-gray-200 transition-colors"
                 >
                   Cancel
                 </button>

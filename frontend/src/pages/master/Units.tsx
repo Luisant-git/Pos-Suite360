@@ -92,7 +92,7 @@ const Units = () => {
         
         <form onSubmit={handleSubmit(onSubmit)} className="p-5 flex flex-col gap-4">
           <div>
-            <label className="block text-[13px] font-bold text-[#1F2937] mb-1">Unit Name *</label>
+            <label className="block text-[13px] font-bold text-black font-bold mb-1">Unit Name *</label>
             <input 
               {...register('name')}
               type="text" 
@@ -103,7 +103,7 @@ const Units = () => {
           </div>
 
           <div>
-            <label className="block text-[13px] text-[#1F2937] mb-1">Short Code / Symbol</label>
+            <label className="block text-[13px] text-black font-bold mb-1">Short Code / Symbol</label>
             <input 
               {...register('shortCode')}
               type="text" 
@@ -154,7 +154,7 @@ const Units = () => {
             <div className="flex flex-row items-center gap-2 w-full md:w-auto">
               <div className="relative flex-1 md:flex-none">
                 <div className="absolute inset-y-0 left-0 pl-2 flex items-center pointer-events-none">
-                  <Search size={14} className="text-gray-400" />
+                  <Search size={14} className="text-black font-bold" />
                 </div>
                 <input 
                   type="text" 
@@ -196,7 +196,7 @@ const Units = () => {
                   <tr key={unit.id} className={`border-b border-[#E5E7EB] ${index % 2 === 0 ? 'bg-[#F9F9F9]' : 'bg-white'} hover:bg-blue-50`}>
                     <td data-label="ID" className="px-3 py-2.5 border-r border-[#E5E7EB] text-center font-bold">{unit.id}</td>
                     <td data-label="Unit Name" className="px-3 py-2.5 border-r border-[#E5E7EB] font-bold text-[#3B82F6]">{unit.name}</td>
-                    <td data-label="Short Code" className="px-3 py-2.5 border-r border-[#E5E7EB] text-center text-gray-900">
+                    <td data-label="Short Code" className="px-3 py-2.5 border-r border-[#E5E7EB] text-center text-black font-bold">
                       <span className="bg-gray-100 border border-gray-200 rounded px-2 py-1 text-[13px] font-mono tracking-wider font-black uppercase">{unit.shortCode || '-'}</span>
                     </td>
                     <td data-label="Actions" className="px-3 py-2.5 text-center">

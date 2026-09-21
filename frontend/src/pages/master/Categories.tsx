@@ -99,7 +99,7 @@ const Categories = () => {
         
         <form onSubmit={handleSubmit(onSubmit)} className="p-5 flex flex-col gap-4">
           <div>
-            <label className="block text-[13px] font-bold text-[#1F2937] mb-1">Category Name *</label>
+            <label className="block text-[13px] font-bold text-black font-bold mb-1">Category Name *</label>
             <input 
               {...register('name')}
               type="text" 
@@ -110,7 +110,7 @@ const Categories = () => {
           </div>
 
           <div>
-            <label className="block text-[13px] font-bold text-[#1F2937] mb-1">Parent Category (Under)</label>
+            <label className="block text-[13px] font-bold text-black font-bold mb-1">Parent Category (Under)</label>
             <select 
               {...register('parentId')}
               className="w-full px-3 py-2 border border-[#3B82F6] rounded shadow-inner focus:border-[#3B82F6] outline-none text-[13px] bg-[#EBF5FF]"
@@ -148,7 +148,7 @@ const Categories = () => {
       <div className={`${isFullTable ? 'lg:col-span-3' : 'lg:col-span-2'} bg-white border border-[#E6E9ED] shadow-sm rounded-sm overflow-hidden flex flex-col`}>
         <div className="bg-[#f9f9f9] border-b border-[#E6E9ED] px-4 py-3 flex flex-col md:flex-row justify-between items-start md:items-center gap-3 md:gap-0">
           <div className="flex items-center justify-between w-full md:w-auto">
-            <div className="flex items-center gap-2 text-[#1F2937]">
+            <div className="flex items-center gap-2 text-black font-bold">
             <Grid size={16} className="text-[#3B82F6]" />
             <h2 className="font-bold text-[14px]">CATEGORY LIST</h2>
           </div>
@@ -164,7 +164,7 @@ const Categories = () => {
             <div className="flex flex-row items-center gap-2 w-full md:w-auto">
               <div className="relative flex-1 md:flex-none">
                 <div className="absolute inset-y-0 left-0 pl-2 flex items-center pointer-events-none">
-                  <Search size={14} className="text-gray-400" />
+                  <Search size={14} className="text-black font-bold" />
                 </div>
                 <input 
                   type="text" 
@@ -206,7 +206,7 @@ const Categories = () => {
                   <tr key={category.id} className={`border-b border-[#E5E7EB] ${index % 2 === 0 ? 'bg-[#F9F9F9]' : 'bg-white'} hover:bg-blue-50`}>
                     <td data-label="ID" className="px-3 py-2.5 border-r border-[#E5E7EB] text-center font-bold">{category.id}</td>
                     <td data-label="Category Name" className="px-3 py-2.5 border-r border-[#E5E7EB] font-bold text-[#3B82F6]">{category.name}</td>
-                    <td data-label="Parent Category" className="px-3 py-2.5 border-r border-[#E5E7EB] text-gray-500">{category.parent ? category.parent.name : '-'}</td>
+                    <td data-label="Parent Category" className="px-3 py-2.5 border-r border-[#E5E7EB] text-black font-bold">{category.parent ? category.parent.name : '-'}</td>
                     <td data-label="Actions" className="px-3 py-2.5 text-center">
                       <div className="flex justify-center gap-2">
                         <button type="button" 

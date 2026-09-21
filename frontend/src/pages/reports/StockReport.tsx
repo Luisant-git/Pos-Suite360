@@ -62,7 +62,7 @@ const StockReport = () => {
       <div className="bg-white border border-[#E2E8F0] shadow-sm rounded-md mb-4 p-4 shrink-0">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end mb-4">
           <div>
-            <label className="flex items-center gap-1 text-[12px] text-[#64748B] mb-1 font-bold">Category</label>
+            <label className="flex items-center gap-1 text-[12px] text-black font-bold mb-1 font-bold">Category</label>
             <SearchableSelect
               options={[{ value: '', label: 'All Categories' }, ...categories.map((c: any) => ({ value: c.id, label: c.name }))]}
               value={categoryId}
@@ -71,7 +71,7 @@ const StockReport = () => {
             />
           </div>
           <div>
-            <label className="flex items-center gap-1 text-[12px] text-[#64748B] mb-1 font-bold">Brand</label>
+            <label className="flex items-center gap-1 text-[12px] text-black font-bold mb-1 font-bold">Brand</label>
             <SearchableSelect
               options={[{ value: '', label: 'All Brands' }, ...brands.map((b: any) => ({ value: b.id, label: b.name }))]}
               value={brandId}
@@ -80,24 +80,24 @@ const StockReport = () => {
             />
           </div>
           <div>
-            <label className="flex items-center gap-1 text-[12px] text-[#64748B] mb-1 font-bold">Search Product</label>
+            <label className="flex items-center gap-1 text-[12px] text-black font-bold mb-1 font-bold">Search Product</label>
             <input 
               type="text" 
               value={quickSearch}
               onChange={(e) => setQuickSearch(e.target.value)}
               placeholder="Search by name or code..."
-              className="w-full px-3 py-1.5 border border-[#CBD5E1] rounded outline-none text-[13px] text-[#334155] focus:border-[#3B82F6]"
+              className="w-full px-3 py-1.5 border border-[#CBD5E1] rounded outline-none text-[13px] text-black font-bold focus:border-[#3B82F6]"
             />
           </div>
           <div>
-            <label className="flex items-center gap-1 text-[12px] text-[#64748B] mb-1 font-bold">Show</label>
+            <label className="flex items-center gap-1 text-[12px] text-black font-bold mb-1 font-bold">Show</label>
             <select
               value={entriesPerPage}
               onChange={(e) => {
                 setEntriesPerPage(Number(e.target.value));
                 setCurrentPage(1);
               }}
-              className="w-full px-3 py-1.5 border border-[#CBD5E1] rounded outline-none text-[13px] text-[#334155] bg-white focus:border-[#3B82F6]"
+              className="w-full px-3 py-1.5 border border-[#CBD5E1] rounded outline-none text-[13px] text-black font-bold bg-white focus:border-[#3B82F6]"
             >
               <option value={10}>10 Entries</option>
               <option value={25}>25 Entries</option>
@@ -115,7 +115,7 @@ const StockReport = () => {
               setCategoryId('');
               setBrandId('');
               setQuickSearch('');
-            }} className={`flex items-center gap-1 px-3 py-1.5 rounded-md text-[12px] font-bold transition-colors shadow-sm border ${!isReset ? 'bg-white text-red-600 border-red-200 hover:bg-red-50' : 'bg-white text-gray-700 border-[#CBD5E1] hover:bg-gray-100'}`}>
+            }} className={`flex items-center gap-1 px-3 py-1.5 rounded-md text-[12px] font-bold transition-colors shadow-sm border ${!isReset ? 'bg-white text-red-600 border-red-200 hover:bg-red-50' : 'bg-white text-black font-bold border-[#CBD5E1] hover:bg-gray-100'}`}>
               Reset Filters
             </button>
           </div>
@@ -125,9 +125,9 @@ const StockReport = () => {
       {/* Report Table Section */}
       <div className="bg-white border border-[#E2E8F0] shadow-sm rounded-md overflow-hidden flex flex-col flex-1">
         <div className="bg-[#F8FAFC] border-b border-[#E2E8F0] px-4 py-3 flex flex-col md:flex-row justify-between items-start md:items-center gap-3 md:gap-0 shrink-0">
-          <div className="flex items-center gap-2 text-[#475569]">
+          <div className="flex items-center gap-2 text-black font-bold">
             <Box size={16} />
-            <h2 className="font-bold text-[13px] tracking-wide text-[#334155]">STOCK AS ON DATE REPORT</h2>
+            <h2 className="font-bold text-[13px] tracking-wide text-black font-bold">STOCK AS ON DATE REPORT</h2>
           </div>
           <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
             <button type="button" 
@@ -195,8 +195,8 @@ const StockReport = () => {
         <div id="stock-report-export" className="flex-1 flex flex-col min-h-0 overflow-hidden">
           <div className="pdf-header hidden mb-4">
             <div className="flex justify-between items-end">
-              <h2 className="text-base font-bold text-[#1E293B] uppercase tracking-wider">Stock Report</h2>
-              <p className="text-[#475569] font-bold text-xs">Date: {new Date().toLocaleDateString()}</p>
+              <h2 className="text-base font-bold text-black font-bold uppercase tracking-wider">Stock Report</h2>
+              <p className="text-black font-bold text-xs">Date: {new Date().toLocaleDateString()}</p>
             </div>
           </div>
           <div className="flex-1 overflow-auto overflow-x-auto" id="stock-report-table">
@@ -215,19 +215,19 @@ const StockReport = () => {
             </thead>
             <tbody>
               {isLoading ? (
-                <tr><td colSpan={8} className="text-center p-6 text-[#6B7280]">Loading report data...</td></tr>
+                <tr><td colSpan={8} className="text-center p-6 text-black font-bold">Loading report data...</td></tr>
               ) : products.length === 0 ? (
-                <tr><td colSpan={8} className="text-center p-6 text-[#6B7280]">No stock records found.</td></tr>
+                <tr><td colSpan={8} className="text-center p-6 text-black font-bold">No stock records found.</td></tr>
               ) : (
                 paginatedProducts.map((p: any, index: number) => (
                   <tr key={p.id} className={`border-b border-[#E2E8F0] ${index % 2 === 0 ? 'bg-white' : 'bg-[#F8FAFC]'} hover:bg-[#EFF6FF]`}>
-                    <td className="px-4 py-3 border-r border-[#E2E8F0] text-center text-[#64748B] font-medium">{(currentPage - 1) * entriesPerPage + index + 1}</td>
-                    <td className="px-4 py-3 border-r border-[#E2E8F0] text-[#334155]">{p.code}</td>
-                    <td className="px-4 py-3 border-r border-[#E2E8F0] font-bold text-[#1E293B]">{p.name}</td>
-                    <td className="px-4 py-3 border-r border-[#E2E8F0] text-[#475569]">{p.brandName}</td>
-                    <td className="px-4 py-3 border-r border-[#E2E8F0] text-[#475569]">{p.categoryName}</td>
-                    <td className="px-4 py-3 border-r border-[#E2E8F0] text-right font-bold text-[#334155]">{p.currentQty}</td>
-                    <td className="px-4 py-3 border-r border-[#E2E8F0] text-right text-[#475569]">{p.purRate}</td>
+                    <td className="px-4 py-3 border-r border-[#E2E8F0] text-center text-black font-bold">{(currentPage - 1) * entriesPerPage + index + 1}</td>
+                    <td className="px-4 py-3 border-r border-[#E2E8F0] text-black font-bold">{p.code}</td>
+                    <td className="px-4 py-3 border-r border-[#E2E8F0] font-bold text-black font-bold">{p.name}</td>
+                    <td className="px-4 py-3 border-r border-[#E2E8F0] text-black font-bold">{p.brandName}</td>
+                    <td className="px-4 py-3 border-r border-[#E2E8F0] text-black font-bold">{p.categoryName}</td>
+                    <td className="px-4 py-3 border-r border-[#E2E8F0] text-right font-bold text-black font-bold">{p.currentQty}</td>
+                    <td className="px-4 py-3 border-r border-[#E2E8F0] text-right text-black font-bold">{p.purRate}</td>
                     <td className="px-4 py-3 text-right font-bold text-[#3B82F6]">{p.stockValue}</td>
                   </tr>
                 ))
@@ -236,7 +236,7 @@ const StockReport = () => {
           </table>
         </div>
         <div className="pdf-footer hidden mt-6 text-right border-t-2 border-[#1E293B] pt-4 pb-8 pr-6">
-          <h3 className="text-xl font-bold text-[#1E293B] inline-block">Total Stock Value: {formatCurrency(totalStockValue)}</h3>
+          <h3 className="text-xl font-bold text-black font-bold inline-block">Total Stock Value: {formatCurrency(totalStockValue)}</h3>
         </div>
         </div>
         {!isLoading && (

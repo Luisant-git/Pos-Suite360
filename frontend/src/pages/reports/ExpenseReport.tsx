@@ -131,25 +131,25 @@ const ExpenseReport = () => {
       <div className="bg-white border border-[#E2E8F0] shadow-sm rounded-md mb-4 p-4 shrink-0">
         <div className="grid grid-cols-1 md:grid-cols-5 gap-4 items-end mb-4">
           <div>
-            <label className="flex items-center gap-1 text-[12px] text-[#64748B] mb-1 font-bold">From Date</label>
+            <label className="flex items-center gap-1 text-[12px] text-black font-bold mb-1 font-bold">From Date</label>
             <input 
               type="date" 
               value={startDate} 
               onChange={(e) => setStartDate(e.target.value)}
-              className="w-full px-3 py-1.5 border border-[#CBD5E1] rounded outline-none text-[13px] text-[#334155] bg-white focus:border-[#3B82F6]"
+              className="w-full px-3 py-1.5 border border-[#CBD5E1] rounded outline-none text-[13px] text-black font-bold bg-white focus:border-[#3B82F6]"
             />
           </div>
           <div>
-            <label className="flex items-center gap-1 text-[12px] text-[#64748B] mb-1 font-bold">To Date</label>
+            <label className="flex items-center gap-1 text-[12px] text-black font-bold mb-1 font-bold">To Date</label>
             <input 
               type="date" 
               value={endDate} 
               onChange={(e) => setEndDate(e.target.value)}
-              className="w-full px-3 py-1.5 border border-[#CBD5E1] rounded outline-none text-[13px] text-[#334155] bg-white focus:border-[#3B82F6]"
+              className="w-full px-3 py-1.5 border border-[#CBD5E1] rounded outline-none text-[13px] text-black font-bold bg-white focus:border-[#3B82F6]"
             />
           </div>
           <div>
-            <label className="flex items-center gap-1 text-[12px] text-[#64748B] mb-1 font-bold">Expense Category</label>
+            <label className="flex items-center gap-1 text-[12px] text-black font-bold mb-1 font-bold">Expense Category</label>
             <SearchableSelect
               options={[{ value: '', label: 'All Categories' }, ...categories.map((c: any) => ({ value: c.id, label: c.name }))]}
               value={categoryId}
@@ -158,24 +158,24 @@ const ExpenseReport = () => {
             />
           </div>
           <div>
-            <label className="flex items-center gap-1 text-[12px] text-[#64748B] mb-1 font-bold">Search Notes / Description</label>
+            <label className="flex items-center gap-1 text-[12px] text-black font-bold mb-1 font-bold">Search Notes / Description</label>
             <input 
               type="text" 
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search notes..."
-              className="w-full px-3 py-1.5 border border-[#CBD5E1] rounded outline-none text-[13px] text-[#334155] focus:border-[#3B82F6]"
+              className="w-full px-3 py-1.5 border border-[#CBD5E1] rounded outline-none text-[13px] text-black font-bold focus:border-[#3B82F6]"
             />
           </div>
           <div>
-            <label className="flex items-center gap-1 text-[12px] text-[#64748B] mb-1 font-bold">Entries Per Page</label>
+            <label className="flex items-center gap-1 text-[12px] text-black font-bold mb-1 font-bold">Entries Per Page</label>
             <select
               value={entriesPerPage}
               onChange={(e) => {
                 setEntriesPerPage(Number(e.target.value));
                 setCurrentPage(1);
               }}
-              className="w-full px-3 py-1.5 border border-[#CBD5E1] rounded outline-none text-[13px] text-[#334155] bg-white focus:border-[#3B82F6]"
+              className="w-full px-3 py-1.5 border border-[#CBD5E1] rounded outline-none text-[13px] text-black font-bold bg-white focus:border-[#3B82F6]"
             >
               <option value={10}>10 Entries</option>
               <option value={25}>25 Entries</option>
@@ -190,22 +190,22 @@ const ExpenseReport = () => {
             <button type="button" onClick={() => refetch()} className="bg-[#0F172A] hover:bg-[#1E293B] text-white px-4 py-1.5 rounded-md flex items-center gap-2 text-[13px] font-bold transition-colors">
               <Filter size={14} /> Apply Filter
             </button>
-            <button type="button" onClick={() => setQuickDate('today')} className="bg-gray-100 hover:bg-gray-200 text-gray-700 text-[12px] font-bold px-3 py-1.5 rounded transition-colors">
+            <button type="button" onClick={() => setQuickDate('today')} className="bg-gray-100 hover:bg-gray-200 text-black font-bold text-[12px] font-bold px-3 py-1.5 rounded transition-colors">
               Today
             </button>
-            <button type="button" onClick={() => setQuickDate('thisMonth')} className="bg-gray-100 hover:bg-gray-200 text-gray-700 text-[12px] font-bold px-3 py-1.5 rounded transition-colors">
+            <button type="button" onClick={() => setQuickDate('thisMonth')} className="bg-gray-100 hover:bg-gray-200 text-black font-bold text-[12px] font-bold px-3 py-1.5 rounded transition-colors">
               This Month
             </button>
             <button type="button" onClick={() => {
               setEndDate('');
               setCategoryId('');
               setSearchQuery('');
-            }} className={`flex items-center gap-1 px-3 py-1.5 rounded-md text-[12px] font-bold transition-colors shadow-sm border ${!isReset ? 'bg-white text-red-600 border-red-200 hover:bg-red-50' : 'bg-white text-gray-700 border-[#CBD5E1] hover:bg-gray-100'}`}>
+            }} className={`flex items-center gap-1 px-3 py-1.5 rounded-md text-[12px] font-bold transition-colors shadow-sm border ${!isReset ? 'bg-white text-red-600 border-red-200 hover:bg-red-50' : 'bg-white text-black font-bold border-[#CBD5E1] hover:bg-gray-100'}`}>
               <RefreshCw size={12} /> Reset Filters
             </button>
           </div>
           
-          <div className="flex items-center gap-4 text-xs font-bold text-[#334155]">
+          <div className="flex items-center gap-4 text-xs font-bold text-black font-bold">
             <span>Total Entries: <strong className="text-[#0F172A]">{totalEntries}</strong></span>
             <span>Total Expense: <strong className="text-[#EF4444]">{formatCurrency(totalExpenseAmount)}</strong></span>
           </div>
@@ -215,9 +215,9 @@ const ExpenseReport = () => {
       {/* Report Table Section */}
       <div className="bg-white border border-[#E2E8F0] shadow-sm rounded-md overflow-hidden flex flex-col flex-1">
         <div className="bg-[#F8FAFC] border-b border-[#E2E8F0] px-4 py-3 flex flex-col md:flex-row justify-between items-start md:items-center gap-3 md:gap-0 shrink-0">
-          <div className="flex items-center gap-2 text-[#475569]">
+          <div className="flex items-center gap-2 text-black font-bold">
             <FileText size={16} />
-            <h2 className="font-bold text-[13px] tracking-wide text-[#334155]">EXPENSE TRANSACTIONS REPORT</h2>
+            <h2 className="font-bold text-[13px] tracking-wide text-black font-bold">EXPENSE TRANSACTIONS REPORT</h2>
           </div>
           <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
             <button type="button" 
@@ -240,11 +240,11 @@ const ExpenseReport = () => {
             <div className="flex justify-between items-end">
               <div>
                 <h1 className="text-xl font-bold uppercase">{settings?.shopName || 'MY SHOP'}</h1>
-                <h2 className="text-sm font-bold text-[#1E293B] uppercase tracking-wider">EXPENSE REPORT BY DATE</h2>
+                <h2 className="text-sm font-bold text-black font-bold uppercase tracking-wider">EXPENSE REPORT BY DATE</h2>
               </div>
               <div className="text-right">
-                <p className="text-[#475569] font-bold text-xs">Date Range: {startDate || 'All'} to {endDate || 'All'}</p>
-                <p className="text-[#475569] text-xs">Generated: {new Date().toLocaleDateString()}</p>
+                <p className="text-black font-bold text-xs">Date Range: {startDate || 'All'} to {endDate || 'All'}</p>
+                <p className="text-black font-bold text-xs">Generated: {new Date().toLocaleDateString()}</p>
               </div>
             </div>
           </div>
@@ -263,17 +263,17 @@ const ExpenseReport = () => {
               </thead>
               <tbody>
                 {isLoading ? (
-                  <tr><td colSpan={6} className="text-center p-6 text-[#6B7280]">Loading report data...</td></tr>
+                  <tr><td colSpan={6} className="text-center p-6 text-black font-bold">Loading report data...</td></tr>
                 ) : expenses.length === 0 ? (
-                  <tr><td colSpan={6} className="text-center p-6 text-[#6B7280]">No expense records found for selected criteria.</td></tr>
+                  <tr><td colSpan={6} className="text-center p-6 text-black font-bold">No expense records found for selected criteria.</td></tr>
                 ) : (
                   paginatedExpenses.map((e: any, index: number) => (
                     <tr key={e.id} className={`border-b border-[#E2E8F0] ${index % 2 === 0 ? 'bg-white' : 'bg-[#F8FAFC]'} hover:bg-[#EFF6FF]`}>
-                      <td className="px-4 py-3 border-r border-[#E2E8F0] text-center text-[#64748B] font-medium">{(currentPage - 1) * entriesPerPage + index + 1}</td>
-                      <td className="px-4 py-3 border-r border-[#E2E8F0] text-[#334155] font-semibold">{new Date(e.date).toLocaleDateString()}</td>
-                      <td className="px-4 py-3 border-r border-[#E2E8F0] font-bold text-[#1E293B]">{e.category?.name || '-'}</td>
-                      <td className="px-4 py-3 border-r border-[#E2E8F0] text-[#475569]">{e.paymentMode?.name || '-'}</td>
-                      <td className="px-4 py-3 border-r border-[#E2E8F0] text-[#475569]">{e.notes || '-'}</td>
+                      <td className="px-4 py-3 border-r border-[#E2E8F0] text-center text-black font-bold">{(currentPage - 1) * entriesPerPage + index + 1}</td>
+                      <td className="px-4 py-3 border-r border-[#E2E8F0] text-black font-bold">{new Date(e.date).toLocaleDateString()}</td>
+                      <td className="px-4 py-3 border-r border-[#E2E8F0] font-bold text-black font-bold">{e.category?.name || '-'}</td>
+                      <td className="px-4 py-3 border-r border-[#E2E8F0] text-black font-bold">{e.paymentMode?.name || '-'}</td>
+                      <td className="px-4 py-3 border-r border-[#E2E8F0] text-black font-bold">{e.notes || '-'}</td>
                       <td className="px-4 py-3 text-right font-bold text-[#EF4444]">{formatCurrency(e.amount)}</td>
                     </tr>
                   ))
@@ -283,7 +283,7 @@ const ExpenseReport = () => {
           </div>
 
           <div className="pdf-footer hidden mt-6 text-right border-t-2 border-[#1E293B] pt-4 pb-8 pr-6">
-            <h3 className="text-xl font-bold text-[#1E293B] inline-block">Total Expense Amount: {formatCurrency(totalExpenseAmount)}</h3>
+            <h3 className="text-xl font-bold text-black font-bold inline-block">Total Expense Amount: {formatCurrency(totalExpenseAmount)}</h3>
           </div>
         </div>
 

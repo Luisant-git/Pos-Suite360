@@ -199,11 +199,11 @@ const SalesReturn = () => {
               <input type="text" value={returnNo} readOnly className="w-full text-red-500 font-bold bg-gray-100 border border-gray-300 rounded px-2 py-1.5 text-sm focus:outline-none" />
             </div>
             <div>
-              <label className="block text-[11px] font-bold text-gray-700 mb-1">Return Date</label>
+              <label className="block text-[11px] font-bold text-black font-bold mb-1">Return Date</label>
               <input type="date" value={returnDate} onChange={(e) => setReturnDate(e.target.value)} className="w-full border border-gray-300 rounded px-2 py-1.5 text-sm focus:outline-none focus:border-[#1ABB9C]" />
             </div>
             <div>
-              <label className="block text-[11px] font-bold text-gray-700 mb-1">Customer Name *</label>
+              <label className="block text-[11px] font-bold text-black font-bold mb-1">Customer Name *</label>
               <SearchableSelect
                 value={selectedCustomerId}
                 onChange={(val) => { setSelectedCustomerId(String(val)); setSelectedSaleId(''); }}
@@ -228,20 +228,20 @@ const SalesReturn = () => {
           
           {/* Optional remarks */}
           <div className="p-4 border-b border-gray-200 bg-gray-50/50">
-             <label className="block text-[11px] font-bold text-gray-700 mb-1">Remarks / Reason</label>
+             <label className="block text-[11px] font-bold text-black font-bold mb-1">Remarks / Reason</label>
              <input type="text" value={remarks} onChange={(e) => setRemarks(e.target.value)} placeholder="Optional return remarks..." className="w-full border border-gray-300 rounded px-2 py-1.5 text-sm focus:outline-none focus:border-[#1ABB9C]" />
           </div>
 
           {/* Table Header */}
           <div className="bg-gray-100 px-4 py-3 border-b border-gray-200 flex flex-col md:flex-row justify-between items-start md:items-center gap-3 md:gap-0">
             <h3 className="font-bold text-sm flex items-center gap-2 uppercase">
-              <List size={16} className="text-gray-500" /> SOLD ITEMS TO RETURN
+              <List size={16} className="text-black font-bold" /> SOLD ITEMS TO RETURN
             </h3>
             <div className="flex flex-wrap items-center gap-2">
-              <button onClick={handleClear} className="bg-white border border-gray-300 hover:bg-gray-50 text-orange-500 font-semibold py-1 px-3 rounded text-xs flex items-center gap-1 shadow-sm">
+              <button onClick={handleClear} className="bg-white border border-gray-300 hover:bg-gray-50 text-orange-500 font-bold py-1 px-3 rounded text-xs flex items-center gap-1 shadow-sm">
                 <RotateCcw size={14} /> Clear
               </button>
-              <button onClick={() => navigate('/reports/sales-return')} className="bg-white border border-gray-300 hover:bg-gray-50 text-blue-600 font-semibold py-1 px-3 rounded text-xs flex items-center gap-1 shadow-sm">
+              <button onClick={() => navigate('/reports/sales-return')} className="bg-white border border-gray-300 hover:bg-gray-50 text-blue-600 font-bold py-1 px-3 rounded text-xs flex items-center gap-1 shadow-sm">
                 <FileText size={14} /> Reports
               </button>
               <span className="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full shadow-sm">{returnItems.length} Items</span>
@@ -268,7 +268,7 @@ const SalesReturn = () => {
               <tbody>
                 {returnItems.length === 0 ? (
                   <tr>
-                    <td colSpan={8} className="text-center py-8 text-gray-500">
+                    <td colSpan={8} className="text-center py-8 text-black font-bold">
                       Select a Sales Invoice / Bill No above to load items for return.
                     </td>
                   </tr>
@@ -276,13 +276,13 @@ const SalesReturn = () => {
                   returnItems.map((item, index) => (
                     <tr key={item.id} className="border-b border-gray-200 hover:bg-gray-50">
                       <td data-label="#" className="px-4 py-2 border-r border-gray-200 text-center">{index + 1}</td>
-                      <td data-label="Product" className="px-4 py-2 border-r border-gray-200 font-medium">
-                        {item.product.name} <span className="text-gray-400 text-xs ml-1">({item.product.code})</span>
+                      <td data-label="Product" className="px-4 py-2 border-r border-gray-200 font-bold">
+                        {item.product.name} <span className="text-black font-bold text-xs ml-1">({item.product.code})</span>
                       </td>
                       <td data-label="Unit" className="px-4 py-2 border-r border-gray-200 text-center">
                         {item.product.unit?.name || 'Nos'}
                       </td>
-                      <td data-label="Sold Qty" className="px-4 py-2 border-r border-gray-200 text-center font-bold text-gray-700">
+                      <td data-label="Sold Qty" className="px-4 py-2 border-r border-gray-200 text-center font-bold text-black font-bold">
                         {item.quantity}
                       </td>
                       <td data-label="Sale Rate" className="px-4 py-2 border-r border-gray-200 text-right">
@@ -299,7 +299,7 @@ const SalesReturn = () => {
                           className="w-full border border-red-300 bg-red-50 rounded px-2 py-1 text-sm text-center text-red-600 font-bold focus:outline-none focus:ring-1 focus:ring-red-400" 
                         />
                       </td>
-                      <td data-label="Total Amount" className="px-4 py-2 border-r border-gray-200 text-right font-bold text-gray-700">
+                      <td data-label="Total Amount" className="px-4 py-2 border-r border-gray-200 text-right font-bold text-black font-bold">
                         {(item.returnQty * parseFloat(item.rate)).toFixed(2)}
                       </td>
                       <td data-label="Action" className="px-4 py-2 text-center">
@@ -318,15 +318,15 @@ const SalesReturn = () => {
             {/* Totals */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 border-t border-gray-200 bg-gray-50">
             <div>
-              <label className="block text-[13px] font-bold text-[#1F2937] uppercase mb-1">Total Items Returned</label>
-              <div className="border border-[#D1D5DB] rounded px-3 py-1.5 bg-white text-center font-black text-[20px] text-[#1F2937]">{totals.itemsCount}</div>
+              <label className="block text-[13px] font-bold text-black font-bold uppercase mb-1">Total Items Returned</label>
+              <div className="border border-[#D1D5DB] rounded px-3 py-1.5 bg-white text-center font-black text-[20px] text-black font-bold">{totals.itemsCount}</div>
             </div>
             <div>
-              <label className="block text-[13px] font-bold text-[#1F2937] uppercase mb-1">Total Quantity Returned</label>
+              <label className="block text-[13px] font-bold text-black font-bold uppercase mb-1">Total Quantity Returned</label>
               <div className="border border-[#D1D5DB] rounded px-3 py-1.5 bg-white text-center font-black text-[20px] text-red-500">{totals.qtyCount.toFixed(2)}</div>
             </div>
             <div>
-              <label className="block text-[13px] font-bold text-[#1F2937] uppercase mb-1">Total Credit / Refund Amount</label>
+              <label className="block text-[13px] font-bold text-black font-bold uppercase mb-1">Total Credit / Refund Amount</label>
               <div className="flex items-center justify-between border-b-2 border-[#D1D5DB] pb-1 mt-1">
                 <span className="bg-red-500 text-white font-black px-2 py-0.5 rounded text-[14px]">TOTAL REFUND</span>
                 <span className="font-black text-[28px] text-[#059669]">{totals.totalAmount.toFixed(2)}</span>
@@ -363,7 +363,7 @@ const SalesReturn = () => {
                 <p className="font-bold text-[15px]">Refund Amount: {Number(pendingSavePayload?.totalAmount || 0).toFixed(2)}</p>
                 <p className="text-[13px] mt-1 text-red-600">Return No: {pendingSavePayload?.returnNo}</p>
               </div>
-              <p className="text-[#334155] font-medium mb-2">How would you like to proceed?</p>
+              <p className="text-black font-bold mb-2">How would you like to proceed?</p>
             </div>
 
             <div className="px-6 pb-6 flex gap-3">

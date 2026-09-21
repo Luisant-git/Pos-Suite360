@@ -273,7 +273,7 @@ const SupplierPaymentsReport = () => {
               <h1 className="font-bold text-[16px] text-[#0F172A] uppercase tracking-wide">
                 SUPPLIER PAYMENTS & OVERALL PAYABLES CONSOLIDATION REPORT
               </h1>
-              <p className="text-xs text-[#64748B]">Complete overview of supplier pending payables, total payments, and ledger balances</p>
+              <p className="text-xs text-black font-bold">Complete overview of supplier pending payables, total payments, and ledger balances</p>
             </div>
           </div>
 
@@ -283,7 +283,7 @@ const SupplierPaymentsReport = () => {
                 type="button"
                 onClick={() => { setReportMode('consolidation'); setCurrentPage(1); }}
                 className={`px-3 py-1.5 text-[12px] font-bold rounded transition-colors ${
-                  reportMode === 'consolidation' ? 'bg-[#0F172A] text-white shadow-sm' : 'text-gray-600 hover:text-gray-900'
+                  reportMode === 'consolidation' ? 'bg-[#0F172A] text-white shadow-sm' : 'text-black font-bold hover:text-black hover:font-bold'
                 }`}
               >
                 Overall Pending Payables
@@ -292,7 +292,7 @@ const SupplierPaymentsReport = () => {
                 type="button"
                 onClick={() => { setReportMode('history'); setCurrentPage(1); }}
                 className={`px-3 py-1.5 text-[12px] font-bold rounded transition-colors ${
-                  reportMode === 'history' ? 'bg-[#0F172A] text-white shadow-sm' : 'text-gray-600 hover:text-gray-900'
+                  reportMode === 'history' ? 'bg-[#0F172A] text-white shadow-sm' : 'text-black font-bold hover:text-black hover:font-bold'
                 }`}
               >
                 Payments History
@@ -344,7 +344,7 @@ const SupplierPaymentsReport = () => {
         {/* Filter Controls */}
         <div className="flex flex-wrap 2xl:flex-nowrap items-end gap-3 pt-2 border-t border-dashed border-[#E2E8F0]">
           <div className="flex-1 min-w-[200px]">
-            <label className="block text-[12px] font-bold text-[#64748B] mb-1 whitespace-nowrap">Search Supplier / Phone / Payment</label>
+            <label className="block text-[12px] font-bold text-black font-bold mb-1 whitespace-nowrap">Search Supplier / Phone / Payment</label>
             <SearchableSelect
               options={searchOptions}
               value={searchTerm}
@@ -354,7 +354,7 @@ const SupplierPaymentsReport = () => {
             />
           </div>
           <div className="w-[130px] shrink-0">
-            <label className="block text-[12px] font-bold text-[#64748B] mb-1">From Date</label>
+            <label className="block text-[12px] font-bold text-black font-bold mb-1">From Date</label>
             <input
               type="date"
               value={startDate}
@@ -363,7 +363,7 @@ const SupplierPaymentsReport = () => {
             />
           </div>
           <div className="w-[130px] shrink-0">
-            <label className="block text-[12px] font-bold text-[#64748B] mb-1">To Date</label>
+            <label className="block text-[12px] font-bold text-black font-bold mb-1">To Date</label>
             <input
               type="date"
               value={endDate}
@@ -372,7 +372,7 @@ const SupplierPaymentsReport = () => {
             />
           </div>
           <div className="w-[100px] shrink-0">
-            <label className="block text-[12px] font-bold text-[#64748B] mb-1">Entries</label>
+            <label className="block text-[12px] font-bold text-black font-bold mb-1">Entries</label>
             <select
               value={entriesPerPage}
               onChange={(e) => {
@@ -396,7 +396,7 @@ const SupplierPaymentsReport = () => {
               className={`px-3 py-1.5 border rounded text-[12px] font-bold flex items-center gap-1 transition-colors h-[34px] whitespace-nowrap ${
                 !isReset 
                   ? 'bg-white text-red-600 border-red-200 hover:bg-red-50' 
-                  : 'bg-white text-gray-700 border-[#CBD5E1] hover:bg-gray-100'
+                  : 'bg-white text-black font-bold border-[#CBD5E1] hover:bg-gray-100'
               }`}
             >
               <RefreshCw size={12} /> Reset
@@ -408,13 +408,13 @@ const SupplierPaymentsReport = () => {
       {/* Main Table Section */}
       <div className="bg-white border border-[#E2E8F0] shadow-sm rounded-md overflow-hidden flex flex-col flex-1">
         <div className="bg-[#F8FAFC] border-b border-[#E2E8F0] px-4 py-3 flex justify-between items-center shrink-0">
-          <div className="flex items-center gap-2 text-[#475569]">
+          <div className="flex items-center gap-2 text-black font-bold">
             <FileText size={16} />
-            <h2 className="font-bold text-[13px] tracking-wide text-[#334155] uppercase">
+            <h2 className="font-bold text-[13px] tracking-wide text-black font-bold uppercase">
               {reportMode === 'consolidation' ? 'OVERALL SUPPLIER PAYABLES CONSOLIDATION' : 'SUPPLIER PAYMENTS HISTORY'}
             </h2>
           </div>
-          <span className="text-xs font-bold text-gray-500">{activeList.length} Records Found</span>
+          <span className="text-xs font-bold text-black font-bold">{activeList.length} Records Found</span>
         </div>
 
         <div id="supplier-payments-report-export" className="flex-1 flex flex-col min-h-0 overflow-hidden p-4">
@@ -423,10 +423,10 @@ const SupplierPaymentsReport = () => {
           <div className="pdf-header hidden mb-4 border-b border-black pb-3">
             <div className="text-center">
               <h1 className="text-xl font-bold uppercase">{settings?.shopName || 'MY SHOP'}</h1>
-              <h2 className="text-sm font-semibold uppercase">
+              <h2 className="text-sm font-bold uppercase">
                 {reportMode === 'consolidation' ? 'SUPPLIER PAYABLES CONSOLIDATION REPORT' : 'SUPPLIER PAYMENTS HISTORY REPORT'}
               </h2>
-              <p className="text-xs text-gray-600 mt-1">Generated: {new Date().toLocaleString()}</p>
+              <p className="text-xs text-black font-bold mt-1">Generated: {new Date().toLocaleString()}</p>
             </div>
           </div>
 
@@ -447,19 +447,19 @@ const SupplierPaymentsReport = () => {
                 </thead>
                 <tbody>
                   {consolidationLoading ? (
-                    <tr><td colSpan={8} className="text-center p-6 text-[#64748B]">Loading consolidation report...</td></tr>
+                    <tr><td colSpan={8} className="text-center p-6 text-black font-bold">Loading consolidation report...</td></tr>
                   ) : filteredConsolidation.length === 0 ? (
-                    <tr><td colSpan={8} className="text-center p-6 text-[#64748B]">No supplier records found.</td></tr>
+                    <tr><td colSpan={8} className="text-center p-6 text-black font-bold">No supplier records found.</td></tr>
                   ) : (
                     paginatedList.map((s: any, index: number) => (
                       <tr key={s.supplierId} className={`border-b border-[#E2E8F0] ${index % 2 === 0 ? 'bg-white' : 'bg-[#F8FAFC]'} hover:bg-[#EFF6FF]`}>
-                        <td className="px-3 py-2.5 border-r border-[#E2E8F0] text-center text-gray-500 font-medium">{(currentPage - 1) * entriesPerPage + index + 1}</td>
+                        <td className="px-3 py-2.5 border-r border-[#E2E8F0] text-center text-black font-bold">{(currentPage - 1) * entriesPerPage + index + 1}</td>
                         <td className="px-3 py-2.5 border-r border-[#E2E8F0] font-bold text-[#0F172A]">{s.supplierName}</td>
-                        <td className="px-3 py-2.5 border-r border-[#E2E8F0] text-gray-600">{s.phone}</td>
-                        <td className="px-3 py-2.5 border-r border-[#E2E8F0] text-right text-gray-600">{formatCurrency(s.openingBalance)} ({s.openingBalanceType})</td>
-                        <td className="px-3 py-2.5 border-r border-[#E2E8F0] text-right font-semibold text-[#1E3A8A]">{formatCurrency(s.totalPurchases)}</td>
-                        <td className="px-3 py-2.5 border-r border-[#E2E8F0] text-right font-semibold text-[#047857]">{formatCurrency(s.totalPayments)}</td>
-                        <td className="px-3 py-2.5 border-r border-[#E2E8F0] text-right text-gray-600">{formatCurrency(s.totalReturns)}</td>
+                        <td className="px-3 py-2.5 border-r border-[#E2E8F0] text-black font-bold">{s.phone}</td>
+                        <td className="px-3 py-2.5 border-r border-[#E2E8F0] text-right text-black font-bold">{formatCurrency(s.openingBalance)} ({s.openingBalanceType})</td>
+                        <td className="px-3 py-2.5 border-r border-[#E2E8F0] text-right font-bold text-[#1E3A8A]">{formatCurrency(s.totalPurchases)}</td>
+                        <td className="px-3 py-2.5 border-r border-[#E2E8F0] text-right font-bold text-[#047857]">{formatCurrency(s.totalPayments)}</td>
+                        <td className="px-3 py-2.5 border-r border-[#E2E8F0] text-right text-black font-bold">{formatCurrency(s.totalReturns)}</td>
                         <td className={`px-3 py-2.5 text-right font-bold ${s.netPending > 0 ? 'text-[#EF4444]' : 'text-[#10B981]'}`}>
                           {formatCurrency(s.netPending)}
                         </td>
@@ -483,18 +483,18 @@ const SupplierPaymentsReport = () => {
                 </thead>
                 <tbody>
                   {historyLoading ? (
-                    <tr><td colSpan={7} className="text-center p-6 text-[#64748B]">Loading payment history...</td></tr>
+                    <tr><td colSpan={7} className="text-center p-6 text-black font-bold">Loading payment history...</td></tr>
                   ) : filteredHistory.length === 0 ? (
-                    <tr><td colSpan={7} className="text-center p-6 text-[#64748B]">No payment vouchers found.</td></tr>
+                    <tr><td colSpan={7} className="text-center p-6 text-black font-bold">No payment vouchers found.</td></tr>
                   ) : (
                     paginatedList.map((p: any, index: number) => (
                       <tr key={p.id} className={`border-b border-[#E2E8F0] ${index % 2 === 0 ? 'bg-white' : 'bg-[#F8FAFC]'} hover:bg-[#EFF6FF]`}>
-                        <td className="px-3 py-2.5 border-r border-[#E2E8F0] text-center text-gray-500 font-medium">{(currentPage - 1) * entriesPerPage + index + 1}</td>
+                        <td className="px-3 py-2.5 border-r border-[#E2E8F0] text-center text-black font-bold">{(currentPage - 1) * entriesPerPage + index + 1}</td>
                         <td className="px-3 py-2.5 border-r border-[#E2E8F0] font-bold text-[#3B82F6]">{p.paymentNo}</td>
-                        <td className="px-3 py-2.5 border-r border-[#E2E8F0] text-gray-700">{new Date(p.date).toLocaleDateString()}</td>
+                        <td className="px-3 py-2.5 border-r border-[#E2E8F0] text-black font-bold">{new Date(p.date).toLocaleDateString()}</td>
                         <td className="px-3 py-2.5 border-r border-[#E2E8F0] font-bold text-[#0F172A]">{p.supplier?.name || '-'}</td>
-                        <td className="px-3 py-2.5 border-r border-[#E2E8F0] text-gray-600">{p.paymentType?.name || p.paymentMode?.name || '-'}</td>
-                        <td className="px-3 py-2.5 border-r border-[#E2E8F0] text-gray-600">{p.reference || '-'}</td>
+                        <td className="px-3 py-2.5 border-r border-[#E2E8F0] text-black font-bold">{p.paymentType?.name || p.paymentMode?.name || '-'}</td>
+                        <td className="px-3 py-2.5 border-r border-[#E2E8F0] text-black font-bold">{p.reference || '-'}</td>
                         <td className="px-3 py-2.5 text-right font-bold text-[#10B981]">{formatCurrency(p.amount)}</td>
                       </tr>
                     ))

@@ -120,7 +120,7 @@ const Suppliers = () => {
         <form onSubmit={handleSubmit(onSubmit as any)} className="p-4 flex flex-col gap-3">
           
           <div>
-            <label className="block text-[12px] font-bold text-[#1F2937] mb-1">Supplier Name *</label>
+            <label className="block text-[12px] font-bold text-black font-bold mb-1">Supplier Name *</label>
             <input 
               {...register('name')}
               type="text" 
@@ -132,7 +132,7 @@ const Suppliers = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <div>
-              <label className="block text-[12px] text-[#1F2937] mb-1">Contact Person</label>
+              <label className="block text-[12px] text-black font-bold mb-1">Contact Person</label>
               <input 
                 {...register('contactPerson')}
                 type="text" 
@@ -140,7 +140,7 @@ const Suppliers = () => {
               />
             </div>
             <div>
-              <label className="block text-[12px] font-bold text-[#1F2937] mb-1">Mobile No *</label>
+              <label className="block text-[12px] font-bold text-black font-bold mb-1">Mobile No *</label>
               <input 
                 {...register('phone')}
                 type="text" 
@@ -152,7 +152,7 @@ const Suppliers = () => {
           </div>
 
           <div>
-            <label className="block text-[12px] text-[#1F2937] mb-1">Email Address</label>
+            <label className="block text-[12px] text-black font-bold mb-1">Email Address</label>
             <input 
               {...register('email')}
               type="email" 
@@ -161,7 +161,7 @@ const Suppliers = () => {
           </div>
 
           <div>
-            <label className="block text-[12px] text-[#1F2937] mb-1">Complete Address</label>
+            <label className="block text-[12px] text-black font-bold mb-1">Complete Address</label>
             <textarea 
               {...register('address')}
               rows={3}
@@ -171,7 +171,7 @@ const Suppliers = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <div>
-              <label className="block text-[12px] text-[#1F2937] mb-1">Opening Bal</label>
+              <label className="block text-[12px] text-black font-bold mb-1">Opening Bal</label>
               <input 
                 {...register('openingBalance')}
                 type="number" step="any" 
@@ -180,7 +180,7 @@ const Suppliers = () => {
               />
             </div>
             <div>
-              <label className="block text-[12px] text-[#1F2937] mb-1">Type</label>
+              <label className="block text-[12px] text-black font-bold mb-1">Type</label>
               <select 
                 {...register('openingBalanceType')}
                 className="w-full px-3 py-1.5 border border-[#ccc] rounded shadow-inner focus:border-[#3B82F6] outline-none text-[13px] bg-white"
@@ -193,7 +193,7 @@ const Suppliers = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <div>
-              <label className="block text-[12px] text-[#1F2937] mb-1">Account No</label>
+              <label className="block text-[12px] text-black font-bold mb-1">Account No</label>
               <input 
                 {...register('accountNo')}
                 type="text" 
@@ -201,7 +201,7 @@ const Suppliers = () => {
               />
             </div>
             <div>
-              <label className="block text-[12px] text-[#1F2937] mb-1">IFSC Code</label>
+              <label className="block text-[12px] text-black font-bold mb-1">IFSC Code</label>
               <input 
                 {...register('ifscCode')}
                 type="text" 
@@ -211,7 +211,7 @@ const Suppliers = () => {
           </div>
 
           <div>
-            <label className="block text-[12px] text-[#1F2937] mb-1">Bank Branch</label>
+            <label className="block text-[12px] text-black font-bold mb-1">Bank Branch</label>
             <input 
               {...register('bankBranch')}
               type="text" 
@@ -245,7 +245,7 @@ const Suppliers = () => {
       <div className={`${isFullTable ? 'xl:col-span-3' : 'xl:col-span-2'} bg-white border border-[#E6E9ED] shadow-sm rounded-sm overflow-hidden flex flex-col`}>
         <div className="bg-[#f9f9f9] border-b border-[#E6E9ED] px-4 py-3 flex flex-col md:flex-row justify-between items-start md:items-center gap-3 md:gap-0">
           <div className="flex items-center justify-between w-full md:w-auto">
-            <div className="flex items-center gap-2 text-[#1F2937]">
+            <div className="flex items-center gap-2 text-black font-bold">
             <Grid size={16} className="text-[#3B82F6]" />
             <h2 className="font-bold text-[14px]">SUPPLIER LIST</h2>
           </div>
@@ -303,11 +303,11 @@ const Suppliers = () => {
               ) : (
                 filteredSuppliers.map((supplier: any, index: number) => (
                   <tr key={supplier.id} className={`border-b border-[#E5E7EB] ${index % 2 === 0 ? 'bg-white' : 'bg-[#F9F9F9]'} hover:bg-blue-50`}>
-                    <td data-label="#" className="px-3 py-3 border-r border-[#E5E7EB] text-center font-bold text-gray-700">{index + 1}</td>
+                    <td data-label="#" className="px-3 py-3 border-r border-[#E5E7EB] text-center font-bold text-black font-bold">{index + 1}</td>
                     <td data-label="Supplier Name" className="px-3 py-3 border-r border-[#E5E7EB] font-bold text-[#3B82F6]">{supplier.name}</td>
-                    <td data-label="Mobile" className="px-3 py-3 border-r border-[#E5E7EB] font-medium text-gray-700">{supplier.phone || '-'}</td>
-                    <td data-label="Complete Address" className="px-3 py-3 border-r border-[#E5E7EB] text-gray-600 truncate max-w-[200px]">{supplier.address || '-'}</td>
-                    <td data-label="Opening Bal" className="px-3 py-3 border-r border-[#E5E7EB] text-right font-bold text-gray-800">
+                    <td data-label="Mobile" className="px-3 py-3 border-r border-[#E5E7EB] font-bold text-black font-bold">{supplier.phone || '-'}</td>
+                    <td data-label="Complete Address" className="px-3 py-3 border-r border-[#E5E7EB] text-black font-bold truncate max-w-[200px]">{supplier.address || '-'}</td>
+                    <td data-label="Opening Bal" className="px-3 py-3 border-r border-[#E5E7EB] text-right font-bold text-black font-bold">
                       RM {Number(supplier.openingBalance).toFixed(2)} ({supplier.openingBalanceType})
                     </td>
                     <td data-label="Actions" className="px-3 py-3 text-center">

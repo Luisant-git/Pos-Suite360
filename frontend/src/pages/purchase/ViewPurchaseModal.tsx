@@ -36,25 +36,25 @@ export default function ViewPurchaseModal({ purchaseId, onClose }: Props) {
         <div className="p-5 overflow-y-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
             <div>
-              <p className="text-[12px] text-gray-500 uppercase tracking-wider font-bold mb-1">Supplier Info</p>
+              <p className="text-[12px] text-black font-bold uppercase tracking-wider font-bold mb-1">Supplier Info</p>
               <p className="font-bold text-[#1E3A8A] text-[15px]">{purchase.supplier?.name}</p>
-              {purchase.supplier?.phone && <p className="text-[13px] text-gray-600">{purchase.supplier.phone}</p>}
-              {purchase.supplier?.email && <p className="text-[13px] text-gray-600">{purchase.supplier.email}</p>}
-              {purchase.supplier?.address && <p className="text-[13px] text-gray-600 mt-1 whitespace-pre-wrap">{purchase.supplier.address}</p>}
+              {purchase.supplier?.phone && <p className="text-[13px] text-black font-bold">{purchase.supplier.phone}</p>}
+              {purchase.supplier?.email && <p className="text-[13px] text-black font-bold">{purchase.supplier.email}</p>}
+              {purchase.supplier?.address && <p className="text-[13px] text-black font-bold mt-1 whitespace-pre-wrap">{purchase.supplier.address}</p>}
             </div>
             <div className="text-right">
-              <p className="text-[12px] text-gray-500 uppercase tracking-wider font-bold mb-1">Invoice Info</p>
+              <p className="text-[12px] text-black font-bold uppercase tracking-wider font-bold mb-1">Invoice Info</p>
               <p className="font-bold text-[#333] text-[14px]">Date: <span className="font-normal">{new Date(purchase.date).toLocaleDateString()}</span></p>
               {purchase.supplierInvoiceNo && (
                 <p className="font-bold text-[#333] text-[14px] mt-1">Supp. Inv. No: <span className="font-normal">{purchase.supplierInvoiceNo}</span></p>
               )}
-              <p className="text-[12px] text-gray-500 uppercase tracking-wider font-bold mt-3 mb-1">Payment</p>
+              <p className="text-[12px] text-black font-bold uppercase tracking-wider font-bold mt-3 mb-1">Payment</p>
               <p className="font-bold text-[#10B981] text-[14px] bg-[#D1FAE5] inline-block px-2 py-0.5 rounded">{purchase.paymentMode?.name}</p>
             </div>
           </div>
           
           <table className="w-full text-left text-[13px] border border-gray-200 mb-6 rounded overflow-hidden whitespace-nowrap">
-            <thead className="bg-[#F3F4F6] text-[#374151]">
+            <thead className="bg-[#F3F4F6] text-black font-bold">
               <tr>
                 <th className="px-3 py-2.5 border border-gray-300">#</th>
                 <th className="px-3 py-2.5 border border-gray-300">Product</th>
@@ -67,9 +67,9 @@ export default function ViewPurchaseModal({ purchaseId, onClose }: Props) {
               {purchase.items?.map((item: any, i: number) => (
                 <tr key={item.id} className="hover:bg-gray-50">
                   <td className="px-3 py-2 border border-gray-300">{i + 1}</td>
-                  <td className="px-3 py-2 border border-gray-300 font-medium text-[#111827]">
+                  <td className="px-3 py-2 border border-gray-300 font-bold text-black font-bold">
                     {item.product?.name}
-                    <span className="block text-[11px] text-gray-500 font-normal">Code: {item.product?.code}</span>
+                    <span className="block text-[11px] text-black font-bold font-normal">Code: {item.product?.code}</span>
                   </td>
                   <td className="px-3 py-2 border border-gray-300 text-right font-bold text-[#3B82F6]">{item.quantity}</td>
                   <td className="px-3 py-2 border border-gray-300 text-right">{formatCurrency(item.rate)}</td>
@@ -82,15 +82,15 @@ export default function ViewPurchaseModal({ purchaseId, onClose }: Props) {
           <div className="flex justify-end">
             <div className="w-72 bg-[#F9FAFB] p-4 rounded border border-gray-200">
               <div className="flex justify-between py-1 text-[13px]">
-                <span className="text-gray-600 font-medium">Subtotal</span>
-                <span className="font-bold text-[#111827]">{formatCurrency(purchase.subtotal)}</span>
+                <span className="text-black font-bold">Subtotal</span>
+                <span className="font-bold text-black font-bold">{formatCurrency(purchase.subtotal)}</span>
               </div>
               {/* <div className="flex justify-between py-1 text-[13px]">
-                <span className="text-gray-600 font-medium">Tax</span>
-                <span className="font-bold text-[#111827]">{formatCurrency(purchase.tax)}</span>
+                <span className="text-black font-bold">Tax</span>
+                <span className="font-bold text-black font-bold">{formatCurrency(purchase.tax)}</span>
               </div> */}
               <div className="flex justify-between py-1 text-[13px]">
-                <span className="text-gray-600 font-medium">Discount</span>
+                <span className="text-black font-bold">Discount</span>
                 <span className="font-bold text-red-500">-{formatCurrency(purchase.discount)}</span>
               </div>
               <div className="flex justify-between py-3 mt-2 border-t border-gray-300 text-[16px] font-bold">

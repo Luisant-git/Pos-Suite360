@@ -312,13 +312,13 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
             <tbody className="align-top">
               {items.map((item: any, idx: number) => (
                 <tr key={idx}>
-                  <td className="py-1 font-medium">{item.product?.code || ''}</td>
-                  <td className="py-1 font-medium">{item.product?.name || ''}</td>
-                  <td className="py-1 text-center font-medium">{Number(item.noOfBirds) || '-'}</td>
-                  <td className="py-1 text-right font-medium">{item.quantity}</td>
-                  <td className="py-1 text-center font-medium">{item.product?.unit?.name || item.product?.unit?.shortCode || 'Nos'}</td>
-                  <td className="py-1 text-right font-medium">{Number(item.rate || 0).toFixed(2)}</td>
-                  <td className="py-1 text-right font-medium">{Number(item.amount || item.total || 0).toFixed(2)}</td>
+                  <td className="py-1 font-bold">{item.product?.code || ''}</td>
+                  <td className="py-1 font-bold">{item.product?.name || ''}</td>
+                  <td className="py-1 text-center font-bold">{Number(item.noOfBirds) || '-'}</td>
+                  <td className="py-1 text-right font-bold">{item.quantity}</td>
+                  <td className="py-1 text-center font-bold">{item.product?.unit?.name || item.product?.unit?.shortCode || 'Nos'}</td>
+                  <td className="py-1 text-right font-bold">{Number(item.rate || 0).toFixed(2)}</td>
+                  <td className="py-1 text-right font-bold">{Number(item.amount || item.total || 0).toFixed(2)}</td>
                 </tr>
               ))}
             </tbody>
@@ -327,7 +327,7 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
           <div className="flex-1"></div>
 
           <div>
-            <p className="uppercase mb-4 text-[13px] font-semibold">RINGGIT MALAYSIA {numberToWords(grandTotal)} ONLY</p>
+            <p className="uppercase mb-4 text-[13px] font-bold">RINGGIT MALAYSIA {numberToWords(grandTotal)} ONLY</p>
             
             <div className="flex justify-between items-start border-t border-[#000000] pt-2">
               <div 

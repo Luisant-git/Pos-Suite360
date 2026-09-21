@@ -92,4 +92,60 @@ export class ReportsService {
       netProfit,
     };
   }
+
+  async getProductWiseSales(fromDateStr?: string, toDateStr?: string) {
+    const whereDate: any = {};
+    if (fromDateStr || toDateStr) {
+      whereDate.date = {};
+      if (fromDateStr) {
+        whereDate.date.gte = new Date(fromDateStr);
+      }
+      if (toDateStr) {
+        const toDate = new Date(toDateStr);
+        toDate.setHours(23, 59, 59, 999);
+        whereDate.date.lte = toDate;
+      }
+    }
+
+    const saleItems = await this.prisma.saleItem.findMany({
+      where: {
+        sale: whereDate
+      },
+      include: {
+        sale: true,
+        product: true
+      }
+    });
+
+    const productGroups: any = {};
+
+    for (const item of saleItems) {
+      if (!item.product) continue;
+      
+      const productKey = `${item.product.code ? item.product.code + ' - ' : ''}${item.product.name}`;
+      
+      if (!productGroups[productKey]) {
+        productGroups[productKey] = {
+          productName: productKey,
+          items: [],
+          totalQty: 0,
+          totalValue: 0
+        };
+      }
+
+      const qty = Number(item.quantity) || 0;
+      const value = Number(item.totalAmount) || 0;
+
+      productGroups[productKey].items.push({
+        invoiceNo: item.sale?.invoiceNo || '-',
+        date: item.sale?.date || new Date(),
+        qty: qty,
+        value: value
+      });
+      productGroups[productKey].totalQty += qty;
+      productGroups[productKey].totalValue += value;
+    }
+
+    return Object.values(productGroups).sort((a: any, b: any) => a.productName.localeCompare(b.productName));
+  }
 }

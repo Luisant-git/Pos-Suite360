@@ -19,8 +19,8 @@ const storeSettingsSchema = z.object({
   invoicePrefix: z.string().min(1, 'Prefix is required'),
   invoiceNotes: z.string().optional(),
   signatureImage: z.string().optional(),
-  yearlyInvoiceReset: z.boolean().optional(),
   allowEditSaleInvoice: z.boolean().optional(),
+  allowEditReceipts: z.boolean().optional(),
   enableCustomerRates: z.boolean().optional(),
 });
 
@@ -62,6 +62,7 @@ const Settings = () => {
         signatureImage: settings.signatureImage || '',
         yearlyInvoiceReset: settings.yearlyInvoiceReset || false,
         allowEditSaleInvoice: settings.allowEditSaleInvoice || false,
+        allowEditReceipts: settings.allowEditReceipts || false,
         enableCustomerRates: settings.enableCustomerRates || false,
       });
     }
@@ -133,7 +134,7 @@ const Settings = () => {
             <span className="text-[#F59E0B]"><SettingsIcon size={18} className="md:w-5 md:h-5" /></span>
             MY ACCOUNT & STORE SETTINGS
           </h1>
-          <p className="text-xs md:text-sm text-[#64748B] mt-1">Manage company details, billing currency, shop address, and account password security</p>
+          <p className="text-xs md:text-sm text-black font-bold mt-1">Manage company details, billing currency, shop address, and account password security</p>
         </div>
         <button type="button" onClick={() => navigate('/')} className="w-full md:w-auto justify-center bg-[#E11D48] text-white font-bold text-[14px] md:text-base px-4 py-2 rounded flex items-center gap-1 transition-colors shadow-sm hover:bg-[#BE123C]">
           <X size={14} /> Close
@@ -152,7 +153,7 @@ const Settings = () => {
             
             <div className="p-4 flex flex-col gap-3">
               <div>
-                <label className="block text-[12px] font-bold text-[#334155] mb-1">Shop / Business Name *</label>
+                <label className="block text-[12px] font-bold text-black font-bold mb-1">Shop / Business Name *</label>
                 <input
                   {...registerStore('shopName')}
                   className="w-full px-2 py-1.5 border border-[#CBD5E1] rounded text-[13px] outline-none focus:border-[#3B82F6]"
@@ -161,7 +162,7 @@ const Settings = () => {
               </div>
 
               <div>
-                <label className="block text-[12px] font-bold text-[#334155] mb-1">Complete Shop Address</label>
+                <label className="block text-[12px] font-bold text-black font-bold mb-1">Complete Shop Address</label>
                 <textarea
                   {...registerStore('shopAddress')}
                   rows={2}
@@ -171,14 +172,14 @@ const Settings = () => {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-[12px] font-bold text-[#334155] mb-1">Contact Phone Number(s) <span className="text-[10px] font-normal text-gray-500">(comma separated)</span></label>
+                  <label className="block text-[12px] font-bold text-black font-bold mb-1">Contact Phone Number(s) <span className="text-[10px] font-normal text-black font-bold">(comma separated)</span></label>
                   <input
                     {...registerStore('phone')}
                     className="w-full px-2 py-1.5 border border-[#CBD5E1] rounded text-[13px] outline-none focus:border-[#3B82F6]"
                   />
                 </div>
                 <div>
-                  <label className="block text-[12px] font-bold text-[#334155] mb-1">Support Email</label>
+                  <label className="block text-[12px] font-bold text-black font-bold mb-1">Support Email</label>
                   <input
                     {...registerStore('email')}
                     autoComplete="off"
@@ -191,19 +192,19 @@ const Settings = () => {
               </div>
 
               <div className="border-t border-[#E2E8F0] pt-4 mt-2">
-                <div className="flex items-center gap-2 text-[#475569] font-bold text-[13px] mb-2">
-                  <span className="text-[#64748B]"><Store size={14} /></span> Currency & Regional Settings
+                <div className="flex items-center gap-2 text-black font-bold text-[13px] mb-2">
+                  <span className="text-black font-bold"><Store size={14} /></span> Currency & Regional Settings
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-[12px] font-bold text-[#334155] mb-1">Currency Symbol</label>
+                    <label className="block text-[12px] font-bold text-black font-bold mb-1">Currency Symbol</label>
                     <input
                       {...registerStore('currencySymbol')}
                       className="w-full px-2 py-1.5 border border-[#CBD5E1] rounded text-[13px] outline-none focus:border-[#3B82F6]"
                     />
                   </div>
                   <div>
-                    <label className="block text-[12px] font-bold text-[#334155] mb-1">Currency Position</label>
+                    <label className="block text-[12px] font-bold text-black font-bold mb-1">Currency Position</label>
                     <select
                       {...registerStore('currencyPosition')}
                       className="w-full px-2 py-1.5 border border-[#CBD5E1] rounded text-[13px] outline-none focus:border-[#3B82F6]"
@@ -239,12 +240,12 @@ const Settings = () => {
             
             <div className="p-4 flex flex-col gap-3">
               <div>
-                <label className="block text-[12px] font-bold text-[#334155] mb-1">Invoice Number Prefix</label>
+                <label className="block text-[12px] font-bold text-black font-bold mb-1">Invoice Number Prefix</label>
                 <input
                   {...registerStore('invoicePrefix')}
                   className="w-full px-2 py-1.5 border border-[#CBD5E1] rounded text-[13px] outline-none focus:border-[#3B82F6]"
                 />
-                <p className="text-[11px] text-[#64748B] mt-1">Generated sales bills will use this prefix (e.g. <span className="text-[#2563EB] font-bold">{settings?.invoicePrefix || 'INV-'}788839</span>)</p>
+                <p className="text-[11px] text-black font-bold mt-1">Generated sales bills will use this prefix (e.g. <span className="text-[#2563EB] font-bold">{settings?.invoicePrefix || 'INV-'}788839</span>)</p>
               </div>
               <div className="flex items-center mt-3">
                 <label className="relative inline-flex items-center cursor-pointer">
@@ -255,12 +256,12 @@ const Settings = () => {
                     className="sr-only peer"
                   />
                   <div className="w-9 h-5 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#2563EB]"></div>
-                  <span className="ml-3 text-[12px] font-bold text-[#334155]">
+                  <span className="ml-3 text-[12px] font-bold text-black font-bold">
                     Enable Auto Yearly Invoice Reset
                   </span>
                 </label>
               </div>
-              <p className="text-[11px] text-[#64748B] mt-1 ml-[48px]">Automatically resets the invoice numbering sequence back to 1 at the start of every year, while keeping your format exactly the same (e.g. <span className="text-[#2563EB] font-bold">{settings?.invoicePrefix || 'INV-'}00001</span>).</p>
+              <p className="text-[11px] text-black font-bold mt-1 ml-[48px]">Automatically resets the invoice numbering sequence back to 1 at the start of every year, while keeping your format exactly the same (e.g. <span className="text-[#2563EB] font-bold">{settings?.invoicePrefix || 'INV-'}00001</span>).</p>
               
               <div className="flex items-center mt-3">
                 <label className="relative inline-flex items-center cursor-pointer">
@@ -271,12 +272,28 @@ const Settings = () => {
                     className="sr-only peer"
                   />
                   <div className="w-9 h-5 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#2563EB]"></div>
-                  <span className="ml-3 text-[12px] font-bold text-[#334155]">
+                  <span className="ml-3 text-[12px] font-bold text-black font-bold">
                     Allow Edit Sales Invoice in Sales List
                   </span>
                 </label>
               </div>
-              <p className="text-[11px] text-[#64748B] mt-1 ml-[48px]">Enables the Edit action button for sales invoices in the Sales List view.</p>
+              <p className="text-[11px] text-black font-bold mt-1 ml-[48px]">Enables the Edit action button for sales invoices in the Sales List view.</p>
+
+              <div className="flex items-center mt-3">
+                <label className="relative inline-flex items-center cursor-pointer">
+                  <input
+                    type="checkbox"
+                    id="allowEditReceipts"
+                    {...registerStore('allowEditReceipts')}
+                    className="sr-only peer"
+                  />
+                  <div className="w-9 h-5 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#2563EB]"></div>
+                  <span className="ml-3 text-[12px] font-bold text-black font-bold">
+                    Allow Edit Receipts & Payments in History
+                  </span>
+                </label>
+              </div>
+              <p className="text-[11px] text-black font-bold mt-1 ml-[48px]">Enables the Edit action button for customer receipts and supplier payments.</p>
 
               <div className="flex items-center mt-3">
                 <label className="relative inline-flex items-center cursor-pointer">
@@ -287,15 +304,15 @@ const Settings = () => {
                     className="sr-only peer"
                   />
                   <div className="w-9 h-5 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#2563EB]"></div>
-                  <span className="ml-3 text-[12px] font-bold text-[#334155]">
+                  <span className="ml-3 text-[12px] font-bold text-black font-bold">
                     Enable Customer-wise Product Rates / Price Fixing
                   </span>
                 </label>
               </div>
-              <p className="text-[11px] text-[#64748B] mt-1 ml-[48px]">Allows fixing specific selling rates per product for each customer in Customer Master & auto-filling them in Sales Entry.</p>
+              <p className="text-[11px] text-black font-bold mt-1 ml-[48px]">Allows fixing specific selling rates per product for each customer in Customer Master & auto-filling them in Sales Entry.</p>
               
               <div className="mt-3">
-                <label className="block text-[12px] font-bold text-[#334155] mb-1">Invoice Footer Notes (Terms & Conditions)</label>
+                <label className="block text-[12px] font-bold text-black font-bold mb-1">Invoice Footer Notes (Terms & Conditions)</label>
                 <div className="border border-[#CBD5E1] rounded overflow-hidden">
                   <Editor
                     value={watchStore('invoiceNotes') || ''}
@@ -303,11 +320,11 @@ const Settings = () => {
                     containerProps={{ className: 'html-content', style: { height: '150px', fontSize: '13px', color: 'black', fontWeight: '500' } }}
                   />
                 </div>
-                <p className="text-[11px] text-[#64748B] mt-1">These notes will be printed at the bottom of all sales receipts. Supports multiple lines.</p>
+                <p className="text-[11px] text-black font-bold mt-1">These notes will be printed at the bottom of all sales receipts. Supports multiple lines.</p>
               </div>
               
               {/* <div className="border-t border-[#E2E8F0] pt-4 mt-2">
-                <label className="block text-[12px] font-bold text-[#334155] mb-1">Authorised Signature Image</label>
+                <label className="block text-[12px] font-bold text-black font-bold mb-1">Authorised Signature Image</label>
                 {watchStore('signatureImage') && (
                   <div className="mb-3 p-2 border border-[#E2E8F0] rounded-lg inline-block bg-[#F8FAFC]">
                     <img src={watchStore('signatureImage') || ''} alt="Signature" className="h-20 object-contain" />
@@ -340,7 +357,7 @@ const Settings = () => {
                   }}
                   className="w-full text-base file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-base file:font-bold file:bg-[#EFF6FF] file:text-[#2563EB] hover:file:bg-[#DBEAFE] cursor-pointer"
                 />
-                <p className="text-[11px] text-[#64748B] mt-1">Upload a clear signature image. Best with transparent background (PNG).</p>
+                <p className="text-[11px] text-black font-bold mt-1">Upload a clear signature image. Best with transparent background (PNG).</p>
               </div> */}
               
               <div className="flex justify-end mt-2">
@@ -364,14 +381,14 @@ const Settings = () => {
             </div>
             <div className="p-5 flex flex-col gap-4">
               <div>
-                <label className="block text-[12px] font-bold text-[#334155] mb-1">User Account</label>
-                <div className="w-full px-3 py-2 bg-[#F8FAFC] border border-[#CBD5E1] rounded text-base text-[#475569] font-medium">
+                <label className="block text-[12px] font-bold text-black font-bold mb-1">User Account</label>
+                <div className="w-full px-3 py-2 bg-[#F8FAFC] border border-[#CBD5E1] rounded text-base text-black font-bold">
                   Administrator (admin)
                 </div>
               </div>
 
               <div>
-                <label className="block text-[12px] font-bold text-[#334155] mb-1">Current Password *</label>
+                <label className="block text-[12px] font-bold text-black font-bold mb-1">Current Password *</label>
                 <input
                   {...registerPassword('currentPassword')}
                   type="password"
@@ -382,7 +399,7 @@ const Settings = () => {
               </div>
 
               <div>
-                <label className="block text-[12px] font-bold text-[#334155] mb-1">New Password *</label>
+                <label className="block text-[12px] font-bold text-black font-bold mb-1">New Password *</label>
                 <input
                   {...registerPassword('newPassword')}
                   type="password"
@@ -393,7 +410,7 @@ const Settings = () => {
               </div>
 
               <div>
-                <label className="block text-[12px] font-bold text-[#334155] mb-1">Confirm New Password *</label>
+                <label className="block text-[12px] font-bold text-black font-bold mb-1">Confirm New Password *</label>
                 <input
                   {...registerPassword('confirmPassword')}
                   type="password"
@@ -444,7 +461,7 @@ const Settings = () => {
               </div>
             ) : (
               <div className="flex flex-col gap-3">
-                <p className="text-sm text-[#64748B] mb-2">
+                <p className="text-sm text-black font-bold mb-2">
                   Select a section to reset. This action is irreversible.
                 </p>
                 
@@ -482,15 +499,15 @@ const Settings = () => {
             <div className="flex justify-center mb-4 text-[#E11D48]">
               <AlertTriangle size={48} />
             </div>
-            <h3 className="text-center font-bold text-[18px] text-[#1E293B] mb-2">Are you sure?</h3>
-            <p className="text-center text-[13px] text-[#64748B] mb-4">
+            <h3 className="text-center font-bold text-[18px] text-black font-bold mb-2">Are you sure?</h3>
+            <p className="text-center text-[13px] text-black font-bold mb-4">
               {resetType === 'transactions' && "All Sales, Purchases, Expenses, and Returns will be deleted. Stock quantities will be reset to 0. Master data will remain intact."}
               {resetType === 'master' && "All Master data (Products, Suppliers, Customers, etc) AND all transactions will be deleted."}
               {resetType === 'full' && "The entire database (except Settings and Users) will be permanently deleted."}
             </p>
             <p className="text-center text-[13px] text-[#BE123C] font-bold mb-4">This action is irreversible.</p>
             
-            <label className="block text-[12px] font-bold text-[#334155] mb-1">Type TRUNCATE to confirm</label>
+            <label className="block text-[12px] font-bold text-black font-bold mb-1">Type TRUNCATE to confirm</label>
             <input 
               type="text"
               value={resetConfirmation}
@@ -502,7 +519,7 @@ const Settings = () => {
             <div className="flex gap-2">
               <button type="button" 
                 onClick={() => { setShowResetModal(false); setResetConfirmation(''); setResetType(''); }}
-                className="flex-1 bg-[#F1F5F9] text-[#475569] font-bold py-2 rounded text-base hover:bg-[#E2E8F0]"
+                className="flex-1 bg-[#F1F5F9] text-black font-bold py-2 rounded text-base hover:bg-[#E2E8F0]"
               >
                 Cancel
               </button>

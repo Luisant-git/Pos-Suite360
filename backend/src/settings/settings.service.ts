@@ -40,6 +40,7 @@ export class SettingsService {
         signatureImage: data.signatureImage,
         yearlyInvoiceReset: data.yearlyInvoiceReset,
         allowEditSaleInvoice: data.allowEditSaleInvoice,
+        allowEditReceipts: data.allowEditReceipts,
         enableCustomerRates: data.enableCustomerRates,
       },
       create: {
@@ -55,6 +56,7 @@ export class SettingsService {
         signatureImage: data.signatureImage,
         yearlyInvoiceReset: data.yearlyInvoiceReset || false,
         allowEditSaleInvoice: data.allowEditSaleInvoice || false,
+        allowEditReceipts: data.allowEditReceipts || false,
         enableCustomerRates: data.enableCustomerRates || false,
       },
     });

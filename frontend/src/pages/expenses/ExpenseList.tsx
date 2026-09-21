@@ -87,7 +87,7 @@ const ExpenseList = () => {
           </div>
           <div>
             <h1 className="font-bold text-[16px] text-[#1E3A8A] uppercase">EXPENSE HISTORY & ENTRY LIST</h1>
-            <p className="text-xs text-gray-500">View, filter, and export all recorded business expenses</p>
+            <p className="text-xs text-black font-bold">View, filter, and export all recorded business expenses</p>
           </div>
         </div>
 
@@ -119,7 +119,7 @@ const ExpenseList = () => {
       <div className="bg-white border border-[#E6E9ED] shadow-sm rounded-sm p-4">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 items-end">
           <div>
-            <label className="block text-[12px] font-bold text-[#374151] mb-1">From Date</label>
+            <label className="block text-[12px] font-bold text-black font-bold mb-1">From Date</label>
             <input 
               type="date" 
               value={startDate} 
@@ -128,7 +128,7 @@ const ExpenseList = () => {
             />
           </div>
           <div>
-            <label className="block text-[12px] font-bold text-[#374151] mb-1">To Date</label>
+            <label className="block text-[12px] font-bold text-black font-bold mb-1">To Date</label>
             <input 
               type="date" 
               value={endDate} 
@@ -137,7 +137,7 @@ const ExpenseList = () => {
             />
           </div>
           <div>
-            <label className="block text-[12px] font-bold text-[#374151] mb-1">Category Filter</label>
+            <label className="block text-[12px] font-bold text-black font-bold mb-1">Category Filter</label>
             <SearchableSelect
               options={[{ value: '', label: 'All Categories' }, ...categories.map((c: any) => ({ value: c.id, label: c.name }))]}
               value={categoryId}
@@ -156,7 +156,7 @@ const ExpenseList = () => {
             <button 
               type="button" 
               onClick={() => { setStartDate(''); setEndDate(''); setCategoryId(''); setSearchQuery(''); }}
-              className="bg-gray-200 hover:bg-gray-300 text-gray-700 text-[12px] font-bold px-3 py-2 rounded transition-colors whitespace-nowrap"
+              className="bg-gray-200 hover:bg-gray-300 text-black font-bold text-[12px] font-bold px-3 py-2 rounded transition-colors whitespace-nowrap"
             >
               Reset
             </button>
@@ -173,8 +173,8 @@ const ExpenseList = () => {
           <div className="pdf-header hidden mb-4 border-b border-black pb-3">
             <div className="text-center">
               <h1 className="text-xl font-bold uppercase">{settings?.shopName || 'MY SHOP'}</h1>
-              <h2 className="text-sm font-semibold">EXPENSE HISTORY REPORT</h2>
-              <p className="text-xs text-gray-600">Date Range: {startDate || 'All Time'} to {endDate || 'All Time'}</p>
+              <h2 className="text-sm font-bold">EXPENSE HISTORY REPORT</h2>
+              <p className="text-xs text-black font-bold">Date Range: {startDate || 'All Time'} to {endDate || 'All Time'}</p>
             </div>
           </div>
 
@@ -194,15 +194,15 @@ const ExpenseList = () => {
                 {isLoading ? (
                   <tr><td colSpan={6} className="text-center p-4">Loading expenses...</td></tr>
                 ) : expenses.length === 0 ? (
-                  <tr><td colSpan={6} className="text-center p-4 text-gray-500">No expense transactions found.</td></tr>
+                  <tr><td colSpan={6} className="text-center p-4 text-black font-bold">No expense transactions found.</td></tr>
                 ) : (
                   expenses.map((e: any, index: number) => (
                     <tr key={e.id} className={`border-b border-[#E5E7EB] ${index % 2 === 0 ? 'bg-[#F9F9F9]' : 'bg-white'} hover:bg-blue-50`}>
-                      <td className="px-3 py-2.5 border-r border-[#E5E7EB] text-center font-bold text-gray-600">{index + 1}</td>
-                      <td className="px-3 py-2.5 border-r border-[#E5E7EB] font-bold text-[#1F2937]">{new Date(e.date).toLocaleDateString()}</td>
+                      <td className="px-3 py-2.5 border-r border-[#E5E7EB] text-center font-bold text-black font-bold">{index + 1}</td>
+                      <td className="px-3 py-2.5 border-r border-[#E5E7EB] font-bold text-black font-bold">{new Date(e.date).toLocaleDateString()}</td>
                       <td className="px-3 py-2.5 border-r border-[#E5E7EB] font-bold text-[#16A34A]">{e.category?.name || '-'}</td>
-                      <td className="px-3 py-2.5 border-r border-[#E5E7EB] text-gray-700">{e.paymentMode?.name || '-'}</td>
-                      <td className="px-3 py-2.5 border-r border-[#E5E7EB] text-gray-600">{e.notes || '-'}</td>
+                      <td className="px-3 py-2.5 border-r border-[#E5E7EB] text-black font-bold">{e.paymentMode?.name || '-'}</td>
+                      <td className="px-3 py-2.5 border-r border-[#E5E7EB] text-black font-bold">{e.notes || '-'}</td>
                       <td className="px-3 py-2.5 text-right font-bold text-[#EF4444]">{formatCurrency(e.amount)}</td>
                     </tr>
                   ))
@@ -219,7 +219,7 @@ const ExpenseList = () => {
 
           {/* Printable PDF Footer */}
           <div className="pdf-footer hidden mt-6 pt-2 border-t border-black text-right">
-            <p className="text-xs text-gray-500">Generated on: {new Date().toLocaleString()}</p>
+            <p className="text-xs text-black font-bold">Generated on: {new Date().toLocaleString()}</p>
           </div>
 
         </div>

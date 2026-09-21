@@ -73,10 +73,10 @@ const PurchaseList = () => {
         
         {/* Controls / Filters */}
         <div className="bg-white p-3 border-b border-[#E5E7EB] shrink-0 flex flex-col sm:flex-row justify-between items-center gap-3">
-          <div className="flex items-center gap-2 text-[12px] font-bold text-gray-700">
+          <div className="flex items-center gap-2 text-[12px] font-bold text-black font-bold">
             <span>Show</span>
           <select 
-            className="border border-[#ccc] rounded px-2 py-1 outline-none text-[#1F2937] bg-white"
+            className="border border-[#ccc] rounded px-2 py-1 outline-none text-black font-bold bg-white"
             value={entriesPerPage}
             onChange={(e) => {
               setEntriesPerPage(Number(e.target.value));
@@ -92,7 +92,7 @@ const PurchaseList = () => {
 
           <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
             <div className="flex items-center gap-1.5">
-              <label className="text-[12px] font-bold text-[#1F2937] hidden sm:block">Payment Mode:</label>
+              <label className="text-[12px] font-bold text-black font-bold hidden sm:block">Payment Mode:</label>
               <select
                 value={paymentModeFilter}
                 onChange={(e) => {
@@ -109,7 +109,7 @@ const PurchaseList = () => {
             </div>
 
             <div className="flex items-center gap-2">
-              <label className="text-[12px] font-bold text-[#1F2937] hidden sm:block">Search:</label>
+              <label className="text-[12px] font-bold text-black font-bold hidden sm:block">Search:</label>
               <input 
                 type="text" 
                 placeholder="Search invoices..."
@@ -150,10 +150,10 @@ const PurchaseList = () => {
               ) : (
                 paginatedPurchases.map((purchase: any, index: number) => (
                   <tr key={purchase.id} className={`border-b border-[#E5E7EB] ${index % 2 === 0 ? 'bg-[#F9F9F9]' : 'bg-white'} hover:bg-blue-50`}>
-                    <td className="px-3 py-2.5 border-r border-[#E5E7EB] text-[#333] font-medium">{purchase.date ? new Date(purchase.date).toISOString().split('T')[0] : '-'}</td>
-                    <td className="px-3 py-2.5 border-r border-[#E5E7EB] text-[#64748B] font-medium">{purchase.invoiceNo}</td>
+                    <td className="px-3 py-2.5 border-r border-[#E5E7EB] text-[#333] font-bold">{purchase.date ? new Date(purchase.date).toISOString().split('T')[0] : '-'}</td>
+                    <td className="px-3 py-2.5 border-r border-[#E5E7EB] text-black font-bold">{purchase.invoiceNo}</td>
                     <td className="px-3 py-2.5 border-r border-[#E5E7EB] text-[#3B82F6] font-bold cursor-pointer hover:underline">{purchase.supplierInvoiceNo || '-'}</td>
-                    <td className="px-3 py-2.5 border-r border-[#E5E7EB] text-[#333] font-medium">{purchase.supplier?.name || 'Unknown Supplier'}</td>
+                    <td className="px-3 py-2.5 border-r border-[#E5E7EB] text-[#333] font-bold">{purchase.supplier?.name || 'Unknown Supplier'}</td>
                     <td className="px-3 py-2.5 border-r border-[#E5E7EB] text-[#333] font-bold text-right">{formatCurrency(purchase.grandTotal)}</td>
                     <td className="px-3 py-2.5 border-r border-[#E5E7EB] text-center">
                       <span className={`px-2 py-0.5 rounded text-[11px] font-bold tracking-wide ${

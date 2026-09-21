@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, UseGuards, Request, Param, Query } from '@nestjs/common';
+import { Controller, Get, Post, Put, Body, UseGuards, Request, Param, Query } from '@nestjs/common';
 import { SupplierPaymentsService } from './supplier-payments.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
@@ -35,6 +35,12 @@ export class SupplierPaymentsController {
     // req.user from JwtAuthGuard contains the user payload
     const userId = req.user?.userId;
     return this.supplierPaymentsService.create(createSupplierPaymentDto, userId);
+  }
+
+  @Put(':id')
+  async update(@Param('id') id: string, @Body() updateData: any, @Request() req: any) {
+    const userId = req.user?.userId;
+    return this.supplierPaymentsService.update(Number(id), updateData, userId);
   }
 
   @Get()

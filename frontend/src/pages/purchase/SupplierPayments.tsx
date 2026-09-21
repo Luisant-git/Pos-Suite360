@@ -38,6 +38,9 @@ const SupplierPayments = () => {
   const [isTableExpanded, setIsTableExpanded] = useState(false);
   const [billFilter, setBillFilter] = useState<'Unpaid' | 'Paid' | 'All'>('Unpaid');
   const [allocations, setAllocations] = useState<Record<string, number>>({});
+  const [editingId, setEditingId] = useState<number | null>(null);
+
+  const { data: storeSettings } = useQuery({ queryKey: ['settings'], queryFn: async () => (await api.get('/settings')).data });
 
   const { register, control, handleSubmit, watch, setValue, reset, formState: { errors } } = useForm<PaymentFormValues>({
     resolver: zodResolver(paymentSchema) as any,
@@ -114,6 +117,22 @@ const SupplierPayments = () => {
     }
   });
 
+  const updateMutation = useMutation({
+    mutationFn: (data: { id: number, payload: any }) => api.put(`/supplier-payments/${data.id}`, data.payload),
+    onSuccess: () => {
+      toast.success('Payment updated successfully!');
+      queryClient.invalidateQueries({ queryKey: ['supplierPayments'] });
+      reset();
+      setEditingId(null);
+      setCurrentBalance(0);
+      setAllocations({});
+    },
+    onError: (error) => {
+      console.error(error);
+      toast.error('Failed to update payment.');
+    }
+  });
+
   const onSubmit = (data: PaymentFormValues) => {
     const payload = {
       ...data,
@@ -122,7 +141,11 @@ const SupplierPayments = () => {
         amount
       }))
     };
-    createMutation.mutate(payload as any);
+    if (editingId) {
+      updateMutation.mutate({ id: editingId, payload });
+    } else {
+      createMutation.mutate(payload as any);
+    }
   };
 
   const onError = (errors: any) => {
@@ -175,7 +198,7 @@ const SupplierPayments = () => {
             <span className="bg-[#E11D48] text-white p-1 rounded"><FileText size={16} /></span>
             SUPPLIER PAYMENTS & PAYOUTS
           </h1>
-          <p className="text-[12px] text-gray-500 mt-1">Record vendor credit payouts and supplier payments</p>
+          <p className="text-[12px] text-black font-bold mt-1">Record vendor credit payouts and supplier payments</p>
         </div>
         <div className="flex flex-wrap gap-2 w-full md:w-auto">
           <button type="button" onClick={() => navigate('/purchase')} className="bg-[#EFF6FF] text-[#2563EB] font-bold text-[13px] px-4 py-2 rounded border border-[#BFDBFE] hover:bg-[#DBEAFE] flex items-center gap-1 transition-colors flex-1 md:flex-none justify-center">
@@ -194,15 +217,15 @@ const SupplierPayments = () => {
         {/* Left Side - New Entry Form */}
         <div className={`bg-white border border-[#E2E8F0] shadow-sm rounded-lg overflow-hidden ${isTableExpanded ? 'hidden' : 'block'} print:border-none print:shadow-none print:w-full`}>
           <div className="bg-[#F8FAFC] border-b border-[#E2E8F0] px-4 py-3 flex items-center gap-2 print:hidden">
-            <FileText size={16} className="text-[#334155]" />
-            <h2 className="font-bold text-[13px] text-[#1E293B]">NEW SUPPLIER PAYMENT ENTRY</h2>
+            <FileText size={16} className="text-black font-bold" />
+            <h2 className="font-bold text-[13px] text-black font-bold">{editingId ? 'EDIT PAYMENT ENTRY' : 'NEW PAYMENT ENTRY'}</h2>
           </div>
           
           <form onSubmit={handleSubmit(onSubmit as any, onError)} className="p-4 flex flex-col gap-4">
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 print:hidden">
               <div>
-                <label className="block text-[12px] font-bold text-[#334155] mb-1">Payment No</label>
+                <label className="block text-[12px] font-bold text-black font-bold mb-1">Payment No</label>
                 <input
                   {...register('paymentNo')}
                   readOnly
@@ -210,7 +233,7 @@ const SupplierPayments = () => {
                 />
               </div>
               <div>
-                <label className="block text-[12px] font-bold text-[#334155] mb-1">Payment Date *</label>
+                <label className="block text-[12px] font-bold text-black font-bold mb-1">Payment Date *</label>
                 <input
                   {...register('date')}
                   type="date"
@@ -236,7 +259,7 @@ const SupplierPayments = () => {
                     ]}
                     value={field.value ? { value: field.value, label: suppliers.find((s: any) => s.id === field.value)?.name || 'Select...' } : null}
                     onChange={(val: any) => field.onChange(val?.value || 0)}
-                    className="text-[13px] font-medium"
+                    className="text-[13px] font-bold"
                     styles={{
                       control: (base: any) => ({
                         ...base,
@@ -268,8 +291,8 @@ const SupplierPayments = () => {
               <div className="flex flex-col gap-3">
                 <div className="border border-[#CBD5E1] rounded-lg overflow-hidden bg-white shadow-sm print:hidden">
                   <div className="bg-[#F8FAFC] px-4 py-3 border-b border-[#CBD5E1] flex justify-between items-center">
-                    <span className="text-[13px] font-bold text-[#334155] flex items-center gap-2">
-                      <FileText size={16} className="text-[#64748B]" /> Outstanding Summary
+                    <span className="text-[13px] font-bold text-black font-bold flex items-center gap-2">
+                      <FileText size={16} className="text-black font-bold" /> Outstanding Summary
                     </span>
                     <button 
                       type="button"
@@ -284,7 +307,7 @@ const SupplierPayments = () => {
                     {/* Removed Total Amount Bal and Purchase Return summaries as per user request */}
                     
                     <div className="flex justify-between items-center">
-                      <span className="text-[14px] font-bold text-[#1E293B]">Over All Outstanding Balance</span>
+                      <span className="text-[14px] font-bold text-black font-bold">Over All Outstanding Balance</span>
                       <div className="flex items-center gap-2">
                         <span className="text-[18px] font-bold text-[#E11D48]">
                           {formatCurrency(currentBalance)}
@@ -332,11 +355,11 @@ const SupplierPayments = () => {
                       <table className="w-full text-left text-[12px] whitespace-nowrap">
                         <thead className="bg-[#F8FAFC] border-b border-[#E2E8F0] sticky top-0">
                           <tr>
-                            <th className="px-3 py-2 font-bold text-[#334155]">Entry / Inv No</th>
-                            <th className="px-3 py-2 font-bold text-[#334155]">Bill Date</th>
-                            <th className="px-3 py-2 font-bold text-[#334155] text-right">Bill Total</th>
+                            <th className="px-3 py-2 font-bold text-black font-bold">Entry / Inv No</th>
+                            <th className="px-3 py-2 font-bold text-black font-bold">Bill Date</th>
+                            <th className="px-3 py-2 font-bold text-black font-bold text-right">Bill Total</th>
                             <th className="px-3 py-2 font-bold text-[#10B981] text-right">Pur. Returns</th>
-                            <th className="px-3 py-2 font-bold text-[#334155] text-right">Paid Amount</th>
+                            <th className="px-3 py-2 font-bold text-black font-bold text-right">Paid Amount</th>
                             <th className="px-3 py-2 font-bold text-[#E11D48] text-right">Pending Balance</th>
                             <th className="px-3 py-2 font-bold text-[#3B82F6] text-right print:hidden">Paying Now</th>
                             <th className="px-3 py-2 font-bold text-[#059669] text-right print:hidden">Balance After</th>
@@ -354,11 +377,11 @@ const SupplierPayments = () => {
                               
                               return (
                                 <tr key={bill.id || idx} className={`border-b border-[#E2E8F0] hover:bg-[#F8FAFC] ${isCleared ? 'bg-[#ECFDF5]' : ''}`}>
-                                  <td className="px-3 py-2 font-bold text-[#1E293B]">
+                                  <td className="px-3 py-2 font-bold text-black font-bold">
                                     {bill.entryNo}
                                   </td>
-                                  <td className="px-3 py-2 text-[#475569]">{new Date(bill.date).toISOString().split('T')[0]}</td>
-                                  <td className="px-3 py-2 text-right text-[#475569]">{formatCurrency(bill.total)}</td>
+                                  <td className="px-3 py-2 text-black font-bold">{new Date(bill.date).toISOString().split('T')[0]}</td>
+                                  <td className="px-3 py-2 text-right text-black font-bold">{formatCurrency(bill.total)}</td>
                                   <td className="px-3 py-2 text-right text-[#10B981]">{formatCurrency(bill.returned || 0)}</td>
                                   <td className="px-3 py-2 text-right text-[#10B981]">{formatCurrency(bill.received)}</td>
                                   <td className="px-3 py-2 text-right font-bold text-[#E11D48]">{formatCurrency(bill.pending)}</td>
@@ -388,7 +411,7 @@ const SupplierPayments = () => {
                               );
                             }) : (
                               <tr>
-                                <td colSpan={8} className="px-3 py-4 text-center text-[#64748B] italic">No {billFilter.toLowerCase()} bills found.</td>
+                                <td colSpan={8} className="px-3 py-4 text-center text-black font-bold italic">No {billFilter.toLowerCase()} bills found.</td>
                               </tr>
                             );
                           })()}
@@ -411,8 +434,8 @@ const SupplierPayments = () => {
                 />
               </div>
               <div>
-                <label className="block text-[12px] font-bold text-[#64748B] mb-1">Remaining Balance After Payment</label>
-                <div className="w-full px-3 py-2 bg-[#F8FAFC] border border-[#E2E8F0] rounded text-[13px] font-bold text-[#1E293B]">
+                <label className="block text-[12px] font-bold text-black font-bold mb-1">Remaining Balance After Payment</label>
+                <div className="w-full px-3 py-2 bg-[#F8FAFC] border border-[#E2E8F0] rounded text-[13px] font-bold text-black font-bold">
                   {formatCurrency(currentBalance - amountToPay)}
                 </div>
               </div>
@@ -420,7 +443,7 @@ const SupplierPayments = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 print:hidden">
               <div>
-                <label className="block text-[12px] font-bold text-[#334155] mb-1">PAYMENT TYPE *</label>
+                <label className="block text-[12px] font-bold text-black font-bold mb-1">PAYMENT TYPE *</label>
                 <select
                   {...register('paymentTypeId')}
                   className="w-full px-3 py-2 border border-[#CBD5E1] rounded shadow-sm focus:border-[#3B82F6] outline-none text-[13px] bg-white"
@@ -433,7 +456,7 @@ const SupplierPayments = () => {
                 {errors.paymentTypeId && <span className="text-red-500 text-[11px] mt-1 block">{errors.paymentTypeId.message}</span>}
               </div>
               <div>
-                <label className="block text-[12px] font-bold text-[#334155] mb-1">Reference / Cheque No (Optional for Cash)</label>
+                <label className="block text-[12px] font-bold text-black font-bold mb-1">Reference / Cheque No (Optional for Cash)</label>
                 <input
                   {...register('reference')}
                   type="text"
@@ -444,7 +467,7 @@ const SupplierPayments = () => {
             </div>
 
             <div className="print:hidden">
-              <label className="block text-[12px] font-bold text-[#334155] mb-1">Remarks (Optional)</label>
+              <label className="block text-[12px] font-bold text-black font-bold mb-1">Remarks (Optional)</label>
               <input
                 {...register('remarks')}
                 type="text"
@@ -453,13 +476,27 @@ const SupplierPayments = () => {
               />
             </div>
 
-            <div className="flex justify-end mt-2 print:hidden">
+            <div className="flex justify-end mt-2 print:hidden gap-2">
+              {editingId && (
+                <button 
+                  type="button" 
+                  onClick={() => {
+                    reset();
+                    setEditingId(null);
+                    setAllocations({});
+                    queryClient.invalidateQueries({ queryKey: ['nextPaymentNo'] });
+                  }}
+                  className="bg-[#F1F5F9] text-black hover:bg-[#E2E8F0] px-4 py-2 rounded font-bold text-[12px] md:text-[14px] flex items-center justify-center gap-2 transition-colors w-full md:w-auto border border-[#CBD5E1]"
+                >
+                  <X size={14} /> CANCEL
+                </button>
+              )}
               <button 
                 type="submit" 
-                disabled={createMutation.isPending}
+                disabled={createMutation.isPending || updateMutation.isPending}
                 className="bg-[#E11D48] hover:bg-[#BE123C] text-white px-4 py-2 rounded font-bold text-[12px] md:text-[14px] flex items-center justify-center gap-2 transition-colors disabled:opacity-50 w-full md:w-auto"
               >
-                <Save size={14} /> SAVE PAYMENT (F10)
+                <Save size={14} /> {editingId ? 'UPDATE PAYMENT (F10)' : 'SAVE PAYMENT (F10)'}
               </button>
             </div>
 
@@ -470,8 +507,8 @@ const SupplierPayments = () => {
         <div className={`bg-white border border-[#E2E8F0] shadow-sm flex flex-col ${isTableExpanded ? 'fixed inset-4 lg:inset-8 z-50 rounded-xl shadow-2xl' : 'rounded-lg overflow-hidden lg:col-span-1'} print:hidden`}>
           <div className="bg-[#F8FAFC] border-b border-[#E2E8F0] px-4 py-3 flex justify-between items-center">
             <div className="flex items-center gap-2">
-              <FileText size={16} className="text-[#334155]" />
-              <h2 className="font-bold text-[13px] text-[#1E293B]">PAYMENTS HISTORY</h2>
+              <FileText size={16} className="text-black font-bold" />
+              <h2 className="font-bold text-[13px] text-black font-bold">PAYMENTS HISTORY</h2>
             </div>
             <div className="flex items-center gap-2">
               <div className="bg-[#E11D48] text-white text-[11px] font-bold px-2 py-0.5 rounded-full">
@@ -480,7 +517,7 @@ const SupplierPayments = () => {
               <button 
                 type="button" 
                 onClick={() => setIsTableExpanded(!isTableExpanded)}
-                className="text-[#64748B] hover:text-[#E11D48] transition-colors ml-1"
+                className="text-black font-bold hover:text-[#E11D48] transition-colors ml-1"
                 title={isTableExpanded ? "Minimize Table" : "View Full Table"}
               >
                 {isTableExpanded ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
@@ -536,28 +573,49 @@ const SupplierPayments = () => {
                   <th className="px-3 py-2 border-r border-[#334155]">Date</th>
                   <th className="px-3 py-2 border-r border-[#334155]">Supplier</th>
                   <th className="px-3 py-2 border-r border-[#334155]">Mode</th>
-                  <th className="px-3 py-2 text-right">Amount Paid</th>
+                  <th className="px-3 py-2 text-right border-r border-[#334155]">Amount Paid</th>
+                  {storeSettings?.allowEditReceipts && <th className="px-3 py-2 text-center w-20">Action</th>}
                 </tr>
               </thead>
               <tbody>
                 {historyLoading ? (
-                  <tr><td colSpan={5} className="text-center p-4 text-gray-500">Loading history...</td></tr>
+                  <tr><td colSpan={storeSettings?.allowEditReceipts ? 6 : 5} className="text-center p-4 text-black font-bold">Loading history...</td></tr>
                 ) : filteredHistory.length === 0 ? (
-                  <tr><td colSpan={5} className="text-center p-4 text-gray-500">No payment records found.</td></tr>
+                  <tr><td colSpan={storeSettings?.allowEditReceipts ? 6 : 5} className="text-center p-4 text-black font-bold">No payment records found.</td></tr>
                 ) : (
                   filteredHistory.map((p: any, idx: number) => (
                     <tr key={p.id} className={`border-b border-[#E2E8F0] ${idx % 2 === 0 ? 'bg-white' : 'bg-[#F8FAFC]'}`}>
-                      <td className="px-3 py-3 border-r border-[#E5E7EB] text-[#475569]">{p.paymentType?.name || p.paymentMode?.name || '-'}</td>
-                      <td className="px-3 py-2 border-r border-[#E2E8F0] text-[#64748B]">{new Date(p.date).toISOString().split('T')[0]}</td>
-                      <td className="px-3 py-2 border-r border-[#E2E8F0] font-medium text-[#334155]">{p.supplier?.name}</td>
-                      <td className="px-3 py-2 border-r border-[#E2E8F0]">
-                        <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                          p.paymentMode?.name?.includes('Return') ? 'bg-[#F59E0B] text-white' : 'bg-[#64748B] text-white'
-                        }`}>
-                          {p.paymentMode?.name}
-                        </span>
+                      <td className="px-3 py-3 border-r border-[#E5E7EB] text-black font-bold">{p.paymentType?.name || p.paymentMode?.name || '-'}</td>
+                      <td className="px-3 py-2 border-r border-[#E2E8F0] text-black font-bold">{new Date(p.date).toISOString().split('T')[0]}</td>
+                      <td className="px-3 py-2 border-r border-[#E2E8F0] font-bold text-black font-bold">{p.supplier?.name}</td>
+                      <td className="px-3 py-2 border-r border-[#E2E8F0] text-black font-bold">
+                        {p.paymentMode?.name || '-'}
                       </td>
                       <td className="px-3 py-2 text-right font-bold text-[#E11D48]">{formatCurrency(p.amount)}</td>
+                      {storeSettings?.allowEditReceipts && (
+                        <td className="px-3 py-2 text-center border-l border-[#E2E8F0]">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              reset({
+                                paymentNo: p.paymentNo,
+                                date: new Date(p.date).toISOString().split('T')[0],
+                                supplierId: p.supplierId,
+                                amount: p.amount,
+                                paymentTypeId: p.paymentTypeId || 0,
+                                reference: p.reference || '',
+                                remarks: p.remarks || '',
+                              });
+                              setEditingId(p.id);
+                              setAllocations({});
+                              window.scrollTo({ top: 0, behavior: 'smooth' });
+                            }}
+                            className="bg-[#EFF6FF] text-[#2563EB] hover:bg-[#DBEAFE] px-2 py-1 rounded text-[11px] font-bold border border-[#BFDBFE] transition-colors"
+                          >
+                            Edit
+                          </button>
+                        </td>
+                      )}
                     </tr>
                   ))
                 )}

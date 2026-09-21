@@ -100,41 +100,41 @@ const SalesReport = () => {
         <div className="grid grid-cols-1 md:grid-cols-6 gap-3 items-end mb-3">
           
           <div>
-            <label className="flex items-center gap-1 text-[12px] text-[#64748B] mb-1 font-bold"><Calendar size={12} /> From Date</label>
+            <label className="flex items-center gap-1 text-[12px] text-black font-bold mb-1 font-bold"><Calendar size={12} /> From Date</label>
             <input
               type="date"
               value={fromDate}
               onChange={(e) => setFromDate(e.target.value)}
-              className="w-full px-3 py-1.5 border border-[#CBD5E1] rounded outline-none text-[13px] text-[#334155] focus:border-[#3B82F6]"
+              className="w-full px-3 py-1.5 border border-[#CBD5E1] rounded outline-none text-[13px] text-black font-bold focus:border-[#3B82F6]"
             />
           </div>
 
           <div>
-            <label className="flex items-center gap-1 text-[12px] text-[#64748B] mb-1 font-bold"><Calendar size={12} /> To Date</label>
+            <label className="flex items-center gap-1 text-[12px] text-black font-bold mb-1 font-bold"><Calendar size={12} /> To Date</label>
             <input
               type="date"
               value={toDate}
               onChange={(e) => setToDate(e.target.value)}
-              className="w-full px-3 py-1.5 border border-[#CBD5E1] rounded outline-none text-[13px] text-[#334155] focus:border-[#3B82F6]"
+              className="w-full px-3 py-1.5 border border-[#CBD5E1] rounded outline-none text-[13px] text-black font-bold focus:border-[#3B82F6]"
             />
           </div>
 
           <div>
             <label className="flex items-center gap-1 text-[12px] text-[#3B82F6] mb-1 font-bold"><FileDigit size={12} /> Invoice No</label>
             <div className="relative">
-              <Search size={14} className="absolute left-2.5 top-2.5 text-[#9CA3AF]" />
+              <Search size={14} className="absolute left-2.5 top-2.5 text-black font-bold" />
               <input 
                 type="text" 
                 value={invoiceNo}
                 onChange={(e) => setInvoiceNo(e.target.value)}
                 placeholder="Type or select invoice..."
-                className="w-full pl-8 pr-3 py-1.5 border border-[#CBD5E1] rounded outline-none text-[13px] text-[#334155] focus:border-[#3B82F6]"
+                className="w-full pl-8 pr-3 py-1.5 border border-[#CBD5E1] rounded outline-none text-[13px] text-black font-bold focus:border-[#3B82F6]"
               />
             </div>
           </div>
 
           <div>
-            <label className="flex items-center gap-1 text-[12px] text-[#64748B] mb-1 font-bold"><Users size={12} /> Customer Name</label>
+            <label className="flex items-center gap-1 text-[12px] text-black font-bold mb-1 font-bold"><Users size={12} /> Customer Name</label>
             <SearchableSelect
               options={[{ value: '', label: 'All Customers' }, ...customers.map((c: any) => ({ value: c.id, label: `${c.name} - ${c.phone || ''}` }))]}
               value={customerId}
@@ -144,11 +144,11 @@ const SalesReport = () => {
           </div>
 
           <div>
-            <label className="flex items-center gap-1 text-[12px] text-[#64748B] mb-1 font-bold"><CreditCard size={12} /> Payment Mode</label>
+            <label className="flex items-center gap-1 text-[12px] text-black font-bold mb-1 font-bold"><CreditCard size={12} /> Payment Mode</label>
             <select
               value={paymentMode}
               onChange={(e) => setPaymentMode(e.target.value)}
-              className="w-full px-2 py-1.5 border border-[#CBD5E1] rounded outline-none text-[12px] text-[#334155] bg-white focus:border-[#3B82F6]"
+              className="w-full px-2 py-1.5 border border-[#CBD5E1] rounded outline-none text-[12px] text-black font-bold bg-white focus:border-[#3B82F6]"
             >
               <option value="">All Payment Modes</option>
               {paymentModes.map((pm: any) => (
@@ -158,14 +158,14 @@ const SalesReport = () => {
           </div>
 
           <div>
-            <label className="flex items-center gap-1 text-[11px] text-[#64748B] mb-1 font-bold">Show</label>
+            <label className="flex items-center gap-1 text-[11px] text-black font-bold mb-1 font-bold">Show</label>
             <select
               value={entriesPerPage}
               onChange={(e) => {
                 setEntriesPerPage(Number(e.target.value));
                 setCurrentPage(1);
               }}
-              className="w-full px-2 py-1.5 border border-[#CBD5E1] rounded outline-none text-[12px] text-[#334155] bg-white focus:border-[#3B82F6]"
+              className="w-full px-2 py-1.5 border border-[#CBD5E1] rounded outline-none text-[12px] text-black font-bold bg-white focus:border-[#3B82F6]"
             >
               <option value={10}>10 Entries</option>
               <option value={25}>25 Entries</option>
@@ -188,7 +188,7 @@ const SalesReport = () => {
               setInvoiceNo('');
               setPaymentMode('');
               setQuickSearch('');
-            }} className={`flex items-center gap-1 px-3 py-1.5 rounded-md text-[12px] font-bold transition-colors shadow-sm border ${!isReset ? 'bg-white text-red-600 border-red-200 hover:bg-red-50' : 'bg-white text-[#1F2937] border-[#E5E7EB] hover:bg-[#F9FAFB]'}`}>
+            }} className={`flex items-center gap-1 px-3 py-1.5 rounded-md text-[12px] font-bold transition-colors shadow-sm border ${!isReset ? 'bg-white text-red-600 border-red-200 hover:bg-red-50' : 'bg-white text-black font-bold border-[#E5E7EB] hover:bg-[#F9FAFB]'}`}>
               <RotateCcw size={14} /> Reset Filters
             </button>
           </div>
@@ -214,7 +214,7 @@ const SalesReport = () => {
           </div>
           <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
             <div className="relative">
-              <Search size={14} className="absolute left-2.5 top-2.5 text-[#9CA3AF]" />
+              <Search size={14} className="absolute left-2.5 top-2.5 text-black font-bold" />
               <input 
                 type="text" 
                 value={quickSearch}
@@ -291,8 +291,8 @@ const SalesReport = () => {
         <div id="sales-report-export" className="flex-1 flex flex-col min-h-0 overflow-hidden">
           <div className="pdf-header hidden mb-4">
             <div className="flex justify-between items-end">
-              <h2 className="text-base font-bold text-[#1E293B] uppercase tracking-wider">Sales Report</h2>
-              <p className="text-[#475569] font-bold text-xs">Date: {fromDate || 'All Time'} to {toDate || 'All Time'}</p>
+              <h2 className="text-base font-bold text-black font-bold uppercase tracking-wider">Sales Report</h2>
+              <p className="text-black font-bold text-xs">Date: {fromDate || 'All Time'} to {toDate || 'All Time'}</p>
             </div>
           </div>
           <div className="flex-1 overflow-auto overflow-x-auto" id="sales-report-table">
@@ -312,17 +312,17 @@ const SalesReport = () => {
             </thead>
             <tbody>
               {isLoading ? (
-                <tr><td colSpan={9} className="text-center p-6 text-[#6B7280]">Loading report data...</td></tr>
+                <tr><td colSpan={9} className="text-center p-6 text-black font-bold">Loading report data...</td></tr>
               ) : filteredSales.length === 0 ? (
-                <tr><td colSpan={9} className="text-center p-6 text-[#6B7280]">No sales records found.</td></tr>
+                <tr><td colSpan={9} className="text-center p-6 text-black font-bold">No sales records found.</td></tr>
               ) : (
                 paginatedSales.map((s: any, index: number) => (
                   <React.Fragment key={s.id}>
                     <tr className={`border-b border-[#E2E8F0] ${index % 2 === 0 ? 'bg-white' : 'bg-[#F8FAFC]'} hover:bg-[#EFF6FF]`}>
-                    <td className="px-4 py-3 border-r border-[#E2E8F0] text-center text-[#64748B] font-medium">{(currentPage - 1) * entriesPerPage + index + 1}</td>
+                    <td className="px-4 py-3 border-r border-[#E2E8F0] text-center text-black font-bold">{(currentPage - 1) * entriesPerPage + index + 1}</td>
                     <td className="px-4 py-3 border-r border-[#E2E8F0] font-bold text-[#3B82F6] cursor-pointer hover:underline">{s.invoiceNo}</td>
-                    <td className="px-4 py-3 border-r border-[#E2E8F0] text-center text-[#475569]">{s.date}</td>
-                    <td className="px-4 py-3 border-r border-[#E2E8F0] font-medium text-[#334155]">{s.customerName}</td>
+                    <td className="px-4 py-3 border-r border-[#E2E8F0] text-center text-black font-bold">{s.date}</td>
+                    <td className="px-4 py-3 border-r border-[#E2E8F0] font-bold text-black font-bold">{s.customerName}</td>
                     <td className="px-4 py-3 border-r border-[#E2E8F0] text-center">
                       <div className="flex justify-center items-center">
                         <span className="payment-badge bg-[#64748B] text-white px-2 rounded text-[10px] font-bold inline-block h-[18px] leading-[18px] text-center" data-pdf-color="#64748B">
@@ -330,7 +330,7 @@ const SalesReport = () => {
                         </span>
                       </div>
                     </td>
-                    <td className="px-4 py-3 border-r border-[#E2E8F0] text-center font-bold text-[#475569]">{s.noOfItems}</td>
+                    <td className="px-4 py-3 border-r border-[#E2E8F0] text-center font-bold text-black font-bold">{s.noOfItems}</td>
                     <td className="px-4 py-3 border-r border-[#E2E8F0] text-center font-bold">{s.totalBirds > 0 ? s.totalBirds : '-'}</td>
                     <td className="px-4 py-3 border-r border-[#E2E8F0] text-center font-bold text-[#3B82F6]">{s.netPayable}</td>
                     <td data-html2canvas-ignore="true" className="px-4 py-3 text-center">
@@ -375,7 +375,7 @@ const SalesReport = () => {
           </table>
         </div>
         <div className="pdf-footer hidden mt-6 text-right border-t-2 border-[#1E293B] pt-4 pb-8 pr-6">
-          <h3 className="text-xl font-bold text-[#1E293B] inline-block">Total Amount: {formatCurrency(totalSalesAmount)}</h3>
+          <h3 className="text-xl font-bold text-black font-bold inline-block">Total Amount: {formatCurrency(totalSalesAmount)}</h3>
         </div>
         </div>
         {!isLoading && (

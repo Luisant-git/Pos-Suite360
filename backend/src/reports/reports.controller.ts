@@ -14,4 +14,12 @@ export class ReportsController {
   ) {
     return this.reportsService.getProfitLoss(fromDate, toDate);
   }
+
+  @Get('product-wise-sales')
+  async getProductWiseSales(
+    @Query('fromDate') fromDate?: string,
+    @Query('toDate') toDate?: string,
+  ) {
+    return this.reportsService.getProductWiseSales(fromDate, toDate);
+  }
 }

@@ -513,6 +513,7 @@ model Settings {
   signatureImage   String?
   yearlyInvoiceReset Boolean @default(false)
   allowEditSaleInvoice Boolean @default(false)
+  allowEditReceipts Boolean @default(false)
   enableCustomerRates Boolean @default(false)
 
   createdAt        DateTime @default(now())

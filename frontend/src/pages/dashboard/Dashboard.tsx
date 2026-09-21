@@ -38,9 +38,9 @@ const StatCard = ({ title, value, icon: Icon, colorClass, desc, layout = 'topbar
   return (
     <div className="bg-white border border-[#E6E9ED] shadow-sm p-4 sm:p-5 relative flex items-center justify-between hover:shadow-md transition-shadow gap-3">
       <div className="min-w-0 flex-1">
-        <h3 className={`${valueSizeClass} font-semibold text-gray-500 whitespace-nowrap`}>{value}</h3>
-        <p className="text-[12px] sm:text-[13px] text-[#1F2937] font-semibold mt-1 uppercase tracking-wide leading-tight">{title}</p>
-        {desc && <p className="text-[11px] sm:text-[12px] text-gray-400 font-medium mt-1 truncate">{desc}</p>}
+        <h3 className={`${valueSizeClass} font-bold text-black font-bold whitespace-nowrap`}>{value}</h3>
+        <p className="text-[12px] sm:text-[13px] text-black font-bold mt-1 uppercase tracking-wide leading-tight">{title}</p>
+        {desc && <p className="text-[11px] sm:text-[12px] text-black font-bold mt-1 truncate">{desc}</p>}
       </div>
       <div className={`p-3 sm:p-4 ${colorClass} text-white flex-shrink-0 flex items-center justify-center shadow-inner rounded-xl`}>
         <Icon className="w-6 h-6 sm:w-8 sm:h-8" />
@@ -78,7 +78,7 @@ const Dashboard = () => {
       <div className="bg-[#F3F5F8] min-h-[calc(100vh-100px)] flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
           <div className="w-12 h-12 border-4 border-t-[#2563EB] border-blue-200 rounded-full animate-spin shadow-md"></div>
-          <p className="text-[15px] font-semibold text-gray-600 tracking-wide">Loading Analytics...</p>
+          <p className="text-[15px] font-bold text-black font-bold tracking-wide">Loading Analytics...</p>
         </div>
       </div>
     );
@@ -94,7 +94,7 @@ const Dashboard = () => {
       {/*
       Quick Launchpad for POS
       <div className="mb-8">
-        <h2 className="text-[20px] font-semibold text-gray-800 mb-4 flex items-center gap-2">
+        <h2 className="text-[20px] font-bold text-black font-bold mb-4 flex items-center gap-2">
           <Zap className="text-amber-500" /> Quick Launchpad
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
@@ -145,24 +145,24 @@ const Dashboard = () => {
       */}
 
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
-        <h1 className="text-[20px] font-semibold text-gray-800">Financial Overview</h1>
+        <h1 className="text-[20px] font-bold text-black font-bold">Financial Overview</h1>
         <div className="flex flex-col sm:flex-row sm:items-center gap-3 bg-white px-4 py-3 sm:py-2 border border-gray-200 rounded-xl shadow-sm w-full sm:w-auto">
           <div className="flex items-center justify-between sm:justify-start gap-2 sm:border-r border-gray-200 sm:pr-4">
-            <label className="text-[13px] font-semibold text-gray-500 w-10 sm:w-auto">From:</label>
+            <label className="text-[13px] font-bold text-black font-bold w-10 sm:w-auto">From:</label>
             <input 
               type="date" 
               value={filterStartDate} 
               onChange={(e) => setFilterStartDate(e.target.value)}
-              className="text-[14px] font-semibold text-gray-800 outline-none bg-transparent cursor-pointer flex-1 text-right sm:text-left"
+              className="text-[14px] font-bold text-black font-bold outline-none bg-transparent cursor-pointer flex-1 text-right sm:text-left"
             />
           </div>
           <div className="flex items-center justify-between sm:justify-start gap-2 sm:pl-2 sm:border-r border-gray-200 sm:pr-4">
-            <label className="text-[13px] font-semibold text-gray-500 w-10 sm:w-auto">To:</label>
+            <label className="text-[13px] font-bold text-black font-bold w-10 sm:w-auto">To:</label>
             <input 
               type="date" 
               value={filterEndDate} 
               onChange={(e) => setFilterEndDate(e.target.value)}
-              className="text-[14px] font-semibold text-gray-800 outline-none bg-transparent cursor-pointer flex-1 text-right sm:text-left"
+              className="text-[14px] font-bold text-black font-bold outline-none bg-transparent cursor-pointer flex-1 text-right sm:text-left"
             />
           </div>
           <div className="flex justify-end w-full sm:w-auto sm:block mt-1 sm:mt-0 border-t border-gray-100 pt-2 sm:border-t-0 sm:pt-0">
@@ -172,7 +172,7 @@ const Dashboard = () => {
                 setFilterStartDate(today);
                 setFilterEndDate(today);
               }}
-              className="flex items-center gap-1.5 text-[13px] font-semibold text-gray-500 hover:text-blue-600 transition-colors sm:pl-2"
+              className="flex items-center gap-1.5 text-[13px] font-bold text-black font-bold hover:text-blue-600 transition-colors sm:pl-2"
               title="Reset to Today"
             >
               <RotateCcw size={16} /> Reset
@@ -245,7 +245,7 @@ const Dashboard = () => {
         {/* Low Stock Products */}
         <div className="bg-white border border-gray-200 shadow-sm rounded-xl overflow-hidden lg:col-span-1">
           <div className="border-b border-gray-100 px-5 py-4 flex justify-between items-center bg-gray-50/50">
-            <h2 className="text-[16px] font-semibold text-gray-800 flex items-center gap-2">
+            <h2 className="text-[16px] font-bold text-black font-bold flex items-center gap-2">
               <Package size={18} className="text-rose-500" /> Low Stock Alerts
             </h2>
           </div>
@@ -255,26 +255,26 @@ const Dashboard = () => {
                 {data.lowStockProducts.map((product: any, idx: number) => (
                   <li key={idx} className="p-4 flex items-center justify-between hover:bg-rose-50/50 transition-colors group">
                     <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center text-gray-500 group-hover:bg-white group-hover:shadow-sm transition-all">
+                      <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center text-black font-bold group-hover:bg-white group-hover:shadow-sm transition-all">
                         <Package size={24} />
                       </div>
                       <div>
-                        <p className="font-semibold text-gray-800 text-[14px]">{product.name}</p>
-                        <p className="text-[12px] text-gray-500 font-medium mt-0.5">Min Stock: {product.minStock}</p>
+                        <p className="font-bold text-black font-bold text-[14px]">{product.name}</p>
+                        <p className="text-[12px] text-black font-bold mt-0.5">Min Stock: {product.minStock}</p>
                       </div>
                     </div>
-                    <div className="font-semibold text-rose-500 bg-rose-100 px-3 py-1.5 rounded-lg text-[13px]">
+                    <div className="font-bold text-rose-500 bg-rose-100 px-3 py-1.5 rounded-lg text-[13px]">
                       {product.currentStock} left
                     </div>
                   </li>
                 ))}
               </ul>
             ) : (
-              <div className="h-full flex flex-col items-center justify-center text-gray-400 p-6 text-center gap-3">
+              <div className="h-full flex flex-col items-center justify-center text-black font-bold p-6 text-center gap-3">
                 <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center">
-                  <Package size={32} className="text-gray-300" />
+                  <Package size={32} className="text-black font-bold" />
                 </div>
-                <p className="font-semibold text-[14px]">All stock levels are optimal</p>
+                <p className="font-bold text-[14px]">All stock levels are optimal</p>
               </div>
             )}
           </div>
@@ -283,10 +283,10 @@ const Dashboard = () => {
         {/* Supplier Payments Due */}
         <div className="bg-white border border-gray-200 shadow-sm rounded-xl overflow-hidden lg:col-span-1 flex flex-col">
           <div className="border-b border-gray-100 px-5 py-4 flex justify-between items-center bg-gray-50/50">
-            <h2 className="text-[16px] font-semibold text-gray-800 flex items-center gap-2">
+            <h2 className="text-[16px] font-bold text-black font-bold flex items-center gap-2">
               <Landmark size={18} className="text-rose-500" /> Supplier Payments Due
             </h2>
-            <Link to="/purchase/payments" className="px-3 py-1 bg-rose-50 text-rose-600 font-semibold rounded hover:bg-rose-100 transition-colors text-[12px]">
+            <Link to="/purchase/payments" className="px-3 py-1 bg-rose-50 text-rose-600 font-bold rounded hover:bg-rose-100 transition-colors text-[12px]">
               Settle
             </Link>
           </div>
@@ -294,7 +294,7 @@ const Dashboard = () => {
             <table className="w-full text-left text-[12px]">
               <thead className="bg-[#F8FAFC] border-b border-[#E2E8F0] sticky top-0">
                 <tr>
-                  <th className="px-4 py-3 font-bold text-[#334155]">Supplier / Bill</th>
+                  <th className="px-4 py-3 font-bold text-black font-bold">Supplier / Bill</th>
                   <th className="px-4 py-3 font-bold text-[#059669] text-right whitespace-nowrap">Pending</th>
                 </tr>
               </thead>
@@ -302,21 +302,21 @@ const Dashboard = () => {
                 {data.unpaidSupplierBills?.length > 0 ? data.unpaidSupplierBills.map((bill: any, idx: number) => (
                   <tr key={idx} className="border-b border-[#E2E8F0] hover:bg-[#F8FAFC]">
                     <td className="px-4 py-3">
-                      <div className="font-bold text-[#1E293B] break-words">{bill.entityName}</div>
-                      <div className="text-[#64748B] text-[11px] mt-0.5">
+                      <div className="font-bold text-black font-bold break-words">{bill.entityName}</div>
+                      <div className="text-black font-bold text-[11px] mt-0.5">
                         {bill.entryNo} • {new Date(bill.date).toLocaleDateString('en-GB')}
                       </div>
                     </td>
                     <td className="px-4 py-3 text-right">
                       <div className="font-bold text-[#059669]">{formatCurrency(bill.pending)}</div>
-                      <div className="text-[#64748B] text-[11px] mt-0.5">
+                      <div className="text-black font-bold text-[11px] mt-0.5">
                         Total: {formatCurrency(bill.total)}
                       </div>
                     </td>
                   </tr>
                 )) : (
                   <tr>
-                    <td colSpan={2} className="px-4 py-8 text-center text-gray-500">
+                    <td colSpan={2} className="px-4 py-8 text-center text-black font-bold">
                       No pending supplier bills
                     </td>
                   </tr>
@@ -329,10 +329,10 @@ const Dashboard = () => {
         {/* Customer Payments Expected */}
         <div className="bg-white border border-gray-200 shadow-sm rounded-xl overflow-hidden lg:col-span-1 flex flex-col">
           <div className="border-b border-gray-100 px-5 py-4 flex justify-between items-center bg-gray-50/50">
-            <h2 className="text-[16px] font-semibold text-gray-800 flex items-center gap-2">
+            <h2 className="text-[16px] font-bold text-black font-bold flex items-center gap-2">
               <Users size={18} className="text-amber-500" /> Customer Payments Due
             </h2>
-            <Link to="/sales/receipts" className="px-3 py-1 bg-amber-50 text-amber-600 font-semibold rounded hover:bg-amber-100 transition-colors text-[12px]">
+            <Link to="/sales/receipts" className="px-3 py-1 bg-amber-50 text-amber-600 font-bold rounded hover:bg-amber-100 transition-colors text-[12px]">
               Collect
             </Link>
           </div>
@@ -340,7 +340,7 @@ const Dashboard = () => {
             <table className="w-full text-left text-[12px]">
               <thead className="bg-[#F8FAFC] border-b border-[#E2E8F0] sticky top-0">
                 <tr>
-                  <th className="px-4 py-3 font-bold text-[#334155]">Customer / Bill</th>
+                  <th className="px-4 py-3 font-bold text-black font-bold">Customer / Bill</th>
                   <th className="px-4 py-3 font-bold text-[#059669] text-right whitespace-nowrap">Pending</th>
                 </tr>
               </thead>
@@ -348,21 +348,21 @@ const Dashboard = () => {
                 {data.unpaidCustomerBills?.length > 0 ? data.unpaidCustomerBills.map((bill: any, idx: number) => (
                   <tr key={idx} className="border-b border-[#E2E8F0] hover:bg-[#F8FAFC]">
                     <td className="px-4 py-3">
-                      <div className="font-bold text-[#1E293B] break-words">{bill.entityName}</div>
-                      <div className="text-[#64748B] text-[11px] mt-0.5">
+                      <div className="font-bold text-black font-bold break-words">{bill.entityName}</div>
+                      <div className="text-black font-bold text-[11px] mt-0.5">
                         {bill.entryNo} • {new Date(bill.date).toLocaleDateString('en-GB')}
                       </div>
                     </td>
                     <td className="px-4 py-3 text-right">
                       <div className="font-bold text-[#059669]">{formatCurrency(bill.pending)}</div>
-                      <div className="text-[#64748B] text-[11px] mt-0.5">
+                      <div className="text-black font-bold text-[11px] mt-0.5">
                         Total: {formatCurrency(bill.total)}
                       </div>
                     </td>
                   </tr>
                 )) : (
                   <tr>
-                    <td colSpan={2} className="px-4 py-8 text-center text-gray-500">
+                    <td colSpan={2} className="px-4 py-8 text-center text-black font-bold">
                       No pending customer bills
                     </td>
                   </tr>

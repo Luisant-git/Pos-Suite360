@@ -32,8 +32,8 @@ const DeleteConfirmationModal: React.FC<DeleteConfirmationModalProps> = ({
           <div className="w-16 h-16 bg-red-100 text-red-500 rounded-full flex items-center justify-center mb-4 shrink-0 shadow-sm border border-red-200">
             <AlertTriangle size={32} />
           </div>
-          <h2 className="text-xl font-bold text-gray-900 mb-2">{title}</h2>
-          <p className="text-gray-600 font-medium">
+          <h2 className="text-xl font-bold text-black font-bold mb-2">{title}</h2>
+          <p className="text-black font-bold">
             {message}
           </p>
           {itemName && (
@@ -48,7 +48,7 @@ const DeleteConfirmationModal: React.FC<DeleteConfirmationModalProps> = ({
             type="button"
             onClick={onCancel}
             disabled={isDeleting}
-            className="px-5 py-2.5 bg-white border-2 border-gray-200 text-gray-700 font-bold rounded-lg hover:bg-gray-100 hover:border-gray-300 transition-colors focus:ring-4 focus:ring-gray-100 outline-none flex-1 sm:flex-none"
+            className="px-5 py-2.5 bg-white border-2 border-gray-200 text-black font-bold rounded-lg hover:bg-gray-100 hover:border-gray-300 transition-colors focus:ring-4 focus:ring-gray-100 outline-none flex-1 sm:flex-none"
           >
             Cancel
           </button>

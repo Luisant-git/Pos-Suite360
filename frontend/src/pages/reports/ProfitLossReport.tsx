@@ -115,7 +115,7 @@ const ProfitLossReport = () => {
   const netProfitMargin = safePnl.netOperatingRevenue > 0 ? (safePnl.netProfit / safePnl.netOperatingRevenue) * 100 : 0;
 
   const presetBtnClass = (preset: string) => 
-    `px-2 py-0.5 text-[11px] rounded transition-colors shadow-sm font-bold ${activePreset === preset ? 'bg-[#1F2937] text-white shadow-md' : 'text-[#374151] hover:bg-white bg-transparent'}`;
+    `px-2 py-0.5 text-[11px] rounded transition-colors shadow-sm font-bold ${activePreset === preset ? 'bg-[#1F2937] text-white shadow-md' : 'text-black font-bold hover:bg-white bg-transparent'}`;
 
   return (
     <div className="bg-[#F8FAFC] absolute inset-0 p-3 md:p-4 flex flex-col overflow-y-auto lg:overflow-hidden print:relative print:h-auto print:bg-white print:p-0 print:block">
@@ -127,11 +127,11 @@ const ProfitLossReport = () => {
       <div className="bg-white p-2 md:p-3 rounded shadow-sm border border-[#E5E7EB] flex flex-col lg:flex-row justify-between items-start lg:items-center gap-3 mb-2 shrink-0 print:hidden">
         <div className="flex flex-col xl:flex-row items-start xl:items-center gap-3 xl:gap-4 w-full lg:w-auto">
           <div className="flex flex-wrap items-center gap-2 w-full lg:w-auto">
-            <span className="text-[12px] font-bold text-[#374151] uppercase tracking-wide flex items-center gap-1 w-full sm:w-auto mb-1 sm:mb-0">
+            <span className="text-[12px] font-bold text-black font-bold uppercase tracking-wide flex items-center gap-1 w-full sm:w-auto mb-1 sm:mb-0">
               <PieChartIcon size={14} /> P&L Statement Period:
             </span>
             <div className="flex items-center gap-2">
-              <span className="text-[12px] text-[#6B7280]">From:</span>
+              <span className="text-[12px] text-black font-bold">From:</span>
               <input 
                 type="date" 
                 value={fromDate}
@@ -140,7 +140,7 @@ const ProfitLossReport = () => {
               />
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-[12px] text-[#6B7280]">To:</span>
+              <span className="text-[12px] text-black font-bold">To:</span>
               <input 
                 type="date" 
                 value={toDate}
@@ -202,7 +202,7 @@ const ProfitLossReport = () => {
           >
             <Download size={14} /> Export PDF
           </button>
-          <button className="bg-white border border-[#D1D5DB] hover:bg-[#F9FAFB] text-[#374151] px-3 py-1.5 rounded flex items-center justify-center gap-1 font-bold text-[12px] whitespace-nowrap transition-colors shadow-sm" onClick={() => window.print()}>
+          <button className="bg-white border border-[#D1D5DB] hover:bg-[#F9FAFB] text-black font-bold px-3 py-1.5 rounded flex items-center justify-center gap-1 font-bold text-[12px] whitespace-nowrap transition-colors shadow-sm" onClick={() => window.print()}>
             <Printer size={14} /> Print
           </button>
         </div>
@@ -233,10 +233,10 @@ const ProfitLossReport = () => {
                   <div>AMOUNT</div>
                 </div>
                 
-                <div className="flex justify-between py-1 text-[#374151] shrink-0">
+                <div className="flex justify-between py-1 text-black font-bold shrink-0">
                   <span>Gross Sales Revenue (Cash & Credit Sales)</span>
                   <div className="flex gap-4">
-                    <span className="text-[#9CA3AF] text-[10px] w-20 text-right">Total Sales</span>
+                    <span className="text-black font-bold text-[10px] w-20 text-right">Total Sales</span>
                     <span className="font-bold w-20 text-right">{formatCurrency(safePnl.grossSales)}</span>
                   </div>
                 </div>
@@ -260,10 +260,10 @@ const ProfitLossReport = () => {
                   <div>AMOUNT</div>
                 </div>
                 
-                <div className="flex justify-between py-1 text-[#374151] shrink-0">
+                <div className="flex justify-between py-1 text-black font-bold shrink-0">
                   <span>Gross Purchases</span>
                   <div className="flex gap-4">
-                    <span className="text-[#9CA3AF] text-[10px] w-20 text-right">Total Purchases</span>
+                    <span className="text-black font-bold text-[10px] w-20 text-right">Total Purchases</span>
                     <span className="font-bold w-20 text-right">{formatCurrency(safePnl.grossPurchases)}</span>
                   </div>
                 </div>
@@ -276,7 +276,7 @@ const ProfitLossReport = () => {
                   </div>
                 </div>
 
-                <div className="flex justify-between py-1 font-bold text-[13px] px-2 mb-2 text-[#1F2937] bg-[#F9FAFB] rounded shrink-0">
+                <div className="flex justify-between py-1 font-bold text-[13px] px-2 mb-2 text-black font-bold bg-[#F9FAFB] rounded shrink-0">
                   <span>NET COST OF GOODS SOLD (COGS)</span>
                   <span>{formatCurrency(safePnl.netCogs)}</span>
                 </div>
@@ -285,33 +285,33 @@ const ProfitLossReport = () => {
                   <span>GROSS PROFIT (NET REVENUE - COGS)</span>
                   <div className="flex flex-col items-end leading-tight">
                     <span>{formatCurrency(safePnl.grossProfit)}</span>
-                    <span className="text-[10px] text-[#9CA3AF] font-normal">({grossProfitMargin.toFixed(1)}%)</span>
+                    <span className="text-[10px] text-black font-bold font-normal">({grossProfitMargin.toFixed(1)}%)</span>
                   </div>
                 </div>
 
                 {/* 3. Operating Expenses */}
-                <div className="flex justify-between font-bold text-[#4B5563] border-b border-[#E5E7EB] pb-1 mb-1 shrink-0">
+                <div className="flex justify-between font-bold text-black font-bold border-b border-[#E5E7EB] pb-1 mb-1 shrink-0">
                   <div className="flex items-center gap-2"><span>III. OPERATING EXPENSES (ITEMIZED)</span></div>
                   <div>AMOUNT</div>
                 </div>
                 
                 {safePnl.itemizedExpenses.length === 0 ? (
-                  <div className="py-1 text-[#9CA3AF] italic text-[11px] border-b border-[#F3F4F6] mb-1 shrink-0">
+                  <div className="py-1 text-black font-bold italic text-[11px] border-b border-[#F3F4F6] mb-1 shrink-0">
                     No operating expenses recorded for this period
-                    <span className="float-right font-normal text-[#9CA3AF]">{formatCurrency(0)}</span>
+                    <span className="float-right font-normal text-black font-bold">{formatCurrency(0)}</span>
                   </div>
                 ) : (
                   <div className="mb-1 border-b border-[#F3F4F6] pb-1 overflow-y-auto min-h-0">
                     {safePnl.itemizedExpenses.map((exp: any, idx: number) => (
-                      <div key={idx} className="flex justify-between py-0.5 text-[#374151] hover:bg-[#F9FAFB] px-2 rounded">
+                      <div key={idx} className="flex justify-between py-0.5 text-black font-bold hover:bg-[#F9FAFB] px-2 rounded">
                         <span>{exp.name}</span>
-                        <span className="font-bold text-[#4B5563]">{formatCurrency(exp.amount)}</span>
+                        <span className="font-bold text-black font-bold">{formatCurrency(exp.amount)}</span>
                       </div>
                     ))}
                   </div>
                 )}
 
-                <div className="flex justify-between py-1 font-bold text-[13px] px-2 mt-auto text-[#1F2937] shrink-0">
+                <div className="flex justify-between py-1 font-bold text-[13px] px-2 mt-auto text-black font-bold shrink-0">
                   <span>TOTAL OPERATING EXPENSES</span>
                   <span className="text-[#EF4444]">{formatCurrency(safePnl.totalExpenses)}</span>
                 </div>
@@ -374,7 +374,7 @@ const ProfitLossReport = () => {
                 )}
               </ResponsiveContainer>
               {safePnl.netOperatingRevenue === 0 && (
-                <div className="absolute inset-0 flex items-center justify-center bg-white/80 text-[#9CA3AF] text-[11px] font-bold italic">
+                <div className="absolute inset-0 flex items-center justify-center bg-white/80 text-black font-bold text-[11px] font-bold italic">
                   No data to display
                 </div>
               )}
@@ -388,13 +388,13 @@ const ProfitLossReport = () => {
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
               <div className="bg-[#F9FAFB] border border-[#E5E7EB] rounded p-2 text-center">
-                <p className="text-[10px] font-bold text-[#6B7280] mb-0.5">Gross Margin</p>
+                <p className="text-[10px] font-bold text-black font-bold mb-0.5">Gross Margin</p>
                 <p className={`text-[18px] font-bold leading-none ${grossProfitMargin < 0 ? 'text-red-500' : 'text-green-600'}`}>
                   {grossProfitMargin.toFixed(1)}%
                 </p>
               </div>
               <div className="bg-[#F9FAFB] border border-[#E5E7EB] rounded p-2 text-center">
-                <p className="text-[10px] font-bold text-[#6B7280] mb-0.5">Net Margin</p>
+                <p className="text-[10px] font-bold text-black font-bold mb-0.5">Net Margin</p>
                 <p className={`text-[18px] font-bold leading-none ${netProfitMargin < 0 ? 'text-red-500' : 'text-green-600'}`}>
                   {netProfitMargin.toFixed(1)}%
                 </p>

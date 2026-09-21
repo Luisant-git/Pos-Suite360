@@ -182,7 +182,7 @@ const Products = () => {
         <form onSubmit={handleSubmit(onSubmit as any)} className="p-4 flex flex-col gap-3">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <div>
-              <label className="block text-[12px] font-bold text-[#1F2937] mb-1">Product Code *</label>
+              <label className="block text-[12px] font-bold text-black font-bold mb-1">Product Code *</label>
               <input 
                 {...register('code')}
                 type="text" 
@@ -193,7 +193,7 @@ const Products = () => {
               {errors.code && <span className="text-red-500 text-xs mt-1 block">{errors.code.message}</span>}
             </div>
             <div>
-              <label className="block text-[12px] font-bold text-[#1F2937] mb-1">Unit *</label>
+              <label className="block text-[12px] font-bold text-black font-bold mb-1">Unit *</label>
               <SearchableSelect
                 options={units.map((u: any) => ({ value: u.id, label: u.name }))}
                 value={watch('unitId')}
@@ -205,7 +205,7 @@ const Products = () => {
           </div>
 
           <div>
-            <label className="block text-[12px] font-bold text-[#1F2937] mb-1">Product Name *</label>
+            <label className="block text-[12px] font-bold text-black font-bold mb-1">Product Name *</label>
             <input 
               {...register('name')}
               type="text" 
@@ -217,7 +217,7 @@ const Products = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <div>
-              <label className="block text-[11px] font-bold text-gray-700 mb-1">Category</label>
+              <label className="block text-[11px] font-bold text-black font-bold mb-1">Category</label>
               <SearchableSelect
                 options={[{ value: '', label: '-- Select Category --' }, ...categories.map((c: any) => ({ value: c.id, label: c.name }))]}
                 value={watch('categoryId')}
@@ -226,7 +226,7 @@ const Products = () => {
               />
             </div>
             <div>
-              <label className="block text-[12px] font-bold text-[#1F2937] mb-1">Brand</label>
+              <label className="block text-[12px] font-bold text-black font-bold mb-1">Brand</label>
               <SearchableSelect
                 options={[{ value: '', label: '-- Select Brand --' }, ...brands.map((b: any) => ({ value: b.id, label: b.name }))]}
                 value={watch('brandId')}
@@ -237,7 +237,7 @@ const Products = () => {
           </div>
 
           <div>
-            <label className="block text-[12px] font-bold text-[#1F2937] mb-1">Default Supplier</label>
+            <label className="block text-[12px] font-bold text-black font-bold mb-1">Default Supplier</label>
             <SearchableSelect
               options={[{ value: '', label: '-- Select Supplier --' }, ...suppliers.map((s: any) => ({ value: s.id, label: s.name }))]}
               value={watch('supplierId')}
@@ -246,11 +246,11 @@ const Products = () => {
             />
           </div>
 
-          <h3 className="font-bold text-[13px] text-gray-500 mt-2 uppercase">Pricing Matrix</h3>
+          <h3 className="font-bold text-[13px] text-black font-bold mt-2 uppercase">Pricing Matrix</h3>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <div>
-              <label className="block text-[12px] text-[#1F2937] mb-1">Opening Stock</label>
+              <label className="block text-[12px] text-black font-bold mb-1">Opening Stock</label>
               <input 
                 {...register('currentStock')}
                 type="number" step="any"
@@ -259,7 +259,7 @@ const Products = () => {
               />
             </div>
             <div>
-              <label className="block text-[12px] text-[#1F2937] mb-1">Pur Rate</label>
+              <label className="block text-[12px] text-black font-bold mb-1">Pur Rate</label>
               <input 
                 {...register('purchaseRate')}
                 type="number" step="any"
@@ -291,7 +291,7 @@ const Products = () => {
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-2">
             <div>
-              <label className="block text-[12px] text-[#1F2937] mb-1">Min Qty (Alert)</label>
+              <label className="block text-[12px] text-black font-bold mb-1">Min Qty (Alert)</label>
               <input 
                 {...register('minStock')}
                 type="number" step="any"
@@ -300,7 +300,7 @@ const Products = () => {
               />
             </div>
             <div>
-              <label className="block text-[12px] text-[#1F2937] mb-1">Reorder Level</label>
+              <label className="block text-[12px] text-black font-bold mb-1">Reorder Level</label>
               <input 
                 {...register('reorderLevel')}
                 type="number" step="any"
@@ -336,7 +336,7 @@ const Products = () => {
       <div className={`${isFullTable ? 'xl:col-span-3' : 'xl:col-span-2'} bg-white border border-[#E6E9ED] shadow-sm rounded-sm overflow-hidden flex flex-col`}>
         <div className="bg-[#E5E7EB] border-b border-[#E6E9ED] px-4 py-3 flex flex-col md:flex-row justify-between items-start md:items-center gap-3 md:gap-0">
           <div className="flex items-center justify-between w-full md:w-auto">
-            <div className="flex items-center gap-2 text-[#1F2937]">
+            <div className="flex items-center gap-2 text-black font-bold">
             <Grid size={16} className="text-[#3B82F6]" />
             <h2 className="font-bold text-[14px]">MASTER PRODUCT LIST BY CATEGORY & BRAND</h2>
           </div>
@@ -366,7 +366,7 @@ const Products = () => {
         {/* Filters */}
         <div className="p-3 border-b border-[#E6E9ED] grid grid-cols-1 md:grid-cols-4 gap-3 bg-[#F9F9F9] items-end">
           <div>
-            <label className="block text-[12px] font-bold text-[#1F2937] mb-1">Category:</label>
+            <label className="block text-[12px] font-bold text-black font-bold mb-1">Category:</label>
             <select 
               value={filterCategory} onChange={(e) => setFilterCategory(e.target.value)}
               className="w-full px-2 py-1.5 border border-[#ccc] rounded outline-none text-[12px] bg-white"
@@ -376,7 +376,7 @@ const Products = () => {
             </select>
           </div>
           <div>
-            <label className="block text-[12px] font-bold text-[#1F2937] mb-1">Brand:</label>
+            <label className="block text-[12px] font-bold text-black font-bold mb-1">Brand:</label>
             <select 
               value={filterBrand} onChange={(e) => setFilterBrand(e.target.value)}
               className="w-full px-2 py-1.5 border border-[#ccc] rounded outline-none text-[12px] bg-white"
@@ -387,7 +387,7 @@ const Products = () => {
           </div>
           <div className="md:col-span-2 flex items-end gap-2">
             <div className="flex-1">
-              <label className="block text-[12px] font-bold text-[#1F2937] mb-1">Search:</label>
+              <label className="block text-[12px] font-bold text-black font-bold mb-1">Search:</label>
               <div className="relative">
                 <input 
                   type="text" 
@@ -400,7 +400,7 @@ const Products = () => {
             </div>
             <button type="button" 
               onClick={() => { setFilterCategory(''); setFilterBrand(''); setSearchTerm(''); }}
-              className="px-4 py-1.5 border border-[#ccc] rounded bg-white text-gray-700 text-[12px] font-bold hover:bg-gray-100"
+              className="px-4 py-1.5 border border-[#ccc] rounded bg-white text-black font-bold text-[12px] font-bold hover:bg-gray-100"
             >
               Reset
             </button>
@@ -431,9 +431,9 @@ const Products = () => {
               ) : (
                 filteredProducts.map((product: any, index: number) => (
                   <tr key={product.id} className={`border-b border-[#E5E7EB] ${index % 2 === 0 ? 'bg-white' : 'bg-[#F9F9F9]'} hover:bg-blue-50`}>
-                    <td data-label="#" className="px-3 py-2.5 border-r border-[#E5E7EB] text-center font-bold text-gray-700">{index + 1}</td>
+                    <td data-label="#" className="px-3 py-2.5 border-r border-[#E5E7EB] text-center font-bold text-black font-bold">{index + 1}</td>
                     <td data-label="Code" className="px-3 py-2.5 border-r border-[#E5E7EB] font-bold text-[#3B82F6]">{product.code}</td>
-                    <td data-label="Product Description" className="px-3 py-2.5 border-r border-[#E5E7EB] font-bold text-[#1F2937]">{product.name}</td>
+                    <td data-label="Product Description" className="px-3 py-2.5 border-r border-[#E5E7EB] font-bold text-black font-bold">{product.name}</td>
                     <td data-label="Category" className="px-3 py-2.5 border-r border-[#E5E7EB]">
                       <span className="text-[10px] font-bold text-[#16A34A] uppercase bg-[#DCFCE7] px-2 py-0.5 rounded">{product.category?.name || '-'}</span>
                     </td>
@@ -443,7 +443,7 @@ const Products = () => {
                     <td data-label="Stock" className="px-3 py-2.5 border-r border-[#E5E7EB] text-center font-bold">
                       {product.currentStock} {product.unit?.name}
                     </td>
-                    <td data-label="Pur Rate" className="px-3 py-2.5 border-r border-[#E5E7EB] text-right text-gray-600 font-medium">RM {Number(product.purchaseRate).toFixed(2)}</td>
+                    <td data-label="Pur Rate" className="px-3 py-2.5 border-r border-[#E5E7EB] text-right text-black font-bold">RM {Number(product.purchaseRate).toFixed(2)}</td>
                     <td data-label="Wholesale" className="px-3 py-2.5 border-r border-[#E5E7EB] text-right font-bold text-[#16A34A]">RM {Number(product.wholesaleRate).toFixed(2)}</td>
                     <td data-label="Sale Rate" className="px-3 py-2.5 border-r border-[#E5E7EB] text-right font-bold text-[#3B82F6]">RM {Number(product.sellingRate).toFixed(2)}</td>
                     <td data-label="Actions" className="px-3 py-2.5 text-center">

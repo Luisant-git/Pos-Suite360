@@ -39,6 +39,41 @@ export class CustomerReceiptsService {
     }
   }
 
+  async update(id: number, data: any, userId: number) {
+    if (!data.customerId || !data.amount || !data.paymentTypeId) {
+      throw new BadRequestException('Missing required fields');
+    }
+
+    try {
+      return await this.prisma.customerReceipt.update({
+        where: { id },
+        data: {
+          date: new Date(data.date || new Date()),
+          customerId: Number(data.customerId),
+          amount: Number(data.amount),
+          paymentTypeId: Number(data.paymentTypeId),
+          reference: data.reference,
+          remarks: data.remarks,
+          userId: userId,
+          allocations: data.allocations && Array.isArray(data.allocations) ? {
+            deleteMany: {},
+            create: data.allocations.filter((a: any) => Number(a.amount) > 0).map((a: any) => ({
+              saleId: a.saleId ? Number(a.saleId) : null,
+              amount: Number(a.amount)
+            }))
+          } : undefined,
+        },
+        include: {
+          customer: true,
+          paymentType: true,
+        },
+      });
+    } catch (error) {
+      console.error('Error updating customer receipt:', error);
+      throw new BadRequestException('Failed to update receipt. ' + (error.message || ''));
+    }
+  }
+
   async findAll() {
     return this.prisma.customerReceipt.findMany({
       orderBy: [

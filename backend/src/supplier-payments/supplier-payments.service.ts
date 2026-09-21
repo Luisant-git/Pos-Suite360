@@ -40,6 +40,41 @@ export class SupplierPaymentsService {
     }
   }
 
+  async update(id: number, data: any, userId: number) {
+    if (!data.supplierId || !data.amount || !data.paymentTypeId) {
+      throw new BadRequestException('Missing required fields');
+    }
+
+    try {
+      return await this.prisma.supplierPayment.update({
+        where: { id },
+        data: {
+          date: new Date(data.date || new Date()),
+          supplierId: Number(data.supplierId),
+          amount: Number(data.amount),
+          paymentTypeId: Number(data.paymentTypeId),
+          reference: data.reference,
+          remarks: data.remarks,
+          userId: userId,
+          allocations: data.allocations && Array.isArray(data.allocations) ? {
+            deleteMany: {},
+            create: data.allocations.filter((a: any) => Number(a.amount) > 0).map((a: any) => ({
+              purchaseId: a.purchaseId ? Number(a.purchaseId) : null,
+              amount: Number(a.amount)
+            }))
+          } : undefined,
+        },
+        include: {
+          supplier: true,
+          paymentType: true,
+        },
+      });
+    } catch (error) {
+      console.error('Error updating supplier payment:', error);
+      throw new BadRequestException('Failed to update payment. ' + (error.message || ''));
+    }
+  }
+
   async findAll() {
     return this.prisma.supplierPayment.findMany({
       orderBy: [

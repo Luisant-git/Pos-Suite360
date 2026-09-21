@@ -119,13 +119,13 @@ const QuickStart = () => {
           {activeCategory && (
             <button 
               onClick={() => setActiveCategory(null)}
-              className="text-gray-500 hover:text-gray-800 transition-colors p-2 hover:bg-gray-100 rounded-lg"
+              className="text-black font-bold hover:text-black hover:font-bold transition-colors p-2 hover:bg-gray-100 rounded-lg"
               title="Back to Categories"
             >
               <ArrowLeft size={20} />
             </button>
           )}
-          <h2 className="text-[20px] font-black text-gray-800">
+          <h2 className="text-[20px] font-black text-black font-bold">
             {activeCategory ? `Quick Links - ${activeCategory}` : 'Quick Links - App Launcher'}
           </h2>
         </div>
@@ -135,7 +135,7 @@ const QuickStart = () => {
             // Show Main Categories
             <div className="grid grid-cols-1 md:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 content-start">
               {filteredMenuData.length === 0 ? (
-                <div className="col-span-full text-center text-gray-500 py-12">
+                <div className="col-span-full text-center text-black font-bold py-12">
                   No quick links available based on your permissions.
                 </div>
               ) : (
@@ -145,12 +145,12 @@ const QuickStart = () => {
                     onClick={() => setActiveCategory(category.title)} 
                     className={`group bg-white border border-gray-200 shadow-sm p-6 rounded-xl flex flex-col items-center justify-center gap-3 hover:shadow-lg transition-all transform hover:-translate-y-1 ${category.colorClass}`}
                   >
-                    <div className="w-20 h-20 rounded-2xl flex items-center justify-center bg-gray-50 group-hover:bg-white group-hover:scale-110 transition-all shadow-sm text-gray-500">
+                    <div className="w-20 h-20 rounded-2xl flex items-center justify-center bg-gray-50 group-hover:bg-white group-hover:scale-110 transition-all shadow-sm text-black font-bold">
                       <category.icon className="w-10 h-10" />
                     </div>
                     <div className="text-center">
-                      <h3 className="text-[18px] font-black text-gray-800">{category.title}</h3>
-                      <p className="text-[12px] text-gray-500 font-medium mt-1 uppercase tracking-wider">{category.items.length} items</p>
+                      <h3 className="text-[18px] font-black text-black font-bold">{category.title}</h3>
+                      <p className="text-[12px] text-black font-bold mt-1 uppercase tracking-wider">{category.items.length} items</p>
                     </div>
                   </button>
                 ))
@@ -167,11 +167,11 @@ const QuickStart = () => {
                     onClick={() => navigate(item.path)} 
                     className={`group bg-white border border-gray-200 shadow-sm p-6 rounded-xl flex flex-col items-center justify-center gap-3 hover:shadow-lg transition-all transform hover:-translate-y-1 ${colorClass}`}
                   >
-                    <div className="w-16 h-16 rounded-2xl flex items-center justify-center bg-gray-50 group-hover:bg-white group-hover:scale-110 transition-all shadow-sm text-gray-500">
+                    <div className="w-16 h-16 rounded-2xl flex items-center justify-center bg-gray-50 group-hover:bg-white group-hover:scale-110 transition-all shadow-sm text-black font-bold">
                       <item.icon className="w-8 h-8" />
                     </div>
                     <div className="text-center">
-                      <h3 className="text-[16px] font-black text-gray-800">{item.name}</h3>
+                      <h3 className="text-[16px] font-black text-black font-bold">{item.name}</h3>
                     </div>
                   </button>
                 );

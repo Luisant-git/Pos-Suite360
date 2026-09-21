@@ -109,10 +109,10 @@ export default function Users() {
     <div className="space-y-6 max-w-6xl mx-auto">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
+          <h1 className="text-2xl font-bold text-black font-bold flex items-center gap-2">
             <UsersIcon className="text-blue-600" /> Users & Roles
           </h1>
-          <p className="text-gray-500 text-sm mt-1">Manage system users and access</p>
+          <p className="text-black font-bold text-sm mt-1">Manage system users and access</p>
         </div>
         <div className="flex gap-3">
           <Link
@@ -135,7 +135,7 @@ export default function Users() {
       <div className="bg-white rounded-xl shadow-sm border border-gray-200">
         <div className="p-4 border-b border-gray-200 flex justify-between items-center">
           <div className="relative w-72">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-black font-bold" size={20} />
             <input
               type="text"
               placeholder="Search users..."
@@ -149,22 +149,22 @@ export default function Users() {
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-gray-50 text-gray-600 text-sm border-b border-gray-200">
-                <th className="px-6 py-4 font-semibold w-[300px]">User</th>
-                <th className="px-6 py-4 font-semibold w-[250px]">Username</th>
-                <th className="px-6 py-4 font-semibold">Role</th>
-                <th className="px-6 py-4 font-semibold text-right">Actions</th>
+              <tr className="bg-gray-50 text-black font-bold text-sm border-b border-gray-200">
+                <th className="px-6 py-4 font-bold w-[300px]">User</th>
+                <th className="px-6 py-4 font-bold w-[250px]">Username</th>
+                <th className="px-6 py-4 font-bold">Role</th>
+                <th className="px-6 py-4 font-bold text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
               {loading ? (
-                <tr><td colSpan={4} className="p-8 text-center text-gray-500">Loading...</td></tr>
+                <tr><td colSpan={4} className="p-8 text-center text-black font-bold">Loading...</td></tr>
               ) : filteredUsers.length === 0 ? (
-                <tr><td colSpan={4} className="p-8 text-center text-gray-500">No users found</td></tr>
+                <tr><td colSpan={4} className="p-8 text-center text-black font-bold">No users found</td></tr>
               ) : (
                 filteredUsers.map((user) => (
                   <tr key={user.id} className="hover:bg-gray-50 transition-colors">
-                    <td className="px-6 py-3 font-medium text-gray-800">
+                    <td className="px-6 py-3 font-bold text-black font-bold">
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold">
                           {user.name.charAt(0).toUpperCase()}
@@ -172,9 +172,9 @@ export default function Users() {
                         {user.name}
                       </div>
                     </td>
-                    <td className="px-6 py-3 text-gray-600 font-medium">{user.username}</td>
+                    <td className="px-6 py-3 text-black font-bold">{user.username}</td>
                     <td className="px-6 py-3">
-                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-700 whitespace-nowrap">
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-indigo-50 text-indigo-700 whitespace-nowrap">
                         <Shield size={16} />
                         {user.role?.name || 'No Role'}
                       </span>
@@ -215,7 +215,7 @@ export default function Users() {
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
           <div className="bg-white rounded-2xl w-full max-w-md shadow-2xl overflow-hidden">
             <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
-              <h2 className="text-xl font-bold text-gray-800 flex items-center gap-2">
+              <h2 className="text-xl font-bold text-black font-bold flex items-center gap-2">
                 <UsersIcon className="text-blue-600" size={24} />
                 {formData.id ? 'Edit User' : 'New User'}
               </h2>
@@ -224,7 +224,7 @@ export default function Users() {
             <form onSubmit={handleSave} className="p-6">
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-1">Full Name</label>
+                  <label className="block text-sm font-bold text-black font-bold mb-1">Full Name</label>
                   <input
                     type="text"
                     required
@@ -235,7 +235,7 @@ export default function Users() {
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-1">Username</label>
+                  <label className="block text-sm font-bold text-black font-bold mb-1">Username</label>
                   <input
                     type="text"
                     required
@@ -246,8 +246,8 @@ export default function Users() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-1">
-                    Password {formData.id && <span className="text-gray-400 font-normal text-xs">(Leave blank to keep current)</span>}
+                  <label className="block text-sm font-bold text-black font-bold mb-1">
+                    Password {formData.id && <span className="text-black font-bold font-normal text-xs">(Leave blank to keep current)</span>}
                   </label>
                   <input
                     type="password"
@@ -259,7 +259,7 @@ export default function Users() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-1">Role</label>
+                  <label className="block text-sm font-bold text-black font-bold mb-1">Role</label>
                   <select
                     required
                     className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-50 focus:bg-white transition-colors appearance-none"
@@ -278,13 +278,13 @@ export default function Users() {
                 <button
                   type="button"
                   onClick={closeModal}
-                  className="px-5 py-2.5 text-gray-600 hover:bg-gray-100 rounded-xl font-medium transition-colors"
+                  className="px-5 py-2.5 text-black font-bold hover:bg-gray-100 rounded-xl font-bold transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-medium transition-colors shadow-sm shadow-blue-200"
+                  className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold transition-colors shadow-sm shadow-blue-200"
                 >
                   {formData.id ? 'Update User' : 'Create User'}
                 </button>
@@ -305,10 +305,10 @@ export default function Users() {
               </h2>
             </div>
             <div className="p-6">
-              <p className="text-gray-700 text-sm mb-4 font-medium">
+              <p className="text-black font-bold text-sm mb-4 font-bold">
                 Are you sure you want to delete this user? This action cannot be undone and they will immediately lose access to the system.
               </p>
-              <label className="block text-sm font-bold text-gray-700 mb-2">
+              <label className="block text-sm font-bold text-black font-bold mb-2">
                 Type <span className="text-red-600 font-mono bg-red-50 px-1 rounded border border-red-100">DELETE</span> to confirm
               </label>
               <input
@@ -321,7 +321,7 @@ export default function Users() {
               <div className="mt-8 flex justify-end gap-3">
                 <button
                   onClick={() => setUserToDelete(null)}
-                  className="px-5 py-2.5 text-gray-600 hover:bg-gray-100 rounded-xl font-bold transition-colors"
+                  className="px-5 py-2.5 text-black font-bold hover:bg-gray-100 rounded-xl font-bold transition-colors"
                 >
                   Cancel
                 </button>

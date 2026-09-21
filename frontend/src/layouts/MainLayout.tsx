@@ -35,9 +35,9 @@ const DropdownItem = ({ to, icon, title, isDanger = false, isWarning = false, on
   <NavLink
     to={to}
     onClick={onClick}
-    className={({ isActive }) => `flex items-center gap-3 px-4 py-2.5 text-sm font-medium transition-colors ${isActive ? 'bg-blue-50 text-blue-700 border-l-4 border-blue-600' : 'text-gray-700 hover:bg-gray-50 hover:text-blue-600 border-l-4 border-transparent'}`}
+    className={({ isActive }) => `flex items-center gap-3 px-4 py-2.5 text-sm font-bold transition-colors ${isActive ? 'bg-blue-50 text-blue-700 border-l-4 border-blue-600' : 'text-black font-bold hover:bg-gray-50 hover:text-blue-600 border-l-4 border-transparent'}`}
   >
-    <div className={`w-6 flex justify-center ${isDanger ? 'text-red-500' : isWarning ? 'text-amber-500' : 'text-gray-400'}`}>
+    <div className={`w-6 flex justify-center ${isDanger ? 'text-red-500' : isWarning ? 'text-amber-500' : 'text-black font-bold'}`}>
       <i className={`fa ${icon} text-base`}></i>
     </div>
     <span>{title}</span>
@@ -72,7 +72,7 @@ const MobileDropdownItem = ({ to, icon, title, onClick, isDanger = false, isWarn
   <NavLink
     to={to}
     onClick={onClick}
-    className={({ isActive }) => `flex items-center gap-3 px-4 py-2.5 text-sm font-medium transition-colors ${isActive ? 'text-white font-bold bg-[#1E3A8A]/30 border-l-2 border-blue-400' : 'text-blue-200 hover:text-white hover:bg-[#1E40AF]/50 border-l-2 border-transparent'}`}
+    className={({ isActive }) => `flex items-center gap-3 px-4 py-2.5 text-sm font-bold transition-colors ${isActive ? 'text-white font-bold bg-[#1E3A8A]/30 border-l-2 border-blue-400' : 'text-blue-200 hover:text-white hover:bg-[#1E40AF]/50 border-l-2 border-transparent'}`}
   >
     <div className={`w-5 flex justify-center ${isDanger ? 'text-red-400' : isWarning ? 'text-amber-400' : 'text-blue-300'}`}>
       <i className={`fa ${icon} text-[13px]`}></i>
@@ -300,19 +300,19 @@ const MainLayout = () => {
               
             {hasAnyPerm(['master_products', 'master_brands', 'master_categories', 'master_units', 'master_suppliers', 'master_customers', 'master_payment_modes', 'master_payment_types', 'master_expense_categories']) && (
               <NavDropdown title="Master" icon="fa-database" isActive={isMasterActive}>
-                <div className="px-4 py-1.5 text-[11px] font-bold text-gray-400 uppercase tracking-wider">Inventory</div>
+                <div className="px-4 py-1.5 text-[11px] font-bold text-black font-bold uppercase tracking-wider">Inventory</div>
                 {hasPerm('master_products') && <DropdownItem to="/master/products" icon="fa-cubes" title="Products" />}
                 {hasPerm('master_brands') && <DropdownItem to="/master/brands" icon="fa-tags" title="Brands" />}
                 {hasPerm('master_categories') && <DropdownItem to="/master/categories" icon="fa-sitemap" title="Categories" />}
                 {hasPerm('master_units') && <DropdownItem to="/master/units" icon="fa-balance-scale" title="Units" />}
                 
                 <div className="h-px bg-gray-100 my-1 mx-4"></div>
-                <div className="px-4 py-1.5 text-[11px] font-bold text-gray-400 uppercase tracking-wider">People</div>
+                <div className="px-4 py-1.5 text-[11px] font-bold text-black font-bold uppercase tracking-wider">People</div>
                 {hasPerm('master_suppliers') && <DropdownItem to="/master/suppliers" icon="fa-building-o" title="Suppliers" />}
                 {hasPerm('master_customers') && <DropdownItem to="/master/customers" icon="fa-users" title="Customers" />}
                 
                 <div className="h-px bg-gray-100 my-1 mx-4"></div>
-                <div className="px-4 py-1.5 text-[11px] font-bold text-gray-400 uppercase tracking-wider">Settings</div>
+                <div className="px-4 py-1.5 text-[11px] font-bold text-black font-bold uppercase tracking-wider">Settings</div>
                 {hasPerm('master_payment_modes') && <DropdownItem to="/master/payment-modes" icon="fa-credit-card-alt" title="Payment Modes" />}
                 {hasPerm('master_payment_types') && <DropdownItem to="/master/payment-types" icon="fa-money" title="Payment Types" />}
                 {hasPerm('master_expense_categories') && <DropdownItem to="/master/expense-categories" icon="fa-list-alt" title="Expense Categories" />}
@@ -342,14 +342,14 @@ const MainLayout = () => {
 
             {hasAnyPerm(['reports_sales', 'reports_purchase', 'reports_financial']) && (
               <NavDropdown title="Reports" icon="fa-pie-chart" isActive={isReportsActive}>
-                <div className="px-4 py-1.5 text-[11px] font-bold text-gray-400 uppercase tracking-wider">Purchase & Sales</div>
+                <div className="px-4 py-1.5 text-[11px] font-bold text-black font-bold uppercase tracking-wider">Purchase & Sales</div>
                 {hasPerm('reports_purchase') && <DropdownItem to="/reports/purchase" icon="fa-file-text-o" title="Purchase Report" />}
                 {hasPerm('reports_purchase') && <DropdownItem to="/reports/purchase-return" icon="fa-mail-reply" title="Purchase Return Report" isWarning />}
                 {hasPerm('reports_sales') && <DropdownItem to="/reports/sales" icon="fa-line-chart" title="Sales Report" />}
                 {hasPerm('reports_sales') && <DropdownItem to="/reports/sales-return" icon="fa-mail-reply" title="Sales Return Report" isDanger />}
                 
                 <div className="h-px bg-gray-100 my-1 mx-4"></div>
-                <div className="px-4 py-1.5 text-[11px] font-bold text-gray-400 uppercase tracking-wider">Financial & Ledger</div>
+                <div className="px-4 py-1.5 text-[11px] font-bold text-black font-bold uppercase tracking-wider">Financial & Ledger</div>
                 {hasPerm('reports_financial') && <DropdownItem to="/reports/stock" icon="fa-cubes" title="Stock As On Date" />}
                 {hasPerm('reports_financial') && <DropdownItem to="/reports/profit-ledger" icon="fa-bar-chart" title="Profit / Ledger" />}
                 {hasPerm('reports_financial') && <DropdownItem to="/reports/expenses" icon="fa-calculator" title="Expense Report" />}
@@ -371,7 +371,7 @@ const MainLayout = () => {
             </Link>
             
             {!showBackButton && (
-              <div className="hidden 2xl:flex items-center text-sm font-medium text-blue-50 bg-[#1E3A8A]/50 px-4 py-1.5 rounded-md border border-blue-400/30 backdrop-blur-sm shadow-inner shrink-0">
+              <div className="hidden 2xl:flex items-center text-sm font-bold text-blue-50 bg-[#1E3A8A]/50 px-4 py-1.5 rounded-md border border-blue-400/30 backdrop-blur-sm shadow-inner shrink-0">
                 <i className="fa fa-clock-o mr-2 text-blue-300"></i>
                 {formattedDate}
               </div>
@@ -392,27 +392,27 @@ const MainLayout = () => {
                 </div>
                 <div className="hidden sm:flex flex-col items-start text-left">
                   <span className="font-bold text-sm leading-tight">{user?.name || 'User'}</span>
-                  <span className="text-[10px] text-blue-200 font-medium">Admin</span>
+                  <span className="text-[10px] text-blue-200 font-bold">Admin</span>
                 </div>
                 <ChevronDown size={14} className={`opacity-70 transition-transform duration-300 ${isProfileOpen ? 'rotate-180' : ''}`} />
               </button>
               
               <div className={`absolute right-0 top-[90%] mt-2 w-56 bg-white border border-gray-100 shadow-2xl rounded-2xl transition-all duration-300 z-50 overflow-hidden transform origin-top-right ${isProfileOpen ? 'opacity-100 visible scale-100' : 'opacity-0 invisible scale-95'}`}>
                 <div className="p-4 bg-gray-50 border-b border-gray-100">
-                  <p className="text-base font-bold text-gray-800">{user?.name || 'User'}</p>
+                  <p className="text-base font-bold text-black font-bold">{user?.name || 'User'}</p>
                   <p className="text-xs font-bold text-blue-600 uppercase tracking-wide mt-1">Administrator</p>
                 </div>
                 <div className="py-2 px-2">
                   {hasPerm('master_store_settings') && (
-                    <Link to="/settings" className="flex items-center gap-3 px-3 py-2.5 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 rounded-lg transition-colors font-bold">
-                      <div className="w-8 h-8 rounded-md bg-gray-100 flex items-center justify-center text-gray-500">
+                    <Link to="/settings" className="flex items-center gap-3 px-3 py-2.5 text-sm text-black font-bold hover:bg-blue-50 hover:text-blue-700 rounded-lg transition-colors font-bold">
+                      <div className="w-8 h-8 rounded-md bg-gray-100 flex items-center justify-center text-black font-bold">
                         <SettingsIcon size={16} />
                       </div>
                       Settings
                     </Link>
                   )}
                   {hasPerm('master_users') && (
-                    <Link to="/master/users" className="flex items-center gap-3 px-3 py-2.5 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 rounded-lg transition-colors font-bold">
+                    <Link to="/master/users" className="flex items-center gap-3 px-3 py-2.5 text-sm text-black font-bold hover:bg-blue-50 hover:text-blue-700 rounded-lg transition-colors font-bold">
                       <div className="w-8 h-8 rounded-md bg-blue-50 flex items-center justify-center text-blue-600">
                         <UsersIcon size={16} />
                       </div>
@@ -420,7 +420,7 @@ const MainLayout = () => {
                     </Link>
                   )}
                   {hasPerm('master_permissions') && (
-                    <Link to="/master/permissions" className="flex items-center gap-3 px-3 py-2.5 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 rounded-lg transition-colors font-bold">
+                    <Link to="/master/permissions" className="flex items-center gap-3 px-3 py-2.5 text-sm text-black font-bold hover:bg-blue-50 hover:text-blue-700 rounded-lg transition-colors font-bold">
                       <div className="w-8 h-8 rounded-md bg-purple-50 flex items-center justify-center text-purple-600">
                         <Shield size={16} />
                       </div>

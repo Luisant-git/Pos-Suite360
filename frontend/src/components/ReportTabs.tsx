@@ -18,6 +18,7 @@ const ReportTabs = () => {
     { name: 'Purchase Return', path: '/reports/purchase-return', icon: <CornerDownLeft size={14} /> },
     { name: 'Sales Report', path: '/reports/sales', icon: <FileText size={14} /> },
     { name: 'Sales Return', path: '/reports/sales-return', icon: <CornerDownLeft size={14} /> },
+    { name: 'Product Wise Sales', path: '/reports/product-wise-sales', icon: <Package size={14} /> },
     { name: 'Stock as on Date', path: '/reports/stock', icon: <Box size={14} /> },
     { name: 'Profit & Ledger', path: '/reports/profit-ledger', icon: <PieChart size={14} /> },
     { name: 'Expense Report', path: '/reports/expenses', icon: <DollarSign size={14} /> },
@@ -37,7 +38,7 @@ const ReportTabs = () => {
               className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-[12px] font-bold whitespace-nowrap transition-all ${
                 isActive
                   ? 'bg-[#0F172A] text-white shadow-sm'
-                  : 'text-[#64748B] hover:text-[#0F172A] hover:bg-[#F1F5F9]'
+                  : 'text-black font-bold hover:text-[#0F172A] hover:bg-[#F1F5F9]'
               }`}
             >
               {tab.icon}

@@ -90,7 +90,7 @@ const ExpenseCategories = () => {
         
         <form onSubmit={handleSubmit(onSubmit)} className="p-5 flex flex-col gap-4">
           <div>
-            <label className="block text-[13px] font-bold text-[#1F2937] mb-1">Category Name *</label>
+            <label className="block text-[13px] font-bold text-black font-bold mb-1">Category Name *</label>
             <input 
               {...register('name')}
               type="text" 
@@ -142,7 +142,7 @@ const ExpenseCategories = () => {
             <div className="flex flex-row items-center gap-2 w-full md:w-auto">
               <div className="relative flex-1 md:flex-none">
                 <div className="absolute inset-y-0 left-0 pl-2 flex items-center pointer-events-none">
-                  <Search size={14} className="text-gray-400" />
+                  <Search size={14} className="text-black font-bold" />
                 </div>
                 <input 
                   type="text" 

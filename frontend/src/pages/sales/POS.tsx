@@ -452,6 +452,51 @@ const POS = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [handleSubmit, isCustomerModalOpen, showLossWarning, isSaveModalOpen, isLeaveModalOpen, reset, append, navigate, onSubmit, onError]);
 
+  const focusCell = (row: number, col: number) => {
+    setTimeout(() => {
+      const el = document.querySelector<HTMLElement>(`[data-row="${row}"][data-col="${col}"]`);
+      if (el) { el.focus(); (el as HTMLInputElement).select?.(); }
+    }, 10);
+  };
+
+  const handleCellKey = (e: React.KeyboardEvent, rowIndex: number, col: number, totalCols: number) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      const nextCol = col + 1;
+      if (nextCol <= totalCols) {
+        focusCell(rowIndex, nextCol);
+      } else {
+        append({ productId: 0, quantity: '' as any, stock: 0, rate: '' as any, unit: 'Nos', discPercent: '' as any, discAmt: '' as any, total: 0 });
+        setTimeout(() => {
+          const selectEl = document.querySelector<HTMLElement>(`[data-row-product="${rowIndex + 1}"] input`);
+          if (selectEl) selectEl.focus();
+        }, 100);
+      }
+    } else if (e.key === 'ArrowRight') {
+      if ((e.target as HTMLInputElement).selectionStart === (e.target as HTMLInputElement).value.length) {
+        e.preventDefault();
+        const nextCol = col + 1;
+        if (nextCol <= totalCols) focusCell(rowIndex, nextCol);
+      }
+    } else if (e.key === 'ArrowLeft') {
+      if ((e.target as HTMLInputElement).selectionStart === 0) {
+        e.preventDefault();
+        const prevCol = col - 1;
+        if (prevCol >= 1) focusCell(rowIndex, prevCol);
+        else if (prevCol === 0) {
+           const selectEl = document.querySelector<HTMLElement>(`[data-row-product="${rowIndex}"] input`);
+           if (selectEl) selectEl.focus();
+        }
+      }
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      if (rowIndex > 0) focusCell(rowIndex - 1, col);
+    } else if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      if (rowIndex < fields.length - 1) focusCell(rowIndex + 1, col);
+    }
+  };
+
   return (
     <div className="absolute inset-0 bg-[#F3F4F6] flex flex-col font-sans overflow-hidden z-10 print:relative print:overflow-visible print:h-auto print:bg-white">
       
@@ -593,17 +638,20 @@ const POS = () => {
                 <tr key={field.id} className="border-b border-[#E5E7EB] hover:bg-[#F9FAFB]">
                   <td data-label="#" className="px-2 py-1 text-center text-[13px] border-r border-[#E5E7EB]">{index + 1}</td>
                   <td data-label="Product" className="px-2 py-1 border-r border-[#E5E7EB]">
-                    <SearchableSelect
-                      value={watch(`items.${index}.productId`)}
-                      onChange={(val) => {
-                        setValue(`items.${index}.productId`, Number(val));
-                        handleProductChange(index, String(val));
-                      }}
-                      options={[
-                        { label: 'Type product name / code...', value: 0 },
-                        ...products.map((p: any) => ({ label: `${p.code} - ${p.name}`, value: p.id }))
-                      ]}
-                    />
+                    <div data-row-product={index}>
+                      <SearchableSelect
+                        value={watch(`items.${index}.productId`)}
+                        onChange={(val) => {
+                          setValue(`items.${index}.productId`, Number(val));
+                          handleProductChange(index, String(val));
+                          setTimeout(() => focusCell(index, 1), 100);
+                        }}
+                        options={[
+                          { label: 'Type product name / code...', value: 0 },
+                          ...products.map((p: any) => ({ label: `${p.code} - ${p.name}`, value: p.id }))
+                        ]}
+                      />
+                    </div>
                   </td>
                   <td data-label="Stock" className="px-2 py-1 border-r border-[#E5E7EB] text-center">
                     <span className={`px-2 py-0.5 rounded-full text-[11px] font-bold text-white ${watch(`items.${index}.stock`) > 0 ? 'bg-[#059669]' : 'bg-[#EF4444]'}`}>
@@ -616,6 +664,8 @@ const POS = () => {
                   <td data-label="Birds" className="px-2 py-1 border-r border-[#E5E7EB]">
                     <input 
                       {...register(`items.${index}.noOfBirds`)} 
+                      data-row={index} data-col={1}
+                      onKeyDown={(e) => handleCellKey(e, index, 1, 5)}
                       type="number" step="any" min="0" placeholder="0" 
                       onFocus={(e) => e.target.select()}
                       className="w-full px-2 py-1 border border-[#D1D5DB] rounded text-[13px] outline-none text-center transition-colors focus:border-[#3B82F6] focus:ring-1 focus:ring-[#3B82F6] focus:bg-blue-50" 
@@ -624,6 +674,8 @@ const POS = () => {
                   <td data-label="Qty" className="px-2 py-1 border-r border-[#E5E7EB]">
                     <input 
                       {...register(`items.${index}.quantity`)} 
+                      data-row={index} data-col={2}
+                      onKeyDown={(e) => handleCellKey(e, index, 2, 5)}
                       type="number" step="any" min="0.001" placeholder="0" 
                       onFocus={(e) => e.target.select()}
                       className={`w-full px-2 py-1 border rounded text-[13px] outline-none text-center transition-colors ${Number(watch(`items.${index}.quantity`)) > Number(watch(`items.${index}.stock`)) ? 'border-red-500 focus:border-red-500 bg-red-100 text-red-700 font-bold' : 'border-[#D1D5DB] focus:border-[#3B82F6] focus:ring-1 focus:ring-[#3B82F6] focus:bg-blue-50'}`} 
@@ -633,6 +685,8 @@ const POS = () => {
                     <div className="flex items-center gap-1">
                       <input 
                         {...register(`items.${index}.rate`)} 
+                        data-row={index} data-col={3}
+                        onKeyDown={(e) => handleCellKey(e, index, 3, 5)}
                         type="number" step="0.01" placeholder="0.00" 
                         onFocus={(e) => e.target.select()}
                         className={`w-full px-2 py-1 border rounded text-[13px] outline-none text-right font-bold transition-colors ${(() => {
@@ -673,6 +727,8 @@ const POS = () => {
                   <td data-label="Disc %" className="px-2 py-1 border-r border-[#E5E7EB]">
                     <input 
                       {...register(`items.${index}.discPercent`)} 
+                      data-row={index} data-col={4}
+                      onKeyDown={(e) => handleCellKey(e, index, 4, 5)}
                       type="number" step="0.01" placeholder="0" 
                       onFocus={(e) => e.target.select()}
                       onChange={(e) => {
@@ -689,6 +745,8 @@ const POS = () => {
                   <td data-label="Disc Amt" className="px-2 py-1 border-r border-[#E5E7EB]">
                     <input 
                       {...register(`items.${index}.discAmt`)} 
+                      data-row={index} data-col={5}
+                      onKeyDown={(e) => handleCellKey(e, index, 5, 5)}
                       type="number" step="0.01" placeholder="0.00" 
                       onFocus={(e) => e.target.select()}
                       onChange={(e) => {

@@ -289,6 +289,51 @@ const PurchaseEntry = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [handleSubmit, isSupplierModalOpen, isSaveModalOpen, isLeaveModalOpen, append, navigate, onSubmit, onError, handleClear]);
 
+  const focusCell = (row: number, col: number) => {
+    setTimeout(() => {
+      const el = document.querySelector<HTMLElement>(`[data-row="${row}"][data-col="${col}"]`);
+      if (el) { el.focus(); (el as HTMLInputElement).select?.(); }
+    }, 10);
+  };
+
+  const handleCellKey = (e: React.KeyboardEvent, rowIndex: number, col: number, totalCols: number) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      const nextCol = col + 1;
+      if (nextCol <= totalCols) {
+        focusCell(rowIndex, nextCol);
+      } else {
+        append({ productId: 0, quantity: '' as any, unit: 'Nos', pRate: '' as any, wRate: '' as any, sRate: '' as any, mrp: '' as any, discPercent: '' as any, discAmt: '' as any, total: 0 });
+        setTimeout(() => {
+          const selectEl = document.querySelector<HTMLElement>(`[data-row-product="${rowIndex + 1}"] input`);
+          if (selectEl) selectEl.focus();
+        }, 100);
+      }
+    } else if (e.key === 'ArrowRight') {
+      if ((e.target as HTMLInputElement).selectionStart === (e.target as HTMLInputElement).value.length) {
+        e.preventDefault();
+        const nextCol = col + 1;
+        if (nextCol <= totalCols) focusCell(rowIndex, nextCol);
+      }
+    } else if (e.key === 'ArrowLeft') {
+      if ((e.target as HTMLInputElement).selectionStart === 0) {
+        e.preventDefault();
+        const prevCol = col - 1;
+        if (prevCol >= 1) focusCell(rowIndex, prevCol);
+        else if (prevCol === 0) {
+           const selectEl = document.querySelector<HTMLElement>(`[data-row-product="${rowIndex}"] input`);
+           if (selectEl) selectEl.focus();
+        }
+      }
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      if (rowIndex > 0) focusCell(rowIndex - 1, col);
+    } else if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      if (rowIndex < fields.length - 1) focusCell(rowIndex + 1, col);
+    }
+  };
+
   const addSupplierMutation = useMutation({
     mutationFn: (data: any) => api.post('/suppliers', data),
     onSuccess: (res) => {
@@ -476,21 +521,26 @@ const PurchaseEntry = () => {
                 <tr key={field.id} className="border-b border-[#E5E7EB] hover:bg-[#F9FAFB]">
                   <td data-label="#" className="px-2 py-1 text-center text-[13px] border-r border-[#E5E7EB]">{index + 1}</td>
                   <td data-label="Product" className="px-2 py-1 border-r border-[#E5E7EB]">
-                    <SearchableSelect
-                      value={watch(`items.${index}.productId`)}
-                      onChange={(val) => {
-                        setValue(`items.${index}.productId`, Number(val));
-                        handleProductChange(index, String(val));
-                      }}
-                      options={[
-                        { label: 'Type product name / code...', value: 0 },
-                        ...products.map((p: any) => ({ label: `${p.code} - ${p.name}`, value: p.id }))
-                      ]}
-                    />
+                    <div data-row-product={index}>
+                      <SearchableSelect
+                        value={watch(`items.${index}.productId`)}
+                        onChange={(val) => {
+                          setValue(`items.${index}.productId`, Number(val));
+                          handleProductChange(index, String(val));
+                          setTimeout(() => focusCell(index, 1), 100);
+                        }}
+                        options={[
+                          { label: 'Type product name / code...', value: 0 },
+                          ...products.map((p: any) => ({ label: `${p.code} - ${p.name}`, value: p.id }))
+                        ]}
+                      />
+                    </div>
                   </td>
                   <td data-label="Stock" className="px-2 py-1 border-r border-[#E5E7EB]">
                     <input 
                       {...register(`items.${index}.quantity`)} 
+                      data-row={index} data-col={1}
+                      onKeyDown={(e) => handleCellKey(e, index, 1, 5)}
                       type="number" step="any" min="0.001" placeholder="0" 
                       onFocus={(e) => e.target.select()}
                       className="w-full px-2 py-1 border border-[#D1D5DB] rounded text-[13px] outline-none focus:border-[#3B82F6] focus:ring-1 focus:ring-[#3B82F6] focus:bg-blue-50 transition-colors text-center" 
@@ -502,6 +552,8 @@ const PurchaseEntry = () => {
                   <td data-label="Qty" className="px-2 py-1 border-r border-[#E5E7EB]">
                     <input 
                       {...register(`items.${index}.pRate`)} 
+                      data-row={index} data-col={2}
+                      onKeyDown={(e) => handleCellKey(e, index, 2, 5)}
                       type="number" step="0.01" placeholder="0.00" 
                       onFocus={(e) => e.target.select()}
                       className="w-full px-2 py-1 border border-[#D1D5DB] rounded text-[13px] outline-none focus:border-[#3B82F6] focus:ring-1 focus:ring-[#3B82F6] focus:bg-blue-50 transition-colors text-right" 
@@ -513,6 +565,8 @@ const PurchaseEntry = () => {
                   <td data-label="Pur Rate" className="px-2 py-1 border-r border-[#E5E7EB]">
                     <input 
                       {...register(`items.${index}.sRate`)} 
+                      data-row={index} data-col={3}
+                      onKeyDown={(e) => handleCellKey(e, index, 3, 5)}
                       type="number" step="0.01" placeholder="0.00" 
                       onFocus={(e) => e.target.select()}
                       className="w-full px-2 py-1 border border-[#D1D5DB] rounded text-[13px] outline-none focus:border-[#3B82F6] focus:ring-1 focus:ring-[#3B82F6] focus:bg-blue-50 transition-colors text-right" 
@@ -524,6 +578,8 @@ const PurchaseEntry = () => {
                   <td data-label="Tax %" className="px-2 py-1 border-r border-[#E5E7EB]">
                     <input 
                       {...register(`items.${index}.discPercent`)} 
+                      data-row={index} data-col={4}
+                      onKeyDown={(e) => handleCellKey(e, index, 4, 5)}
                       type="number" step="0.01" placeholder="0" 
                       onFocus={(e) => e.target.select()}
                       onChange={(e) => {
@@ -540,6 +596,8 @@ const PurchaseEntry = () => {
                   <td data-label="Tax Amt" className="px-2 py-1 border-r border-[#E5E7EB]">
                     <input 
                       {...register(`items.${index}.discAmt`)} 
+                      data-row={index} data-col={5}
+                      onKeyDown={(e) => handleCellKey(e, index, 5, 5)}
                       type="number" step="0.01" placeholder="0.00" 
                       onFocus={(e) => e.target.select()}
                       onChange={(e) => {

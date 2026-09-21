@@ -146,9 +146,9 @@ const POS = () => {
           const customRate = customerRates.find((r: any) => r.productId === prod.id);
           let targetRate: any = '';
           if (customRate && Number(customRate.rate) > 0) {
-            targetRate = Number(customRate.rate);
+            targetRate = parseFloat(Number(customRate.rate).toFixed(2));
           } else if (prod.sellingRate && Number(prod.sellingRate) > 0) {
-            targetRate = Number(prod.sellingRate);
+            targetRate = parseFloat(Number(prod.sellingRate).toFixed(2));
           }
           
           if (targetRate !== '' && Number(item.rate) !== Number(targetRate)) {
@@ -263,17 +263,17 @@ const POS = () => {
   const handleProductChange = async (index: number, productId: string) => {
     const product = products.find((p: any) => p.id === Number(productId));
     if (product) {
-      setValue(`items.${index}.stock`, product.currentStock || 0);
-      setValue(`items.${index}.unit`, product.unit?.shortCode || product.unit?.name || 'Nos');
-      
-      let rateToUse: any = product.sellingRate ? Number(product.sellingRate) : '';
-      if (settings?.enableCustomerRates && selectedCustomerId && customerRates.length > 0) {
-        const customRate = customerRates.find((r: any) => r.productId === product.id);
-        if (customRate && Number(customRate.rate) > 0) {
-          rateToUse = customRate.rate;
+        setValue(`items.${index}.stock`, product.currentStock || 0);
+        setValue(`items.${index}.unit`, product.unit?.shortCode || product.unit?.name || 'Nos');
+        
+        let rateToUse: any = product.sellingRate ? parseFloat(Number(product.sellingRate).toFixed(2)) : '';
+        if (settings?.enableCustomerRates && selectedCustomerId && customerRates.length > 0) {
+          const customRate = customerRates.find((r: any) => r.productId === product.id);
+          if (customRate && Number(customRate.rate) > 0) {
+            rateToUse = parseFloat(Number(customRate.rate).toFixed(2));
+          }
         }
-      }
-      setValue(`items.${index}.rate`, rateToUse);
+        setValue(`items.${index}.rate`, rateToUse);
     }
   };
 

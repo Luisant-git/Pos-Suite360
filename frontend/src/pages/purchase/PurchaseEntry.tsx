@@ -283,6 +283,13 @@ const PurchaseEntry = () => {
       } else if (e.key === 'F4') {
         e.preventDefault();
         handleClear();
+      } else if (e.key === 'F2') {
+        e.preventDefault();
+        append({ productId: 0, quantity: '' as any, unit: 'Nos', pRate: '' as any, wRate: '' as any, sRate: '' as any, mrp: '' as any, discPercent: '' as any, discAmt: '' as any, total: 0 });
+        setTimeout(() => {
+          const inputs = document.querySelectorAll<HTMLElement>('[data-row-product] input');
+          if (inputs.length > 0) inputs[inputs.length - 1].focus();
+        }, 100);
       }
     };
     window.addEventListener('keydown', handleKeyDown);
@@ -331,6 +338,11 @@ const PurchaseEntry = () => {
     } else if (e.key === 'ArrowDown') {
       e.preventDefault();
       if (rowIndex < fields.length - 1) focusCell(rowIndex + 1, col);
+    } else if (e.ctrlKey && e.key === 'Delete') {
+      e.preventDefault();
+      if (fields.length > 1) {
+        remove(rowIndex);
+      }
     }
   };
 
@@ -468,14 +480,20 @@ const PurchaseEntry = () => {
         </div>
 
         {/* Items Grid */}
-        <div className="flex-1 overflow-auto custom-scrollbar bg-white p-2 sm:p-4 border-b border-[#E5E7EB] overflow-x-auto">
-          <div className="flex flex-wrap justify-end gap-2 mb-2 min-w-[300px]">
+        <div className="flex flex-col flex-1 bg-white border-b border-[#E5E7EB] overflow-hidden">
+          <div className="flex flex-wrap justify-end gap-2 mb-2 p-2 min-w-[300px] border-b border-[#E5E7EB]">
             <button 
               type="button"
-              onClick={() => append({ productId: 0, quantity: '' as any, unit: 'Nos', pRate: '' as any, wRate: '' as any, sRate: '' as any, mrp: '' as any, discPercent: '' as any, discAmt: '' as any, total: 0 })}
+              onClick={() => {
+                append({ productId: 0, quantity: '' as any, unit: 'Nos', pRate: '' as any, wRate: '' as any, sRate: '' as any, mrp: '' as any, discPercent: '' as any, discAmt: '' as any, total: 0 });
+                setTimeout(() => {
+                  const inputs = document.querySelectorAll<HTMLElement>('[data-row-product] input');
+                  if (inputs.length > 0) inputs[inputs.length - 1].focus();
+                }, 100);
+              }}
               className="border border-[#0B355B] text-[#0B355B] hover:bg-[#0B355B] hover:text-white px-3 py-1 rounded flex items-center gap-1 text-[12px] transition-colors font-bold"
             >
-              <PlusCircle size={14} /> Add Row
+              <PlusCircle size={14} /> Add Row (F2)
             </button>
             <button 
               type="button"
@@ -499,7 +517,8 @@ const PurchaseEntry = () => {
               <FileText size={14} /> Purchase Report
             </button>
           </div>
-          <table className="w-full border-collapse border border-[#E5E7EB] md:min-w-[1200px] whitespace-nowrap responsive-table">
+          <div className="flex-1 overflow-auto custom-scrollbar">
+            <table className="w-full border-collapse border border-[#E5E7EB] md:min-w-[1200px] whitespace-nowrap responsive-table">
             <thead>
               <tr className="bg-[#0F172A] text-white">
                 <th className="px-2 py-2 text-center text-[12px] font-bold border border-[#334155] w-10">#</th>
@@ -519,11 +538,14 @@ const PurchaseEntry = () => {
             <tbody>
               {fields.map((field, index) => (
                 <tr key={field.id} className="border-b border-[#E5E7EB] hover:bg-[#F9FAFB]">
-                  <td data-label="#" className="px-2 py-1 text-center text-[13px] border-r border-[#E5E7EB]">{index + 1}</td>
+                  <td data-label="#" className="px-2 py-1 text-center text-[13px] border-r border-[#E5E7EB] relative group">{index + 1}</td>
                   <td data-label="Product" className="px-2 py-1 border-r border-[#E5E7EB]">
-                    <div data-row-product={index}>
+                    <div data-row-product={index} onKeyDown={(e) => {
+                      if (e.ctrlKey && e.key === 'Delete' && fields.length > 1) remove(index);
+                    }}>
                       <SearchableSelect
                         value={watch(`items.${index}.productId`)}
+                        autoFocus={index === fields.length - 1 && watch(`items.${index}.productId`) === 0}
                         onChange={(val) => {
                           setValue(`items.${index}.productId`, Number(val));
                           handleProductChange(index, String(val));
@@ -645,6 +667,7 @@ const PurchaseEntry = () => {
             </tbody>
           </table>
         </div>
+      </div>
 
         {/* Footer Calculation Area */}
         <div className="bg-white border-t border-[#E5E7EB] p-3 sm:p-4 shrink-0 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">

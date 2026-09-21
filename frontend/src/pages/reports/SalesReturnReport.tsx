@@ -7,6 +7,7 @@ import { useSettings } from '../../contexts/SettingsContext';
 import { exportTableToPdf, type PdfColumn } from '../../utils/exportPdf';
 import { exportToExcel } from '../../utils/exportExcel';
 import PaginationControls from '../../components/PaginationControls';
+import TableLoader from '../../components/TableLoader';
 
 const SalesReturnReport = () => {
   const { formatCurrency, settings } = useSettings();
@@ -220,9 +221,7 @@ const SalesReturnReport = () => {
               </thead>
               <tbody>
                 {isLoading ? (
-                  <tr>
-                    <td colSpan={8} className="px-4 py-8 text-center text-black font-bold">Loading report data...</td>
-                  </tr>
+                  <TableLoader columns={8} />
                 ) : filteredReturns.length === 0 ? (
                   <tr>
                     <td colSpan={8} className="px-4 py-8 text-center text-black font-bold">No sales returns found matching your filters.</td>

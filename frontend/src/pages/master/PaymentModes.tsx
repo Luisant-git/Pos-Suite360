@@ -7,6 +7,7 @@ import { z } from 'zod';
 import toast from 'react-hot-toast';
 import DeleteConfirmationModal from '../../components/DeleteConfirmationModal';
 import api from '../../services/api';
+import TableLoader from '../../components/TableLoader';
 
 const paymentModeSchema = z.object({
   name: z.string().min(1, 'Payment Mode Name is required'),
@@ -193,7 +194,7 @@ const PaymentModes = () => {
             </thead>
             <tbody>
               {isLoading ? (
-                <tr><td colSpan={4} className="text-center p-4">Loading...</td></tr>
+                <TableLoader columns={4} />
               ) : filteredModes.length === 0 ? (
                 <tr><td colSpan={4} className="text-center p-4">No payment modes found.</td></tr>
               ) : (

@@ -8,6 +8,7 @@ import { exportTableToPdf, type PdfColumn } from '../../utils/exportPdf';
 import { exportToExcel } from '../../utils/exportExcel';
 import { useSettings } from '../../contexts/SettingsContext';
 import SearchableSelect from '../../components/SearchableSelect';
+import TableLoader from '../../components/TableLoader';
 
 const ExpenseEntry = () => {
   const { formatCurrency, settings } = useSettings();
@@ -339,7 +340,7 @@ const ExpenseEntry = () => {
                   </thead>
                   <tbody>
                     {historyLoading ? (
-                      <tr><td colSpan={5} className="text-center py-4 text-black font-bold">Loading expenses...</td></tr>
+                      <TableLoader columns={5} />
                     ) : expenses.length === 0 ? (
                       <tr>
                         <td colSpan={5} className="text-center py-4 text-black font-bold">No expenses found for selected criteria.</td>

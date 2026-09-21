@@ -8,6 +8,7 @@ import api from '../../services/api';
 import ReportTabs from '../../components/ReportTabs';
 import PaginationControls from '../../components/PaginationControls';
 import SearchableSelect from '../../components/SearchableSelect';
+import TableLoader from '../../components/TableLoader';
 
 const CustomerReceiptsReport = () => {
   const { formatCurrency, settings } = useSettings();
@@ -447,7 +448,7 @@ const CustomerReceiptsReport = () => {
                 </thead>
                 <tbody>
                   {consolidationLoading ? (
-                    <tr><td colSpan={8} className="text-center p-6 text-black font-bold">Loading consolidation report...</td></tr>
+                    <TableLoader columns={8} />
                   ) : filteredConsolidation.length === 0 ? (
                     <tr><td colSpan={8} className="text-center p-6 text-black font-bold">No customer records found.</td></tr>
                   ) : (
@@ -483,7 +484,7 @@ const CustomerReceiptsReport = () => {
                 </thead>
                 <tbody>
                   {historyLoading ? (
-                    <tr><td colSpan={7} className="text-center p-6 text-black font-bold">Loading receipt history...</td></tr>
+                    <TableLoader columns={7} />
                   ) : filteredHistory.length === 0 ? (
                     <tr><td colSpan={7} className="text-center p-6 text-black font-bold">No receipt vouchers found.</td></tr>
                   ) : (

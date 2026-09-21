@@ -8,6 +8,7 @@ import DeleteConfirmationModal from '../../components/DeleteConfirmationModal';
 import CustomerRatesModal from '../../components/CustomerRatesModal';
 import { useSettings } from '../../contexts/SettingsContext';
 import api from '../../services/api';
+import TableLoader from '../../components/TableLoader';
 
 const customerSchema = z.object({
   name: z.string().min(1, 'Customer Name is required'),
@@ -317,7 +318,7 @@ const Customers = () => {
             </thead>
             <tbody>
               {isLoading ? (
-                <tr><td colSpan={6} className="text-center p-4">Loading...</td></tr>
+                <TableLoader columns={6} />
               ) : filteredCustomers.length === 0 ? (
                 <tr><td colSpan={6} className="text-center p-4">No customers found.</td></tr>
               ) : (

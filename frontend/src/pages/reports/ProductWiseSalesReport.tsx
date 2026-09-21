@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Loader2 } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { CornerDownLeft, Calendar, Package } from 'lucide-react';
 import api from '../../services/api';
@@ -87,7 +88,10 @@ const ProductWiseSalesReport = () => {
           {/* Table */}
           <div className="flex-1 overflow-auto bg-white">
             {isLoading ? (
-              <div className="p-8 text-center text-black font-bold">Loading report data...</div>
+              <div className="p-12 text-center text-gray-500 flex flex-col items-center justify-center gap-3">
+                <Loader2 className="w-8 h-8 animate-spin text-[#3B82F6]" />
+                <span className="font-bold">Loading report data...</span>
+              </div>
             ) : (
               <table className="w-full text-left text-[12px] whitespace-nowrap border-collapse">
                 <thead className="bg-[#1E293B] text-white">

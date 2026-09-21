@@ -7,6 +7,7 @@ import InvoicePrintModal from '../../components/InvoicePrintModal';
 import { useSettings } from '../../contexts/SettingsContext';
 import ViewSalesModal from './ViewSalesModal';
 import PaginationControls from '../../components/PaginationControls';
+import TableLoader from '../../components/TableLoader';
 
 const SalesList = () => {
   const { settings, formatCurrency } = useSettings();
@@ -143,9 +144,7 @@ const SalesList = () => {
             </thead>
             <tbody>
               {isLoading ? (
-                <tr>
-                  <td colSpan={6} className="px-2 py-4 text-center text-[#73879C]">Loading...</td>
-                </tr>
+                <TableLoader columns={6} />
               ) : filteredSales.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="px-2 py-4 text-center text-[#73879C]">No sales invoices found matching your criteria.</td>

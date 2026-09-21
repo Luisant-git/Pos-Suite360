@@ -8,6 +8,7 @@ import api from '../../services/api';
 import ReportTabs from '../../components/ReportTabs';
 import PaginationControls from '../../components/PaginationControls';
 import SearchableSelect from '../../components/SearchableSelect';
+import TableLoader from '../../components/TableLoader';
 
 const ExpenseReport = () => {
   const { formatCurrency, settings } = useSettings();
@@ -263,7 +264,7 @@ const ExpenseReport = () => {
               </thead>
               <tbody>
                 {isLoading ? (
-                  <tr><td colSpan={6} className="text-center p-6 text-black font-bold">Loading report data...</td></tr>
+                  <TableLoader columns={6} />
                 ) : expenses.length === 0 ? (
                   <tr><td colSpan={6} className="text-center p-6 text-black font-bold">No expense records found for selected criteria.</td></tr>
                 ) : (

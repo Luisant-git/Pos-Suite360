@@ -8,6 +8,7 @@ import { exportToExcel } from '../../utils/exportExcel';
 import { useSettings } from '../../contexts/SettingsContext';
 import PaginationControls from '../../components/PaginationControls';
 import SearchableSelect from '../../components/SearchableSelect';
+import TableLoader from '../../components/TableLoader';
 
 const StockReport = () => {
   const { formatCurrency, settings } = useSettings();
@@ -215,7 +216,7 @@ const StockReport = () => {
             </thead>
             <tbody>
               {isLoading ? (
-                <tr><td colSpan={8} className="text-center p-6 text-black font-bold">Loading report data...</td></tr>
+                <TableLoader columns={8} />
               ) : products.length === 0 ? (
                 <tr><td colSpan={8} className="text-center p-6 text-black font-bold">No stock records found.</td></tr>
               ) : (

@@ -10,6 +10,7 @@ import { exportTableToPdf, type PdfColumn } from '../../utils/exportPdf';
 import ViewPurchaseModal from '../purchase/ViewPurchaseModal';
 import PaginationControls from '../../components/PaginationControls';
 import SearchableSelect from '../../components/SearchableSelect';
+import TableLoader from '../../components/TableLoader';
 
 const PurchaseReport = () => {
   const navigate = useNavigate();
@@ -316,7 +317,7 @@ const PurchaseReport = () => {
             </thead>
             <tbody>
               {isLoading ? (
-                <tr><td colSpan={9} className="text-center p-6 text-black font-bold">Loading report data...</td></tr>
+                <TableLoader columns={9} />
               ) : filteredPurchases.length === 0 ? (
                 <tr><td colSpan={9} className="text-center p-6 text-black font-bold">No purchase records found.</td></tr>
               ) : (

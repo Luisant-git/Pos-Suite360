@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Plus, Search, Edit2, Trash2, Users as UsersIcon, Shield } from 'lucide-react';
 import toast from 'react-hot-toast';
 import api from '../../services/api';
+import TableLoader from '../../components/TableLoader';
 
 export default function Users() {
   const [users, setUsers] = useState<any[]>([]);
@@ -158,7 +159,7 @@ export default function Users() {
             </thead>
             <tbody className="divide-y divide-gray-200">
               {loading ? (
-                <tr><td colSpan={4} className="p-8 text-center text-black font-bold">Loading...</td></tr>
+                <TableLoader columns={4} />
               ) : filteredUsers.length === 0 ? (
                 <tr><td colSpan={4} className="p-8 text-center text-black font-bold">No users found</td></tr>
               ) : (

@@ -6,6 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import DeleteConfirmationModal from '../../components/DeleteConfirmationModal';
 import api from '../../services/api';
+import TableLoader from '../../components/TableLoader';
 
 const categorySchema = z.object({
   name: z.string().min(1, 'Category Name is required'),
@@ -198,7 +199,7 @@ const Categories = () => {
             </thead>
             <tbody>
               {isLoading ? (
-                <tr><td colSpan={4} className="text-center p-4">Loading...</td></tr>
+                <TableLoader columns={4} />
               ) : filteredCategories.length === 0 ? (
                 <tr><td colSpan={4} className="text-center p-4">No categories found.</td></tr>
               ) : (

@@ -6,6 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import DeleteConfirmationModal from '../../components/DeleteConfirmationModal';
 import api from '../../services/api';
+import TableLoader from '../../components/TableLoader';
 
 const supplierSchema = z.object({
   name: z.string().min(1, 'Supplier Name is required'),
@@ -297,7 +298,7 @@ const Suppliers = () => {
             </thead>
             <tbody>
               {isLoading ? (
-                <tr><td colSpan={6} className="text-center p-4">Loading...</td></tr>
+                <TableLoader columns={6} />
               ) : filteredSuppliers.length === 0 ? (
                 <tr><td colSpan={6} className="text-center p-4">No suppliers found.</td></tr>
               ) : (

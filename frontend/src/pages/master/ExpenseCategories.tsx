@@ -6,6 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import DeleteConfirmationModal from '../../components/DeleteConfirmationModal';
 import api from '../../services/api';
+import TableLoader from '../../components/TableLoader';
 
 const expenseCategorySchema = z.object({
   name: z.string().min(1, 'Category Name is required'),
@@ -175,7 +176,7 @@ const ExpenseCategories = () => {
             </thead>
             <tbody>
               {isLoading ? (
-                <tr><td colSpan={3} className="text-center p-4">Loading...</td></tr>
+                <TableLoader columns={3} />
               ) : filteredCategories.length === 0 ? (
                 <tr><td colSpan={3} className="text-center p-4">No categories found.</td></tr>
               ) : (

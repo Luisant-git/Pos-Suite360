@@ -11,6 +11,7 @@ import InvoicePrintModal from '../../components/InvoicePrintModal';
 import ViewSalesModal from '../sales/ViewSalesModal';
 import PaginationControls from '../../components/PaginationControls';
 import SearchableSelect from '../../components/SearchableSelect';
+import TableLoader from '../../components/TableLoader';
 
 const SalesReport = () => {
   const navigate = useNavigate();
@@ -313,7 +314,7 @@ const SalesReport = () => {
             </thead>
             <tbody>
               {isLoading ? (
-                <tr><td colSpan={9} className="text-center p-6 text-black font-bold">Loading report data...</td></tr>
+                <TableLoader columns={9} />
               ) : filteredSales.length === 0 ? (
                 <tr><td colSpan={9} className="text-center p-6 text-black font-bold">No sales records found.</td></tr>
               ) : (

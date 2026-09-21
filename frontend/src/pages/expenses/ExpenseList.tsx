@@ -7,6 +7,7 @@ import { exportToExcel } from '../../utils/exportExcel';
 import { useSettings } from '../../contexts/SettingsContext';
 import api from '../../services/api';
 import SearchableSelect from '../../components/SearchableSelect';
+import TableLoader from '../../components/TableLoader';
 
 const ExpenseList = () => {
   const { formatCurrency, settings } = useSettings();
@@ -192,7 +193,7 @@ const ExpenseList = () => {
               </thead>
               <tbody>
                 {isLoading ? (
-                  <tr><td colSpan={6} className="text-center p-4">Loading expenses...</td></tr>
+                  <TableLoader columns={6} />
                 ) : expenses.length === 0 ? (
                   <tr><td colSpan={6} className="text-center p-4 text-black font-bold">No expense transactions found.</td></tr>
                 ) : (

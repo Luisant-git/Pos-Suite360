@@ -6,6 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import DeleteConfirmationModal from '../../components/DeleteConfirmationModal';
 import api from '../../services/api';
+import TableLoader from '../../components/TableLoader';
 
 const paymentTypeSchema = z.object({
   name: z.string().min(1, 'Payment Type Name is required'),
@@ -188,7 +189,7 @@ const PaymentTypes = () => {
             </thead>
             <tbody>
               {isLoading ? (
-                <tr><td colSpan={4} className="text-center p-4">Loading...</td></tr>
+                <TableLoader columns={4} />
               ) : filteredTypes.length === 0 ? (
                 <tr><td colSpan={4} className="text-center p-4">No payment types found.</td></tr>
               ) : (

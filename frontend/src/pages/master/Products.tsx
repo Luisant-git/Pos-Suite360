@@ -8,6 +8,7 @@ import { z } from 'zod';
 import DeleteConfirmationModal from '../../components/DeleteConfirmationModal';
 import api from '../../services/api';
 import SearchableSelect from '../../components/SearchableSelect';
+import TableLoader from '../../components/TableLoader';
 
 const productSchema = z.object({
   code: z.string().min(1, 'Product Code is required'),
@@ -425,7 +426,7 @@ const Products = () => {
             </thead>
             <tbody>
               {isLoading ? (
-                <tr><td colSpan={10} className="text-center p-4">Loading...</td></tr>
+                <TableLoader columns={10} />
               ) : filteredProducts.length === 0 ? (
                 <tr><td colSpan={10} className="text-center p-4">No products found.</td></tr>
               ) : (

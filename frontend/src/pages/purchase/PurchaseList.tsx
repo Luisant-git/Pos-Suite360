@@ -6,6 +6,7 @@ import api from '../../services/api';
 import { useSettings } from '../../contexts/SettingsContext';
 import ViewPurchaseModal from './ViewPurchaseModal';
 import PaginationControls from '../../components/PaginationControls';
+import TableLoader from '../../components/TableLoader';
 
 const PurchaseList = () => {
   const { formatCurrency } = useSettings();
@@ -140,9 +141,7 @@ const PurchaseList = () => {
             </thead>
             <tbody>
               {isLoading ? (
-                <tr>
-                  <td colSpan={6} className="px-3 py-4 text-center text-[#73879C]">Loading...</td>
-                </tr>
+                <TableLoader columns={6} />
               ) : filteredPurchases.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="px-3 py-4 text-center text-[#73879C]">No purchase invoices found matching your criteria.</td>

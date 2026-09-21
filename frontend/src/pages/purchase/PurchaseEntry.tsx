@@ -526,13 +526,6 @@ const PurchaseEntry = () => {
             </button>
             <button 
               type="button"
-              onClick={() => setIsHelpModalOpen(true)}
-              className="border border-[#0B355B] text-[#0B355B] hover:bg-[#0B355B] hover:text-white px-3 py-1 rounded flex items-center gap-1 text-[12px] transition-colors font-bold"
-            >
-              <Keyboard size={14} /> Shortcuts
-            </button>
-            <button 
-              type="button"
               onClick={() => navigate('/purchase')}
               className="border border-[#0B355B] text-[#0B355B] hover:bg-[#0B355B] hover:text-white px-3 py-1 rounded flex items-center gap-1 text-[12px] transition-colors font-bold"
             >
@@ -544,6 +537,13 @@ const PurchaseEntry = () => {
               className="border border-[#0B355B] text-[#0B355B] hover:bg-[#0B355B] hover:text-white px-3 py-1 rounded flex items-center gap-1 text-[12px] transition-colors font-bold"
             >
               <FileText size={14} /> Purchase Report
+            </button>
+            <button 
+              type="button"
+              onClick={() => setIsHelpModalOpen(true)}
+              className="border border-[#0B355B] text-[#0B355B] hover:bg-[#0B355B] hover:text-white px-3 py-1 rounded flex items-center gap-1 text-[12px] transition-colors font-bold"
+            >
+              <Keyboard size={14} /> Shortcuts
             </button>
           </div>
           <div className="flex-1 overflow-auto custom-scrollbar">

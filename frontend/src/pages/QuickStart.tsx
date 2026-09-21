@@ -75,6 +75,7 @@ const menuData = [
       { name: 'Purchase Return Report', path: '/reports/purchase-return', icon: FileText, authKey: 'reports_purchase' },
       { name: 'Sales Report', path: '/reports/sales', icon: FileText, authKey: 'reports_sales' },
       { name: 'Sales Return Report', path: '/reports/sales-return', icon: FileText, authKey: 'reports_sales' },
+      { name: 'Product Wise Sales', path: '/reports/product-wise-sales', icon: FileText, authKey: 'reports_sales' },
       { name: 'Stock As On Date', path: '/reports/stock', icon: FileText, authKey: 'reports_financial' },
       { name: 'Profit / Ledger', path: '/reports/profit-ledger', icon: FileText, authKey: 'reports_financial' },
       { name: 'Expense Report', path: '/reports/expenses', icon: FileText, authKey: 'reports_financial' },

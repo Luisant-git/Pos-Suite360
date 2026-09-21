@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Download, FileText, Search, Calendar, FileDigit, Users, CreditCard, RotateCcw, Plus, Printer, Share2, Eye } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useSettings } from '../../contexts/SettingsContext';
 import api from '../../services/api';
 import ReportTabs from '../../components/ReportTabs';
@@ -14,11 +14,12 @@ import SearchableSelect from '../../components/SearchableSelect';
 
 const SalesReport = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { formatCurrency, settings } = useSettings();
   const [fromDate, setFromDate] = useState('');
   const [toDate, setToDate] = useState('');
   const [customerId, setCustomerId] = useState('');
-  const [invoiceNo, setInvoiceNo] = useState('');
+  const [invoiceNo, setInvoiceNo] = useState(searchParams.get('invoiceNo') || '');
   const [paymentMode, setPaymentMode] = useState('');
   const [quickSearch, setQuickSearch] = useState('');
   const [selectedSale, setSelectedSale] = useState<any>(null);

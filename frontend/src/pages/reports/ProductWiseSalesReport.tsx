@@ -120,8 +120,8 @@ const ProductWiseSalesReport = () => {
                             key={i} 
                             className="border-b border-[#F1F5F9] hover:bg-[#F8FAFC] cursor-pointer"
                             onClick={() => {
-                              if (item.saleId) {
-                                navigate(`/sales?edit=${item.saleId}`);
+                              if (item.invoiceNo && item.invoiceNo !== '-') {
+                                navigate(`/reports/sales?invoiceNo=${item.invoiceNo}`);
                               }
                             }}
                           >

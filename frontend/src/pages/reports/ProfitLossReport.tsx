@@ -292,25 +292,11 @@ const ProfitLossReport = () => {
 
                 {/* 3. Operating Expenses */}
                 <div className="flex justify-between font-bold text-black font-bold border-b border-[#E5E7EB] pb-1 mb-1 shrink-0">
-                  <div className="flex items-center gap-2"><span>III. OPERATING EXPENSES (ITEMIZED)</span></div>
+                  <div className="flex items-center gap-2"><span>III. OPERATING EXPENSES</span></div>
                   <div>AMOUNT</div>
                 </div>
                 
-                {safePnl.itemizedExpenses.length === 0 ? (
-                  <div className="py-1 text-black font-bold italic text-[11px] border-b border-[#F3F4F6] mb-1 shrink-0">
-                    No operating expenses recorded for this period
-                    <span className="float-right font-normal text-black font-bold">{formatCurrency(0)}</span>
-                  </div>
-                ) : (
-                  <div className="mb-1 border-b border-[#F3F4F6] pb-1 overflow-y-auto min-h-0">
-                    {safePnl.itemizedExpenses.map((exp: any, idx: number) => (
-                      <div key={idx} className="flex justify-between py-0.5 text-black font-bold hover:bg-[#F9FAFB] px-2 rounded">
-                        <span>{exp.name}</span>
-                        <span className="font-bold text-black font-bold">{formatCurrency(exp.amount)}</span>
-                      </div>
-                    ))}
-                  </div>
-                )}
+
 
                 <div className="flex justify-between py-1 font-bold text-[13px] px-2 mt-auto text-black font-bold shrink-0">
                   <span>TOTAL OPERATING EXPENSES</span>

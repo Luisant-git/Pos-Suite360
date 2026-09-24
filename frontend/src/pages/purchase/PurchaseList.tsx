@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Plus, Eye } from 'lucide-react';
+import { Plus, Eye, Edit } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../services/api';
 import { useSettings } from '../../contexts/SettingsContext';
@@ -172,6 +172,15 @@ const PurchaseList = () => {
                         >
                           <Eye size={14} />
                         </button>
+                        {settings?.allowEditPurchaseInvoice && (
+                          <button type="button" 
+                            onClick={() => navigate(`/purchase/new?edit=${purchase.id}`)}
+                            className="text-[#10B981] border border-[#10B981] rounded p-1 hover:bg-[#10B981] hover:text-white transition-colors"
+                            title="Edit Purchase Invoice"
+                          >
+                            <Edit size={14} />
+                          </button>
+                        )}
                       </div>
                     </td>
                   </tr>

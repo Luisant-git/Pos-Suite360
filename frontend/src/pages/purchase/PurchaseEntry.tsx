@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -397,7 +397,7 @@ const PurchaseEntry = () => {
             onClick={handleSubmit(onSubmit as any, onError)}
             className="bg-[#059669] hover:bg-[#047857] text-white px-4 py-1.5 rounded flex items-center gap-2 font-bold text-[13px] transition-colors"
           >
-            <CheckCircle size={16} /> SAVE PURCHASE (F10)
+            <CheckCircle size={16} /> {editId ? 'UPDATE PURCHASE (F10)' : 'SAVE PURCHASE (F10)'}
           </button>
         </div>
         <div className="flex items-center gap-3">
@@ -794,7 +794,7 @@ const PurchaseEntry = () => {
 
             <button 
               type="button"
-              disabled={createMutation.isPending}
+              disabled={createMutation.isPending || updateMutation.isPending}
               className="bg-[#059669] text-white text-[10px] sm:text-[11px] font-bold px-2 sm:px-3 py-1.5 rounded-sm flex items-center gap-1 cursor-pointer hover:bg-[#047857] disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap" 
               onClick={handleSubmit(onSubmit as any, onError)}
             >

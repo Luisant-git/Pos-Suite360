@@ -212,4 +212,116 @@ export class PurchasesService {
       });
     });
   }
+
+  async update(id: number, createPurchaseDto: CreatePurchaseDto, userId: number = 1) {
+    return this.prisma.$transaction(async (tx) => {
+      const existingPurchase = await tx.purchase.findUnique({
+        where: { id },
+        include: { items: true },
+      });
+
+      if (!existingPurchase) {
+        throw new BadRequestException(`Purchase invoice not found: ${id}`);
+      }
+
+      // 1. Reverse stock from old items
+      for (const oldItem of existingPurchase.items) {
+        const updatedProduct = await tx.product.update({
+          where: { id: oldItem.productId },
+          data: {
+            currentStock: { decrement: oldItem.quantity },
+          },
+        });
+
+        await tx.stockTransaction.create({
+          data: {
+            date: new Date(),
+            productId: oldItem.productId,
+            type: TransactionType.PURCHASE_RETURN,
+            quantityIn: 0,
+            quantityOut: oldItem.quantity,
+            balance: updatedProduct.currentStock,
+            reference: `Reverted for Edit ${existingPurchase.invoiceNo}`,
+          },
+        });
+      }
+
+      // 2. Delete old Purchase items
+      await tx.purchaseItem.deleteMany({
+        where: { purchaseId: id },
+      });
+
+      // 3. Update Purchase and insert new items
+      const updatedPurchase = await tx.purchase.update({
+        where: { id },
+        data: {
+          invoiceNo: createPurchaseDto.invoiceNo || existingPurchase.invoiceNo,
+          supplierInvoiceNo: createPurchaseDto.supplierInvoiceNo,
+          date: new Date(createPurchaseDto.date),
+          supplierId: createPurchaseDto.supplierId,
+          paymentModeId: createPurchaseDto.paymentModeId,
+          subtotal: createPurchaseDto.subtotal,
+          tax: createPurchaseDto.tax || 0,
+          discount: createPurchaseDto.discount || 0,
+          grandTotal: createPurchaseDto.grandTotal,
+          items: {
+            create: createPurchaseDto.items.map((item) => ({
+              productId: item.productId,
+              quantity: item.quantity,
+              rate: item.rate,
+              tax: item.tax || 0,
+              amount: item.amount,
+            })),
+          },
+        },
+        include: { items: true },
+      });
+
+      // 4. Update stock, rates, and ledger for new items
+      for (const item of createPurchaseDto.items) {
+        const currentProduct = await tx.product.findUnique({ where: { id: item.productId } });
+        if (!currentProduct) {
+          throw new BadRequestException(`Product not found: ${item.productId}`);
+        }
+
+        let newPurchaseRate = Number(currentProduct.purchaseRate);
+        let newWholesaleRate = Number(currentProduct.wholesaleRate);
+        let newSellingRate = Number(currentProduct.sellingRate);
+        let newMrp = Number(currentProduct.mrp);
+
+        if (item.rate && item.rate > newPurchaseRate) newPurchaseRate = item.rate;
+        if (item.wRate && item.wRate > newWholesaleRate) newWholesaleRate = item.wRate;
+        if (item.sRate !== undefined && item.sRate > 0) newSellingRate = item.sRate;
+        if (item.mrp && item.mrp > newMrp) newMrp = item.mrp;
+
+        const updatedProduct = await tx.product.update({
+          where: { id: item.productId },
+          data: {
+            currentStock: { increment: item.quantity },
+            purchaseRate: newPurchaseRate,
+            wholesaleRate: newWholesaleRate,
+            sellingRate: newSellingRate,
+            mrp: newMrp,
+          },
+        });
+
+        await tx.stockTransaction.create({
+          data: {
+            date: new Date(createPurchaseDto.date),
+            productId: item.productId,
+            type: TransactionType.PURCHASE,
+            quantityIn: item.quantity,
+            quantityOut: 0,
+            balance: updatedProduct.currentStock,
+            reference: updatedPurchase.invoiceNo,
+          },
+        });
+      }
+
+      return updatedPurchase;
+    }).catch(err => {
+      console.error('PRISMA ERROR IN PURCHASE UPDATE:', err);
+      throw new BadRequestException(err.message || 'Error updating purchase');
+    });
+  }
 }

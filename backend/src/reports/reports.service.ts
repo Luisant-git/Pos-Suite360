@@ -35,29 +35,8 @@ export class ReportsService {
 
     const netOperatingRevenue = grossSales - totalSalesReturns;
 
-    // --- COGS CALCULATION: OPENING STOCK + PURCHASES - CLOSING STOCK ---
+    // --- COGS CALCULATION: PURCHASES ONLY ---
     
-    // Get all products and their current purchase rate to value stock
-    const allProducts = await this.prisma.product.findMany({
-      select: { id: true, purchaseRate: true }
-    });
-    const productRates = Object.fromEntries(allProducts.map(p => [p.id, Number(p.purchaseRate)]));
-
-    // A. Opening Stock Value (Stock before fromDate)
-    let openingStockValue = 0;
-    if (fromDateStr) {
-      const openingTxs = await this.prisma.stockTransaction.groupBy({
-        by: ['productId'],
-        where: { date: { lt: new Date(fromDateStr) } },
-        _sum: { quantityIn: true, quantityOut: true }
-      });
-      openingTxs.forEach(tx => {
-        const qty = Number(tx._sum.quantityIn || 0) - Number(tx._sum.quantityOut || 0);
-        const rate = productRates[tx.productId] || 0;
-        openingStockValue += qty * rate;
-      });
-    }
-
     // B. Purchases during period
     const purchases = await this.prisma.purchase.aggregate({
       where: whereDate,
@@ -72,26 +51,9 @@ export class ReportsService {
     });
     const totalPurchaseReturns = Number(purchaseReturns._sum.totalAmount || 0);
 
-    // D. Closing Stock Value (Stock up to toDate)
-    let closingStockValue = 0;
-    const closingTxWhere: any = {};
-    if (toDateStr) {
-      const toDate = new Date(toDateStr);
-      toDate.setHours(23, 59, 59, 999);
-      closingTxWhere.date = { lte: toDate };
-    }
-    const closingTxs = await this.prisma.stockTransaction.groupBy({
-      by: ['productId'],
-      where: closingTxWhere,
-      _sum: { quantityIn: true, quantityOut: true }
-    });
-    closingTxs.forEach(tx => {
-      const qty = Number(tx._sum.quantityIn || 0) - Number(tx._sum.quantityOut || 0);
-      const rate = productRates[tx.productId] || 0;
-      closingStockValue += qty * rate;
-    });
-
-    const netCogs = openingStockValue + grossPurchases - totalPurchaseReturns - closingStockValue;
+    const netCogs = grossPurchases - totalPurchaseReturns;
+    const openingStockValue = 0;
+    const closingStockValue = 0;
 
     // ----------------------------------------------------------------
 

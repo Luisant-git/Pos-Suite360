@@ -101,6 +101,46 @@ const PurchaseEntry = () => {
   });
 
   // Fetch Masters & Next Entry No
+  // Fetch existing purchase if editing
+  const { data: existingPurchase } = useQuery({
+    queryKey: ['purchase', editId],
+    queryFn: async () => {
+      const res = await api.get(`/purchases/${editId}`);
+      return res.data;
+    },
+    enabled: !!editId
+  });
+
+  useEffect(() => {
+    if (existingPurchase) {
+      reset({
+        entryNo: existingPurchase.invoiceNo,
+        invoiceNo: existingPurchase.supplierInvoiceNo || '',
+        invoiceDate: existingPurchase.invoiceDate ? existingPurchase.invoiceDate.split('T')[0] : '',
+        supplierId: existingPurchase.supplierId,
+        date: existingPurchase.date ? existingPurchase.date.split('T')[0] : '',
+        paymentModeId: existingPurchase.paymentModeId,
+        items: existingPurchase.items.map((item: any) => ({
+          productId: item.productId,
+          quantity: item.quantity,
+          unit: item.product?.unit?.shortCode || item.product?.unit?.name || 'Nos',
+          pRate: item.rate,
+          wRate: item.product?.wholesaleRate || 0,
+          sRate: item.product?.sellingRate || 0,
+          mrp: item.product?.mrp || 0,
+          discPercent: 0,
+          discAmt: 0,
+          total: item.amount
+        })),
+        totalAmount: existingPurchase.subtotal,
+        totalDiscount: existingPurchase.discount,
+        totalDiscountPercent: 0 as any,
+        roundOff: existingPurchase.grandTotal - (existingPurchase.subtotal - existingPurchase.discount),
+        netAmount: existingPurchase.grandTotal
+      });
+    }
+  }, [existingPurchase, reset]);
+
   const { data: suppliers = [] } = useQuery({ queryKey: ['suppliers'], queryFn: async () => (await api.get('/suppliers')).data });
   const { data: products = [] } = useQuery({ queryKey: ['products'], queryFn: async () => (await api.get('/products')).data });
   const { data: paymentModes = [] } = useQuery({ queryKey: ['paymentModes'], queryFn: async () => (await api.get('/payment-modes')).data });

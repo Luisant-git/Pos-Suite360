@@ -73,8 +73,8 @@ const ProfitLossReport = () => {
       ['NET OPERATING REVENUE', safePnl.netOperatingRevenue],
       [],
       ['II. COST OF GOODS SOLD', 'AMOUNT'],
-      ['Gross Purchases', safePnl.grossPurchases],
-      ['Purchase Returns', `-${safePnl.totalPurchaseReturns}`],
+      ['Add: Gross Purchases', safePnl.grossPurchases],
+      ['Less: Purchase Returns', `-${safePnl.totalPurchaseReturns}`],
       ['NET COST OF GOODS SOLD', safePnl.netCogs],
       ['GROSS PROFIT', safePnl.grossProfit],
       [],
@@ -185,8 +185,8 @@ const ProfitLossReport = () => {
                 { label: 'NET OPERATING REVENUE', value: formatCurrency(safePnl.netOperatingRevenue) },
                 { label: '', value: '' },
                 { label: 'II. COST OF GOODS SOLD', value: '' },
-                { label: 'Gross Purchases', value: formatCurrency(safePnl.grossPurchases) },
-                { label: 'Purchase Returns', value: `-${formatCurrency(safePnl.totalPurchaseReturns)}` },
+                { label: 'Add: Gross Purchases', value: formatCurrency(safePnl.grossPurchases) },
+                { label: 'Less: Purchase Returns', value: `-${formatCurrency(safePnl.totalPurchaseReturns)}` },
                 { label: 'NET COST OF GOODS SOLD', value: formatCurrency(safePnl.netCogs) },
                 { label: 'GROSS PROFIT', value: formatCurrency(safePnl.grossProfit) },
                 { label: '', value: '' },
@@ -264,14 +264,14 @@ const ProfitLossReport = () => {
                 </div>
                 
                 <div className="flex justify-between py-1 text-black font-bold shrink-0">
-                  <span>Gross Purchases</span>
+                  <span>Add: Gross Purchases</span>
                   <div className="flex gap-4">
-                    <span className="text-black font-bold text-[10px] w-20 text-right">Total Purchases</span>
+                    <span className="text-black font-bold text-[10px] w-20 text-right">Purchases</span>
                     <span className="font-bold w-20 text-right">{formatCurrency(safePnl.grossPurchases)}</span>
                   </div>
                 </div>
                 
-                <div className="flex justify-between py-1 text-[#059669] border-b border-[#F3F4F6] mb-1 shrink-0">
+                <div className="flex justify-between py-1 text-[#059669] shrink-0">
                   <span>Less: Purchase Returns</span>
                   <div className="flex gap-4">
                     <span className="opacity-70 text-[10px] w-20 text-right">Returns</span>

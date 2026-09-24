@@ -5,7 +5,7 @@ import { PrismaService } from '../prisma/prisma.service';
 export class ReportsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async getProfitLoss(fromDateStr?: string, toDateStr?: string) {
+    async getProfitLoss(fromDateStr?: string, toDateStr?: string) {
     const whereDate: any = {};
     if (fromDateStr || toDateStr) {
       whereDate.date = {};
@@ -35,21 +35,65 @@ export class ReportsService {
 
     const netOperatingRevenue = grossSales - totalSalesReturns;
 
-    // 3. Gross Purchases (Used as COGS here)
+    // --- COGS CALCULATION: OPENING STOCK + PURCHASES - CLOSING STOCK ---
+    
+    // Get all products and their current purchase rate to value stock
+    const allProducts = await this.prisma.product.findMany({
+      select: { id: true, purchaseRate: true }
+    });
+    const productRates = Object.fromEntries(allProducts.map(p => [p.id, Number(p.purchaseRate)]));
+
+    // A. Opening Stock Value (Stock before fromDate)
+    let openingStockValue = 0;
+    if (fromDateStr) {
+      const openingTxs = await this.prisma.stockTransaction.groupBy({
+        by: ['productId'],
+        where: { date: { lt: new Date(fromDateStr) } },
+        _sum: { quantityIn: true, quantityOut: true }
+      });
+      openingTxs.forEach(tx => {
+        const qty = Number(tx._sum.quantityIn || 0) - Number(tx._sum.quantityOut || 0);
+        const rate = productRates[tx.productId] || 0;
+        openingStockValue += qty * rate;
+      });
+    }
+
+    // B. Purchases during period
     const purchases = await this.prisma.purchase.aggregate({
       where: whereDate,
       _sum: { grandTotal: true },
     });
     const grossPurchases = Number(purchases._sum.grandTotal || 0);
 
-    // 4. Purchase Returns
+    // C. Purchase Returns during period
     const purchaseReturns = await this.prisma.purchaseReturn.aggregate({
       where: whereDate,
       _sum: { totalAmount: true },
     });
     const totalPurchaseReturns = Number(purchaseReturns._sum.totalAmount || 0);
 
-    const netCogs = grossPurchases - totalPurchaseReturns;
+    // D. Closing Stock Value (Stock up to toDate)
+    let closingStockValue = 0;
+    const closingTxWhere: any = {};
+    if (toDateStr) {
+      const toDate = new Date(toDateStr);
+      toDate.setHours(23, 59, 59, 999);
+      closingTxWhere.date = { lte: toDate };
+    }
+    const closingTxs = await this.prisma.stockTransaction.groupBy({
+      by: ['productId'],
+      where: closingTxWhere,
+      _sum: { quantityIn: true, quantityOut: true }
+    });
+    closingTxs.forEach(tx => {
+      const qty = Number(tx._sum.quantityIn || 0) - Number(tx._sum.quantityOut || 0);
+      const rate = productRates[tx.productId] || 0;
+      closingStockValue += qty * rate;
+    });
+
+    const netCogs = openingStockValue + grossPurchases - totalPurchaseReturns - closingStockValue;
+
+    // ----------------------------------------------------------------
 
     const grossProfit = netOperatingRevenue - netCogs;
 
@@ -83,8 +127,10 @@ export class ReportsService {
       grossSales,
       totalSalesReturns,
       netOperatingRevenue,
+      openingStockValue,
       grossPurchases,
       totalPurchaseReturns,
+      closingStockValue,
       netCogs,
       grossProfit,
       itemizedExpenses,

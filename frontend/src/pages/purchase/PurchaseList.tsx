@@ -11,6 +11,7 @@ import TableLoader from '../../components/TableLoader';
 const PurchaseList = () => {
   const { formatCurrency } = useSettings();
   const navigate = useNavigate();
+  const { settings } = useSettings();
   const [searchTerm, setSearchTerm] = useState('');
   const [paymentModeFilter, setPaymentModeFilter] = useState('');
   const [viewId, setViewId] = useState<number | null>(null);

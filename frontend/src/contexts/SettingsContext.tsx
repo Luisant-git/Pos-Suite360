@@ -14,6 +14,7 @@ interface Settings {
   signatureImage?: string;
   yearlyInvoiceReset?: boolean;
   allowEditSaleInvoice?: boolean;
+  allowEditPurchaseInvoice?: boolean;
   enableCustomerRates?: boolean;
 }
 

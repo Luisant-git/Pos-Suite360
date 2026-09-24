@@ -62,6 +62,9 @@ type PurchaseFormValues = z.infer<typeof purchaseSchema>;
 const PurchaseEntry = () => {
   const { settings, formatCurrency } = useSettings();
   const navigate = useNavigate();
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const editId = searchParams.get('edit');
   const queryClient = useQueryClient();
   const [isSupplierModalOpen, setIsSupplierModalOpen] = useState(false);
   const [newSupplier, setNewSupplier] = useState({ name: '', phone: '', address: '' });
@@ -189,6 +192,26 @@ const PurchaseEntry = () => {
     onError: (error) => {
       console.error(error);
       toast.error('Failed to record purchase. Please check your inputs.');
+    }
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: (data: any) => api.put(`/purchases/${editId}`, data),
+    onSuccess: () => {
+      toast.success('Purchase updated successfully!');
+      setTimeout(() => {
+        if (printAfterSaveRef.current) {
+          window.print();
+        }
+        queryClient.invalidateQueries({ queryKey: ['products'] });
+        queryClient.invalidateQueries({ queryKey: ['purchases'] });
+        reset();
+        navigate('/purchase');
+      }, 100);
+    },
+    onError: (error) => {
+      console.error(error);
+      toast.error('Failed to update purchase. Please check your inputs.');
     }
   });
 

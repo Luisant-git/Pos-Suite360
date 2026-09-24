@@ -79,7 +79,6 @@ const ProfitLossReport = () => {
       ['GROSS PROFIT', safePnl.grossProfit],
       [],
       ['III. OPERATING EXPENSES', 'AMOUNT'],
-      ...safePnl.itemizedExpenses.map((exp: any) => [exp.name, exp.amount]),
       ['TOTAL OPERATING EXPENSES', safePnl.totalExpenses],
       [],
       ['NET PROFIT FOR PERIOD', safePnl.netProfit]
@@ -191,7 +190,6 @@ const ProfitLossReport = () => {
                 { label: 'GROSS PROFIT', value: formatCurrency(safePnl.grossProfit) },
                 { label: '', value: '' },
                 { label: 'III. OPERATING EXPENSES', value: '' },
-                ...safePnl.itemizedExpenses.map((exp: any) => ({ label: exp.name, value: formatCurrency(exp.amount) })),
                 { label: 'TOTAL OPERATING EXPENSES', value: formatCurrency(safePnl.totalExpenses) },
                 { label: '', value: '' },
                 { label: 'NET PROFIT FOR PERIOD', value: formatCurrency(safePnl.netProfit) },

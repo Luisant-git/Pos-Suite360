@@ -54,8 +54,21 @@ const Dashboard = () => {
   const { formatCurrency } = useSettings();
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [filterStartDate, setFilterStartDate] = useState(new Date().toISOString().split('T')[0]);
-  const [filterEndDate, setFilterEndDate] = useState(new Date().toISOString().split('T')[0]);
+  const getMalaysiaDate = () => {
+    const d = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Kuala_Lumpur" }));
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  };
+
+  const [filterStartDate, setFilterStartDate] = useState(getMalaysiaDate());
+  const [filterEndDate, setFilterEndDate] = useState(getMalaysiaDate());
+  const [currentDateTime, setCurrentDateTime] = useState(new Date());
+
+  useEffect(() => {
+    const timer = setInterval(() => setCurrentDateTime(new Date()), 60000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const formattedDateTime = `${currentDateTime.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', timeZone: 'Asia/Kuala_Lumpur' })} ${currentDateTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true, timeZone: 'Asia/Kuala_Lumpur' })}`;
 
   useEffect(() => {
     const fetchDashboard = async () => {
@@ -84,7 +97,7 @@ const Dashboard = () => {
     );
   }
 
-  const todayStr = new Date().toISOString().split('T')[0];
+  const todayStr = getMalaysiaDate();
   const isToday = filterStartDate === todayStr && filterEndDate === todayStr;
   const prefix = isToday ? "Today's" : "Filtered";
   const descPrefix = isToday ? "Today's" : "Period";
@@ -145,7 +158,12 @@ const Dashboard = () => {
       */}
 
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
-        <h1 className="text-[20px] font-bold text-black font-bold">Financial Overview</h1>
+        <div>
+          <h1 className="text-[20px] font-bold text-black font-bold">Financial Overview</h1>
+          <p className="text-[13px] font-bold text-blue-600 mt-1 flex items-center gap-1.5">
+            <i className="fa fa-clock-o"></i> {formattedDateTime}
+          </p>
+        </div>
         <div className="flex flex-col sm:flex-row sm:items-center gap-3 bg-white px-4 py-3 sm:py-2 border border-gray-200 rounded-xl shadow-sm w-full sm:w-auto">
           <div className="flex items-center justify-between sm:justify-start gap-2 sm:border-r border-gray-200 sm:pr-4">
             <label className="text-[13px] font-bold text-black font-bold w-10 sm:w-auto">From:</label>
@@ -168,7 +186,7 @@ const Dashboard = () => {
           <div className="flex justify-end w-full sm:w-auto sm:block mt-1 sm:mt-0 border-t border-gray-100 pt-2 sm:border-t-0 sm:pt-0">
             <button 
               onClick={() => {
-                const today = new Date().toISOString().split('T')[0];
+                const today = getMalaysiaDate();
                 setFilterStartDate(today);
                 setFilterEndDate(today);
               }}

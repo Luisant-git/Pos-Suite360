@@ -226,6 +226,7 @@ const MainLayout = () => {
             {hasAnyPerm(['purchase_entry', 'purchase_return', 'purchase_payments']) && (
               <MobileNavDropdown title="Purchases" icon="fa-truck" isActive={isPurchaseActive}>
                 {hasPerm('purchase_entry') && <MobileDropdownItem to="/purchase/new" icon="fa-shopping-basket" title="Purchase Entry" />}
+                {hasPerm('purchase_entry') && <MobileDropdownItem to="/purchase" icon="fa-list-alt" title="Purchase List" />}
                 {hasPerm('purchase_return') && <MobileDropdownItem to="/purchase/return" icon="fa-undo" title="Purchase Return" isWarning />}
                 {hasPerm('purchase_payments') && <MobileDropdownItem to="/purchase/payments" icon="fa-credit-card" title="Supplier Payments" />}
               </MobileNavDropdown>
@@ -323,6 +324,7 @@ const MainLayout = () => {
             {hasAnyPerm(['purchase_entry', 'purchase_return', 'purchase_payments']) && (
               <NavDropdown title="Purchases" icon="fa-truck" isActive={isPurchaseActive}>
                 {hasPerm('purchase_entry') && <DropdownItem to="/purchase/new" icon="fa-shopping-basket" title="Purchase Entry" />}
+                {hasPerm('purchase_entry') && <DropdownItem to="/purchase" icon="fa-list-alt" title="Purchase List" />}
                 {hasPerm('purchase_return') && <DropdownItem to="/purchase/return" icon="fa-undo" title="Purchase Return" isWarning />}
                 <div className="h-px bg-gray-100 my-1 mx-4"></div>
                 {hasPerm('purchase_payments') && <DropdownItem to="/purchase/payments" icon="fa-credit-card" title="Supplier Payments" />}
@@ -493,6 +495,7 @@ const MainLayout = () => {
               {hasAnyPerm(['purchase_entry', 'purchase_return', 'purchase_payments']) && (
                 <MobileNavDropdown title="Purchases" icon="fa-truck" isActive={isPurchaseActive}>
                   {hasPerm('purchase_entry') && <MobileDropdownItem to="/purchase/new" icon="fa-shopping-basket" title="Purchase Entry" onClick={closeMobileMenu} />}
+                  {hasPerm('purchase_entry') && <MobileDropdownItem to="/purchase" icon="fa-list-alt" title="Purchase List" onClick={closeMobileMenu} />}
                   {hasPerm('purchase_return') && <MobileDropdownItem to="/purchase/return" icon="fa-undo" title="Purchase Return" isWarning onClick={closeMobileMenu} />}
                   {hasPerm('purchase_payments') && <MobileDropdownItem to="/purchase/payments" icon="fa-credit-card" title="Supplier Payments" onClick={closeMobileMenu} />}
                 </MobileNavDropdown>

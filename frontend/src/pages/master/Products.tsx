@@ -417,6 +417,7 @@ const Products = () => {
                 <th className="px-3 py-2 border-r border-[#444]">Product Description</th>
                 <th className="px-3 py-2 border-r border-[#444]">Category</th>
                 <th className="px-3 py-2 border-r border-[#444]">Brand</th>
+                <th className="px-3 py-2 border-r border-[#444] text-center">Birds</th>
                 <th className="px-3 py-2 border-r border-[#444] text-center">Stock</th>
                 <th className="px-3 py-2 border-r border-[#444] text-right">Pur Rate</th>
                 <th className="px-3 py-2 border-r border-[#444] text-right">Wholesale</th>
@@ -426,9 +427,9 @@ const Products = () => {
             </thead>
             <tbody>
               {isLoading ? (
-                <TableLoader columns={10} />
+                <TableLoader columns={11} />
               ) : filteredProducts.length === 0 ? (
-                <tr><td colSpan={10} className="text-center p-4">No products found.</td></tr>
+                <tr><td colSpan={11} className="text-center p-4">No products found.</td></tr>
               ) : (
                 filteredProducts.map((product: any, index: number) => (
                   <tr key={product.id} className={`border-b border-[#E5E7EB] ${index % 2 === 0 ? 'bg-white' : 'bg-[#F9F9F9]'} hover:bg-blue-50`}>
@@ -441,6 +442,7 @@ const Products = () => {
                     <td data-label="Brand" className="px-3 py-2.5 border-r border-[#E5E7EB]">
                       <span className="text-[10px] font-bold text-[#D97706] uppercase bg-[#FEF3C7] px-2 py-0.5 rounded">{product.brand?.name || '-'}</span>
                     </td>
+                    <td data-label="Birds" className="px-3 py-2.5 border-r border-[#E5E7EB] text-center font-bold text-[#D97706]">{product.currentBirds || 0}</td>
                     <td data-label="Stock" className="px-3 py-2.5 border-r border-[#E5E7EB] text-center font-bold">
                       {product.currentStock} {product.unit?.name}
                     </td>

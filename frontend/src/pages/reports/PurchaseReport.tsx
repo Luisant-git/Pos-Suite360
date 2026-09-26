@@ -57,6 +57,7 @@ const PurchaseReport = () => {
         totalAmount: formatCurrency(p.subtotal),
         taxAmount: formatCurrency(p.tax),
         netAmount: formatCurrency(p.grandTotal),
+        totalBirds: p.items?.reduce((sum: number, i: any) => sum + (Number(i.noOfBirds) || 0), 0) || 0,
         rawGrandTotal: p.grandTotal,
       }));
     },
@@ -231,6 +232,7 @@ const PurchaseReport = () => {
                   'Date': p.date,
                   'Supplier Name': p.supplierName,
                   'Payment Mode': p.mode,
+                  'Total Birds': p.totalBirds,
                   'Total Amount': p.totalAmount,
                   'Tax Amount': p.taxAmount,
                   'Net Amount': p.netAmount
@@ -263,6 +265,7 @@ const PurchaseReport = () => {
                   { header: 'Date', dataKey: 'date' },
                   { header: 'Supplier Name', dataKey: 'supplierName' },
                   { header: 'Mode', dataKey: 'mode' },
+                  { header: 'Total Birds', dataKey: 'totalBirds' },
                   { header: 'Total Amount', dataKey: 'totalAmount' },
                   { header: 'Tax Amount', dataKey: 'taxAmount' },
                   { header: 'Net Amount', dataKey: 'netAmount' },
@@ -309,6 +312,7 @@ const PurchaseReport = () => {
                 <th className="px-4 py-3 border-r border-[#1E293B]">Date</th>
                 <th className="px-4 py-3 border-r border-[#1E293B]">Supplier Name</th>
                 <th className="px-4 py-3 border-r border-[#1E293B]">Mode</th>
+                <th className="px-4 py-3 border-r border-[#1E293B] text-right">Birds</th>
                 <th className="px-4 py-3 border-r border-[#1E293B] text-right">Total Amount</th>
                 {/* <th className="px-4 py-3 border-r border-[#1E293B] text-right">Tax Amount</th> */}
                 <th className="px-4 py-3 border-r border-[#1E293B] text-right">Net Amount</th>
@@ -341,6 +345,7 @@ const PurchaseReport = () => {
                         </span>
                       </div>
                     </td>
+                    <td className="px-4 py-3 border-r border-[#E2E8F0] text-right text-black font-bold">{p.totalBirds}</td>
                     <td className="px-4 py-3 border-r border-[#E2E8F0] text-right text-black font-bold">{p.totalAmount}</td>
                     {/* <td className="px-4 py-3 border-r border-[#E2E8F0] text-right text-black font-bold">{p.taxAmount}</td> */}
                     <td className="px-4 py-3 border-r border-[#E2E8F0] text-right font-bold text-[#10B981]">{p.netAmount}</td>

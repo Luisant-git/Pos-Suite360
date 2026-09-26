@@ -26,6 +26,7 @@ export class PurchasesService {
             create: createPurchaseDto.items.map((item) => ({
               productId: item.productId,
               quantity: item.quantity,
+              noOfBirds: item.noOfBirds || 0,
               rate: item.rate,
               tax: item.tax || 0,
               amount: item.amount,
@@ -58,6 +59,7 @@ export class PurchasesService {
           where: { id: item.productId },
           data: {
             currentStock: { increment: item.quantity },
+            currentBirds: { increment: item.noOfBirds || 0 },
             purchaseRate: newPurchaseRate,
             wholesaleRate: newWholesaleRate,
             sellingRate: newSellingRate,
@@ -74,6 +76,9 @@ export class PurchasesService {
             quantityIn: item.quantity,
             quantityOut: 0,
             balance: updatedProduct.currentStock,
+            birdsIn: item.noOfBirds || 0,
+            birdsOut: 0,
+            birdsBalance: updatedProduct.currentBirds,
             reference: purchase.invoiceNo,
           },
         });
@@ -115,6 +120,7 @@ export class PurchasesService {
       include: {
         supplier: true,
         paymentMode: true,
+        items: true,
       },
       orderBy: [
         { date: 'desc' },
@@ -184,6 +190,7 @@ export class PurchasesService {
           where: { id: item.productId },
           data: {
             currentStock: { decrement: item.quantity },
+            currentBirds: { decrement: item.noOfBirds || 0 },
           },
         });
 
@@ -196,6 +203,9 @@ export class PurchasesService {
             quantityIn: 0,
             quantityOut: item.quantity,
             balance: updatedProduct.currentStock,
+            birdsIn: 0,
+            birdsOut: item.noOfBirds || 0,
+            birdsBalance: updatedProduct.currentBirds,
             reference: `Reverted ${purchase.invoiceNo}`,
           },
         });
@@ -230,6 +240,7 @@ export class PurchasesService {
           where: { id: oldItem.productId },
           data: {
             currentStock: { decrement: oldItem.quantity },
+            currentBirds: { decrement: oldItem.noOfBirds || 0 },
           },
         });
 
@@ -241,6 +252,9 @@ export class PurchasesService {
             quantityIn: 0,
             quantityOut: oldItem.quantity,
             balance: updatedProduct.currentStock,
+            birdsIn: 0,
+            birdsOut: oldItem.noOfBirds || 0,
+            birdsBalance: updatedProduct.currentBirds,
             reference: `Reverted for Edit ${existingPurchase.invoiceNo}`,
           },
         });
@@ -268,6 +282,7 @@ export class PurchasesService {
             create: createPurchaseDto.items.map((item) => ({
               productId: item.productId,
               quantity: item.quantity,
+              noOfBirds: item.noOfBirds || 0,
               rate: item.rate,
               tax: item.tax || 0,
               amount: item.amount,
@@ -298,6 +313,7 @@ export class PurchasesService {
           where: { id: item.productId },
           data: {
             currentStock: { increment: item.quantity },
+            currentBirds: { increment: item.noOfBirds || 0 },
             purchaseRate: newPurchaseRate,
             wholesaleRate: newWholesaleRate,
             sellingRate: newSellingRate,
@@ -313,6 +329,9 @@ export class PurchasesService {
             quantityIn: item.quantity,
             quantityOut: 0,
             balance: updatedProduct.currentStock,
+            birdsIn: item.noOfBirds || 0,
+            birdsOut: 0,
+            birdsBalance: updatedProduct.currentBirds,
             reference: updatedPurchase.invoiceNo,
           },
         });

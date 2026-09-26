@@ -184,6 +184,7 @@ model Product {
   reorderLevel   Decimal  @default(0)
   
   currentStock   Decimal  @default(0) // Usually computed, but caching it for quick access is common in POS
+  currentBirds   Int      @default(0)
   
   purchaseItems       PurchaseItem[]
   purchaseReturnItems PurchaseReturnItem[]
@@ -235,6 +236,7 @@ model PurchaseItem {
   product    Product  @relation(fields: [productId], references: [id])
   
   quantity   Decimal
+  noOfBirds  Int      @default(0)
   rate       Decimal
   tax        Decimal  @default(0)
   amount     Decimal
@@ -269,6 +271,7 @@ model PurchaseReturnItem {
   product          Product  @relation(fields: [productId], references: [id])
   
   returnQty        Decimal
+  noOfBirds        Int      @default(0)
   rate             Decimal
   amount           Decimal
 }
@@ -352,6 +355,7 @@ model SalesReturnItem {
   product       Product  @relation(fields: [productId], references: [id])
   
   returnQty     Decimal
+  noOfBirds     Int      @default(0)
   rate          Decimal
   amount        Decimal
 }
@@ -481,6 +485,9 @@ model StockTransaction {
   quantityIn  Decimal  @default(0)
   quantityOut Decimal  @default(0)
   balance     Decimal  // Snapshot of stock balance after this transaction
+  birdsIn     Int      @default(0)
+  birdsOut    Int      @default(0)
+  birdsBalance Int     @default(0)
   
   reference   String?  // Could be Invoice No or Adjustment ID
   

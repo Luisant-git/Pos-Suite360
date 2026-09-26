@@ -13,6 +13,7 @@ import SearchableSelect from '../../components/SearchableSelect';
 const purchaseItemSchema = z.object({
   productId: z.coerce.number().min(0),
   quantity: z.coerce.number().min(0),
+  noOfBirds: z.union([z.coerce.number(), z.literal('')]).optional(),
   unit: z.string().optional(),
   pRate: z.coerce.number().min(0),
   wRate: z.coerce.number().min(0),
@@ -86,7 +87,7 @@ const PurchaseEntry = () => {
       supplierId: 0,
       date: new Date().toLocaleDateString('sv-SE', { timeZone: 'Asia/Kuala_Lumpur' }),
       paymentModeId: 0,
-      items: [{ productId: 0, quantity: '' as any, unit: 'Nos', pRate: '' as any, wRate: '' as any, sRate: '' as any, mrp: '' as any, discPercent: '' as any, discAmt: '' as any, total: 0 }],
+      items: [{ productId: 0, quantity: '' as any, noOfBirds: '' as any, unit: 'Nos', pRate: '' as any, wRate: '' as any, sRate: '' as any, mrp: '' as any, discPercent: '' as any, discAmt: '' as any, total: 0 }],
       totalAmount: 0,
       totalDiscountPercent: '' as any,
       totalDiscount: '' as any,
@@ -123,6 +124,7 @@ const PurchaseEntry = () => {
         items: existingPurchase.items.map((item: any) => ({
           productId: item.productId,
           quantity: item.quantity,
+          noOfBirds: item.noOfBirds || '',
           unit: item.product?.unit?.shortCode || item.product?.unit?.name || 'Nos',
           pRate: item.rate,
           wRate: item.product?.wholesaleRate || 0,
@@ -318,7 +320,7 @@ const PurchaseEntry = () => {
       supplierId: 0,
       date: new Date().toISOString().split('T')[0],
       paymentModeId: 0,
-      items: [{ productId: 0, quantity: '' as any, unit: 'Nos', pRate: '' as any, wRate: '' as any, sRate: '' as any, mrp: '' as any, discPercent: '' as any, discAmt: '' as any, total: 0 }],
+      items: [{ productId: 0, quantity: '' as any, noOfBirds: '' as any, unit: 'Nos', pRate: '' as any, wRate: '' as any, sRate: '' as any, mrp: '' as any, discPercent: '' as any, discAmt: '' as any, total: 0 }],
       totalAmount: 0,
       totalDiscountPercent: '' as any,
       totalDiscount: '' as any,
@@ -345,7 +347,7 @@ const PurchaseEntry = () => {
         }
       } else if (e.key === 'F2') {
         e.preventDefault();
-        append({ productId: 0, quantity: '' as any, unit: 'Nos', pRate: '' as any, wRate: '' as any, sRate: '' as any, mrp: '' as any, discPercent: '' as any, discAmt: '' as any, total: 0 });
+        append({ productId: 0, quantity: '' as any, noOfBirds: '' as any, unit: 'Nos', pRate: '' as any, wRate: '' as any, sRate: '' as any, mrp: '' as any, discPercent: '' as any, discAmt: '' as any, total: 0 });
         setTimeout(() => {
           const inputs = document.querySelectorAll<HTMLElement>('[data-row-product] input');
           if (inputs.length > 0) inputs[inputs.length - 1].focus();
@@ -376,7 +378,7 @@ const PurchaseEntry = () => {
           if (selectEl) selectEl.focus();
         }, 80);
       } else {
-        append({ productId: 0, quantity: '' as any, unit: 'Nos', pRate: '' as any, wRate: '' as any, sRate: '' as any, mrp: '' as any, discPercent: '' as any, discAmt: '' as any, total: 0 });
+        append({ productId: 0, quantity: '' as any, noOfBirds: '' as any, unit: 'Nos', pRate: '' as any, wRate: '' as any, sRate: '' as any, mrp: '' as any, discPercent: '' as any, discAmt: '' as any, total: 0 });
         setTimeout(() => {
           const selectEl = document.querySelector<HTMLElement>(`[data-row-product="${nextRow}"] input`);
           if (selectEl) selectEl.focus();
@@ -570,7 +572,7 @@ const PurchaseEntry = () => {
             <button 
               type="button"
               onClick={() => {
-                append({ productId: 0, quantity: '' as any, unit: 'Nos', pRate: '' as any, wRate: '' as any, sRate: '' as any, mrp: '' as any, discPercent: '' as any, discAmt: '' as any, total: 0 });
+                append({ productId: 0, quantity: '' as any, noOfBirds: '' as any, unit: 'Nos', pRate: '' as any, wRate: '' as any, sRate: '' as any, mrp: '' as any, discPercent: '' as any, discAmt: '' as any, total: 0 });
                 setTimeout(() => {
                   const inputs = document.querySelectorAll<HTMLElement>('[data-row-product] input');
                   if (inputs.length > 0) inputs[inputs.length - 1].focus();
@@ -615,6 +617,7 @@ const PurchaseEntry = () => {
               <tr className="bg-[#0F172A] text-white">
                 <th className="px-2 py-2 text-center text-[12px] font-bold border border-[#334155] w-10">#</th>
                 <th className="px-2 py-2 text-left text-[12px] font-bold border border-[#334155]">Item Code / Name (Searchable Dropdown)</th>
+                <th className="px-2 py-2 text-center text-[12px] font-bold border border-[#334155] w-16">Birds</th>
                 <th className="px-2 py-2 text-center text-[12px] font-bold border border-[#334155] w-20">Qty</th>
                 <th className="px-2 py-2 text-center text-[12px] font-bold border border-[#334155] w-20">Unit</th>
                 <th className="px-2 py-2 text-center text-[12px] font-bold border border-[#334155] w-24">PRate</th>
@@ -651,7 +654,7 @@ const PurchaseEntry = () => {
                           handleProductChange(index, String(val));
                           if (Number(val) === 0) {
                             if (index === fields.length - 1) {
-                              append({ productId: 0, quantity: '' as any, unit: 'Nos', pRate: '' as any, wRate: '' as any, sRate: '' as any, mrp: '' as any, discPercent: '' as any, discAmt: '' as any, total: 0 });
+                              append({ productId: 0, quantity: '' as any, noOfBirds: '' as any, unit: 'Nos', pRate: '' as any, wRate: '' as any, sRate: '' as any, mrp: '' as any, discPercent: '' as any, discAmt: '' as any, total: 0 });
                               setTimeout(() => {
                                 const inputs = document.querySelectorAll<HTMLElement>('[data-row-product] input');
                                 if (inputs.length > 0) inputs[inputs.length - 1].focus();
@@ -760,7 +763,7 @@ const PurchaseEntry = () => {
                     <div className="flex justify-center gap-2">
                       <button 
                         type="button" 
-                        onClick={() => append({ productId: 0, quantity: '' as any, unit: 'Nos', pRate: '' as any, wRate: '' as any, sRate: '' as any, mrp: '' as any, discPercent: '' as any, discAmt: '' as any, total: 0 })} 
+                        onClick={() => append({ productId: 0, quantity: '' as any, noOfBirds: '' as any, unit: 'Nos', pRate: '' as any, wRate: '' as any, sRate: '' as any, mrp: '' as any, discPercent: '' as any, discAmt: '' as any, total: 0 })} 
                         className="bg-[#10B981] text-white p-1.5 rounded hover:bg-[#059669] transition-colors shadow-sm"
                         title="Add Row"
                       >
@@ -849,7 +852,7 @@ const PurchaseEntry = () => {
           <div className="flex flex-nowrap justify-between sm:justify-center gap-1 sm:gap-2 w-full md:w-auto">
             <button 
               type="button"
-              onClick={() => append({ productId: 0, quantity: '' as any, unit: 'Nos', pRate: '' as any, wRate: '' as any, sRate: '' as any, mrp: '' as any, discPercent: '' as any, discAmt: '' as any, total: 0 })}
+              onClick={() => append({ productId: 0, quantity: '' as any, noOfBirds: '' as any, unit: 'Nos', pRate: '' as any, wRate: '' as any, sRate: '' as any, mrp: '' as any, discPercent: '' as any, discAmt: '' as any, total: 0 })}
               className="bg-[#2563EB] text-white text-[10px] sm:text-[11px] font-bold px-2 sm:px-3 py-1.5 rounded-sm flex items-center gap-1 cursor-pointer hover:bg-[#1D4ED8] whitespace-nowrap"
             >
               <span className="opacity-70 border-r border-[#60A5FA] pr-1 mr-1">F2</span> Add Row

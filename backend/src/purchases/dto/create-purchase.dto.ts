@@ -9,6 +9,10 @@ class PurchaseItemDto {
   quantity: number;
 
   @IsNumber()
+  @IsOptional()
+  noOfBirds?: number;
+
+  @IsNumber()
   rate: number;
 
   @IsNumber()

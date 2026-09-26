@@ -74,6 +74,7 @@ export class SalesService {
           where: { id: item.productId },
           data: {
             currentStock: { decrement: item.quantity },
+            currentBirds: { decrement: item.noOfBirds || 0 },
             ...(item.rate > 0 && { sellingRate: item.rate }),
           },
         });
@@ -87,6 +88,9 @@ export class SalesService {
             quantityIn: 0,
             quantityOut: item.quantity,
             balance: updatedProduct.currentStock,
+            birdsIn: 0,
+            birdsOut: item.noOfBirds || 0,
+            birdsBalance: updatedProduct.currentBirds,
             reference: sale.invoiceNo,
           },
         });
@@ -207,6 +211,7 @@ export class SalesService {
           where: { id: item.productId },
           data: {
             currentStock: { increment: item.quantity },
+            currentBirds: { increment: item.noOfBirds || 0 },
           },
         });
 
@@ -219,6 +224,9 @@ export class SalesService {
             quantityIn: item.quantity,
             quantityOut: 0,
             balance: updatedProduct.currentStock,
+            birdsIn: item.noOfBirds || 0,
+            birdsOut: 0,
+            birdsBalance: updatedProduct.currentBirds,
             reference: `Reverted ${sale.invoiceNo}`,
           },
         });
@@ -253,6 +261,7 @@ export class SalesService {
           where: { id: oldItem.productId },
           data: {
             currentStock: { increment: oldItem.quantity },
+            currentBirds: { increment: oldItem.noOfBirds || 0 },
           },
         });
 
@@ -264,6 +273,9 @@ export class SalesService {
             quantityIn: oldItem.quantity,
             quantityOut: 0,
             balance: updatedProduct.currentStock,
+            birdsIn: oldItem.noOfBirds || 0,
+            birdsOut: 0,
+            birdsBalance: updatedProduct.currentBirds,
             reference: `Reverted for Edit ${existingSale.invoiceNo}`,
           },
         });
@@ -308,6 +320,7 @@ export class SalesService {
           where: { id: item.productId },
           data: {
             currentStock: { decrement: item.quantity },
+            currentBirds: { decrement: item.noOfBirds || 0 },
             ...(item.rate > 0 && { sellingRate: item.rate }),
           },
         });
@@ -320,6 +333,9 @@ export class SalesService {
             quantityIn: 0,
             quantityOut: item.quantity,
             balance: updatedProduct.currentStock,
+            birdsIn: 0,
+            birdsOut: item.noOfBirds || 0,
+            birdsBalance: updatedProduct.currentBirds,
             reference: updatedSale.invoiceNo,
           },
         });

@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { Plus, Eye, Printer, Edit } from 'lucide-react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { Plus, Eye, Printer, Edit, Trash2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../services/api';
 import InvoicePrintModal from '../../components/InvoicePrintModal';
@@ -12,6 +12,7 @@ import TableLoader from '../../components/TableLoader';
 const SalesList = () => {
   const { settings, formatCurrency } = useSettings();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [searchTerm, setSearchTerm] = useState('');
   const [paymentModeFilter, setPaymentModeFilter] = useState('');
   const [selectedSale, setSelectedSale] = useState<any>(null);
@@ -26,6 +27,17 @@ const SalesList = () => {
       return data;
     },
   });
+
+  const handleDelete = async (id: number) => {
+    if (window.confirm('Are you sure you want to delete this sales invoice? This action cannot be undone and stock levels will be reverted.')) {
+      try {
+        await api.delete(`/sales/${id}`);
+        queryClient.invalidateQueries({ queryKey: ['sales'] });
+      } catch (error: any) {
+        alert(error.response?.data?.message || 'Error deleting sales invoice');
+      }
+    }
+  };
 
   // Fetch Payment Modes
   const { data: paymentModes = [] } = useQuery({
@@ -196,6 +208,13 @@ const SalesList = () => {
                             <Edit size={14} />
                           </button>
                         )}
+                        <button type="button" 
+                          onClick={() => handleDelete(sale.id)}
+                          className="text-rose-500 border border-rose-500 rounded p-1 hover:bg-rose-500 hover:text-white transition-colors"
+                          title="Delete Sales Invoice"
+                        >
+                          <Trash2 size={14} />
+                        </button>
                       </div>
                     </td>
                   </tr>

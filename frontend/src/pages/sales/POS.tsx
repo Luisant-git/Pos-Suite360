@@ -153,7 +153,12 @@ const POS = () => {
           }
           
           if (targetRate !== '' && Number(item.rate) !== Number(targetRate)) {
-            setValue(`items.${index}.rate`, targetRate);
+            if (targetRate <= Number(prod.purchaseRate)) {
+              setValue(`items.${index}.rate`, '' as any);
+              toast.error(`Customer fixed rate for ${prod.name} is lower than purchase rate. Rate cleared.`, { id: 'cust-rate-err' });
+            } else {
+              setValue(`items.${index}.rate`, targetRate);
+            }
           }
         }
       }
@@ -274,6 +279,18 @@ const POS = () => {
             rateToUse = parseFloat(Number(customRate.rate).toFixed(2));
           }
         }
+        if (rateToUse !== '' && rateToUse <= Number(product.purchaseRate)) {
+            toast.error(`Configured rate for ${product.name} is lower than purchase rate. Rate cleared.`);
+            rateToUse = '';
+        }
+        if (rateToUse !== '' && rateToUse <= Number(product.purchaseRate)) {
+            toast.error(`Configured rate for ${product.name} is lower than purchase rate. Rate cleared.`);
+            rateToUse = '';
+        }
+        if (rateToUse !== '' && rateToUse <= Number(product.purchaseRate)) {
+            toast.error(`Configured rate for ${product.name} is lower than purchase rate. Rate cleared.`);
+            rateToUse = '';
+        }
         setValue(`items.${index}.rate`, rateToUse);
     }
   };
@@ -352,8 +369,7 @@ const POS = () => {
     });
 
     if (hasLowRate) {
-      setPendingPayload(payload);
-      setShowLossWarning(true);
+      toast.error('Validation Error: Sales rate must be higher than the purchase rate for all items.');
       return;
     }
 
@@ -768,7 +784,8 @@ const POS = () => {
                           const pId = watch(`items.${index}.productId`);
                           const product = products.find((p: any) => p.id === Number(pId));
                           if (product && enteredRate > 0 && enteredRate <= Number(product.purchaseRate)) {
-                            toast.error(`Loss Warning: Selling below purchase rate (${formatCurrency(product.purchaseRate)})!`, { duration: 4000 });
+                            toast.error(`Validation Error: Sales rate cannot be less than or equal to purchase rate (${formatCurrency(product.purchaseRate)})!`, { duration: 4000 });
+                            setValue(`items.${index}.rate`, '' as any);
                           }
                           register(`items.${index}.rate`).onBlur(e);
                         }}

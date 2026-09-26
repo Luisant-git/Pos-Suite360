@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { Plus, Eye, Edit } from 'lucide-react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { Plus, Eye, Edit, Trash2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../services/api';
 import { useSettings } from '../../contexts/SettingsContext';
@@ -11,6 +11,7 @@ import TableLoader from '../../components/TableLoader';
 const PurchaseList = () => {
   const { formatCurrency } = useSettings();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const { settings } = useSettings();
   const [searchTerm, setSearchTerm] = useState('');
   const [paymentModeFilter, setPaymentModeFilter] = useState('');
@@ -24,6 +25,17 @@ const PurchaseList = () => {
       return data;
     },
   });
+
+  const handleDelete = async (id: number) => {
+    if (window.confirm('Are you sure you want to delete this purchase invoice? This action cannot be undone and stock levels will be reverted.')) {
+      try {
+        await api.delete(`/purchases/${id}`);
+        queryClient.invalidateQueries({ queryKey: ['purchases'] });
+      } catch (error: any) {
+        alert(error.response?.data?.message || 'Error deleting purchase invoice');
+      }
+    }
+  };
 
   // Fetch Payment Modes
   const { data: paymentModes = [] } = useQuery({
@@ -182,6 +194,13 @@ const PurchaseList = () => {
                             <Edit size={14} />
                           </button>
                         )}
+                        <button type="button" 
+                          onClick={() => handleDelete(purchase.id)}
+                          className="text-rose-500 border border-rose-500 rounded p-1 hover:bg-rose-500 hover:text-white transition-colors"
+                          title="Delete Purchase Invoice"
+                        >
+                          <Trash2 size={14} />
+                        </button>
                       </div>
                     </td>
                   </tr>

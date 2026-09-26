@@ -18,6 +18,7 @@ const productSchema = z.object({
   unitId: z.string().min(1, 'Unit is required'),
   supplierId: z.string().optional(),
   currentStock: z.coerce.number().min(0).default(0), // Opening Stock
+  currentBirds: z.coerce.number().min(0).default(0),
   purchaseRate: z.coerce.number().min(0).default(0),
   wholesaleRate: z.coerce.number().min(0).default(0),
   sellingRate: z.coerce.number().min(0).default(0), // Sale Rate (Retail)
@@ -47,6 +48,7 @@ const Products = () => {
       unitId: '',
       supplierId: '',
       currentStock: '' as any,
+      currentBirds: '' as any,
       purchaseRate: '' as any,
       wholesaleRate: '' as any,
       sellingRate: '' as any,
@@ -157,6 +159,7 @@ const Products = () => {
     setValue('unitId', product.unitId != null ? String(product.unitId) : (product.unit?.id != null ? String(product.unit.id) : ''));
     setValue('supplierId', product.supplierId != null ? String(product.supplierId) : (product.supplier?.id != null ? String(product.supplier.id) : ''));
     setValue('currentStock', product.currentStock != null ? Number(product.currentStock) : 0);
+    setValue('currentBirds', product.currentBirds != null ? Number(product.currentBirds) : 0);
     setValue('purchaseRate', product.purchaseRate != null ? Number(product.purchaseRate) : 0);
     setValue('wholesaleRate', product.wholesaleRate != null ? Number(product.wholesaleRate) : 0);
     setValue('sellingRate', product.sellingRate != null ? Number(product.sellingRate) : 0);
@@ -257,6 +260,15 @@ const Products = () => {
                 type="number" step="any"
                 placeholder="0"
                 className="w-full px-3 py-1.5 border border-[#ccc] rounded shadow-inner focus:border-[#3B82F6] outline-none text-[13px] text-right"
+              />
+            </div>
+            <div>
+              <label className="block text-[12px] font-bold text-[#D97706] mb-1">Opening Birds</label>
+              <input 
+                {...register('currentBirds')}
+                type="number" step="any"
+                placeholder="0"
+                className="w-full px-3 py-1.5 border border-[#D97706] rounded shadow-inner focus:border-[#D97706] outline-none text-[13px] text-right"
               />
             </div>
             <div>

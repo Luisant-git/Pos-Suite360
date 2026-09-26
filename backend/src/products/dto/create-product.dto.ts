@@ -65,4 +65,9 @@ export class CreateProductDto {
   @IsOptional()
   @Min(0)
   currentStock?: number;
+
+  @IsNumber()
+  @IsOptional()
+  @Min(0)
+  currentBirds?: number;
 }

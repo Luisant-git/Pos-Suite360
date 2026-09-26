@@ -7,6 +7,7 @@ import { useSettings } from '../../contexts/SettingsContext';
 import ViewPurchaseModal from './ViewPurchaseModal';
 import PaginationControls from '../../components/PaginationControls';
 import TableLoader from '../../components/TableLoader';
+import DeleteConfirmationModal from '../../components/DeleteConfirmationModal';
 
 const PurchaseList = () => {
   const { formatCurrency } = useSettings();
@@ -26,14 +27,17 @@ const PurchaseList = () => {
     },
   });
 
-  const handleDelete = async (id: number) => {
-    if (window.confirm('Are you sure you want to delete this purchase invoice? This action cannot be undone and stock levels will be reverted.')) {
-      try {
-        await api.delete(`/purchases/${id}`);
-        queryClient.invalidateQueries({ queryKey: ['purchases'] });
-      } catch (error: any) {
-        alert(error.response?.data?.message || 'Error deleting purchase invoice');
-      }
+  const handleDeleteConfirm = async () => {
+    if (!itemToDelete) return;
+    setIsDeleting(true);
+    try {
+      await api.delete(`/purchases/${itemToDelete.id}`);
+      queryClient.invalidateQueries({ queryKey: ['purchases'] });
+    } catch (error: any) {
+      alert(error.response?.data?.message || 'Error deleting purchase invoice');
+    } finally {
+      setIsDeleting(false);
+      setItemToDelete(null);
     }
   };
 
@@ -195,7 +199,7 @@ const PurchaseList = () => {
                           </button>
                         )}
                         <button type="button" 
-                          onClick={() => handleDelete(purchase.id)}
+                          onClick={() => setItemToDelete(purchase)}
                           className="text-rose-500 border border-rose-500 rounded p-1 hover:bg-rose-500 hover:text-white transition-colors"
                           title="Delete Purchase Invoice"
                         >

@@ -8,6 +8,7 @@ import { useSettings } from '../../contexts/SettingsContext';
 import ViewSalesModal from './ViewSalesModal';
 import PaginationControls from '../../components/PaginationControls';
 import TableLoader from '../../components/TableLoader';
+import DeleteConfirmationModal from '../../components/DeleteConfirmationModal';
 
 const SalesList = () => {
   const { settings, formatCurrency } = useSettings();
@@ -18,6 +19,8 @@ const SalesList = () => {
   const [selectedSale, setSelectedSale] = useState<any>(null);
   const [isPrintModalOpen, setIsPrintModalOpen] = useState(false);
   const [viewSaleId, setViewSaleId] = useState<number | null>(null);
+  const [itemToDelete, setItemToDelete] = useState<any>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   // Fetch Sales from API
   const { data: sales = [], isLoading } = useQuery({
@@ -209,7 +212,7 @@ const SalesList = () => {
                           </button>
                         )}
                         <button type="button" 
-                          onClick={() => handleDelete(sale.id)}
+                          onClick={() => setItemToDelete(sale)}
                           className="text-rose-500 border border-rose-500 rounded p-1 hover:bg-rose-500 hover:text-white transition-colors"
                           title="Delete Sales Invoice"
                         >

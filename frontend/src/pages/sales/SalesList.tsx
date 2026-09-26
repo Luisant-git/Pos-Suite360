@@ -31,14 +31,17 @@ const SalesList = () => {
     },
   });
 
-  const handleDelete = async (id: number) => {
-    if (window.confirm('Are you sure you want to delete this sales invoice? This action cannot be undone and stock levels will be reverted.')) {
-      try {
-        await api.delete(`/sales/${id}`);
-        queryClient.invalidateQueries({ queryKey: ['sales'] });
-      } catch (error: any) {
-        alert(error.response?.data?.message || 'Error deleting sales invoice');
-      }
+  const handleDeleteConfirm = async () => {
+    if (!itemToDelete) return;
+    setIsDeleting(true);
+    try {
+      await api.delete(`/sales/${itemToDelete.id}`);
+      queryClient.invalidateQueries({ queryKey: ['sales'] });
+    } catch (error: any) {
+      alert(error.response?.data?.message || 'Error deleting sales invoice');
+    } finally {
+      setIsDeleting(false);
+      setItemToDelete(null);
     }
   };
 
@@ -254,6 +257,17 @@ const SalesList = () => {
           onClose={() => setViewSaleId(null)}
         />
       )}
+
+      {/* Delete Confirmation Modal */}
+      <DeleteConfirmationModal 
+        isOpen={!!itemToDelete}
+        title="Delete Sales Invoice"
+        message="Are you sure you want to delete this sales invoice? This action cannot be undone and stock levels will be reverted."
+        itemName={itemToDelete?.invoiceNo || ''}
+        isDeleting={isDeleting}
+        onConfirm={handleDeleteConfirm}
+        onCancel={() => setItemToDelete(null)}
+      />
     </div>
   );
 };

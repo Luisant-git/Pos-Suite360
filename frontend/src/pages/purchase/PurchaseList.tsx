@@ -17,6 +17,8 @@ const PurchaseList = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [paymentModeFilter, setPaymentModeFilter] = useState('');
   const [viewId, setViewId] = useState<number | null>(null);
+  const [itemToDelete, setItemToDelete] = useState<any>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   // Fetch Purchases
   const { data: purchases = [], isLoading } = useQuery({
@@ -227,6 +229,17 @@ const PurchaseList = () => {
       {viewId && (
         <ViewPurchaseModal purchaseId={viewId} onClose={() => setViewId(null)} />
       )}
+
+      {/* Delete Confirmation Modal */}
+      <DeleteConfirmationModal 
+        isOpen={!!itemToDelete}
+        title="Delete Purchase Invoice"
+        message="Are you sure you want to delete this purchase invoice? This action cannot be undone and stock levels will be reverted."
+        itemName={itemToDelete?.invoiceNo || itemToDelete?.referenceNo || ''}
+        isDeleting={isDeleting}
+        onConfirm={handleDeleteConfirm}
+        onCancel={() => setItemToDelete(null)}
+      />
     </div>
   );
 };

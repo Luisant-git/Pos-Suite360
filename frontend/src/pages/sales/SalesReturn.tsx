@@ -283,7 +283,7 @@ const SalesReturn = () => {
                         {item.product.unit?.name || 'Nos'}
                       </td>
                       <td data-label="Sold Qty" className="px-4 py-2 border-r border-gray-200 text-center font-bold text-black font-bold">
-                        {item.quantity}
+                        {Number(Number(item.quantity).toFixed(4))}
                       </td>
                       <td data-label="Sale Rate" className="px-4 py-2 border-r border-gray-200 text-right">
                         {Number(item.rate).toFixed(2)}
@@ -292,7 +292,7 @@ const SalesReturn = () => {
                         <input 
                           type="number" step="any" 
                           min="0" 
-                          max={item.quantity}
+                          max={Number(Number(item.quantity).toFixed(4))}
                           value={item.returnQty === '' ? '' : item.returnQty || ''} 
                           placeholder="0"
                           onChange={(e) => handleReturnQtyChange(index, e.target.value)} 

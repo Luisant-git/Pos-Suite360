@@ -123,7 +123,7 @@ const PurchaseEntry = () => {
         paymentModeId: existingPurchase.paymentModeId,
         items: existingPurchase.items.map((item: any) => ({
           productId: item.productId,
-          quantity: item.quantity,
+          quantity: Number(Number(item.quantity).toFixed(4)),
           noOfBirds: item.noOfBirds || '',
           unit: item.product?.unit?.shortCode || item.product?.unit?.name || 'Nos',
           pRate: item.rate,
@@ -284,7 +284,7 @@ const PurchaseEntry = () => {
       grandTotal: data.netAmount,
       items: validItems.map(item => ({
         productId: item.productId,
-        quantity: item.quantity,
+        quantity: Number(Number(item.quantity).toFixed(4)),
         rate: item.pRate,
         wRate: item.wRate,
         sRate: item.sRate,
@@ -676,7 +676,14 @@ const PurchaseEntry = () => {
                       />
                     </div>
                   </td>
-                  <td data-label="Stock" className="px-2 py-1 border-r border-[#E5E7EB]">
+                  <td data-label="Birds" className="px-2 py-1 border-r border-[#E5E7EB]">
+                    <input 
+                      {...register(`items.${index}.noOfBirds`)} 
+                      type="number" placeholder="0" 
+                      className="w-full px-2 py-1 border border-[#D1D5DB] rounded text-[13px] outline-none focus:border-[#3B82F6] focus:ring-1 focus:ring-[#3B82F6] focus:bg-blue-50 transition-colors text-center" 
+                    />
+                  </td>
+                  <td data-label="Qty" className="px-2 py-1 border-r border-[#E5E7EB]">
                     <input 
                       {...register(`items.${index}.quantity`)} 
                       data-row={index} data-col={1}
@@ -689,7 +696,7 @@ const PurchaseEntry = () => {
                   <td data-label="Unit" className="px-2 py-1 border-r border-[#E5E7EB]">
                     <input {...register(`items.${index}.unit`)} type="text" readOnly tabIndex={-1} className="w-full px-1 py-1 bg-transparent text-[13px] outline-none text-center" />
                   </td>
-                  <td data-label="Qty" className="px-2 py-1 border-r border-[#E5E7EB]">
+                  <td data-label="PRate" className="px-2 py-1 border-r border-[#E5E7EB]">
                     <input 
                       {...register(`items.${index}.pRate`)} 
                       data-row={index} data-col={2}
@@ -699,10 +706,10 @@ const PurchaseEntry = () => {
                       className="w-full px-2 py-1 border border-[#D1D5DB] rounded text-[13px] outline-none focus:border-[#3B82F6] focus:ring-1 focus:ring-[#3B82F6] focus:bg-blue-50 transition-colors text-right" 
                     />
                   </td>
-                  <td data-label="Free" className="px-2 py-1 border-r border-[#E5E7EB]">
+                  <td data-label="WRate" className="px-2 py-1 border-r border-[#E5E7EB]">
                     <input {...register(`items.${index}.wRate`)} type="number" step="0.01" placeholder="0.00" readOnly tabIndex={-1} className="w-full px-2 py-1 bg-blue-50/50 border border-blue-200/50 text-blue-700/80 font-bold rounded text-[13px] outline-none text-right cursor-not-allowed" />
                   </td>
-                  <td data-label="Pur Rate" className="px-2 py-1 border-r border-[#E5E7EB]">
+                  <td data-label="SRate" className="px-2 py-1 border-r border-[#E5E7EB]">
                     <input 
                       {...register(`items.${index}.sRate`)} 
                       data-row={index} data-col={3}
@@ -715,7 +722,7 @@ const PurchaseEntry = () => {
                   <td data-label="MRP" className="px-2 py-1 border-r border-[#E5E7EB]">
                     <input {...register(`items.${index}.mrp`)} type="number" step="0.01" placeholder="0.00" readOnly tabIndex={-1} className="w-full px-2 py-1 bg-blue-50/50 border border-blue-200/50 text-blue-700/80 font-bold rounded text-[13px] outline-none text-right cursor-not-allowed" />
                   </td>
-                  <td data-label="Tax %" className="px-2 py-1 border-r border-[#E5E7EB]">
+                  <td data-label="Disc %" className="px-2 py-1 border-r border-[#E5E7EB]">
                     <input 
                       {...register(`items.${index}.discPercent`)} 
                       data-row={index} data-col={4}
@@ -733,7 +740,7 @@ const PurchaseEntry = () => {
                       className="w-full px-2 py-1 border border-[#D1D5DB] rounded text-[13px] outline-none focus:border-[#3B82F6] focus:ring-1 focus:ring-[#3B82F6] focus:bg-blue-50 transition-colors text-right" 
                     />
                   </td>
-                  <td data-label="Tax Amt" className="px-2 py-1 border-r border-[#E5E7EB]">
+                  <td data-label="Disc Amt" className="px-2 py-1 border-r border-[#E5E7EB]">
                     <input 
                       {...register(`items.${index}.discAmt`)} 
                       data-row={index} data-col={5}
@@ -756,10 +763,10 @@ const PurchaseEntry = () => {
                       className="w-full px-2 py-1 border border-[#D1D5DB] rounded text-[13px] outline-none focus:border-[#3B82F6] focus:ring-1 focus:ring-[#3B82F6] focus:bg-blue-50 transition-colors text-right" 
                     />
                   </td>
-                  <td data-label="Disc %" className="px-2 py-1 border-r border-[#E5E7EB]">
+                  <td data-label="Total" className="px-2 py-1 border-r border-[#E5E7EB]">
                     <input value={Number(watch(`items.${index}.total`) || 0).toFixed(2)} readOnly tabIndex={-1} className="w-full px-2 py-1 bg-transparent text-[13px] outline-none text-right font-bold" onChange={() => {}} />
                   </td>
-                  <td data-label="Disc Amt" className="px-2 py-1 text-center">
+                  <td data-label="Act" className="px-2 py-1 text-center">
                     <div className="flex justify-center gap-2">
                       <button 
                         type="button" 

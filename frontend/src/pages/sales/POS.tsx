@@ -203,7 +203,7 @@ const POS = () => {
           const currentStockNum = prod ? Number(prod.currentStock) : 0;
           return {
             productId: item.productId,
-            quantity: item.quantity,
+            quantity: Number(Number(item.quantity).toFixed(4)),
             noOfBirds: item.noOfBirds || '',
             stock: currentStockNum + Number(item.quantity),
             rate: item.rate,

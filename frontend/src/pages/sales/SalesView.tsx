@@ -189,7 +189,7 @@ const SalesView = () => {
                     <tr key={idx} className="border-b border-gray-100 last:border-0 hover:bg-gray-50">
                       <td className="py-3 px-2 font-bold text-black font-bold">{item.product?.code || '-'}</td>
                       <td className="py-3 px-2 font-bold text-black font-bold">{item.product?.name}</td>
-                      <td className="py-3 px-2 text-right">{item.quantity}</td>
+                      <td className="py-3 px-2 text-right">{Number(Number(item.quantity).toFixed(4))}</td>
                       <td className="py-3 px-2 text-center text-black font-bold">{item.product?.unit?.name || 'Nos'}</td>
                       <td className="py-3 px-2 text-right font-bold">{formatCurrency(item.rate)}</td>
                       <td className="py-3 px-2 text-right text-red-500">{item.discount > 0 ? formatCurrency(item.discount) : '-'}</td>

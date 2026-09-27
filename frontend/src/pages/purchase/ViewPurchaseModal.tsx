@@ -71,7 +71,7 @@ export default function ViewPurchaseModal({ purchaseId, onClose }: Props) {
                     {item.product?.name}
                     <span className="block text-[11px] text-black font-bold font-normal">Code: {item.product?.code}</span>
                   </td>
-                  <td className="px-3 py-2 border border-gray-300 text-right font-bold text-[#3B82F6]">{item.quantity}</td>
+                  <td className="px-3 py-2 border border-gray-300 text-right font-bold text-[#3B82F6]">{Number(Number(item.quantity).toFixed(4))}</td>
                   <td className="px-3 py-2 border border-gray-300 text-right">{formatCurrency(item.rate)}</td>
                   <td className="px-3 py-2 border border-gray-300 text-right font-bold">{formatCurrency(item.amount)}</td>
                 </tr>

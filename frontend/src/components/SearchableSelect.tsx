@@ -55,6 +55,7 @@ export const SearchableSelect: React.FC<SearchableSelectProps> = ({
       className={`text-[13px] ${className}`}
       menuPortalTarget={typeof document !== 'undefined' ? document.body : undefined}
       menuPosition="fixed"
+      menuShouldScrollIntoView={false}
       styles={{
         control: (base: any, state: any) => ({
           ...base,

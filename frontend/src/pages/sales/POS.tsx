@@ -705,6 +705,7 @@ const POS = () => {
                       }
                     }}>
                       <SearchableSelect
+                        menuPlacement={index >= fields.length - 2 ? 'top' : 'auto'}
                         value={watch(`items.${index}.productId`)}
                         autoFocus={index === fields.length - 1 && watch(`items.${index}.productId`) === 0}
                         onChange={(val) => {

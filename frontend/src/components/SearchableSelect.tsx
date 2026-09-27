@@ -18,6 +18,7 @@ interface SearchableSelectProps {
   isSearchable?: boolean;
   isLoading?: boolean;
   autoFocus?: boolean;
+  menuPlacement?: 'auto' | 'top' | 'bottom';
 }
 
 export const SearchableSelect: React.FC<SearchableSelectProps> = ({
@@ -31,6 +32,7 @@ export const SearchableSelect: React.FC<SearchableSelectProps> = ({
   isSearchable = true,
   isLoading = false,
   autoFocus = false,
+  menuPlacement = 'auto',
 }) => {
   const selectedOption = options.find((opt) => String(opt.value) === String(value)) || null;
 
@@ -54,8 +56,8 @@ export const SearchableSelect: React.FC<SearchableSelectProps> = ({
       openMenuOnFocus={true}
       className={`text-[13px] ${className}`}
       menuPortalTarget={typeof document !== 'undefined' ? document.body : undefined}
-      menuPosition="absolute"
-      closeMenuOnScroll={true}
+      menuPosition="fixed"
+      menuPlacement={menuPlacement}
       menuShouldScrollIntoView={false}
       styles={{
         control: (base: any, state: any) => ({

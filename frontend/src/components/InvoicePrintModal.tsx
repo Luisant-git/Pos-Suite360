@@ -329,12 +329,12 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
           <div>
             <p className="uppercase mb-4 text-[13px] font-bold">RINGGIT MALAYSIA {numberToWords(grandTotal)} ONLY</p>
             
-            <div className="flex justify-between items-start border-t border-[#000000] pt-2">
+            <div className="flex justify-between items-start border-t border-[#000000] pt-2 gap-4">
               <div 
-                className="w-[70%] text-[11px] text-[#000000] pr-4 html-content leading-tight whitespace-pre-line"
+                className="flex-1 text-[11px] text-[#000000] pr-4 html-content leading-tight whitespace-pre-line"
                 dangerouslySetInnerHTML={{ __html: settings?.invoiceNotes || `Note:<br/>All Cheques should be crossed and made payable to NASA WORLD SDN BHD<br/>ACCOUNT DETAILS:<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NASA FRESH MART<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ACCOUNT NO- 21419200030833, BANK NAME:   RHB bank<br/>Goods sold are neither returnable nor refundable. Otherwise a cancellation fee of 20% on the purchase price will be imposed` }}
               />
-              <div className="w-[30%] flex flex-col items-end gap-2 font-bold text-sm whitespace-nowrap">
+              <div className="flex-none flex flex-col items-end gap-2 font-bold text-sm whitespace-nowrap">
                 {totalBirds > 0 && (
                   <div className="flex items-center gap-4">
                     <span>TOTAL BIRDS :</span>

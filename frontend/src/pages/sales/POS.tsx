@@ -736,7 +736,7 @@ const POS = () => {
                   </td>
                   <td data-label="Stock" className="px-2 py-1 border-r border-[#E5E7EB] text-center">
                     <span className={`px-2 py-0.5 rounded-full text-[11px] font-bold text-white ${watch(`items.${index}.stock`) > 0 ? 'bg-[#059669]' : 'bg-[#EF4444]'}`}>
-                      {watch(`items.${index}.stock`)}
+                      {Number(Number(watch(`items.${index}.stock`)).toFixed(4))}
                     </span>
                   </td>
                   <td data-label="Unit" className="px-2 py-1 border-r border-[#E5E7EB]">

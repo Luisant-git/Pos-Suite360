@@ -282,7 +282,7 @@ const Dashboard = () => {
                       </div>
                     </div>
                     <div className="font-bold text-rose-500 bg-rose-100 px-3 py-1.5 rounded-lg text-[13px]">
-                      {product.currentStock} left
+                      {Number(Number(product.currentStock).toFixed(4))} left
                     </div>
                   </li>
                 ))}

@@ -331,7 +331,7 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
             
             <div className="flex justify-between items-start border-t border-[#000000] pt-2 gap-4">
               <div 
-                className="flex-1 text-[11px] text-[#000000] pr-4 html-content leading-tight whitespace-pre-line"
+                className="flex-1 text-[11px] text-[#000000] pr-4 html-content leading-tight"
                 dangerouslySetInnerHTML={{ __html: settings?.invoiceNotes || `Note:<br/>All Cheques should be crossed and made payable to NASA WORLD SDN BHD<br/>ACCOUNT DETAILS:<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NASA FRESH MART<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ACCOUNT NO- 21419200030833, BANK NAME:   RHB bank<br/>Goods sold are neither returnable nor refundable. Otherwise a cancellation fee of 20% on the purchase price will be imposed` }}
               />
               <div className="flex-none flex flex-col items-end gap-2 font-bold text-sm whitespace-nowrap">

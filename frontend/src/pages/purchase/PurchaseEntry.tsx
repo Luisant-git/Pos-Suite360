@@ -679,15 +679,18 @@ const PurchaseEntry = () => {
                   <td data-label="Birds" className="px-2 py-1 border-r border-[#E5E7EB]">
                     <input 
                       {...register(`items.${index}.noOfBirds`)} 
+                      data-row={index} data-col={1}
+                      onKeyDown={(e) => handleCellKey(e, index, 1, 6)}
                       type="number" placeholder="0" 
+                      onFocus={(e) => e.target.select()}
                       className="w-full px-2 py-1 border border-[#D1D5DB] rounded text-[13px] outline-none focus:border-[#3B82F6] focus:ring-1 focus:ring-[#3B82F6] focus:bg-blue-50 transition-colors text-center" 
                     />
                   </td>
                   <td data-label="Qty" className="px-2 py-1 border-r border-[#E5E7EB]">
                     <input 
                       {...register(`items.${index}.quantity`)} 
-                      data-row={index} data-col={1}
-                      onKeyDown={(e) => handleCellKey(e, index, 1, 5)}
+                      data-row={index} data-col={2}
+                      onKeyDown={(e) => handleCellKey(e, index, 2, 6)}
                       type="number" step="any" min="0.001" placeholder="0" 
                       onFocus={(e) => e.target.select()}
                       className="w-full px-2 py-1 border border-[#D1D5DB] rounded text-[13px] outline-none focus:border-[#3B82F6] focus:ring-1 focus:ring-[#3B82F6] focus:bg-blue-50 transition-colors text-center" 
@@ -699,8 +702,8 @@ const PurchaseEntry = () => {
                   <td data-label="PRate" className="px-2 py-1 border-r border-[#E5E7EB]">
                     <input 
                       {...register(`items.${index}.pRate`)} 
-                      data-row={index} data-col={2}
-                      onKeyDown={(e) => handleCellKey(e, index, 2, 5)}
+                      data-row={index} data-col={3}
+                      onKeyDown={(e) => handleCellKey(e, index, 3, 6)}
                       type="number" step="0.01" placeholder="0.00" 
                       onFocus={(e) => e.target.select()}
                       className="w-full px-2 py-1 border border-[#D1D5DB] rounded text-[13px] outline-none focus:border-[#3B82F6] focus:ring-1 focus:ring-[#3B82F6] focus:bg-blue-50 transition-colors text-right" 
@@ -712,8 +715,8 @@ const PurchaseEntry = () => {
                   <td data-label="SRate" className="px-2 py-1 border-r border-[#E5E7EB]">
                     <input 
                       {...register(`items.${index}.sRate`)} 
-                      data-row={index} data-col={3}
-                      onKeyDown={(e) => handleCellKey(e, index, 3, 5)}
+                      data-row={index} data-col={4}
+                      onKeyDown={(e) => handleCellKey(e, index, 4, 6)}
                       type="number" step="0.01" placeholder="0.00" 
                       onFocus={(e) => e.target.select()}
                       className="w-full px-2 py-1 border border-[#D1D5DB] rounded text-[13px] outline-none focus:border-[#3B82F6] focus:ring-1 focus:ring-[#3B82F6] focus:bg-blue-50 transition-colors text-right" 
@@ -725,8 +728,8 @@ const PurchaseEntry = () => {
                   <td data-label="Disc %" className="px-2 py-1 border-r border-[#E5E7EB]">
                     <input 
                       {...register(`items.${index}.discPercent`)} 
-                      data-row={index} data-col={4}
-                      onKeyDown={(e) => handleCellKey(e, index, 4, 5)}
+                      data-row={index} data-col={5}
+                      onKeyDown={(e) => handleCellKey(e, index, 5, 6)}
                       type="number" step="0.01" placeholder="0" 
                       onFocus={(e) => e.target.select()}
                       onChange={(e) => {
@@ -743,8 +746,8 @@ const PurchaseEntry = () => {
                   <td data-label="Disc Amt" className="px-2 py-1 border-r border-[#E5E7EB]">
                     <input 
                       {...register(`items.${index}.discAmt`)} 
-                      data-row={index} data-col={5}
-                      onKeyDown={(e) => handleCellKey(e, index, 5, 5)}
+                      data-row={index} data-col={6}
+                      onKeyDown={(e) => handleCellKey(e, index, 6, 6)}
                       type="number" step="0.01" placeholder="0.00" 
                       onFocus={(e) => e.target.select()}
                       onChange={(e) => {

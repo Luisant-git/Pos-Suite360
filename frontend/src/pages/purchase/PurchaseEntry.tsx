@@ -197,21 +197,21 @@ const PurchaseEntry = () => {
         const response = await api.get(`/purchases/latest-rate/${productId}`);
         const latest = response.data;
         if (latest) {
-          setValue(`items.${index}.pRate`, latest.rate || product.purchaseRate || 0);
-          setValue(`items.${index}.wRate`, latest.wRate || product.wholesaleRate || 0);
-          setValue(`items.${index}.sRate`, latest.sRate || product.sellingRate || 0);
-          setValue(`items.${index}.mrp`, latest.mrp || product.mrp || 0);
+          setValue(`items.${index}.pRate`, Number(Number(latest.rate || product.purchaseRate || 0).toFixed(4)));
+          setValue(`items.${index}.wRate`, Number(Number(latest.wRate || product.wholesaleRate || 0).toFixed(4)));
+          setValue(`items.${index}.sRate`, Number(Number(latest.sRate || product.sellingRate || 0).toFixed(4)));
+          setValue(`items.${index}.mrp`, Number(Number(latest.mrp || product.mrp || 0).toFixed(4)));
         } else {
-          setValue(`items.${index}.pRate`, product.purchaseRate || 0);
-          setValue(`items.${index}.wRate`, product.wholesaleRate || 0);
-          setValue(`items.${index}.sRate`, product.sellingRate || 0);
-          setValue(`items.${index}.mrp`, product.mrp || 0);
+          setValue(`items.${index}.pRate`, Number(Number(product.purchaseRate || 0).toFixed(4)));
+          setValue(`items.${index}.wRate`, Number(Number(product.wholesaleRate || 0).toFixed(4)));
+          setValue(`items.${index}.sRate`, Number(Number(product.sellingRate || 0).toFixed(4)));
+          setValue(`items.${index}.mrp`, Number(Number(product.mrp || 0).toFixed(4)));
         }
       } catch (e) {
-        setValue(`items.${index}.pRate`, product.purchaseRate || 0);
-        setValue(`items.${index}.wRate`, product.wholesaleRate || 0);
-        setValue(`items.${index}.sRate`, product.sellingRate || 0);
-        setValue(`items.${index}.mrp`, product.mrp || 0);
+        setValue(`items.${index}.pRate`, Number(Number(product.purchaseRate || 0).toFixed(4)));
+        setValue(`items.${index}.wRate`, Number(Number(product.wholesaleRate || 0).toFixed(4)));
+        setValue(`items.${index}.sRate`, Number(Number(product.sellingRate || 0).toFixed(4)));
+        setValue(`items.${index}.mrp`, Number(Number(product.mrp || 0).toFixed(4)));
       }
     }
   };

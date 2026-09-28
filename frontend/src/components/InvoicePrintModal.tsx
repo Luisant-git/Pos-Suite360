@@ -200,11 +200,11 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
 
   if (!isOpen) return null;
 
-  if (isLoading && !hiddenRenderer) {
+  if ((isLoading || !fullSale || customerBalance === undefined) && !hiddenRenderer) {
     return (
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
         <div className="bg-[#FFFFFF] p-6 rounded-md shadow-lg font-bold text-blue-900 flex items-center gap-3">
-          <Loader2 className="animate-spin" size={20} /> Loading invoice data...
+          <Loader2 className="animate-spin" size={20} /> Loading invoice...
         </div>
       </div>
     );

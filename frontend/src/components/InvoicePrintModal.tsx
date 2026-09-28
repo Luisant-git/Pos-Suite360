@@ -260,13 +260,13 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
 
           {/* Printable Area */}
         <div id={hiddenRenderer ? "hidden-printable-invoice" : "printable-invoice"} className="flex-1 overflow-auto flex flex-col p-8 font-sans text-[#000000] print:p-6 bg-[#FFFFFF]">
-          <div className="w-full text-center mb-3 print:pt-4">
+          <div className="w-full flex flex-col items-center justify-center mb-3 print:pt-4 text-center">
             <div className="text-lg font-bold uppercase">NASA FRESH MART <span className="text-xs font-normal">(001634825-A)</span></div>
             <p className="mt-1 text-[12px]">NO 8G, JLN 3/2 PANDAN JAYA, 55100 KUALA LUMPUR.</p>
             <p className="text-[12px]">Tel : {settings?.phone || '0392856786'}</p>
           </div>
           
-          <div className="w-full border-t border-b border-[#000000] py-2 mb-4 text-center font-bold text-base uppercase tracking-wider">
+          <div className="w-full border-t border-b border-[#000000] py-2 mb-4 flex justify-center text-center font-bold text-base uppercase tracking-wider">
             INVOICE
           </div>
           
@@ -302,11 +302,11 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
               <tr className="border-b border-[#000000] uppercase">
                 <th className="py-2 w-[15%] font-bold">Code</th>
                 <th className="py-2 w-[35%] font-bold">Description</th>
-                <th className="py-2 w-[10%] text-center font-bold">Birds</th>
-                <th className="py-2 w-[10%] text-right font-bold">Qty</th>
-                <th className="py-2 w-[10%] text-center font-bold">UOM</th>
-                <th className="py-2 w-[15%] text-right font-bold">U.Price</th>
-                <th className="py-2 w-[15%] text-right font-bold">Amount</th>
+                <th className="py-2 w-[10%] font-bold"><div className="flex justify-center w-full">Birds</div></th>
+                <th className="py-2 w-[10%] font-bold"><div className="flex justify-end w-full">Qty</div></th>
+                <th className="py-2 w-[10%] font-bold"><div className="flex justify-center w-full">UOM</div></th>
+                <th className="py-2 w-[15%] font-bold"><div className="flex justify-end w-full">U.Price</div></th>
+                <th className="py-2 w-[15%] font-bold"><div className="flex justify-end w-full">Amount</div></th>
               </tr>
             </thead>
             <tbody className="align-top">
@@ -314,11 +314,11 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
                 <tr key={idx}>
                   <td className="py-1 font-bold">{item.product?.code || ''}</td>
                   <td className="py-1 font-bold">{item.product?.name || ''}</td>
-                  <td className="py-1 text-center font-bold">{Number(item.noOfBirds) || '-'}</td>
-                  <td className="py-1 text-right font-bold">{Number(Number(item.quantity).toFixed(4))}</td>
-                  <td className="py-1 text-center font-bold">{item.product?.unit?.name || item.product?.unit?.shortCode || 'Nos'}</td>
-                  <td className="py-1 text-right font-bold">{Number(item.rate || 0).toFixed(2)}</td>
-                  <td className="py-1 text-right font-bold">{Number(item.amount || item.total || 0).toFixed(2)}</td>
+                  <td className="py-1 font-bold"><div className="flex justify-center w-full">{Number(item.noOfBirds) || '-'}</div></td>
+                  <td className="py-1 font-bold"><div className="flex justify-end w-full">{Number(Number(item.quantity).toFixed(4))}</div></td>
+                  <td className="py-1 font-bold"><div className="flex justify-center w-full">{item.product?.unit?.name || item.product?.unit?.shortCode || 'Nos'}</div></td>
+                  <td className="py-1 font-bold"><div className="flex justify-end w-full">{Number(item.rate || 0).toFixed(2)}</div></td>
+                  <td className="py-1 font-bold"><div className="flex justify-end w-full">{Number(item.amount || item.total || 0).toFixed(2)}</div></td>
                 </tr>
               ))}
             </tbody>

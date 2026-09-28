@@ -613,7 +613,7 @@ const PurchaseEntry = () => {
           </div>
           <div className="flex-1 overflow-auto custom-scrollbar">
             <table className="w-full border-collapse border border-[#E5E7EB] md:min-w-[1200px] whitespace-nowrap responsive-table">
-            <thead>
+            <thead className="sticky top-0 z-10">
               <tr className="bg-[#0F172A] text-white">
                 <th className="px-2 py-2 text-center text-[12px] font-bold border border-[#334155] w-10">#</th>
                 <th className="px-2 py-2 text-left text-[12px] font-bold border border-[#334155]">Item Code / Name</th>

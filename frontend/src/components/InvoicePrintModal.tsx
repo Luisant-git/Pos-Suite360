@@ -73,7 +73,7 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
 
     // Clone the element so the visible modal is NEVER touched
     const clone = element.cloneNode(true) as HTMLElement;
-    clone.style.cssText = `position:fixed;top:0;left:0;width:794px;height:1100px;overflow:visible;flex:none;opacity:0;pointer-events:none;z-index:-1;background:#fff;`;
+    clone.style.cssText = `position:fixed;top:100vh;left:0;width:794px;height:1100px;overflow:visible;flex:none;pointer-events:none;z-index:-1;background:#fff;`;
     document.body.appendChild(clone);
 
     try {

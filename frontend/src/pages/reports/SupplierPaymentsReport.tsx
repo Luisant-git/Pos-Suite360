@@ -44,29 +44,12 @@ const SupplierPaymentsReport = () => {
   const searchOptions = React.useMemo(() => {
     const optionsMap = new Map();
     
-    // Add all suppliers and phones from consolidation data
     consolidationData.forEach((item: any) => {
       if (item.supplierName) {
+        const phoneStr = item.phone ? ` - ${item.phone}` : '';
         optionsMap.set(`supp_${item.supplierName}`, { 
           value: item.supplierName, 
-          label: `Supplier: ${item.supplierName}${item.phone ? ` - ${item.phone}` : ''}` 
-        });
-      }
-      if (item.phone) {
-        optionsMap.set(`phone_${item.phone}`, { 
-          value: item.phone, 
-          label: `Phone: ${item.phone}${item.supplierName ? ` - ${item.supplierName}` : ''}` 
-        });
-      }
-    });
-
-    // Add all payment numbers from history data
-    paymentsHistory.forEach((item: any) => {
-      if (item.paymentNo) {
-        const suppName = item.supplier?.name || 'Unknown';
-        optionsMap.set(`pay_${item.paymentNo}`, { 
-          value: item.paymentNo, 
-          label: `Payment No: ${item.paymentNo} - ${suppName}` 
+          label: `${item.supplierName}${phoneStr}` 
         });
       }
     });
@@ -345,7 +328,7 @@ const SupplierPaymentsReport = () => {
         {/* Filter Controls */}
         <div className="flex flex-wrap 2xl:flex-nowrap items-end gap-3 pt-2 border-t border-dashed border-[#E2E8F0]">
           <div className="flex-1 min-w-[200px]">
-            <label className="block text-[12px] font-bold text-black font-bold mb-1 whitespace-nowrap">Search Supplier / Phone / Payment</label>
+            <label className="block text-[12px] font-bold text-black mb-1 whitespace-nowrap">Search Supplier</label>
             <SearchableSelect
               options={searchOptions}
               value={searchTerm}

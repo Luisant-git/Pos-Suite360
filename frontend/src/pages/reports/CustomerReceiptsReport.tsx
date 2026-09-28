@@ -46,27 +46,11 @@ const CustomerReceiptsReport = () => {
     
     // Add all customers and phones from consolidation data
     consolidationData.forEach((item: any) => {
-      if (item.customerName) {
+      if (item.customerName && item.customerName !== 'Counter Sale') {
+        const phoneStr = item.phone ? ` - ${item.phone}` : '';
         optionsMap.set(`cust_${item.customerName}`, { 
           value: item.customerName, 
-          label: `Customer: ${item.customerName}${item.phone ? ` - ${item.phone}` : ''}` 
-        });
-      }
-      if (item.phone) {
-        optionsMap.set(`phone_${item.phone}`, { 
-          value: item.phone, 
-          label: `Phone: ${item.phone}${item.customerName ? ` - ${item.customerName}` : ''}` 
-        });
-      }
-    });
-
-    // Add all receipt numbers from history data
-    receiptsHistory.forEach((item: any) => {
-      if (item.receiptNo) {
-        const custName = item.customer?.name || 'Unknown';
-        optionsMap.set(`rec_${item.receiptNo}`, { 
-          value: item.receiptNo, 
-          label: `Receipt No: ${item.receiptNo} - ${custName}` 
+          label: `${item.customerName}${phoneStr}` 
         });
       }
     });
@@ -345,7 +329,7 @@ const CustomerReceiptsReport = () => {
         {/* Filter Controls */}
         <div className="flex flex-wrap 2xl:flex-nowrap items-end gap-3 pt-2 border-t border-dashed border-[#E2E8F0]">
           <div className="flex-1 min-w-[200px]">
-            <label className="block text-[12px] font-bold text-black font-bold mb-1 whitespace-nowrap">Search Customer / Phone / Receipt</label>
+            <label className="block text-[12px] font-bold text-black mb-1 whitespace-nowrap">Search Customer</label>
             <SearchableSelect
               options={searchOptions}
               value={searchTerm}

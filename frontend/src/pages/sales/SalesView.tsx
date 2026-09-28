@@ -49,11 +49,11 @@ const SalesView = () => {
         }
         
         const opt = {
-          margin: 0.5,
+          margin: 0,
           filename: `Invoice_${sale.invoiceNo}.pdf`,
-          image:        { type: 'jpeg' as const, quality: 0.98 },
-          html2canvas: { scale: 2, windowWidth: 794 },
-          jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' as const }
+          image: { type: 'jpeg', quality: 0.98 },
+          html2canvas: { scale: 2, useCORS: true, logging: false, scrollY: 0, windowWidth: 794 },
+          jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
         };
         
         const pdfBase64 = await html2pdf().set(opt).from(element).output('datauristring');

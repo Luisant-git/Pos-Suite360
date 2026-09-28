@@ -226,7 +226,7 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
   };
 
   const modalContent = (
-    <div className={hiddenRenderer ? "absolute -left-[9999px] -top-[9999px] block visible print:block print:absolute print:top-0 print:left-0 print:bg-transparent print:m-0 print:p-0 print-invoice-container" : "fixed inset-0 z-50 flex items-center justify-center bg-black/60 print:absolute print:top-0 print:left-0 print:block print:bg-transparent print:m-0 print:p-0 print-invoice-container"}>
+    <div className={hiddenRenderer ? "fixed top-0 left-0 w-[794px] -z-50 opacity-0 pointer-events-none print:block print:absolute print:top-0 print:left-0 print:bg-transparent print:m-0 print:p-0 print-invoice-container" : "fixed inset-0 z-50 flex items-center justify-center bg-black/60 print:absolute print:top-0 print:left-0 print:block print:bg-transparent print:m-0 print:p-0 print-invoice-container"}>
       {isSharing && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60">
           <div className="bg-[#FFFFFF] p-6 rounded-md shadow-lg font-bold text-blue-900 flex items-center gap-3">
@@ -234,7 +234,7 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
           </div>
         </div>
       )}
-        <div className={`bg-[#FFFFFF] flex flex-col relative print:w-full print:shadow-none print:h-auto print:min-h-[250mm] ${hiddenRenderer ? 'w-[210mm]' : 'w-[210mm] h-[97vh] rounded-md shadow-2xl'}`}>
+        <div className={`bg-[#FFFFFF] flex flex-col relative print:w-full print:shadow-none print:h-auto print:min-h-[250mm] ${hiddenRenderer ? 'w-[794px] min-h-[1123px]' : 'w-[210mm] h-[97vh] rounded-md shadow-2xl'}`}>
         
         {/* Header - Screen Only */}
           {!hiddenRenderer && (

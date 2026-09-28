@@ -1,5 +1,23 @@
 import React from 'react';
-import Select from 'react-select';
+import Select, { components } from 'react-select';
+
+const CustomOption = (props: any) => {
+  const { onMouseDown } = props.innerProps;
+  return (
+    <components.Option 
+      {...props} 
+      innerProps={{
+        ...props.innerProps,
+        onMouseDown: (e: any) => {
+          e.preventDefault();
+          e.stopPropagation();
+          props.selectOption(props.data);
+          if (onMouseDown) onMouseDown(e);
+        }
+      }}
+    />
+  );
+};
 
 export interface SelectOption {
   value: string | number;
@@ -60,6 +78,8 @@ export const SearchableSelect: React.FC<SearchableSelectProps> = ({
       menuPlacement={menuPlacement}
       menuShouldScrollIntoView={false}
       captureMenuScroll={false}
+      closeMenuOnScroll={false}
+      components={{ Option: CustomOption }}
       styles={{
         control: (base: any, state: any) => ({
           ...base,

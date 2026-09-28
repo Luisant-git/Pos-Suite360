@@ -55,8 +55,6 @@ export const SearchableSelect: React.FC<SearchableSelectProps> = ({
       autoFocus={autoFocus}
       openMenuOnFocus={true}
       className={`text-[13px] ${className}`}
-      menuPortalTarget={typeof document !== 'undefined' ? document.body : undefined}
-      menuPosition="fixed"
       menuPlacement={menuPlacement}
       styles={{
         control: (base: any, state: any) => ({

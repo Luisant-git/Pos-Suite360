@@ -585,7 +585,7 @@ const POS = () => {
             </div>
 
             <div className="w-full lg:flex-[2]">
-              <label className="block text-[11px] font-bold text-black font-bold mb-1">Customer Name (Searchable Dropdown) *</label>
+              <label className="block text-[11px] font-bold text-black font-bold mb-1">Customer Name *</label>
               <div className="flex flex-col gap-1">
                 <div className="flex-1 w-full">
                   <SearchableSelect
@@ -674,7 +674,7 @@ const POS = () => {
             <thead>
               <tr className="bg-[#0F172A] text-white">
                 <th className="px-2 py-2 text-center text-[12px] font-bold border border-[#334155] w-10">#</th>
-                <th className="px-2 py-2 text-left text-[12px] font-bold border border-[#334155]">Product Code / Name (Searchable Dropdown)</th>
+                <th className="px-2 py-2 text-left text-[12px] font-bold border border-[#334155]">Product Code / Name</th>
                 <th className="px-2 py-2 text-center text-[12px] font-bold border border-[#334155] w-20">Stock</th>
                 <th className="px-2 py-2 text-center text-[12px] font-bold border border-[#334155] w-20">Unit</th>
                 <th className="px-2 py-2 text-center text-[12px] font-bold border border-[#334155] w-20">Birds</th>

@@ -24,7 +24,7 @@ const WhatsAppIcon = ({ size = 16, className = "" }: { size?: number, className?
 const SalesView = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { settings, formatCurrency } = useSettings();
+  const { formatCurrency } = useSettings();
   
   const [isPrintModalOpen, setIsPrintModalOpen] = useState(false);
   const [isProcessingPdf, setIsProcessingPdf] = useState(false);

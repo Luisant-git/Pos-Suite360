@@ -121,7 +121,9 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
   useEffect(() => {
     if (isOpen && !hiddenRenderer && !pregeneratedBlob && !isLoading && fullSale && customerBalance !== undefined) {
       setIsPdfReady(false);
-      const timer = setTimeout(async () => {
+      const idle = window.requestIdleCallback ?? ((cb: () => void) => setTimeout(cb, 500));
+      const cancel = window.cancelIdleCallback ?? clearTimeout;
+      const handle = idle(async () => {
         try {
           const blob = await generatePdf();
           setPregeneratedBlob(blob);
@@ -130,8 +132,8 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
           console.error('Pre-generation failed', e);
           setIsPdfReady(true);
         }
-      }, 1000);
-      return () => clearTimeout(timer);
+      });
+      return () => cancel(handle);
     }
   }, [isOpen, hiddenRenderer, invoiceNo, pregeneratedBlob, isLoading, fullSale, customerBalance]);
 

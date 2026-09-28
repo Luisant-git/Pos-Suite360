@@ -234,7 +234,7 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
           </div>
         </div>
       )}
-        <div className={`bg-[#FFFFFF] flex flex-col relative print:w-full print:shadow-none print:h-auto print:min-h-[250mm] ${hiddenRenderer ? 'w-[794px] min-h-[1123px]' : 'w-[210mm] h-[97vh] rounded-md shadow-2xl'}`}>
+        <div className={`bg-[#FFFFFF] flex flex-col relative print:w-full print:shadow-none print:h-auto print:min-h-[250mm] ${hiddenRenderer ? 'w-[794px] h-[1123px]' : 'w-[210mm] h-[97vh] rounded-md shadow-2xl'}`}>
         
         {/* Header - Screen Only */}
           {!hiddenRenderer && (

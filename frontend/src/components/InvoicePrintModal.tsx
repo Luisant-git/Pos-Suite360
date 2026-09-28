@@ -5,7 +5,8 @@ import { useSettings } from '../contexts/SettingsContext';
 import { useQuery } from '@tanstack/react-query';
 import api from '../services/api';
 import toast from 'react-hot-toast';
-import html2pdf from 'html2pdf.js';
+import html2canvas from 'html2canvas';
+import { jsPDF } from 'jspdf';
 
 const numberToWords = (num: number): string => {
   if (!num || num === 0) return "ZERO";
@@ -90,14 +91,18 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
     }
 
     try {
-      const worker = html2pdf().set({
-        margin: 0,
-        filename: `Invoice_${invoiceNo}.pdf`,
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2, useCORS: true, logging: false, scrollY: 0, windowWidth: 794 },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-      }).from(element);
-      const pdf = await worker.toPdf().get('pdf');
+      const canvas = await html2canvas(element, {
+        scale: 2,
+        useCORS: true,
+        logging: false,
+        scrollY: 0,
+        windowWidth: 794,
+      });
+      const imgData = canvas.toDataURL('image/jpeg', 0.98);
+      const pdf = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait' });
+      const pdfW = pdf.internal.pageSize.getWidth();
+      const pdfH = (canvas.height * pdfW) / canvas.width;
+      pdf.addImage(imgData, 'JPEG', 0, 0, pdfW, pdfH);
       return pdf.output('blob');
     } finally {
       element.style.overflow = prevEl.overflow;

@@ -259,7 +259,7 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
           )}
 
           {/* Printable Area */}
-        <div id={hiddenRenderer ? "hidden-printable-invoice" : "printable-invoice"} className={`relative flex-1 overflow-visible flex flex-col p-8 pb-[200px] font-sans text-[#000000] print:p-6 print:pb-[180px] bg-[#FFFFFF] ${hiddenRenderer ? 'min-h-[1123px]' : 'print:min-h-[275mm]'}`}>
+        <div id={hiddenRenderer ? "hidden-printable-invoice" : "printable-invoice"} className={`flex-1 flex flex-col p-8 font-sans text-[#000000] print:p-6 bg-[#FFFFFF] ${hiddenRenderer ? 'relative overflow-visible pb-[200px] min-h-[1123px]' : 'overflow-auto'}`}>
           <div className="w-full flex flex-col items-center justify-center mb-3 print:pt-4 text-center">
             <div className="text-lg font-bold uppercase">NASA FRESH MART <span className="text-xs font-normal">(001634825-A)</span></div>
             <p className="mt-1 text-[12px]">NO 8G, JLN 3/2 PANDAN JAYA, 55100 KUALA LUMPUR.</p>
@@ -324,7 +324,8 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
             </tbody>
           </table>
           
-          <div className="absolute bottom-8 left-8 right-8 print:bottom-6 print:left-6 print:right-6">
+          {!hiddenRenderer && <div className="flex-1"></div>}
+          <div className={hiddenRenderer ? "absolute bottom-8 left-8 right-8" : "mt-8"}>
             <p className="uppercase mb-4 text-[13px] font-bold">RINGGIT MALAYSIA {numberToWords(grandTotal)} ONLY</p>
             
             <div className="flex justify-between items-start border-t border-[#000000] pt-2 gap-4">

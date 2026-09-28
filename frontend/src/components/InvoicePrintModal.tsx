@@ -67,7 +67,7 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
   const totalBirds = items.reduce((sum: number, item: any) => sum + (Number(item.noOfBirds) || 0), 0);
 
   const [pregeneratedBlob, setPregeneratedBlob] = useState<Blob | null>(null);
-  const [isPdfReady, setIsPdfReady] = useState(false);
+  const [isPdfReady, setIsPdfReady] = useState(true);
 
   const generatePdf = async (): Promise<Blob> => {
     const element = document.getElementById('printable-invoice');
@@ -117,25 +117,7 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
     }
   };
 
-  // Pre-generate PDF for instant sharing
-  useEffect(() => {
-    if (isOpen && !hiddenRenderer && !pregeneratedBlob && !isLoading && fullSale && customerBalance !== undefined) {
-      setIsPdfReady(false);
-      const idle = window.requestIdleCallback ?? ((cb: () => void) => setTimeout(cb, 500));
-      const cancel = window.cancelIdleCallback ?? clearTimeout;
-      const handle = idle(async () => {
-        try {
-          const blob = await generatePdf();
-          setPregeneratedBlob(blob);
-          setIsPdfReady(true);
-        } catch (e) {
-          console.error('Pre-generation failed', e);
-          setIsPdfReady(true);
-        }
-      });
-      return () => cancel(handle);
-    }
-  }, [isOpen, hiddenRenderer, invoiceNo, pregeneratedBlob, isLoading, fullSale, customerBalance]);
+  // No pre-generation - generate on demand when user clicks Share
 
   const handleShare = useCallback(async () => {
     const performShare = async (blob: Blob) => {
@@ -194,13 +176,10 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
   useEffect(() => {
     if (isOpen) {
       document.body.classList.add('printing-modal');
-      setIsPdfReady(false);
-      setPregeneratedBlob(null);
     } else {
       document.body.classList.remove('printing-modal');
       autoShareTriggered.current = false;
       setPregeneratedBlob(null);
-      setIsPdfReady(false);
     }
     return () => document.body.classList.remove('printing-modal');
   }, [isOpen]);

@@ -66,6 +66,7 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
   const totalBirds = items.reduce((sum: number, item: any) => sum + (Number(item.noOfBirds) || 0), 0);
 
   const [pregeneratedBlob, setPregeneratedBlob] = useState<Blob | null>(null);
+  const [isPdfReady, setIsPdfReady] = useState(false);
 
   const generatePdf = async (): Promise<Blob> => {
     const element = document.getElementById('printable-invoice');
@@ -114,12 +115,15 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
   // Pre-generate PDF for instant sharing
   useEffect(() => {
     if (isOpen && !hiddenRenderer && !pregeneratedBlob && !isLoading && fullSale && customerBalance !== undefined) {
+      setIsPdfReady(false);
       const timer = setTimeout(async () => {
         try {
           const blob = await generatePdf();
           setPregeneratedBlob(blob);
+          setIsPdfReady(true);
         } catch (e) {
           console.error('Pre-generation failed', e);
+          setIsPdfReady(true);
         }
       }, 1000);
       return () => clearTimeout(timer);
@@ -183,9 +187,13 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
   useEffect(() => {
     if (isOpen) {
       document.body.classList.add('printing-modal');
+      setIsPdfReady(false);
+      setPregeneratedBlob(null);
     } else {
       document.body.classList.remove('printing-modal');
       autoShareTriggered.current = false;
+      setPregeneratedBlob(null);
+      setIsPdfReady(false);
     }
     return () => document.body.classList.remove('printing-modal');
   }, [isOpen]);
@@ -228,9 +236,9 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
             <span>Invoice - {invoiceNo}</span>
           </div>
           <div className="flex items-center gap-3">
-            <button type="button" onClick={handleShare} disabled={isSharing} className="bg-[#25D366] hover:bg-[#1EBE55] disabled:opacity-70 text-white px-3 py-1 rounded flex items-center gap-1 text-[12px] font-bold transition-colors">
-              {isSharing ? <Loader2 size={14} className="animate-spin" /> : <Share2 size={14} />} 
-              {isSharing ? 'Preparing...' : 'Share Invoice'}
+            <button type="button" onClick={handleShare} disabled={isSharing || !isPdfReady} className="bg-[#25D366] hover:bg-[#1EBE55] disabled:opacity-70 text-white px-3 py-1 rounded flex items-center gap-1 text-[12px] font-bold transition-colors">
+              {(!isPdfReady || isSharing) ? <Loader2 size={14} className="animate-spin" /> : <Share2 size={14} />}
+              {!isPdfReady ? 'Preparing...' : isSharing ? 'Sharing...' : 'Share Invoice'}
             </button>
             <button type="button" onClick={handlePrint} className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded flex items-center gap-1 text-[12px] font-bold transition-colors">
               <Printer size={14} /> Print
@@ -357,11 +365,11 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
           <button 
             type="button"
             onClick={handleShare}
-            disabled={isSharing}
+            disabled={isSharing || !isPdfReady}
             className="flex items-center gap-2 bg-[#25D366] hover:bg-[#1DA851] disabled:opacity-70 text-white font-bold py-2 px-4 rounded transition-colors shadow-sm"
           >
-            {isSharing ? <Loader2 size={16} className="animate-spin" /> : <Share2 size={16} />}
-            {isSharing ? 'Preparing...' : 'Share Invoice'}
+            {(!isPdfReady || isSharing) ? <Loader2 size={16} className="animate-spin" /> : <Share2 size={16} />}
+            {!isPdfReady ? 'Preparing PDF...' : isSharing ? 'Sharing...' : 'Share Invoice'}
           </button>
           
           <div className="flex gap-2">

@@ -70,24 +70,11 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
   const generatePdf = async (): Promise<Blob> => {
     const element = document.getElementById('printable-invoice');
     if (!element) throw new Error('Invoice element not found');
-    const parent = element.parentElement;
-    const grandParent = parent?.parentElement;
 
-    const prevEl = { overflow: element.style.overflow, height: element.style.height, flex: element.style.flex };
-    const prevPar = parent ? { height: parent.style.height, maxHeight: parent.style.maxHeight, overflow: parent.style.overflow } : null;
-    const prevGP = grandParent ? { overflow: grandParent.style.overflow } : null;
-
-    element.style.overflow = 'visible';
-    element.style.height = '1100px';
-    element.style.flex = 'none';
-    if (parent && prevPar) {
-      parent.style.height = 'auto';
-      parent.style.maxHeight = 'none';
-      parent.style.overflow = 'hidden';
-    }
-    if (grandParent && prevGP) {
-      grandParent.style.overflow = 'hidden';
-    }
+    // Clone the element so the visible modal is NEVER touched
+    const clone = element.cloneNode(true) as HTMLElement;
+    clone.style.cssText = `position:fixed;top:0;left:0;width:794px;height:1100px;overflow:visible;flex:none;opacity:0;pointer-events:none;z-index:-1;background:#fff;`;
+    document.body.appendChild(clone);
 
     try {
       const worker = html2pdf().set({
@@ -96,21 +83,11 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
         image: { type: 'jpeg', quality: 0.98 },
         html2canvas: { scale: 2, useCORS: true, logging: false, scrollY: 0, windowWidth: 794 },
         jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-      }).from(element);
+      }).from(clone);
       const pdf = await worker.toPdf().get('pdf');
       return pdf.output('blob');
     } finally {
-      element.style.overflow = prevEl.overflow;
-      element.style.height = prevEl.height;
-      element.style.flex = prevEl.flex;
-      if (parent && prevPar) {
-        parent.style.height = prevPar.height;
-        parent.style.maxHeight = prevPar.maxHeight;
-        parent.style.overflow = prevPar.overflow;
-      }
-      if (grandParent && prevGP) {
-        grandParent.style.overflow = prevGP.overflow;
-      }
+      document.body.removeChild(clone);
     }
   };
 

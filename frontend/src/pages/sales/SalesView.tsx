@@ -5,7 +5,7 @@ import api from '../../services/api';
 import { useSettings } from '../../contexts/SettingsContext';
 import { useState } from 'react';
 import InvoicePrintModal from '../../components/InvoicePrintModal';
-import html2pdf from 'html2pdf.js';
+import { generateNativePdf } from '../../utils/pdfGenerator';
 import toast from 'react-hot-toast';
 
 const WhatsAppIcon = ({ size = 16, className = "" }: { size?: number, className?: string }) => (
@@ -24,7 +24,7 @@ const WhatsAppIcon = ({ size = 16, className = "" }: { size?: number, className?
 const SalesView = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { formatCurrency } = useSettings();
+  const { settings, formatCurrency } = useSettings();
   
   const [isPrintModalOpen, setIsPrintModalOpen] = useState(false);
   const [isProcessingPdf, setIsProcessingPdf] = useState(false);
@@ -41,25 +41,18 @@ const SalesView = () => {
   const processHiddenPdf = async (): Promise<string | null> => {
     return new Promise((resolve) => {
       setIsProcessingPdf(true);
-      setTimeout(async () => {
-        const element = document.getElementById('hidden-printable-invoice');
-        if (!element) {
+      setTimeout(() => {
+        try {
+          // Use the native jsPDF generator instead of HTML snapshot
+          const pdfBase64 = generateNativePdf(sale, settings || {});
           setIsProcessingPdf(false);
-          return resolve(null);
+          resolve(pdfBase64);
+        } catch (e) {
+          console.error(e);
+          setIsProcessingPdf(false);
+          resolve(null);
         }
-        
-        const opt = {
-          margin: 0,
-          filename: `Invoice_${sale.invoiceNo}.pdf`,
-          image: { type: 'jpeg' as const, quality: 0.98 },
-          html2canvas: { scale: 2, useCORS: true, logging: false, scrollY: 0, windowWidth: 794 },
-          jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' as const }
-        };
-        
-        const pdfBase64 = await html2pdf().set(opt).from(element).output('datauristring');
-        setIsProcessingPdf(false);
-        resolve(pdfBase64);
-      }, 300);
+      }, 100);
     });
   };
 

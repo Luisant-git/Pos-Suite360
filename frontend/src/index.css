@@ -83,6 +83,27 @@
     padding: 0 !important;
     display: block !important;
   }
+
+  #printable-invoice {
+    height: 277mm !important;
+    min-height: 277mm !important;
+    max-height: 277mm !important;
+    overflow: visible !important;
+    flex: none !important;
+    position: relative !important;
+    display: block !important;
+  }
+
+  #printable-invoice .invoice-bottom-section {
+    position: absolute !important;
+    bottom: 0 !important;
+    left: 32px !important;
+    right: 32px !important;
+  }
+
+  #printable-invoice .invoice-spacer {
+    display: none !important;
+  }
   
   body.printing-modal {
     background-color: white !important;

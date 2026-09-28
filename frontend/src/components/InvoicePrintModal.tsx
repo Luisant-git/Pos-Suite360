@@ -67,46 +67,59 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
 
   const [pregeneratedBlob, setPregeneratedBlob] = useState<Blob | null>(null);
 
-  // Pre-generate PDF for instant sharing to preserve user gesture
+  const generatePdf = async (): Promise<Blob> => {
+    const element = document.getElementById('printable-invoice');
+    if (!element) throw new Error('Invoice element not found');
+    const parent = element.parentElement;
+
+    const prevEl = { overflow: element.style.overflow, height: element.style.height, flex: element.style.flex };
+    const prevPar = parent ? { height: parent.style.height, maxHeight: parent.style.maxHeight, overflow: parent.style.overflow } : null;
+
+    element.style.overflow = 'visible';
+    element.style.height = '1100px';
+    element.style.flex = 'none';
+    if (parent && prevPar) {
+      parent.style.height = 'auto';
+      parent.style.maxHeight = 'none';
+      parent.style.overflow = 'visible';
+    }
+
+    try {
+      const worker = html2pdf().set({
+        margin: 0,
+        filename: `Invoice_${invoiceNo}.pdf`,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true, logging: false, scrollY: 0, windowWidth: 794 },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+      }).from(element);
+      const pdf = await worker.toPdf().get('pdf');
+      return pdf.output('blob');
+    } finally {
+      element.style.overflow = prevEl.overflow;
+      element.style.height = prevEl.height;
+      element.style.flex = prevEl.flex;
+      if (parent && prevPar) {
+        parent.style.height = prevPar.height;
+        parent.style.maxHeight = prevPar.maxHeight;
+        parent.style.overflow = prevPar.overflow;
+      }
+    }
+  };
+
+  // Pre-generate PDF for instant sharing
   useEffect(() => {
-    if (isOpen && !hiddenRenderer && !pregeneratedBlob) {
+    if (isOpen && !hiddenRenderer && !pregeneratedBlob && !isLoading && fullSale && customerBalance !== undefined) {
       const timer = setTimeout(async () => {
-        const element = document.getElementById('printable-invoice');
-        if (!element) return;
-        
-        const prevOverflow = element.style.overflow;
-        const prevMaxHeight = element.style.maxHeight;
-        const prevHeight = element.style.height;
-        element.style.overflow = 'visible';
-        element.style.maxHeight = 'none';
-        element.style.height = 'auto';
-        
         try {
-          const worker = html2pdf()
-            .set({
-              margin: 0,
-              filename: `Invoice_${invoiceNo}.pdf`,
-              image: { type: 'jpeg', quality: 0.98 },
-              html2canvas: { scale: 2, useCORS: true, logging: false, scrollY: 0, windowWidth: 794 },
-              jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-            })
-            .from(element);
-          
-          const pdf = await worker.toPdf().get('pdf');
-          const blob = pdf.output('blob');
+          const blob = await generatePdf();
           setPregeneratedBlob(blob);
         } catch (e) {
           console.error('Pre-generation failed', e);
         }
-        
-        element.style.overflow = prevOverflow;
-        element.style.maxHeight = prevMaxHeight;
-        element.style.height = prevHeight;
       }, 1000);
-      
       return () => clearTimeout(timer);
     }
-  }, [isOpen, hiddenRenderer, invoiceNo, pregeneratedBlob]);
+  }, [isOpen, hiddenRenderer, invoiceNo, pregeneratedBlob, isLoading, fullSale, customerBalance]);
 
   const handleShare = useCallback(async () => {
     const performShare = async (blob: Blob) => {
@@ -143,46 +156,12 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
       return;
     }
 
-    // Fallback if not pre-generated yet
-    const element = document.getElementById('printable-invoice');
-    if (!element) {
-      toast.error('Invoice content not found.');
-      return;
-    }
     setIsSharing(true);
-    
-    const prevOverflow = element.style.overflow;
-    const prevMaxHeight = element.style.maxHeight;
-    const prevHeight = element.style.height;
-    element.style.overflow = 'visible';
-    element.style.maxHeight = 'none';
-    element.style.height = 'auto';
-    
     try {
-      const worker = html2pdf()
-        .set({
-          margin: 0,
-          filename: `Invoice_${invoiceNo}.pdf`,
-          image: { type: 'jpeg', quality: 0.98 },
-          html2canvas: { scale: 2, useCORS: true, logging: false, scrollY: 0, windowWidth: 794 },
-          jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-        })
-        .from(element);
-      
-      const pdf = await worker.toPdf().get('pdf');
-      const blob: Blob = pdf.output('blob');
-        
-      element.style.overflow = prevOverflow;
-      element.style.maxHeight = prevMaxHeight;
-      element.style.height = prevHeight;
-      
+      const blob = await generatePdf();
       await performShare(blob);
     } catch (err) {
-      element.style.overflow = prevOverflow;
-      element.style.maxHeight = prevMaxHeight;
-      element.style.height = prevHeight;
       toast.error(`Failed to generate invoice PDF: ${err instanceof Error ? err.message : String(err)}`);
-      console.error('PDF Generation Error:', err);
     } finally {
       setIsSharing(false);
     }
@@ -259,7 +238,7 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
           )}
 
           {/* Printable Area */}
-        <div id={hiddenRenderer ? "hidden-printable-invoice" : "printable-invoice"} className={`flex-1 flex flex-col p-8 font-sans text-[#000000] print:p-6 bg-[#FFFFFF] ${hiddenRenderer ? 'relative overflow-visible pb-[200px] min-h-[1123px]' : 'overflow-auto'}`}>
+        <div id={hiddenRenderer ? "hidden-printable-invoice" : "printable-invoice"} className={`flex-1 flex flex-col p-8 font-sans text-[#000000] print:p-6 bg-[#FFFFFF] ${hiddenRenderer ? 'overflow-visible' : 'overflow-auto'}`}>
           <div className="w-full flex flex-col items-center justify-center mb-3 print:pt-4 text-center">
             <div className="text-lg font-bold uppercase">NASA FRESH MART <span className="text-xs font-normal">(001634825-A)</span></div>
             <p className="mt-1 text-[12px]">NO 8G, JLN 3/2 PANDAN JAYA, 55100 KUALA LUMPUR.</p>
@@ -324,8 +303,8 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
             </tbody>
           </table>
           
-          {!hiddenRenderer && <div className="flex-1"></div>}
-          <div className={hiddenRenderer ? "absolute bottom-8 left-8 right-8" : "mt-8"}>
+                  <div className="flex-1 invoice-spacer"></div>
+          <div className="mb-8 invoice-bottom-section">
             <p className="uppercase mb-4 text-[13px] font-bold">RINGGIT MALAYSIA {numberToWords(grandTotal)} ONLY</p>
             
             <div className="flex justify-between items-start border-t border-[#000000] pt-2 gap-4">
@@ -392,7 +371,7 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
             <button 
               type="button"
               onClick={onClose}
-              className="bg-[#F9FAFB]0 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded transition-colors shadow-sm"
+              className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded transition-colors shadow-sm"
             >
               Close
             </button>

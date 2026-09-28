@@ -75,27 +75,61 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
     const parent = element.parentElement;
     const grandParent = parent?.parentElement;
 
-    const prevEl = { overflow: element.style.overflow, height: element.style.height, flex: element.style.flex };
-    const prevPar = parent ? { height: parent.style.height, maxHeight: parent.style.maxHeight, overflow: parent.style.overflow } : null;
-    // Hide entire modal visually - layout changes happen but user sees nothing
-    if (grandParent) grandParent.style.visibility = 'hidden';
+    const prevEl = {
+      overflow: element.style.overflow,
+      height: element.style.height,
+      minHeight: element.style.minHeight,
+      width: element.style.width,
+      flex: element.style.flex,
+      position: element.style.position,
+    };
+    const prevPar = parent ? {
+      height: parent.style.height,
+      minHeight: parent.style.minHeight,
+      maxHeight: parent.style.maxHeight,
+      overflow: parent.style.overflow,
+      position: parent.style.position,
+      width: parent.style.width,
+    } : null;
+    const prevGP = grandParent ? {
+      visibility: grandParent.style.visibility,
+      position: grandParent.style.position,
+    } : null;
 
-    element.style.overflow = 'visible';
-    element.style.height = '1100px';
-    element.style.flex = 'none';
+    // Detach from fixed/flex layout so html2canvas can measure correctly
+    if (grandParent) {
+      grandParent.style.visibility = 'hidden';
+      grandParent.style.position = 'absolute';
+    }
     if (parent && prevPar) {
+      parent.style.position = 'relative';
+      parent.style.width = '794px';
       parent.style.height = 'auto';
+      parent.style.minHeight = 'unset';
       parent.style.maxHeight = 'none';
       parent.style.overflow = 'visible';
     }
+    element.style.position = 'relative';
+    element.style.width = '794px';
+    element.style.overflow = 'visible';
+    element.style.height = 'auto';
+    element.style.minHeight = '1100px';
+    element.style.flex = 'none';
+
+    // Allow browser to reflow before capture
+    await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
 
     try {
       const canvas = await html2canvas(element, {
         scale: 2,
         useCORS: true,
         logging: false,
+        scrollX: 0,
         scrollY: 0,
         windowWidth: 794,
+        width: 794,
+        x: 0,
+        y: 0,
       });
       const imgData = canvas.toDataURL('image/jpeg', 0.98);
       const pdf = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait' });
@@ -106,13 +140,22 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
     } finally {
       element.style.overflow = prevEl.overflow;
       element.style.height = prevEl.height;
+      element.style.minHeight = prevEl.minHeight;
+      element.style.width = prevEl.width;
       element.style.flex = prevEl.flex;
+      element.style.position = prevEl.position;
       if (parent && prevPar) {
         parent.style.height = prevPar.height;
+        parent.style.minHeight = prevPar.minHeight;
         parent.style.maxHeight = prevPar.maxHeight;
         parent.style.overflow = prevPar.overflow;
+        parent.style.position = prevPar.position;
+        parent.style.width = prevPar.width;
       }
-      if (grandParent) grandParent.style.visibility = '';
+      if (grandParent && prevGP) {
+        grandParent.style.visibility = prevGP.visibility;
+        grandParent.style.position = prevGP.position;
+      }
     }
   };
 

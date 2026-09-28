@@ -260,13 +260,13 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
 
           {/* Printable Area */}
         <div id={hiddenRenderer ? "hidden-printable-invoice" : "printable-invoice"} className="flex-1 overflow-auto flex flex-col p-8 font-sans text-[#000000] print:p-6 bg-[#FFFFFF]">
-          <div className="text-center mb-3 print:pt-4">
+          <div className="w-full text-center mb-3 print:pt-4">
             <div className="text-lg font-bold uppercase">NASA FRESH MART <span className="text-xs font-normal">(001634825-A)</span></div>
             <p className="mt-1 text-[12px]">NO 8G, JLN 3/2 PANDAN JAYA, 55100 KUALA LUMPUR.</p>
             <p className="text-[12px]">Tel : {settings?.phone || '0392856786'}</p>
           </div>
           
-          <div className="border-t border-b border-[#000000] py-2 mb-4 text-center font-bold text-base uppercase tracking-wider">
+          <div className="w-full border-t border-b border-[#000000] py-2 mb-4 text-center font-bold text-base uppercase tracking-wider">
             INVOICE
           </div>
           
@@ -305,8 +305,8 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
                 <th className="py-2 w-[10%] text-center font-bold">Birds</th>
                 <th className="py-2 w-[10%] text-right font-bold">Qty</th>
                 <th className="py-2 w-[10%] text-center font-bold">UOM</th>
-                <th className="py-2 w-[10%] text-right font-bold">U.Price</th>
-                <th className="py-2 w-[10%] text-right font-bold">Amount</th>
+                <th className="py-2 w-[15%] text-right font-bold">U.Price</th>
+                <th className="py-2 w-[15%] text-right font-bold">Amount</th>
               </tr>
             </thead>
             <tbody className="align-top">
@@ -336,18 +336,18 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
               />
               <div className="flex-none flex flex-col items-end gap-2 font-bold text-sm whitespace-nowrap">
                 {totalBirds > 0 && (
-                  <div className="flex items-center gap-4">
+                  <div className="flex justify-between items-center w-[250px] mb-2">
                     <span>TOTAL BIRDS :</span>
-                    <span className="min-w-[100px] text-right inline-block">{totalBirds}</span>
+                    <span className="w-[100px] text-right inline-block">{totalBirds}</span>
                   </div>
                 )}
-                <div className="flex items-center gap-4">
+                <div className="flex justify-between items-center w-[250px] mb-2">
                   <span>TOTAL : RM</span>
-                  <span className="border-b-2 border-[#000000] min-w-[100px] text-right inline-block pb-1">{Number(grandTotal).toFixed(2)}</span>
+                  <span className="border-b-2 border-[#000000] w-[100px] text-right inline-block pb-1">{Number(grandTotal).toFixed(2)}</span>
                 </div>
-                <div className="flex items-center gap-4 border-2 border-[#000000] px-2.5 py-1 rounded-sm mt-6 bg-[#F9FAFB] print:bg-transparent">
+                <div className="flex justify-between items-center border-2 border-[#000000] px-2.5 py-1 w-[250px] rounded-sm bg-[#F9FAFB] print:bg-transparent">
                   <span>PENDING AMT : RM</span>
-                  <span className="min-w-[100px] text-right inline-block font-bold">{Number(pendingAmount).toFixed(2)}</span>
+                  <span className="w-[100px] text-right inline-block font-bold">{Number(pendingAmount).toFixed(2)}</span>
                 </div>
               </div>
             </div>

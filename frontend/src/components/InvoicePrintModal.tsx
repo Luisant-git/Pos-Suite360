@@ -234,7 +234,7 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
           </div>
         </div>
       )}
-        <div className={`bg-[#FFFFFF] flex flex-col relative print:w-full print:shadow-none print:h-auto print:min-h-[275mm] ${hiddenRenderer ? 'w-[794px] h-[1123px]' : 'w-[210mm] h-[97vh] rounded-md shadow-2xl'}`}>
+        <div className={`bg-[#FFFFFF] flex flex-col relative print:w-full print:shadow-none print:h-auto ${hiddenRenderer ? 'w-[794px] h-[1123px]' : 'w-[210mm] h-[97vh] rounded-md shadow-2xl'}`}>
         
         {/* Header - Screen Only */}
           {!hiddenRenderer && (
@@ -259,7 +259,7 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
           )}
 
           {/* Printable Area */}
-        <div id={hiddenRenderer ? "hidden-printable-invoice" : "printable-invoice"} className="flex-1 overflow-auto flex flex-col p-8 font-sans text-[#000000] print:p-6 bg-[#FFFFFF]">
+        <div id={hiddenRenderer ? "hidden-printable-invoice" : "printable-invoice"} className={`flex-1 overflow-auto flex flex-col p-8 font-sans text-[#000000] print:p-6 bg-[#FFFFFF] ${hiddenRenderer ? 'min-h-[1123px]' : 'print:min-h-[275mm]'}`}>
           <div className="w-full flex flex-col items-center justify-center mb-3 print:pt-4 text-center">
             <div className="text-lg font-bold uppercase">NASA FRESH MART <span className="text-xs font-normal">(001634825-A)</span></div>
             <p className="mt-1 text-[12px]">NO 8G, JLN 3/2 PANDAN JAYA, 55100 KUALA LUMPUR.</p>

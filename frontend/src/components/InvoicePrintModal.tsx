@@ -67,7 +67,6 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
   const totalBirds = items.reduce((sum: number, item: any) => sum + (Number(item.noOfBirds) || 0), 0);
 
   const [pregeneratedBlob, setPregeneratedBlob] = useState<Blob | null>(null);
-  const [isPdfReady, setIsPdfReady] = useState(true);
 
   const generatePdf = async (): Promise<Blob> => {
     const element = document.getElementById('printable-invoice');
@@ -223,9 +222,9 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
             <span>Invoice - {invoiceNo}</span>
           </div>
           <div className="flex items-center gap-3">
-            <button type="button" onClick={handleShare} disabled={isSharing || !isPdfReady} className="bg-[#25D366] hover:bg-[#1EBE55] disabled:opacity-70 text-white px-3 py-1 rounded flex items-center gap-1 text-[12px] font-bold transition-colors">
-              {(!isPdfReady || isSharing) ? <Loader2 size={14} className="animate-spin" /> : <Share2 size={14} />}
-              {!isPdfReady ? 'Preparing...' : isSharing ? 'Sharing...' : 'Share Invoice'}
+            <button type="button" onClick={handleShare} disabled={isSharing} className="bg-[#25D366] hover:bg-[#1EBE55] disabled:opacity-70 text-white px-3 py-1 rounded flex items-center gap-1 text-[12px] font-bold transition-colors">
+              {isSharing ? <Loader2 size={14} className="animate-spin" /> : <Share2 size={14} />}
+              {isSharing ? 'Sharing...' : 'Share Invoice'}
             </button>
             <button type="button" onClick={handlePrint} className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded flex items-center gap-1 text-[12px] font-bold transition-colors">
               <Printer size={14} /> Print
@@ -352,11 +351,11 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
           <button 
             type="button"
             onClick={handleShare}
-            disabled={isSharing || !isPdfReady}
+            disabled={isSharing}
             className="flex items-center gap-2 bg-[#25D366] hover:bg-[#1DA851] disabled:opacity-70 text-white font-bold py-2 px-4 rounded transition-colors shadow-sm"
           >
-            {(!isPdfReady || isSharing) ? <Loader2 size={16} className="animate-spin" /> : <Share2 size={16} />}
-            {!isPdfReady ? 'Preparing PDF...' : isSharing ? 'Sharing...' : 'Share Invoice'}
+            {isSharing ? <Loader2 size={16} className="animate-spin" /> : <Share2 size={16} />}
+            {isSharing ? 'Sharing...' : 'Share Invoice'}
           </button>
           
           <div className="flex gap-2">

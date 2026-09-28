@@ -71,10 +71,22 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
     const element = document.getElementById('printable-invoice');
     if (!element) throw new Error('Invoice element not found');
 
-    // Clone the element so the visible modal is NEVER touched
-    const clone = element.cloneNode(true) as HTMLElement;
-    clone.style.cssText = `position:fixed;top:100vh;left:0;width:794px;height:1100px;overflow:visible;flex:none;pointer-events:none;z-index:-1;background:#fff;`;
-    document.body.appendChild(clone);
+    const parent = element.parentElement;
+    const grandParent = parent?.parentElement;
+
+    const prevEl = { overflow: element.style.overflow, height: element.style.height, flex: element.style.flex };
+    const prevPar = parent ? { height: parent.style.height, maxHeight: parent.style.maxHeight, overflow: parent.style.overflow } : null;
+    // Hide entire modal visually - layout changes happen but user sees nothing
+    if (grandParent) grandParent.style.visibility = 'hidden';
+
+    element.style.overflow = 'visible';
+    element.style.height = '1100px';
+    element.style.flex = 'none';
+    if (parent && prevPar) {
+      parent.style.height = 'auto';
+      parent.style.maxHeight = 'none';
+      parent.style.overflow = 'visible';
+    }
 
     try {
       const worker = html2pdf().set({
@@ -83,11 +95,19 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
         image: { type: 'jpeg', quality: 0.98 },
         html2canvas: { scale: 2, useCORS: true, logging: false, scrollY: 0, windowWidth: 794 },
         jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-      }).from(clone);
+      }).from(element);
       const pdf = await worker.toPdf().get('pdf');
       return pdf.output('blob');
     } finally {
-      document.body.removeChild(clone);
+      element.style.overflow = prevEl.overflow;
+      element.style.height = prevEl.height;
+      element.style.flex = prevEl.flex;
+      if (parent && prevPar) {
+        parent.style.height = prevPar.height;
+        parent.style.maxHeight = prevPar.maxHeight;
+        parent.style.overflow = prevPar.overflow;
+      }
+      if (grandParent) grandParent.style.visibility = '';
     }
   };
 

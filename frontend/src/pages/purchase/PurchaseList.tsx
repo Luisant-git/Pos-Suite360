@@ -176,7 +176,7 @@ const PurchaseList = () => {
                     <td className="px-3 py-2.5 border-r border-[#E5E7EB] text-center">
                       <span className={`px-2 py-0.5 rounded text-[11px] font-bold tracking-wide ${
                         purchase.paymentMode?.name === 'Cash' ? 'bg-[#06B6D4] text-white' : 
-                        purchase.paymentMode?.name === 'Credit' ? 'bg-rose-500 text-white' :
+                        purchase.paymentMode?.name === 'Credit' ? 'bg-[#22C55E] text-white' :
                         'bg-[#22C55E] text-white'
                       }`}>
                         {purchase.paymentMode?.name?.toUpperCase() || 'PAID'}

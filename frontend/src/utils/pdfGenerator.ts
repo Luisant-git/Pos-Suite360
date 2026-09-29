@@ -189,16 +189,18 @@ export const generateBillByBillPdf = (companyName: string, entityName: string, e
       if (data.section === 'body') {
         if (data.row.index === body.length - 1) { // Total row
           data.cell.styles.fontStyle = 'bold';
-          data.cell.styles.fillColor = [245, 245, 245];
-        }
-        if (entityType === 'Customer') {
-          if (data.column.index === 3) data.cell.styles.textColor = [225, 29, 72]; // Rose-600
-          if (data.column.index === 4) data.cell.styles.textColor = [16, 185, 129]; // Emerald-500
-          if (data.column.index === 5) data.cell.styles.textColor = [5, 150, 105]; // Emerald-600
+          data.cell.styles.fillColor = [226, 232, 240]; // Slate 200 for highlight
+          data.cell.styles.textColor = [0, 0, 0]; // Explicitly black
         } else {
-          if (data.column.index === 3) data.cell.styles.textColor = [16, 185, 129]; // Emerald-500
-          if (data.column.index === 4) data.cell.styles.textColor = [16, 185, 129]; // Emerald-500
-          if (data.column.index === 5) data.cell.styles.textColor = [225, 29, 72]; // Rose-600
+          if (entityType === 'Customer') {
+            if (data.column.index === 3) data.cell.styles.textColor = [225, 29, 72]; // Rose-600
+            if (data.column.index === 4) data.cell.styles.textColor = [16, 185, 129]; // Emerald-500
+            if (data.column.index === 5) data.cell.styles.textColor = [5, 150, 105]; // Emerald-600
+          } else {
+            if (data.column.index === 3) data.cell.styles.textColor = [16, 185, 129]; // Emerald-500
+            if (data.column.index === 4) data.cell.styles.textColor = [16, 185, 129]; // Emerald-500
+            if (data.column.index === 5) data.cell.styles.textColor = [225, 29, 72]; // Rose-600
+          }
         }
       }
       if (data.section === 'head') {

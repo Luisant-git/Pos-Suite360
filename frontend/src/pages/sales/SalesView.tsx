@@ -125,7 +125,7 @@ const SalesView = () => {
             <div className="flex gap-2 items-center text-[13px] text-black font-bold mt-1">
               <span>{new Date(sale.date).toISOString().split('T')[0]}</span>
               <span>•</span>
-              <span className={`flex items-center gap-1 font-bold px-2 py-0.5 rounded ${sale.paymentMode?.name === 'Credit' ? 'text-rose-800 bg-rose-100' : 'text-emerald-600 bg-emerald-100'}`}>
+              <span className="flex items-center gap-1 font-bold px-2 py-0.5 rounded text-emerald-600 bg-emerald-100">
                 {sale.paymentMode?.name === 'Credit' ? 'CREDIT' : <><CheckCircle2 size={12} /> PAID</>}
               </span>
             </div>

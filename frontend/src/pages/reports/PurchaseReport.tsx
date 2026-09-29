@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Search, FileText, Download, Calendar, FileDigit, Truck, CreditCard, RotateCcw, Plus, Eye , X} from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { Search, FileText, Download, Calendar, FileDigit, Truck, CreditCard, RotateCcw, Eye , X} from 'lucide-react';
 import { useSettings } from '../../contexts/SettingsContext';
 import api from '../../services/api';
 import ReportTabs from '../../components/ReportTabs';
@@ -13,7 +12,6 @@ import SearchableSelect from '../../components/SearchableSelect';
 import TableLoader from '../../components/TableLoader';
 
 const PurchaseReport = () => {
-  const navigate = useNavigate();
   const { formatCurrency, settings } = useSettings();
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [fromDate, setFromDate] = useState('');
@@ -394,4 +392,5 @@ const PurchaseReport = () => {
 };
 
 export default PurchaseReport;
+
 

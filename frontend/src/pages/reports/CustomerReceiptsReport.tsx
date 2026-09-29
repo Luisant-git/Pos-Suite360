@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Download, Users, FileText, RefreshCw, DollarSign, AlertCircle, CheckCircle2, Printer, Loader2 , X, X} from 'lucide-react';
+import { Download, Users, FileText, RefreshCw, DollarSign, AlertCircle, CheckCircle2, Printer, Loader2 , X} from 'lucide-react';
 import { exportTableToPdf, type PdfColumn } from '../../utils/exportPdf';
 import { exportToExcel } from '../../utils/exportExcel';
 import { useSettings } from '../../contexts/SettingsContext';
@@ -571,6 +571,7 @@ const CustomerReceiptsReport = () => {
 };
 
 export default CustomerReceiptsReport;
+
 
 
 

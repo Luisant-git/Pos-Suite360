@@ -96,17 +96,16 @@ const SalesReport = () => {
       <div className="print:hidden flex flex-col flex-1 overflow-hidden p-2">
         <ReportTabs />
 
-        {/* Mobile Quick Bar */}
-      <div className="md:hidden flex items-center gap-2 mb-2 shrink-0">
-        <input type="date" value={fromDate} onChange={(e) => setFromDate(e.target.value)} className="flex-1 min-w-0 px-2 py-1.5 border border-[#CBD5E1] rounded text-[12px] font-bold text-black" />
-        <input type="date" value={toDate} onChange={(e) => setToDate(e.target.value)} className="flex-1 min-w-0 px-2 py-1.5 border border-[#CBD5E1] rounded text-[12px] font-bold text-black" />
-        <div className="relative shrink-0">
-          <Search size={13} className="absolute left-2 top-2 text-gray-400" />
-          <input type="text" value={quickSearch} onChange={(e) => setQuickSearch(e.target.value)} placeholder="Search" className="pl-6 pr-2 py-1.5 border border-[#CBD5E1] rounded text-[12px] font-bold text-black w-24" />
+                {/* Mobile Quick Bar */}
+        <div className="md:hidden flex items-center justify-between gap-2 mb-2 shrink-0">
+          <div className="flex gap-2 flex-1">
+            <input type="date" value={fromDate} onChange={(e) => setFromDate(e.target.value)} className="w-1/2 px-2 py-1.5 border border-[#CBD5E1] rounded text-[12px] font-bold text-black" />
+            <input type="date" value={toDate} onChange={(e) => setToDate(e.target.value)} className="w-1/2 px-2 py-1.5 border border-[#CBD5E1] rounded text-[12px] font-bold text-black" />
+          </div>
+          <button onClick={() => setIsFilterOpen(true)} className="flex items-center gap-1 shrink-0 bg-[#1E3A8A] text-white px-3 py-1.5 rounded text-[12px] font-bold">
+            <Filter size={14} /> Filter
+          </button>
         </div>
-        <button type="button" onClick={() => { const exportData = filteredSales.map((s: any) => ({ 'Invoice No': s.invoiceNo, 'Date': s.date, 'Customer Name': s.customerName, 'Payment Mode': s.paymentMode, 'No. of Items': s.noOfItems, 'Total Amount': s.netPayable })); exportToExcel(exportData, `Sales_Report_${fromDate}_to_${toDate}`, { shopName: settings?.shopName || 'MY SHOP', title: 'Sales Report', totalCount: filteredSales.length }); }} className="shrink-0 bg-[#10B981] text-white p-1.5 rounded"><Download size={14} /></button>
-        <button onClick={() => setIsFilterOpen(true)} className="shrink-0 bg-[#1E3A8A] text-white p-1.5 rounded"><Filter size={14} /></button>
-      </div>
 
       {/* Filter Section */}
       <div className={`bg-white border border-[#E2E8F0] shadow-sm rounded-md mb-2 p-3 ${isFilterOpen ? 'fixed inset-0 z-[100] m-0 rounded-none overflow-y-auto' : 'hidden md:block'}`}>
@@ -442,6 +441,8 @@ const SalesReport = () => {
 };
 
 export default SalesReport;
+
+
 
 
 

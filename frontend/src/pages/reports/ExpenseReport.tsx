@@ -107,7 +107,7 @@ const ExpenseReport = () => {
     <div className="absolute inset-0 bg-[#F8FAFC] flex flex-col font-sans overflow-y-auto lg:overflow-hidden z-10 p-2 sm:p-4">
       <ReportTabs />
 
-            {/* Mobile Quick Bar */}
+      {/* Mobile Quick Bar */}
       <div className="md:hidden flex items-center justify-between gap-2 mb-2 shrink-0">
         <div className="flex gap-2 flex-1">
           <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} className="w-1/2 px-2 py-1.5 border border-[#CBD5E1] rounded text-[12px] font-bold text-black" />
@@ -134,7 +134,6 @@ const ExpenseReport = () => {
             <span>Total Expense: <strong className="text-[#EF4444]">{formatCurrency(totalExpenseAmount)}</strong></span>
           </div>
         </div>
-      </div>
 
       {/* Report Table Section */}
       <div className="bg-white border border-[#E2E8F0] shadow-sm rounded-md overflow-hidden flex flex-col flex-1">

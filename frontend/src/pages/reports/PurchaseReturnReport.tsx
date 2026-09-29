@@ -58,15 +58,16 @@ const PurchaseReturnReport = () => {
         <div className="bg-white border border-[#E6E9ED] shadow-sm rounded-sm flex flex-col flex-1 overflow-hidden">
           {/* Header */}
           <div className="bg-[#F8F9FA] border-b border-[#E6E9ED] px-4 py-3">
-            <div className="flex items-start md:items-center justify-between gap-2 text-[#F59E0B]">
+            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3 text-[#F59E0B]">
               <div className="flex items-center gap-2">
                 <CornerDownLeft size={18} className="shrink-0" />
                 <h2 className="font-bold text-[13px] md:text-[14px] uppercase tracking-wide">Purchase Returns Audit & History Report</h2>
               </div>
-              <div className="bg-[#FACC15] text-[#854D0E] font-bold text-[11px] px-3 py-1 rounded-sm shadow-sm shrink-0 whitespace-nowrap">
-                {returns.length} Returns
-              </div>
-              <button type="button"
+              <div className="flex flex-wrap items-center gap-2 w-full md:w-auto mt-2 md:mt-0">
+                <div className="bg-[#FACC15] text-[#854D0E] font-bold text-[11px] px-3 py-1.5 rounded shadow-sm shrink-0 whitespace-nowrap flex items-center h-[30px]">
+                  {returns.length} Returns
+                </div>
+                <button type="button"
                 onClick={() => {
                   const cols: PdfColumn[] = [
                     { header: 'S.No', dataKey: '_sno' },
@@ -126,12 +127,13 @@ const PurchaseReturnReport = () => {
               >
                 <Download size={13} /> <span className="hidden lg:inline">Export Excel</span>
               </button>
+              </div>
             </div>
           </div>
 
           {/* Filters */}
-          <div className="bg-white p-3 border-b border-[#E6E9ED] grid grid-cols-2 md:grid-cols-4 gap-3">
-            <div className="relative col-span-1 md:col-span-2">
+          <div className="bg-white p-3 border-b border-[#E6E9ED] flex flex-col md:flex-row gap-3">
+            <div className="relative flex-1">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <Search size={14} className="text-black font-bold" />
               </div>
@@ -143,7 +145,9 @@ const PurchaseReturnReport = () => {
                 className="w-full pl-9 pr-3 py-2 border border-[#E5E7EB] rounded text-[13px] outline-none focus:border-[#F59E0B]"
               />
             </div>
-            <div>
+            </div>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <div className="w-full sm:w-[130px]">
               <input
                 type="date"
                 value={filterFromDate}
@@ -151,17 +155,20 @@ const PurchaseReturnReport = () => {
                 className="w-full px-3 py-2 border border-[#E5E7EB] rounded text-[13px] outline-none focus:border-[#F59E0B]"
               />
             </div>
-            <div className="flex gap-2">
-              <input
-                type="date"
-                value={filterToDate}
-                onChange={(e) => setFilterToDate(e.target.value)}
-                className="w-full px-3 py-2 border border-[#E5E7EB] rounded text-[13px] outline-none focus:border-[#F59E0B]"
-              />
-              <button className="bg-[#F59E0B] text-white px-3 rounded flex items-center justify-center hover:bg-[#D97706] transition-colors">
-                <Filter size={14} />
-              </button>
-              <button 
+              </div>
+              <div className="w-full sm:w-[130px]">
+                <input
+                  type="date"
+                  value={filterToDate}
+                  onChange={(e) => setFilterToDate(e.target.value)}
+                  className="w-full px-3 py-2 border border-[#E5E7EB] rounded text-[13px] outline-none focus:border-[#F59E0B]"
+                />
+              </div>
+              <div className="flex gap-2 shrink-0">
+                <button className="bg-[#F59E0B] text-white px-3 py-2 rounded flex items-center justify-center hover:bg-[#D97706] transition-colors">
+                  <Filter size={14} />
+                </button>
+                <button 
                 type="button" 
                 onClick={() => {
                   setSearch('');
@@ -174,7 +181,7 @@ const PurchaseReturnReport = () => {
                 <RefreshCw size={14} className="mr-1" /> Reset
               </button>
             </div>
-            <div>
+            <div className="w-full sm:w-[110px]">
               <select
                 value={entriesPerPage}
                 onChange={(e) => {

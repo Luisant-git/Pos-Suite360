@@ -100,18 +100,7 @@ const ExpenseReport = () => {
     <div className="absolute inset-0 bg-[#F8FAFC] flex flex-col font-sans overflow-y-auto lg:overflow-hidden z-10 p-2 sm:p-4">
       <ReportTabs />
 
-      {/* Mobile Quick Bar */}
-      <div className="md:hidden flex items-center justify-between gap-2 mb-2 shrink-0">
-        <div className="flex gap-2 flex-1">
-          <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} className="w-1/2 px-2 py-1.5 border border-[#CBD5E1] rounded text-[12px] font-bold text-black" />
-          <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} className="w-1/2 px-2 py-1.5 border border-[#CBD5E1] rounded text-[12px] font-bold text-black" />
-        </div>
-        <button onClick={() => setIsFilterOpen(true)} className="flex items-center gap-1 shrink-0 bg-[#10B981] text-white px-3 py-1.5 rounded text-[12px] font-bold">
-          <Filter size={14} /> Filter
-        </button>
-      </div>
-
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center pt-2 border-t border-dashed border-[#E2E8F0] gap-3 md:gap-0">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center pt-2 border-t border-dashed border-[#E2E8F0] gap-3 md:gap-0">
           <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
             <button type="button" onClick={() => refetch()} className="bg-[#0F172A] hover:bg-[#1E293B] text-white px-4 py-1.5 rounded-md flex items-center gap-2 text-[13px] font-bold transition-colors">
               <Filter size={14} /> Apply Filter

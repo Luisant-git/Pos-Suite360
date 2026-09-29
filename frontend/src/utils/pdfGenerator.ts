@@ -167,8 +167,6 @@ export const generateBillByBillPdf = (entityName: string, entityType: 'Customer'
     Number(totals.pending).toFixed(2)
   ]);
 
-  const color = entityType === 'Customer' ? [16, 185, 129] : [225, 29, 72]; // Emerald for Customer, Rose for Supplier
-
   autoTable(doc, {
     startY: 35,
     head: head,

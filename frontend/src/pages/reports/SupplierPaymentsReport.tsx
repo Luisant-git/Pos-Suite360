@@ -16,6 +16,7 @@ const SupplierPaymentsReport = () => {
   const { formatCurrency, settings } = useSettings();
   const [reportMode, setReportMode] = useState<'consolidation' | 'history'>('consolidation');
 
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
@@ -355,8 +356,25 @@ const SupplierPaymentsReport = () => {
           </div>
         </div>
 
+                {/* Mobile Quick Bar (Date & Filter Toggle) */}
+        <div className="md:hidden flex items-center justify-between gap-2 pt-2 border-t border-dashed border-[#E2E8F0]">
+          <div className="flex gap-2 flex-1">
+            <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} className="w-1/2 px-2 py-1.5 border border-[#CBD5E1] rounded text-[12px] font-bold text-black bg-white" />
+            <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} className="w-1/2 px-2 py-1.5 border border-[#CBD5E1] rounded text-[12px] font-bold text-black bg-white" />
+          </div>
+          <button onClick={() => setIsFilterOpen(true)} className="flex items-center gap-1 bg-black text-white px-3 py-1.5 rounded text-[12px] font-bold shrink-0">
+             Filter
+          </button>
+        </div>
+
         {/* Filter Controls */}
-        <div className="grid grid-cols-2 md:flex flex-wrap md:flex-nowrap items-end gap-2 md:gap-3 pt-2 border-t border-dashed border-[#E2E8F0]">
+        <div className={`grid grid-cols-2 md:flex flex-wrap md:flex-nowrap items-end gap-2 md:gap-3 pt-2 md:border-t md:border-dashed md:border-[#E2E8F0] `}>
+          {isFilterOpen && (
+            <div className="flex justify-between items-center pb-3 border-b border-[#E2E8F0] mb-3 md:hidden w-full">
+              <h3 className="font-bold text-[15px] text-[#1E3A8A]">Advanced Filters</h3>
+              <button onClick={() => setIsFilterOpen(false)} className="p-1.5 bg-red-50 text-red-600 rounded-full font-bold px-3">Close</button>
+            </div>
+          )}
           <div className="col-span-2 md:col-span-1 md:flex-1 md:min-w-[200px]">
             <label className="block text-[12px] font-bold text-black mb-1 whitespace-nowrap">Search Supplier</label>
             <SearchableSelect
@@ -552,4 +570,5 @@ const SupplierPaymentsReport = () => {
 };
 
 export default SupplierPaymentsReport;
+
 

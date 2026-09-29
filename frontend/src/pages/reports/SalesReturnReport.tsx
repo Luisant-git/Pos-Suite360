@@ -20,6 +20,7 @@ const SalesReturnReport = () => {
     },
   });
 
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [search, setSearch] = useState('');
   const [filterFromDate, setFilterFromDate] = useState('');
   const [filterToDate, setFilterToDate] = useState('');
@@ -137,8 +138,26 @@ const SalesReturnReport = () => {
             </div>
           </div>
 
+          {/* Mobile Quick Bar (Date & Filter Toggle) */}
+          <div className="md:hidden flex items-center justify-between gap-2 p-2 bg-white border-b border-[#E6E9ED] shrink-0">
+            <div className="flex gap-2 flex-1">
+              <input type="date" value={filterFromDate} onChange={(e) => setFilterFromDate(e.target.value)} className="w-1/2 px-2 py-1.5 border border-[#CBD5E1] rounded text-[12px] font-bold text-black" />
+              <input type="date" value={filterToDate} onChange={(e) => setFilterToDate(e.target.value)} className="w-1/2 px-2 py-1.5 border border-[#CBD5E1] rounded text-[12px] font-bold text-black" />
+            </div>
+            <button onClick={() => setIsFilterOpen(true)} className="flex items-center gap-1 bg-[#EF4444] text-white px-3 py-1.5 rounded text-[12px] font-bold shrink-0">
+              <Filter size={14} /> Filter
+            </button>
+          </div>
+
           {/* Filters */}
-          <div className="bg-white p-3 border-b border-[#E6E9ED] flex flex-col md:flex-row gap-3">
+          <div className={`bg-white p-3 border-b border-[#E6E9ED] ${isFilterOpen ? 'fixed inset-0 z-[100] m-0 overflow-y-auto block' : 'hidden md:block'}`}>
+            {isFilterOpen && (
+              <div className="flex justify-between items-center pb-3 border-b border-[#E2E8F0] mb-3 md:hidden">
+                <h3 className="font-bold text-[15px] text-[#1E3A8A]">Advanced Filters</h3>
+                <button onClick={() => setIsFilterOpen(false)} className="p-1.5 bg-red-50 text-red-600 rounded-full"><i className="fa fa-times"></i></button>
+              </div>
+            )}
+            <div className="flex flex-col md:flex-row gap-3">
             <div className="relative flex-1">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <Search size={14} className="text-black font-bold" />
@@ -293,3 +312,4 @@ const SalesReturnReport = () => {
 };
 
 export default SalesReturnReport;
+

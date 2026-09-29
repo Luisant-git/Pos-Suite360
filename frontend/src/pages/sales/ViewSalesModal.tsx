@@ -85,7 +85,7 @@ export default function ViewSalesModal({ saleId, onClose }: Props) {
                   <div className="text-right">
                     <p className="text-[11px] font-bold text-black font-bold uppercase tracking-wide mb-1">Payment Details</p>
                     <p className="font-bold text-[14px] text-black font-bold">{sale.paymentMode?.name || 'CASH'}</p>
-                    <p className="text-[13px] text-black font-bold mt-1">Status: Paid</p>
+                    <p className="text-[13px] text-black font-bold mt-1">Status: {sale.paymentMode?.name === 'Credit' ? 'Credit' : 'Paid'}</p>
                   </div>
                 </div>
               </div>

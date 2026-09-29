@@ -292,8 +292,8 @@ const SupplierPaymentsReport = () => {
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2">
-            <div className="bg-gray-100 p-1 rounded-md flex items-center gap-1 border border-gray-200">
+          <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide w-full pb-1 -mx-2 px-2 sm:mx-0 sm:px-0">
+            <div className="bg-gray-100 p-1 rounded-md flex items-center gap-1 border border-gray-200 shrink-0">
               <button
                 type="button"
                 onClick={() => { setReportMode('consolidation'); setCurrentPage(1); }}
@@ -314,17 +314,11 @@ const SupplierPaymentsReport = () => {
               </button>
             </div>
 
-            <button
-              type="button"
-              onClick={handleExcelExport}
-              className="bg-[#10B981] hover:bg-[#059669] text-white px-3 py-1.5 rounded text-[12px] font-bold flex items-center gap-1.5 transition-colors"
+            <button type="button" onClick={handleExcelExport} className="bg-[#10B981] hover:bg-[#059669] text-white px-3 py-1.5 rounded text-[12px] font-bold flex items-center gap-1.5 transition-colors shrink-0"
             >
               <Download size={14} /> <span className="hidden lg:inline">Export Excel</span>
             </button>
-            <button
-              type="button"
-              onClick={handlePdfExport}
-              className="bg-[#EF4444] hover:bg-[#DC2626] text-white px-3 py-1.5 rounded text-[12px] font-bold flex items-center gap-1.5 transition-colors"
+            <button type="button" onClick={handlePdfExport} className="bg-[#EF4444] hover:bg-[#DC2626] text-white px-3 py-1.5 rounded text-[12px] font-bold flex items-center gap-1.5 transition-colors shrink-0"
             >
               <Download size={14} /> <span className="hidden lg:inline">Export PDF</span>
             </button>
@@ -368,7 +362,7 @@ const SupplierPaymentsReport = () => {
         </div>
 
         {/* Filter Controls */}
-        <div className={`grid grid-cols-2 md:flex flex-wrap md:flex-nowrap items-end gap-2 md:gap-3 pt-2 md:border-t md:border-dashed md:border-[#E2E8F0] `}>
+        <div className={` flex-wrap md:flex-nowrap items-end gap-2 md:gap-3 pt-2 md:border-t md:border-dashed md:border-[#E2E8F0] `}>
           {isFilterOpen && (
             <div className="flex justify-between items-center pb-3 border-b border-[#E2E8F0] mb-3 md:hidden w-full">
               <h3 className="font-bold text-[15px] text-[#1E3A8A]">Advanced Filters</h3>
@@ -570,6 +564,9 @@ const SupplierPaymentsReport = () => {
 };
 
 export default SupplierPaymentsReport;
+
+
+
 
 
 

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Download, Truck, FileText, RefreshCw, DollarSign, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { Download, Truck, FileText, RefreshCw, DollarSign, AlertCircle, CheckCircle2, Printer, Loader2 } from 'lucide-react';
 import { exportTableToPdf, type PdfColumn } from '../../utils/exportPdf';
 import { exportToExcel } from '../../utils/exportExcel';
 import { useSettings } from '../../contexts/SettingsContext';
@@ -9,6 +9,8 @@ import ReportTabs from '../../components/ReportTabs';
 import PaginationControls from '../../components/PaginationControls';
 import SearchableSelect from '../../components/SearchableSelect';
 import TableLoader from '../../components/TableLoader';
+import { generateBillByBillPdf } from '../../utils/pdfGenerator';
+import PdfViewerModal from '../../components/PdfViewerModal';
 
 const SupplierPaymentsReport = () => {
   const { formatCurrency, settings } = useSettings();
@@ -20,6 +22,10 @@ const SupplierPaymentsReport = () => {
 
   const [entriesPerPage, setEntriesPerPage] = useState(25);
   const [currentPage, setCurrentPage] = useState(1);
+
+  const [pdfModalOpen, setPdfModalOpen] = useState(false);
+  const [pdfUrl, setPdfUrl] = useState('');
+  const [printingId, setPrintingId] = useState<number | null>(null);
 
   // Fetch Consolidation Data
   const { data: consolidationData = [], isLoading: consolidationLoading } = useQuery({
@@ -240,6 +246,30 @@ const SupplierPaymentsReport = () => {
     }
   };
 
+  const handlePrintBreakdown = async (supplierId: number, supplierName: string) => {
+    if (!supplierId) return;
+    try {
+      setPrintingId(supplierId);
+      const res = await api.get(`/supplier-payments/unpaid-bills/${supplierId}`);
+      const unpaidBills = res.data;
+      const totals = unpaidBills.reduce((acc: any, bill: any) => {
+        acc.total += Number(bill.total || 0);
+        acc.returned += Number(bill.returned || 0);
+        acc.paid += Number(bill.paid || bill.received || 0);
+        acc.pending += Number(bill.pending || 0);
+        return acc;
+      }, { total: 0, returned: 0, paid: 0, pending: 0 });
+      const companyName = settings?.shopName || 'NJ FRESH AND FROZEN SDN BHD';
+      const url = generateBillByBillPdf(companyName, supplierName, 'Supplier', unpaidBills, totals) as unknown as string;
+      setPdfUrl(url);
+      setPdfModalOpen(true);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setPrintingId(null);
+    }
+  };
+
   return (
     <div className="absolute inset-0 bg-[#F8FAFC] flex flex-col font-sans overflow-hidden z-10 p-4">
       
@@ -426,7 +456,8 @@ const SupplierPaymentsReport = () => {
                     <th className="px-3 py-2.5 border-r border-[#1E293B] text-right">Total Purchases</th>
                     <th className="px-3 py-2.5 border-r border-[#1E293B] text-right">Total Paid</th>
                     <th className="px-3 py-2.5 border-r border-[#1E293B] text-right">Returns</th>
-                    <th className="px-3 py-2.5 text-right font-bold">Net Pending Payable</th>
+                    <th className="px-3 py-2.5 border-r border-[#1E293B] text-right font-bold">Net Pending Payable</th>
+                    <th className="px-3 py-2.5 text-center font-bold print:hidden">Action</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -444,8 +475,13 @@ const SupplierPaymentsReport = () => {
                         <td className="px-3 py-2.5 border-r border-[#E2E8F0] text-right font-bold text-[#1E3A8A]">{formatCurrency(s.totalPurchases)}</td>
                         <td className="px-3 py-2.5 border-r border-[#E2E8F0] text-right font-bold text-[#047857]">{formatCurrency(s.totalPayments)}</td>
                         <td className="px-3 py-2.5 border-r border-[#E2E8F0] text-right text-black font-bold">{formatCurrency(s.totalReturns)}</td>
-                        <td className={`px-3 py-2.5 text-right font-bold ${s.netPending > 0 ? 'text-[#EF4444]' : 'text-[#10B981]'}`}>
+                        <td className={`px-3 py-2.5 border-r border-[#E2E8F0] text-right font-bold ${s.netPending > 0 ? 'text-[#EF4444]' : 'text-[#10B981]'}`}>
                           {formatCurrency(s.netPending)}
+                        </td>
+                        <td className="px-3 py-2.5 text-center print:hidden">
+                          <button type="button" onClick={() => handlePrintBreakdown(s.supplierId, s.supplierName)} disabled={printingId === s.supplierId} className="text-[#3B82F6] hover:bg-blue-50 p-1.5 rounded disabled:opacity-50 transition-colors" title="Print Bill-by-Bill Breakdown">
+                            {printingId === s.supplierId ? <Loader2 size={16} className="animate-spin" /> : <Printer size={16} />}
+                          </button>
                         </td>
                       </tr>
                     ))
@@ -505,7 +541,12 @@ const SupplierPaymentsReport = () => {
           />
         )}
       </div>
-
+      <PdfViewerModal 
+        isOpen={pdfModalOpen} 
+        onClose={() => setPdfModalOpen(false)} 
+        pdfUrl={pdfUrl} 
+        title="PENDING BALANCE BILL BY BILL" 
+      />
     </div>
   );
 };

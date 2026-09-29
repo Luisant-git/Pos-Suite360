@@ -318,14 +318,14 @@ const SupplierPaymentsReport = () => {
               onClick={handleExcelExport}
               className="bg-[#10B981] hover:bg-[#059669] text-white px-3 py-1.5 rounded text-[12px] font-bold flex items-center gap-1.5 transition-colors"
             >
-              <Download size={14} /> Export Excel
+              <Download size={14} /> <span className="hidden lg:inline">Export Excel</span>
             </button>
             <button
               type="button"
               onClick={handlePdfExport}
               className="bg-[#EF4444] hover:bg-[#DC2626] text-white px-3 py-1.5 rounded text-[12px] font-bold flex items-center gap-1.5 transition-colors"
             >
-              <Download size={14} /> Export PDF
+              <Download size={14} /> <span className="hidden lg:inline">Export PDF</span>
             </button>
           </div>
         </div>

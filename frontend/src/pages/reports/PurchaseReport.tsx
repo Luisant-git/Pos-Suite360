@@ -273,7 +273,7 @@ const PurchaseReport = () => {
               }}
               className="bg-[#10B981] hover:bg-[#059669] text-white px-3 py-1.5 rounded flex items-center justify-center gap-1.5 text-[12px] font-bold whitespace-nowrap transition-colors"
             >
-              <Download size={14} /> Export Excel
+              <Download size={14} /> <span className="hidden lg:inline">Export Excel</span>
             </button>
             <button type="button"
               onClick={() => {
@@ -302,13 +302,13 @@ const PurchaseReport = () => {
               }}
               className="bg-[#EF4444] hover:bg-[#DC2626] text-white px-3 py-1.5 rounded flex items-center justify-center gap-1.5 text-[12px] font-bold whitespace-nowrap transition-colors"
             >
-              <Download size={14} /> Export PDF
+              <Download size={14} /> <span className="hidden lg:inline">Export PDF</span>
             </button>
             <button type="button" 
               onClick={() => navigate('/purchase/new')}
               className="text-black font-bold border border-[#CBD5E1] hover:bg-[#F9FAFB] px-3 py-1.5 rounded flex items-center justify-center gap-1.5 text-[12px] font-bold whitespace-nowrap transition-colors"
             >
-              <Plus size={14} /> New Purchase Entry
+              <Plus size={14} /> <span className="hidden lg:inline">New Purchase Entry</span>
             </button>
           </div>
         </div>

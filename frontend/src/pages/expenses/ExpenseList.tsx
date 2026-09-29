@@ -97,21 +97,21 @@ const ExpenseList = () => {
             to="/expenses/new" 
             className="bg-[#16A34A] hover:bg-[#15803D] text-white text-[13px] font-bold px-4 py-2 rounded flex items-center gap-1.5 transition-colors shadow-sm"
           >
-            <Plus size={16} /> NEW EXPENSE ENTRY
+            <Plus size={16} /> <span className="hidden lg:inline">NEW EXPENSE ENTRY</span>
           </Link>
           <button 
             type="button" 
             onClick={handleExcelExport}
             className="bg-[#10B981] hover:bg-[#059669] text-white text-[12px] font-bold px-3 py-2 rounded flex items-center gap-1.5 transition-colors shadow-sm"
           >
-            <Download size={14} /> Export Excel
+            <Download size={14} /> <span className="hidden lg:inline">Export Excel</span>
           </button>
           <button 
             type="button" 
             onClick={handlePdfExport}
             className="bg-[#EF4444] hover:bg-[#DC2626] text-white text-[12px] font-bold px-3 py-2 rounded flex items-center gap-1.5 transition-colors shadow-sm"
           >
-            <Download size={14} /> Export PDF
+            <Download size={14} /> <span className="hidden lg:inline">Export PDF</span>
           </button>
         </div>
       </div>

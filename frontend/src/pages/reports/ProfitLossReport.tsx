@@ -169,7 +169,7 @@ const ProfitLossReport = () => {
             onClick={exportToCsv}
             className="bg-white border border-[#D1D5DB] hover:bg-[#F9FAFB] text-green-700 px-3 py-1.5 rounded flex items-center justify-center gap-1 font-bold text-[12px] whitespace-nowrap transition-colors shadow-sm"
           >
-            <Download size={14} /> Export CSV
+            <Download size={14} /> <span className="hidden lg:inline">Export CSV</span>
           </button>
           <button
             onClick={() => {
@@ -198,7 +198,7 @@ const ProfitLossReport = () => {
             }}
             className="bg-[#EF4444] hover:bg-[#DC2626] text-white px-3 py-1.5 rounded flex items-center justify-center gap-1 font-bold text-[12px] whitespace-nowrap transition-colors shadow-sm"
           >
-            <Download size={14} /> Export PDF
+            <Download size={14} /> <span className="hidden lg:inline">Export PDF</span>
           </button>
           <button className="bg-white border border-[#D1D5DB] hover:bg-[#F9FAFB] text-black font-bold px-3 py-1.5 rounded flex items-center justify-center gap-1 font-bold text-[12px] whitespace-nowrap transition-colors shadow-sm" onClick={() => window.print()}>
             <Printer size={14} /> Print

@@ -96,7 +96,7 @@ const PurchaseReturnReport = () => {
                 }}
                 className="bg-[#EF4444] hover:bg-[#DC2626] text-white px-3 py-1 rounded flex items-center justify-center gap-1.5 text-[12px] font-bold whitespace-nowrap transition-colors shrink-0"
               >
-                <Download size={13} /> Export PDF
+                <Download size={13} /> <span className="hidden lg:inline">Export PDF</span>
               </button>
               <button type="button"
                 onClick={() => {
@@ -124,7 +124,7 @@ const PurchaseReturnReport = () => {
                 }}
                 className="bg-[#10B981] hover:bg-[#059669] text-white px-3 py-1 rounded flex items-center justify-center gap-1.5 text-[12px] font-bold whitespace-nowrap transition-colors shrink-0 ml-2"
               >
-                <Download size={13} /> Export Excel
+                <Download size={13} /> <span className="hidden lg:inline">Export Excel</span>
               </button>
             </div>
           </div>

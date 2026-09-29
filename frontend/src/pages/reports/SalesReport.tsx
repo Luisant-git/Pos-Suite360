@@ -271,7 +271,7 @@ const SalesReport = () => {
               }}
               className="bg-[#10B981] hover:bg-[#059669] text-white px-3 py-1.5 rounded flex items-center gap-1.5 text-[12px] font-bold transition-colors"
             >
-              <Download size={14} /> Export Excel
+              <Download size={14} /> <span className="hidden lg:inline">Export Excel</span>
             </button>
             <button type="button"
               onClick={() => {
@@ -297,13 +297,13 @@ const SalesReport = () => {
               }}
               className="bg-[#EF4444] hover:bg-[#DC2626] text-white px-3 py-1.5 rounded flex items-center gap-1.5 text-[12px] font-bold transition-colors"
             >
-              <Download size={14} /> Export PDF
+              <Download size={14} /> <span className="hidden lg:inline">Export PDF</span>
             </button>
             <button type="button" 
               onClick={() => navigate('/sales/pos')}
               className="bg-[#1E3A8A] hover:bg-[#172554] text-white px-3 py-1.5 rounded flex items-center gap-1.5 text-[12px] font-bold transition-colors"
             >
-              <Plus size={14} /> New POS Bill
+              <Plus size={14} /> <span className="hidden lg:inline">New POS Bill</span>
             </button>
           </div>
         </div>

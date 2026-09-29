@@ -158,14 +158,14 @@ const ExpenseEntry = () => {
             onClick={handleExcelExport}
             className="bg-[#10B981] hover:bg-[#059669] text-white text-[12px] font-bold px-3 py-1.5 rounded flex items-center gap-1.5 transition-colors shadow-sm"
           >
-            <Download size={14} /> Export Excel
+            <Download size={14} /> <span className="hidden lg:inline">Export Excel</span>
           </button>
           <button 
             type="button" 
             onClick={handlePdfExport}
             className="bg-[#EF4444] hover:bg-[#DC2626] text-white text-[12px] font-bold px-3 py-1.5 rounded flex items-center gap-1.5 transition-colors shadow-sm"
           >
-            <Download size={14} /> Export PDF
+            <Download size={14} /> <span className="hidden lg:inline">Export PDF</span>
           </button>
           <Link to="/dashboard" className="bg-red-500 hover:bg-red-600 text-white py-1.5 px-3 rounded text-[12px] font-bold flex items-center gap-1.5 shadow-sm">
             <X size={14} /> Close (Esc)

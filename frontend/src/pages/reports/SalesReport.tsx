@@ -56,14 +56,12 @@ const SalesReport = () => {
         } 
       });
       return data.map((s: any) => {
-        const totalBirds = s.items?.reduce((sum: number, item: any) => sum + (Number(item.noOfBirds) || 0), 0) || 0;
         return {
           id: s.id,
           invoiceNo: s.invoiceNo,
           date: new Date(s.date).toISOString().split('T')[0],
           customerName: s.customer?.name || 'Walk-in',
           paymentMode: s.paymentMode?.name || 'Cash',
-          totalBirds,
           noOfItems: s.items?.length || 0,
           netPayable: formatCurrency(s.grandTotal || 0),
           rawTotalAmount: s.grandTotal || 0,
@@ -251,7 +249,6 @@ const SalesReport = () => {
                   'Customer Name': s.customerName,
                   'Payment Mode': s.paymentMode,
                   'No. of Items': s.noOfItems,
-                  'Total Birds': s.totalBirds,
                   'Total Amount': s.netPayable
                 }));
                 exportData.push({
@@ -259,8 +256,7 @@ const SalesReport = () => {
                   'Date': '',
                   'Customer Name': '',
                   'Payment Mode': '',
-                  'No. of Items': '',
-                  'Total Birds': 'TOTAL AMOUNT:',
+                  'No. of Items': 'TOTAL AMOUNT:',
                   'Total Amount': formatCurrency(totalSalesAmount)
                 });
                 exportToExcel(exportData, `Sales_Report_${fromDate}_to_${toDate}`, {
@@ -281,7 +277,6 @@ const SalesReport = () => {
                   { header: 'Customer Name', dataKey: 'customerName' },
                   { header: 'Payment Mode', dataKey: 'paymentMode' },
                   { header: 'No. of Items', dataKey: 'noOfItems' },
-                  { header: 'Total Birds', dataKey: 'totalBirds' },
                   { header: 'Total Amount', dataKey: 'netPayable' },
                 ];
                 const pdfData = [...filteredSales, {
@@ -289,8 +284,7 @@ const SalesReport = () => {
                   date: '',
                   customerName: '',
                   paymentMode: '',
-                  noOfItems: '',
-                  totalBirds: 'TOTAL AMOUNT:',
+                  noOfItems: 'TOTAL AMOUNT:',
                   netPayable: formatCurrency(totalSalesAmount)
                 }];
                 exportTableToPdf(cols, pdfData, `Sales_Report_${fromDate}_to_${toDate}`, 'Sales Report', settings?.shopName, filteredSales.length);
@@ -298,12 +292,6 @@ const SalesReport = () => {
               className="bg-[#EF4444] hover:bg-[#DC2626] text-white px-3 py-1.5 rounded flex items-center gap-1.5 text-[12px] font-bold transition-colors"
             >
               <Download size={14} /> <span className="hidden lg:inline">Export PDF</span>
-            </button>
-            <button type="button" 
-              onClick={() => navigate('/sales/pos')}
-              className="bg-[#1E3A8A] hover:bg-[#172554] text-white px-3 py-1.5 rounded flex items-center gap-1.5 text-[12px] font-bold transition-colors"
-            >
-              <Plus size={14} /> <span className="hidden lg:inline">New POS Bill</span>
             </button>
           </div>
         </div>
@@ -325,7 +313,6 @@ const SalesReport = () => {
                 <th className="px-4 py-3 border-r border-[#1E293B]">Customer Name</th>
                 <th className="px-4 py-3 border-r border-[#1E293B] text-center">Payment Mode</th>
                 <th className="px-4 py-3 border-r border-[#1E293B] text-center">No. of Items</th>
-                <th className="px-4 py-3 border-r border-[#1E293B] text-center">Total Birds</th>
                 <th className="px-4 py-3 border-r border-[#1E293B] text-center">Total Amount</th>
                 <th data-html2canvas-ignore="true" className="px-4 py-3 text-center w-40">Action</th>
               </tr>
@@ -351,8 +338,7 @@ const SalesReport = () => {
                       </div>
                     </td>
                     <td className="px-4 py-3 border-r border-[#E2E8F0] text-center font-bold text-black font-bold">{s.noOfItems}</td>
-                    <td className="px-4 py-3 border-r border-[#E2E8F0] text-center font-bold">{s.totalBirds > 0 ? s.totalBirds : '-'}</td>
-                    <td className="px-4 py-3 border-r border-[#E2E8F0] text-center font-bold text-[#3B82F6]">{s.netPayable}</td>
+                                        <td className="px-4 py-3 border-r border-[#E2E8F0] text-center font-bold text-[#3B82F6]">{s.netPayable}</td>
                     <td data-html2canvas-ignore="true" className="px-4 py-3 text-center">
                       <div className="flex justify-center items-center gap-2">
                         <button type="button" 

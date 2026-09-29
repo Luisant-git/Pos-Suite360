@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Download, FileText, Filter, RefreshCw } from 'lucide-react';
+import { Download, FileText, Filter, RefreshCw, X } from 'lucide-react';
 import { exportTableToPdf, type PdfColumn } from '../../utils/exportPdf';
 import { exportToExcel } from '../../utils/exportExcel';
 import { useSettings } from '../../contexts/SettingsContext';
@@ -20,6 +20,7 @@ const ExpenseReport = () => {
   });
   const [endDate, setEndDate] = useState(() => new Date().toISOString().split('T')[0]);
   const [categoryId, setCategoryId] = useState('');
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
   const [entriesPerPage, setEntriesPerPage] = useState(25);
@@ -128,8 +129,25 @@ const ExpenseReport = () => {
       
       <ReportTabs />
 
+            {/* Mobile Quick Bar (Date, Search & Filter Toggle) */}
+      <div className="md:hidden flex items-center justify-between gap-2 p-2 bg-white border border-[#E2E8F0] shadow-sm rounded-md mb-2 shrink-0">
+        <div className="flex gap-2 flex-1">
+          <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} className="w-1/2 px-2 py-1.5 border border-[#CBD5E1] rounded text-[12px] font-bold text-black" />
+          <input type="text" placeholder="Search..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="w-1/2 px-2 py-1.5 border border-[#CBD5E1] rounded text-[12px] font-bold text-black" />
+        </div>
+        <button onClick={() => setIsFilterOpen(true)} className="flex items-center gap-1 bg-[#10B981] text-white px-3 py-1.5 rounded text-[12px] font-bold shrink-0">
+          <Filter size={14} /> Filter
+        </button>
+      </div>
+
       {/* Filter Section */}
-      <div className="bg-white border border-[#E2E8F0] shadow-sm rounded-md mb-2 p-2 sm:p-3 sm:mb-3 shrink-0">
+      <div className={g-white border border-[#E2E8F0] shadow-sm rounded-md mb-2 p-3 sm:mb-3 shrink-0 }>
+        {isFilterOpen && (
+          <div className="flex justify-between items-center pb-3 border-b border-[#E2E8F0] mb-3 md:hidden">
+            <h3 className="font-bold text-[15px] text-[#1E3A8A]">Advanced Filters</h3>
+            <button onClick={() => setIsFilterOpen(false)} className="p-1.5 bg-red-50 text-red-600 rounded-full"><X size={16} /></button>
+          </div>
+        )}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2 sm:gap-3 items-end mb-2 sm:mb-3">
           <div>
             <label className="flex items-center gap-1 text-[12px] text-black font-bold mb-1 font-bold">From Date</label>
@@ -304,3 +322,4 @@ const ExpenseReport = () => {
 };
 
 export default ExpenseReport;
+

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Search, FileText, Download, Calendar, FileDigit, Truck, CreditCard, RotateCcw, Plus, Eye } from 'lucide-react';
+import { Search, FileText, Download, Calendar, FileDigit, Truck, CreditCard, RotateCcw, Plus, Eye , X} from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useSettings } from '../../contexts/SettingsContext';
 import api from '../../services/api';
@@ -112,7 +112,7 @@ const PurchaseReport = () => {
         {isFilterOpen && (
           <div className="flex justify-between items-center pb-3 border-b border-[#E2E8F0] mb-3 md:hidden">
             <h3 className="font-bold text-[15px] text-[#1E3A8A]">Advanced Filters</h3>
-            <button onClick={() => setIsFilterOpen(false)} className="p-1.5 bg-red-50 text-red-600 rounded-full"><i className="fa fa-times"></i></button>
+            <button onClick={() => setIsFilterOpen(false)} className="p-1.5 bg-red-50 text-red-600 rounded-full"><X size={16} /></button>
           </div>
         )}
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-2 sm:gap-3 items-end mb-2 sm:mb-3">
@@ -394,3 +394,4 @@ const PurchaseReport = () => {
 };
 
 export default PurchaseReport;
+

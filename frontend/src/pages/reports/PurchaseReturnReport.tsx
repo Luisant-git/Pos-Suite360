@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { CornerDownLeft, Package, Search, Filter, Download, RefreshCw } from 'lucide-react';
+import { CornerDownLeft, Package, Search, Filter, Download, RefreshCw , X} from 'lucide-react';
 import api from '../../services/api';
 import ReportTabs from '../../components/ReportTabs';
 import { useSettings } from '../../contexts/SettingsContext';
@@ -148,7 +148,7 @@ const PurchaseReturnReport = () => {
             {isFilterOpen && (
               <div className="flex justify-between items-center pb-3 border-b border-[#E2E8F0] mb-3 md:hidden">
                 <h3 className="font-bold text-[15px] text-[#1E3A8A]">Advanced Filters</h3>
-                <button onClick={() => setIsFilterOpen(false)} className="p-1.5 bg-red-50 text-red-600 rounded-full"><i className="fa fa-times"></i></button>
+                <button onClick={() => setIsFilterOpen(false)} className="p-1.5 bg-red-50 text-red-600 rounded-full"><X size={16} /></button>
               </div>
             )}
             <div className="flex flex-col md:flex-row gap-3">
@@ -302,4 +302,5 @@ const PurchaseReturnReport = () => {
 };
 
 export default PurchaseReturnReport;
+
 

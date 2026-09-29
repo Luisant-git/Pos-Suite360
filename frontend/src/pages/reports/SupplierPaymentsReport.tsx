@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Download, Truck, FileText, RefreshCw, DollarSign, AlertCircle, CheckCircle2, Printer, Loader2 } from 'lucide-react';
+import { Download, Truck, FileText, RefreshCw, DollarSign, AlertCircle, CheckCircle2, Printer, Loader2 , X, X} from 'lucide-react';
 import { exportTableToPdf, type PdfColumn } from '../../utils/exportPdf';
 import { exportToExcel } from '../../utils/exportExcel';
 import { useSettings } from '../../contexts/SettingsContext';
@@ -285,10 +285,10 @@ const SupplierPaymentsReport = () => {
               <Truck size={20} />
             </div>
             <div>
-              <h1 className="font-bold text-[16px] text-[#0F172A] uppercase tracking-wide">
+              <h1 className="font-bold text-[14px] md:text-[16px] text-[#0F172A] uppercase tracking-wide truncate max-w-[230px] md:max-w-none">
                 SUPPLIER PAYMENTS & OVERALL PAYABLES CONSOLIDATION REPORT
               </h1>
-              <p className="text-xs text-black font-bold">Complete overview of supplier pending payables, total payments, and ledger balances</p>
+              <p className="text-xs text-black font-bold hidden md:block">Complete overview of supplier pending payables, total payments, and ledger balances</p>
             </div>
           </div>
 
@@ -372,7 +372,7 @@ const SupplierPaymentsReport = () => {
           {isFilterOpen && (
             <div className="flex justify-between items-center pb-3 border-b border-[#E2E8F0] mb-3 md:hidden w-full">
               <h3 className="font-bold text-[15px] text-[#1E3A8A]">Advanced Filters</h3>
-              <button onClick={() => setIsFilterOpen(false)} className="p-1.5 bg-red-50 text-red-600 rounded-full font-bold px-3">Close</button>
+              <button onClick={() => setIsFilterOpen(false)} className="p-1.5 bg-red-50 text-red-600 rounded-full"><X size={16} /></button>
             </div>
           )}
           <div className="col-span-2 md:col-span-1 md:flex-1 md:min-w-[200px]">
@@ -570,5 +570,8 @@ const SupplierPaymentsReport = () => {
 };
 
 export default SupplierPaymentsReport;
+
+
+
 
 

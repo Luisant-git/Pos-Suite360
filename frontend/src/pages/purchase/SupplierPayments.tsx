@@ -12,6 +12,7 @@ import * as XLSX from 'xlsx';
 import api from '../../services/api';
 import { useSettings } from '../../contexts/SettingsContext';
 import { generateBillByBillPdf } from '../../utils/pdfGenerator';
+import PdfViewerModal from '../../components/PdfViewerModal';
 
 const paymentSchema = z.object({
   paymentNo: z.string(),
@@ -41,6 +42,10 @@ const SupplierPayments = () => {
   const [billFilter, setBillFilter] = useState<'Unpaid' | 'Paid' | 'All'>('Unpaid');
   const [allocations, setAllocations] = useState<Record<string, number>>({});
   const [editingId, setEditingId] = useState<number | null>(null);
+
+  // PDF Modal State
+  const [pdfModalOpen, setPdfModalOpen] = useState(false);
+  const [pdfUrl, setPdfUrl] = useState('');
 
   // Pagination for History
   const [currentPage, setCurrentPage] = useState(1);
@@ -367,7 +372,9 @@ const SupplierPayments = () => {
                               return acc;
                             }, { total: 0, returned: 0, paid: 0, pending: 0 });
                             const supplier = suppliers.find((s: any) => s.id === selectedSupplierId);
-                            generateBillByBillPdf(supplier?.name || 'Unknown', 'Supplier', displayedBills, totals);
+                            const url = generateBillByBillPdf(supplier?.name || 'Unknown', 'Supplier', displayedBills, totals) as unknown as string;
+                            setPdfUrl(url);
+                            setPdfModalOpen(true);
                           }}
                           className="bg-white text-[#E11D48] hover:bg-gray-100 p-1 rounded transition-colors"
                           title="Print Breakdown"
@@ -703,6 +710,12 @@ const SupplierPayments = () => {
           </div>
         </div>
       </div>
+      <PdfViewerModal 
+        isOpen={pdfModalOpen} 
+        onClose={() => setPdfModalOpen(false)} 
+        pdfUrl={pdfUrl} 
+        title="Bill-by-Bill Breakdown" 
+      />
     </div>
   );
 };

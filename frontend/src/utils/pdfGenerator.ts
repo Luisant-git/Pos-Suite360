@@ -174,7 +174,7 @@ export const generateBillByBillPdf = (entityName: string, entityType: 'Customer'
     head: head,
     body: body,
     theme: 'grid',
-    headStyles: { fillColor: color as [number, number, number], fontStyle: 'bold' },
+    headStyles: { fillColor: [248, 250, 252], textColor: 0, fontStyle: 'bold' },
     styles: { fontSize: 9, cellPadding: 2 },
     columnStyles: {
       0: { fontStyle: 'bold' },
@@ -191,5 +191,5 @@ export const generateBillByBillPdf = (entityName: string, entityType: 'Customer'
     }
   });
 
-  window.open(doc.output('bloburl'));
+  return doc.output('bloburl');
 };

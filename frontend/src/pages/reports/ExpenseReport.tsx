@@ -1,13 +1,12 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Download, FileText, Filter, RefreshCw, X, Search } from 'lucide-react';
+import { Download, FileText, Filter, RefreshCw, Search } from 'lucide-react';
 import { exportTableToPdf, type PdfColumn } from '../../utils/exportPdf';
 import { exportToExcel } from '../../utils/exportExcel';
 import { useSettings } from '../../contexts/SettingsContext';
 import api from '../../services/api';
 import ReportTabs from '../../components/ReportTabs';
 import PaginationControls from '../../components/PaginationControls';
-import SearchableSelect from '../../components/SearchableSelect';
 import TableLoader from '../../components/TableLoader';
 
 const ExpenseReport = () => {
@@ -20,15 +19,9 @@ const ExpenseReport = () => {
   });
   const [endDate, setEndDate] = useState(() => new Date().toISOString().split('T')[0]);
   const [categoryId, setCategoryId] = useState('');
-  const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [entriesPerPage, setEntriesPerPage] = useState(25);
+  const [entriesPerPage] = useState(25);
   const [currentPage, setCurrentPage] = useState(1);
-
-  const { data: categories = [] } = useQuery({
-    queryKey: ['expenseCategories'],
-    queryFn: async () => (await api.get('/expense-categories')).data
-  });
 
   const { data: expenses = [], isLoading, refetch } = useQuery({
     queryKey: ['expensesReport', startDate, endDate, categoryId, searchQuery],

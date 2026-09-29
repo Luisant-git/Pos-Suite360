@@ -93,13 +93,13 @@ const SalesReport = () => {
   const isReset = !fromDate && !toDate && !customerId && !invoiceNo && !paymentMode && !quickSearch;
 
   return (
-    <div className="absolute inset-0 bg-[#F8FAFC] flex flex-col font-sans overflow-hidden z-10">
+    <div className="absolute inset-0 bg-[#F8FAFC] flex flex-col font-sans overflow-y-auto lg:overflow-hidden z-10">
       <div className="print:hidden flex flex-col flex-1 overflow-hidden p-2">
         <ReportTabs />
 
         {/* Filter Section */}
       <div className="bg-white border border-[#E2E8F0] shadow-sm rounded-md mb-2 p-3">
-        <div className="grid grid-cols-1 md:grid-cols-6 gap-3 items-end mb-3">
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3 items-end mb-2 sm:mb-3">
           
           <div>
             <label className="flex items-center gap-1 text-[12px] text-black font-bold mb-1 font-bold"><Calendar size={12} /> From Date</label>
@@ -208,7 +208,7 @@ const SalesReport = () => {
       </div>
 
       {/* Report Table Section */}
-      <div className="bg-white border border-[#E2E8F0] shadow-sm rounded-md overflow-hidden flex flex-col flex-1 min-h-0">
+      <div className="bg-white border border-[#E2E8F0] shadow-sm rounded-md overflow-hidden flex flex-col flex-1 min-h-[500px] lg:min-h-0">
         <div className="bg-[#F8FAFC] border-b border-[#E2E8F0] px-4 py-3 flex flex-col md:flex-row justify-between items-start md:items-center gap-3 md:gap-0">
           <div className="flex items-center gap-2 text-[#3B82F6]">
             <FileText size={16} />
@@ -410,7 +410,7 @@ const SalesReport = () => {
             <span className="opacity-70 border-r border-[#67E8F9] pr-1 mr-1">Esc</span> Dashboard
           </button>
         </div>
-        <div className="flex items-center gap-2 md:gap-4 flex-wrap justify-end">
+        <div className="flex items-center gap-2 md:gap-2 sm:gap-3 flex-wrap justify-end">
           <span className="text-[13px] md:text-[16px] font-bold text-white uppercase tracking-wide">TOTAL AMOUNT:</span>
           <span className="text-[20px] md:text-[28px] font-bold text-[#38BDF8]">{formatCurrency(totalSalesAmount)}</span>
         </div>

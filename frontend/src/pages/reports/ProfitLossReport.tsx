@@ -124,7 +124,7 @@ const ProfitLossReport = () => {
 
       {/* Toolbar */}
       <div className="bg-white p-2 md:p-3 rounded shadow-sm border border-[#E5E7EB] flex flex-col lg:flex-row justify-between items-start lg:items-center gap-3 mb-2 shrink-0 print:hidden">
-        <div className="flex flex-col xl:flex-row items-start xl:items-center gap-3 xl:gap-4 w-full lg:w-auto">
+        <div className="flex flex-col xl:flex-row items-start xl:items-center gap-3 xl:gap-2 sm:gap-3 w-full lg:w-auto">
           <div className="flex flex-wrap items-center gap-2 w-full lg:w-auto">
             <span className="text-[12px] font-bold text-black font-bold uppercase tracking-wide flex items-center gap-1 w-full sm:w-auto mb-1 sm:mb-0">
               <PieChartIcon size={14} /> P&L Statement Period:
@@ -236,7 +236,7 @@ const ProfitLossReport = () => {
                 
                 <div className="flex justify-between py-1 text-black font-bold shrink-0">
                   <span>Gross Sales Revenue (Cash & Credit Sales)</span>
-                  <div className="flex gap-4">
+                  <div className="flex gap-2 sm:gap-3">
                     <span className="text-black font-bold text-[10px] w-20 text-right">Total Sales</span>
                     <span className="font-bold w-20 text-right">{formatCurrency(safePnl.grossSales)}</span>
                   </div>
@@ -244,7 +244,7 @@ const ProfitLossReport = () => {
                 
                 <div className="flex justify-between py-1 text-[#EF4444] border-b border-[#F3F4F6] mb-1 shrink-0">
                   <span>Less: Sales Returns</span>
-                  <div className="flex gap-4">
+                  <div className="flex gap-2 sm:gap-3">
                     <span className="opacity-70 text-[10px] w-20 text-right">Returns</span>
                     <span className="font-bold w-20 text-right">- {formatCurrency(safePnl.totalSalesReturns)}</span>
                   </div>
@@ -263,7 +263,7 @@ const ProfitLossReport = () => {
                 
                 <div className="flex justify-between py-1 text-black font-bold shrink-0">
                   <span>Add: Gross Purchases</span>
-                  <div className="flex gap-4">
+                  <div className="flex gap-2 sm:gap-3">
                     <span className="text-black font-bold text-[10px] w-20 text-right">Purchases</span>
                     <span className="font-bold w-20 text-right">{formatCurrency(safePnl.grossPurchases)}</span>
                   </div>
@@ -271,7 +271,7 @@ const ProfitLossReport = () => {
                 
                 <div className="flex justify-between py-1 text-[#059669] shrink-0">
                   <span>Less: Purchase Returns</span>
-                  <div className="flex gap-4">
+                  <div className="flex gap-2 sm:gap-3">
                     <span className="opacity-70 text-[10px] w-20 text-right">Returns</span>
                     <span className="font-bold w-20 text-right">- {formatCurrency(safePnl.totalPurchaseReturns)}</span>
                   </div>

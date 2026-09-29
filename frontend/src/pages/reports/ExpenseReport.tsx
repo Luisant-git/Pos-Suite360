@@ -124,13 +124,13 @@ const ExpenseReport = () => {
   };
 
   return (
-    <div className="absolute inset-0 bg-[#F8FAFC] flex flex-col font-sans overflow-hidden z-10 p-2 sm:p-4">
+    <div className="absolute inset-0 bg-[#F8FAFC] flex flex-col font-sans overflow-y-auto lg:overflow-hidden z-10 p-2 sm:p-4">
       
       <ReportTabs />
 
       {/* Filter Section */}
-      <div className="bg-white border border-[#E2E8F0] shadow-sm rounded-md mb-4 p-4 shrink-0">
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-4 items-end mb-4">
+      <div className="bg-white border border-[#E2E8F0] shadow-sm rounded-md mb-2 p-2 sm:p-3 sm:mb-3 shrink-0">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2 sm:gap-3 items-end mb-2 sm:mb-3">
           <div>
             <label className="flex items-center gap-1 text-[12px] text-black font-bold mb-1 font-bold">From Date</label>
             <input 
@@ -206,7 +206,7 @@ const ExpenseReport = () => {
             </button>
           </div>
           
-          <div className="flex items-center gap-4 text-xs font-bold text-black font-bold">
+          <div className="flex items-center gap-2 sm:gap-3 text-xs font-bold text-black font-bold">
             <span>Total Entries: <strong className="text-[#0F172A]">{totalEntries}</strong></span>
             <span>Total Expense: <strong className="text-[#EF4444]">{formatCurrency(totalExpenseAmount)}</strong></span>
           </div>
@@ -237,7 +237,7 @@ const ExpenseReport = () => {
         </div>
 
         <div id="expense-report-export" className="flex-1 flex flex-col min-h-0 overflow-hidden">
-          <div className="pdf-header hidden mb-4 p-4 border-b border-black">
+          <div className="pdf-header hidden mb-2 p-2 sm:p-3 sm:mb-3 border-b border-black">
             <div className="flex justify-between items-end">
               <div>
                 <h1 className="text-xl font-bold uppercase">{settings?.shopName || 'MY SHOP'}</h1>

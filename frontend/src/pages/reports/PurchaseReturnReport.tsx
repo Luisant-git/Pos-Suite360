@@ -51,7 +51,7 @@ const PurchaseReturnReport = () => {
   const paginatedReturns = filteredReturns.slice((currentPage - 1) * entriesPerPage, currentPage * entriesPerPage);
 
   return (
-    <div className="absolute inset-0 bg-[#F7F7F7] flex flex-col font-sans overflow-hidden z-10 p-2 sm:p-4">
+    <div className="absolute inset-0 bg-[#F7F7F7] flex flex-col font-sans overflow-y-auto lg:overflow-hidden z-10 p-2 sm:p-4">
       <ReportTabs />
 
       <div className="flex flex-col flex-1 overflow-hidden mt-4">
@@ -130,7 +130,7 @@ const PurchaseReturnReport = () => {
           </div>
 
           {/* Filters */}
-          <div className="bg-white p-3 border-b border-[#E6E9ED] grid grid-cols-1 md:grid-cols-4 gap-3">
+          <div className="bg-white p-3 border-b border-[#E6E9ED] grid grid-cols-2 md:grid-cols-4 gap-3">
             <div className="relative col-span-1 md:col-span-2">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <Search size={14} className="text-black font-bold" />

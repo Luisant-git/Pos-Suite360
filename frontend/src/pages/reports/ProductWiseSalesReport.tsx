@@ -38,7 +38,7 @@ const ProductWiseSalesReport = () => {
   });
 
   return (
-    <div className="absolute inset-0 bg-[#F7F7F7] flex flex-col font-sans overflow-hidden z-10 p-2 sm:p-4">
+    <div className="absolute inset-0 bg-[#F7F7F7] flex flex-col font-sans overflow-y-auto lg:overflow-hidden z-10 p-2 sm:p-4">
       <ReportTabs />
 
       <div className="flex flex-col flex-1 overflow-hidden mt-4">
@@ -55,7 +55,7 @@ const ProductWiseSalesReport = () => {
 
           {/* Filters */}
           <div className="bg-white border-b border-[#E2E8F0] shadow-sm mb-2 p-3">
-            <div className="grid grid-cols-1 md:grid-cols-6 gap-3 items-end">
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3 items-end">
               <div>
                 <label className="flex items-center gap-1 text-[12px] text-black font-bold mb-1"><Calendar size={12} /> From Date</label>
                 <input

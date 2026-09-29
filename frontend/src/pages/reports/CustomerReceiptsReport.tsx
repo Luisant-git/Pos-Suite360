@@ -272,13 +272,13 @@ const CustomerReceiptsReport = () => {
   };
 
   return (
-    <div className="absolute inset-0 bg-[#F8FAFC] flex flex-col font-sans overflow-hidden z-10 p-2 sm:p-4">
+    <div className="absolute inset-0 bg-[#F8FAFC] flex flex-col font-sans overflow-y-auto lg:overflow-hidden z-10 p-2 sm:p-4">
       
       <ReportTabs />
 
       {/* Top Header Card with Summary Stats */}
-      <div className="bg-white border border-[#E2E8F0] shadow-sm rounded-md mb-4 p-4 shrink-0">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4 border-b border-[#E2E8F0] pb-3">
+      <div className="bg-white border border-[#E2E8F0] shadow-sm rounded-md mb-2 p-2 sm:p-3 sm:mb-3 shrink-0">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-2 sm:gap-3 mb-4 border-b border-[#E2E8F0] pb-3">
           
           <div className="flex items-center gap-3">
             <div className="bg-[#3B82F6] text-white p-2.5 rounded-lg shadow-sm">
@@ -332,7 +332,7 @@ const CustomerReceiptsReport = () => {
         </div>
 
         {/* Stat Summary Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-3">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3 mb-3">
           <div className="bg-[#EFF6FF] border border-[#BFDBFE] p-3 rounded-md flex justify-between items-center">
             <div>
               <p className="text-[11px] font-bold text-[#1E40AF] uppercase">Total Credit Invoiced</p>

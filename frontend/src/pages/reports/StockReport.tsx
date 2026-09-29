@@ -36,7 +36,6 @@ const StockReport = () => {
         name: p.name,
         brandName: p.brand?.name || '-',
         categoryName: p.category?.name || '-',
-        currentBirds: p.currentBirds || 0,
         currentQty: `${Number(Number(p.currentStock).toFixed(4))} ${p.unit?.shortCode || p.unit?.name || ''}`.trim(),
         purRate: formatCurrency(p.purchaseRate),
         stockValue: formatCurrency(Number(p.currentStock) * Number(p.purchaseRate)),
@@ -62,7 +61,7 @@ const StockReport = () => {
 
       {/* Filter Section */}
       <div className="bg-white border border-[#E2E8F0] shadow-sm rounded-md mb-2 p-2 sm:p-3 sm:mb-3 shrink-0">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3 items-end mb-2 sm:mb-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3 items-end mb-2 sm:mb-3">
           <div>
             <label className="flex items-center gap-1 text-[12px] text-black font-bold mb-1 font-bold">Category</label>
             <SearchableSelect
@@ -108,16 +107,16 @@ const StockReport = () => {
             </select>
           </div>
         </div>
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center pt-2 border-t border-dashed border-[#E2E8F0] gap-3 md:gap-0">
-          <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
-            <button type="button" onClick={() => refetch()} className="bg-[#0F172A] hover:bg-[#1E293B] text-white px-4 py-1.5 rounded-md flex items-center gap-2 text-[13px] font-bold transition-colors">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center pt-2 border-t border-dashed border-[#E2E8F0] gap-2 sm:gap-0">
+          <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+            <button type="button" onClick={() => refetch()} className="flex-1 sm:flex-none bg-[#0F172A] hover:bg-[#1E293B] text-white px-4 py-1.5 rounded-md flex items-center justify-center gap-2 text-[13px] font-bold transition-colors">
               Apply Filter
             </button>
             <button type="button" onClick={() => {
               setCategoryId('');
               setBrandId('');
               setQuickSearch('');
-            }} className={`flex items-center gap-1 px-3 py-1.5 rounded-md text-[12px] font-bold transition-colors shadow-sm border ${!isReset ? 'bg-white text-red-600 border-red-200 hover:bg-red-50' : 'bg-white text-black font-bold border-[#CBD5E1] hover:bg-gray-100'}`}>
+            }} className={`flex-1 sm:flex-none flex items-center justify-center gap-1 px-3 py-1.5 rounded-md text-[12px] font-bold transition-colors shadow-sm border ${!isReset ? 'bg-white text-red-600 border-red-200 hover:bg-red-50' : 'bg-white text-black font-bold border-[#CBD5E1] hover:bg-gray-100'}`}>
               Reset Filters
             </button>
           </div>
@@ -126,12 +125,12 @@ const StockReport = () => {
 
       {/* Report Table Section */}
       <div className="bg-white border border-[#E2E8F0] shadow-sm rounded-md overflow-hidden flex flex-col flex-1">
-        <div className="bg-[#F8FAFC] border-b border-[#E2E8F0] px-4 py-3 flex flex-col md:flex-row justify-between items-start md:items-center gap-3 md:gap-0 shrink-0">
+        <div className="bg-[#F8FAFC] border-b border-[#E2E8F0] px-3 py-2 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 shrink-0">
           <div className="flex items-center gap-2 text-black font-bold">
             <Box size={16} />
             <h2 className="font-bold text-[13px] tracking-wide text-black font-bold">STOCK AS ON DATE REPORT</h2>
           </div>
-          <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
+          <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
             <button type="button" 
               onClick={() => {
                 const exportData = products.map((p: any) => ({
@@ -139,7 +138,6 @@ const StockReport = () => {
                   'Product Name': p.name,
                   'Brand': p.brandName,
                   'Category': p.categoryName,
-                  'Current Birds': p.currentBirds,
                   'Current Qty': p.currentQty,
                   'Pur Rate': p.purRate,
                   'Stock Value': p.stockValue,
@@ -149,7 +147,6 @@ const StockReport = () => {
                   'Product Name': '',
                   'Brand': '',
                   'Category': '',
-                  'Current Birds': '',
                   'Current Qty': '',
                   'Pur Rate': 'TOTAL VALUE:',
                   'Stock Value': formatCurrency(totalStockValue) as any,
@@ -160,9 +157,9 @@ const StockReport = () => {
                   totalCount: products.length
                 });
               }}
-              className="bg-[#10B981] hover:bg-[#059669] text-white px-3 py-1.5 rounded flex items-center justify-center gap-1.5 text-[12px] font-bold whitespace-nowrap transition-colors"
+              className="flex-1 sm:flex-none bg-[#10B981] hover:bg-[#059669] text-white px-3 py-1.5 rounded flex items-center justify-center gap-1.5 text-[12px] font-bold whitespace-nowrap transition-colors"
             >
-              <Download size={14} /> <span className="hidden lg:inline">Export Excel</span>
+              <Download size={14} /> <span>Export Excel</span>
             </button>
             <button type="button"
               onClick={() => {
@@ -171,7 +168,6 @@ const StockReport = () => {
                   { header: 'Product Name', dataKey: 'name' },
                   { header: 'Brand', dataKey: 'brandName' },
                   { header: 'Category', dataKey: 'categoryName' },
-                  { header: 'Current Birds', dataKey: 'currentBirds' },
                   { header: 'Current Qty', dataKey: 'currentQty' },
                   { header: 'Pur Rate', dataKey: 'purRate' },
                   { header: 'Stock Value', dataKey: 'stockValue' },
@@ -181,19 +177,18 @@ const StockReport = () => {
                   name: '',
                   brandName: '',
                   categoryName: '',
-                  currentBirds: '',
                   currentQty: '',
                   purRate: 'TOTAL VALUE:',
                   stockValue: formatCurrency(totalStockValue)
                 }];
                 exportTableToPdf(cols, pdfData, 'Stock_Report', 'Stock Report', settings?.shopName, products.length);
               }}
-              className="bg-[#EF4444] hover:bg-[#DC2626] text-white px-3 py-1.5 rounded flex items-center justify-center gap-1.5 text-[12px] font-bold whitespace-nowrap transition-colors"
+              className="flex-1 sm:flex-none bg-[#EF4444] hover:bg-[#DC2626] text-white px-3 py-1.5 rounded flex items-center justify-center gap-1.5 text-[12px] font-bold whitespace-nowrap transition-colors"
             >
-              <Download size={14} /> <span className="hidden lg:inline">Export PDF</span>
+              <Download size={14} /> <span>Export PDF</span>
             </button>
-            <button type="button" className="bg-[#64748B] hover:bg-[#475569] text-white px-3 py-1.5 rounded flex items-center justify-center gap-1.5 text-[12px] font-bold whitespace-nowrap transition-colors">
-              <Activity size={14} /> Live Inventory Valuation
+            <button type="button" className="hidden sm:flex flex-1 sm:flex-none bg-[#64748B] hover:bg-[#475569] text-white px-3 py-1.5 rounded items-center justify-center gap-1.5 text-[12px] font-bold whitespace-nowrap transition-colors">
+              <Activity size={14} /> <span className="hidden lg:inline">Live Inventory Valuation</span>
             </button>
           </div>
         </div>
@@ -206,7 +201,8 @@ const StockReport = () => {
             </div>
           </div>
           <div className="flex-1 overflow-auto overflow-x-auto" id="stock-report-table">
-          <table className="w-full text-left text-[12px] whitespace-nowrap">
+          {/* Desktop Table */}
+          <table className="hidden sm:table w-full text-left text-[12px] whitespace-nowrap">
             <thead>
               <tr className="bg-[#0F172A] text-white font-bold">
                 <th className="px-4 py-3 border-r border-[#1E293B] w-12 text-center">S.No</th>
@@ -214,7 +210,6 @@ const StockReport = () => {
                 <th className="px-4 py-3 border-r border-[#1E293B]">Product Name</th>
                 <th className="px-4 py-3 border-r border-[#1E293B]">Brand</th>
                 <th className="px-4 py-3 border-r border-[#1E293B]">Category</th>
-                <th className="px-4 py-3 border-r border-[#1E293B] text-right">Birds</th>
                 <th className="px-4 py-3 border-r border-[#1E293B] text-right">Current Qty</th>
                 <th className="px-4 py-3 border-r border-[#1E293B] text-right">Pur Rate</th>
                 <th className="px-4 py-3 text-right">Stock Value</th>
@@ -233,7 +228,6 @@ const StockReport = () => {
                     <td className="px-4 py-3 border-r border-[#E2E8F0] font-bold text-black font-bold">{p.name}</td>
                     <td className="px-4 py-3 border-r border-[#E2E8F0] text-black font-bold">{p.brandName}</td>
                     <td className="px-4 py-3 border-r border-[#E2E8F0] text-black font-bold">{p.categoryName}</td>
-                    <td className="px-4 py-3 border-r border-[#E2E8F0] text-right text-black font-bold">{p.currentBirds}</td>
                     <td className="px-4 py-3 border-r border-[#E2E8F0] text-right font-bold text-black font-bold">{p.currentQty}</td>
                     <td className="px-4 py-3 border-r border-[#E2E8F0] text-right text-black font-bold">{p.purRate}</td>
                     <td className="px-4 py-3 text-right font-bold text-[#3B82F6]">{p.stockValue}</td>
@@ -242,6 +236,41 @@ const StockReport = () => {
               )}
             </tbody>
           </table>
+
+          {/* Mobile Cards */}
+          <div className="sm:hidden">
+            {isLoading ? (
+              <div className="p-4 text-center text-black font-bold">Loading...</div>
+            ) : products.length === 0 ? (
+              <div className="p-6 text-center text-black font-bold">No stock records found.</div>
+            ) : (
+              paginatedProducts.map((p: any, index: number) => (
+                <div key={p.id} className={`border-b border-[#E2E8F0] p-3 ${index % 2 === 0 ? 'bg-white' : 'bg-[#F8FAFC]'}`}>
+                  <div className="flex justify-between items-start mb-1">
+                    <div>
+                      <span className="text-[11px] text-gray-400 font-bold">#{(currentPage - 1) * entriesPerPage + index + 1} · {p.code}</span>
+                      <p className="font-bold text-[13px] text-black">{p.name}</p>
+                    </div>
+                    <span className="font-bold text-[14px] text-[#3B82F6]">{p.stockValue}</span>
+                  </div>
+                  <div className="grid grid-cols-3 gap-1 mt-1">
+                    <div className="bg-[#F1F5F9] rounded px-2 py-1">
+                      <p className="text-[10px] text-gray-500">Category</p>
+                      <p className="text-[11px] font-bold text-black truncate">{p.categoryName}</p>
+                    </div>
+                    <div className="bg-[#F1F5F9] rounded px-2 py-1">
+                      <p className="text-[10px] text-gray-500">Qty</p>
+                      <p className="text-[11px] font-bold text-black">{p.currentQty}</p>
+                    </div>
+                    <div className="bg-[#F1F5F9] rounded px-2 py-1">
+                      <p className="text-[10px] text-gray-500">Pur Rate</p>
+                      <p className="text-[11px] font-bold text-black">{p.purRate}</p>
+                    </div>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
         </div>
         <div className="pdf-footer hidden mt-6 text-right border-t-2 border-[#1E293B] pt-4 pb-8 pr-6">
           <h3 className="text-xl font-bold text-black font-bold inline-block">Total Stock Value: {formatCurrency(totalStockValue)}</h3>

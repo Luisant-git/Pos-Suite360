@@ -123,53 +123,53 @@ const ProfitLossReport = () => {
       </div>
 
       {/* Toolbar */}
-      <div className="bg-white p-2 md:p-3 rounded shadow-sm border border-[#E5E7EB] flex flex-col lg:flex-row justify-between items-start lg:items-center gap-3 mb-2 shrink-0 print:hidden">
-        <div className="flex flex-col xl:flex-row items-start xl:items-center gap-3 xl:gap-2 sm:gap-3 w-full lg:w-auto">
-          <div className="flex flex-wrap items-center gap-2 w-full lg:w-auto">
-            <span className="text-[12px] font-bold text-black font-bold uppercase tracking-wide flex items-center gap-1 w-full sm:w-auto mb-1 sm:mb-0">
-              <PieChartIcon size={14} /> P&L Statement Period:
-            </span>
-            <div className="flex items-center gap-2">
-              <span className="text-[12px] text-black font-bold">From:</span>
-              <input 
-                type="date" 
-                value={fromDate}
-                onChange={(e) => handleCustomDateChange(true, e.target.value)}
-                className="border border-[#D1D5DB] rounded px-2 py-0.5 text-[12px] font-bold w-full"
-              />
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-[12px] text-black font-bold">To:</span>
-              <input 
-                type="date" 
-                value={toDate}
-                onChange={(e) => handleCustomDateChange(false, e.target.value)}
-                className="border border-[#D1D5DB] rounded px-2 py-0.5 text-[12px] font-bold w-full"
-              />
-            </div>
-            <button 
-              onClick={() => refetch()}
-              className="bg-[#2563EB] hover:bg-[#1D4ED8] text-white px-3 py-1 rounded flex items-center justify-center gap-1 font-bold text-[12px] transition-colors shadow-sm w-full sm:w-auto mt-2 sm:mt-0"
-            >
-              <Filter size={14} /> Calculate
-            </button>
+      <div className="bg-white p-2 md:p-3 rounded shadow-sm border border-[#E5E7EB] flex flex-col gap-2 mb-2 shrink-0 print:hidden">
+        {/* Row 1: Date inputs + Calculate */}
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="text-[12px] font-bold text-black uppercase tracking-wide flex items-center gap-1">
+            <PieChartIcon size={14} /> P&L Period:
+          </span>
+          <div className="flex items-center gap-1 flex-1 min-w-[130px]">
+            <span className="text-[12px] text-black font-bold shrink-0">From:</span>
+            <input 
+              type="date" 
+              value={fromDate}
+              onChange={(e) => handleCustomDateChange(true, e.target.value)}
+              className="border border-[#D1D5DB] rounded px-2 py-0.5 text-[12px] font-bold w-full"
+            />
           </div>
+          <div className="flex items-center gap-1 flex-1 min-w-[130px]">
+            <span className="text-[12px] text-black font-bold shrink-0">To:</span>
+            <input 
+              type="date" 
+              value={toDate}
+              onChange={(e) => handleCustomDateChange(false, e.target.value)}
+              className="border border-[#D1D5DB] rounded px-2 py-0.5 text-[12px] font-bold w-full"
+            />
+          </div>
+          <button 
+            onClick={() => refetch()}
+            className="bg-[#2563EB] hover:bg-[#1D4ED8] text-white px-3 py-1.5 rounded flex items-center gap-1 font-bold text-[12px] transition-colors shadow-sm shrink-0"
+          >
+            <Filter size={14} /> Calculate
+          </button>
+        </div>
 
+        {/* Row 2: Presets + Export buttons */}
+        <div className="flex flex-wrap items-center gap-2">
           {/* Quick Presets */}
-          <div className="flex flex-wrap bg-[#F3F4F6] p-1 rounded border border-[#E5E7EB] gap-1 items-center w-full lg:w-auto">
+          <div className="flex bg-[#F3F4F6] p-1 rounded border border-[#E5E7EB] gap-1 items-center flex-wrap">
             <button onClick={() => handleDatePreset('today')} className={presetBtnClass('today')}>Today</button>
             <button onClick={() => handleDatePreset('month')} className={presetBtnClass('month')}>This Month</button>
             <button onClick={() => handleDatePreset('year')} className={presetBtnClass('year')}>This Year</button>
             <button onClick={() => handleDatePreset('all')} className={presetBtnClass('all')}>All Time</button>
           </div>
-        </div>
-
-        <div className="flex flex-wrap items-center gap-2 w-full lg:w-auto justify-start lg:justify-end mt-2 lg:mt-0">
+          <div className="flex flex-wrap items-center gap-2 ml-auto">
           <button
             onClick={exportToCsv}
             className="bg-white border border-[#D1D5DB] hover:bg-[#F9FAFB] text-green-700 px-3 py-1.5 rounded flex items-center justify-center gap-1 font-bold text-[12px] whitespace-nowrap transition-colors shadow-sm"
           >
-            <Download size={14} /> <span className="hidden lg:inline">Export CSV</span>
+            <Download size={14} /> <span className="hidden sm:inline">Export CSV</span>
           </button>
           <button
             onClick={() => {
@@ -198,15 +198,16 @@ const ProfitLossReport = () => {
             }}
             className="bg-[#EF4444] hover:bg-[#DC2626] text-white px-3 py-1.5 rounded flex items-center justify-center gap-1 font-bold text-[12px] whitespace-nowrap transition-colors shadow-sm"
           >
-            <Download size={14} /> <span className="hidden lg:inline">Export PDF</span>
+            <Download size={14} /> <span className="hidden sm:inline">Export PDF</span>
           </button>
           <button className="bg-white border border-[#D1D5DB] hover:bg-[#F9FAFB] text-black font-bold px-3 py-1.5 rounded flex items-center justify-center gap-1 font-bold text-[12px] whitespace-nowrap transition-colors shadow-sm" onClick={() => window.print()}>
-            <Printer size={14} /> Print
+            <Printer size={14} /> <span className="hidden sm:inline">Print</span>
           </button>
+          </div>
         </div>
       </div>
 
-      <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-3 min-h-0 print:block">
+      <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-3 min-h-0 print:block overflow-y-auto lg:overflow-hidden">
         {/* Left Side: Ledger */}
         <div className="lg:col-span-8 bg-white rounded shadow-sm border border-[#E5E7EB] flex flex-col min-h-0 print:border-none print:shadow-none print:h-auto" id="pnl-report-content">
           {/* Header */}
@@ -236,17 +237,17 @@ const ProfitLossReport = () => {
                 
                 <div className="flex justify-between py-1 text-black font-bold shrink-0">
                   <span>Gross Sales Revenue (Cash & Credit Sales)</span>
-                  <div className="flex gap-2 sm:gap-3">
-                    <span className="text-black font-bold text-[10px] w-20 text-right">Total Sales</span>
-                    <span className="font-bold w-20 text-right">{formatCurrency(safePnl.grossSales)}</span>
+                  <div className="flex gap-2">
+                    <span className="text-black font-bold text-[10px] hidden sm:block text-right">Total Sales</span>
+                    <span className="font-bold text-right">{formatCurrency(safePnl.grossSales)}</span>
                   </div>
                 </div>
                 
                 <div className="flex justify-between py-1 text-[#EF4444] border-b border-[#F3F4F6] mb-1 shrink-0">
                   <span>Less: Sales Returns</span>
-                  <div className="flex gap-2 sm:gap-3">
-                    <span className="opacity-70 text-[10px] w-20 text-right">Returns</span>
-                    <span className="font-bold w-20 text-right">- {formatCurrency(safePnl.totalSalesReturns)}</span>
+                  <div className="flex gap-2">
+                    <span className="opacity-70 text-[10px] hidden sm:block text-right">Returns</span>
+                    <span className="font-bold text-right">- {formatCurrency(safePnl.totalSalesReturns)}</span>
                   </div>
                 </div>
 
@@ -263,17 +264,17 @@ const ProfitLossReport = () => {
                 
                 <div className="flex justify-between py-1 text-black font-bold shrink-0">
                   <span>Add: Gross Purchases</span>
-                  <div className="flex gap-2 sm:gap-3">
-                    <span className="text-black font-bold text-[10px] w-20 text-right">Purchases</span>
-                    <span className="font-bold w-20 text-right">{formatCurrency(safePnl.grossPurchases)}</span>
+                  <div className="flex gap-2">
+                    <span className="text-black font-bold text-[10px] hidden sm:block text-right">Purchases</span>
+                    <span className="font-bold text-right">{formatCurrency(safePnl.grossPurchases)}</span>
                   </div>
                 </div>
                 
                 <div className="flex justify-between py-1 text-[#059669] shrink-0">
                   <span>Less: Purchase Returns</span>
-                  <div className="flex gap-2 sm:gap-3">
-                    <span className="opacity-70 text-[10px] w-20 text-right">Returns</span>
-                    <span className="font-bold w-20 text-right">- {formatCurrency(safePnl.totalPurchaseReturns)}</span>
+                  <div className="flex gap-2">
+                    <span className="opacity-70 text-[10px] hidden sm:block text-right">Returns</span>
+                    <span className="font-bold text-right">- {formatCurrency(safePnl.totalPurchaseReturns)}</span>
                   </div>
                 </div>
 

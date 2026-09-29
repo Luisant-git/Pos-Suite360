@@ -504,6 +504,7 @@ const MainLayout = () => {
               {hasAnyPerm(['sales_pos', 'sales_return', 'sales_receipts']) && (
                 <MobileNavDropdown title="Sales" icon="fa-shopping-cart" isActive={isSalesActive}>
                   {hasPerm('sales_pos') && <MobileDropdownItem to="/sales/pos" icon="fa-th-large" title="Sales Entry (POS)" onClick={closeMobileMenu} />}
+                  {hasPerm('sales_pos') && <MobileDropdownItem to="/sales" icon="fa-list-alt" title="Sales List" onClick={closeMobileMenu} />}
                   {hasPerm('sales_return') && <MobileDropdownItem to="/sales/return" icon="fa-reply" title="Sales Return" isDanger onClick={closeMobileMenu} />}
                   {hasPerm('sales_receipts') && <MobileDropdownItem to="/sales/receipts" icon="fa-money" title="Customer Receipts" onClick={closeMobileMenu} />}
                 </MobileNavDropdown>

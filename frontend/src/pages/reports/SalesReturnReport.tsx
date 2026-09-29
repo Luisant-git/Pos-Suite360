@@ -52,7 +52,7 @@ const SalesReturnReport = () => {
   const paginatedReturns = filteredReturns.slice((currentPage - 1) * entriesPerPage, currentPage * entriesPerPage);
 
   return (
-    <div className="absolute inset-0 bg-[#F7F7F7] flex flex-col font-sans overflow-hidden z-10 p-4">
+    <div className="absolute inset-0 bg-[#F7F7F7] flex flex-col font-sans overflow-hidden z-10 p-2 sm:p-4">
       <ReportTabs />
 
       <div className="flex flex-col flex-1 overflow-hidden mt-4">

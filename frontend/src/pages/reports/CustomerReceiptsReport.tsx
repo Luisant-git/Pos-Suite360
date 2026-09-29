@@ -272,7 +272,7 @@ const CustomerReceiptsReport = () => {
   };
 
   return (
-    <div className="absolute inset-0 bg-[#F8FAFC] flex flex-col font-sans overflow-hidden z-10 p-4">
+    <div className="absolute inset-0 bg-[#F8FAFC] flex flex-col font-sans overflow-hidden z-10 p-2 sm:p-4">
       
       <ReportTabs />
 

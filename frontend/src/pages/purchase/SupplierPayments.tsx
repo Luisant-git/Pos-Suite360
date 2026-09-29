@@ -362,7 +362,7 @@ const SupplierPayments = () => {
                             const totals = displayedBills.reduce((acc, bill) => {
                               acc.total += Number(bill.total || 0);
                               acc.returned += Number(bill.returned || 0);
-                              acc.paid += Number(bill.received || b.paid || 0);
+                              acc.paid += Number(bill.received || bill.paid || 0);
                               acc.pending += Number(bill.pending || 0);
                               return acc;
                             }, { total: 0, returned: 0, paid: 0, pending: 0 });
@@ -447,7 +447,7 @@ const SupplierPayments = () => {
                             const totals = displayedBills.reduce((acc, bill) => {
                               acc.total += Number(bill.total || 0);
                               acc.returned += Number(bill.returned || 0);
-                              acc.paid += Number(bill.received || b.paid || 0);
+                              acc.paid += Number(bill.received || bill.paid || 0);
                               acc.pending += Number(bill.pending || 0);
                               return acc;
                             }, { total: 0, returned: 0, paid: 0, pending: 0 });

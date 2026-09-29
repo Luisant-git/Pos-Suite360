@@ -132,20 +132,24 @@ export const generateNativePdf = (sale: any, settings: any): string => {
   return doc.output('datauristring');
 };
 
-export const generateBillByBillPdf = (entityName: string, entityType: 'Customer' | 'Supplier', bills: any[], totals: any) => {
+export const generateBillByBillPdf = (companyName: string, entityName: string, entityType: 'Customer' | 'Supplier', bills: any[], totals: any) => {
   const doc = new jsPDF('p', 'mm', 'a4');
   
   // Header
+  doc.setFontSize(16);
+  doc.setFont("helvetica", "bold");
+  doc.text(companyName, 105, 15, { align: 'center' });
+
   doc.setFontSize(14);
   doc.setFont("helvetica", "bold");
-  doc.text('BILL-BY-BILL BREAKDOWN', 105, 15, { align: 'center' });
+  doc.text('PENDING BALANCE BILL BY BILL', 105, 22, { align: 'center' });
   
   doc.setFontSize(11);
   doc.setFont("helvetica", "bold");
-  doc.text(`${entityType.toUpperCase()}: ${entityName}`, 14, 25);
+  doc.text(`${entityType.toUpperCase()}: ${entityName}`, 14, 32);
   doc.setFontSize(10);
   doc.setFont("helvetica", "normal");
-  doc.text(`Date: ${new Date().toLocaleDateString()}`, 14, 30);
+  doc.text(`Date: ${new Date().toLocaleDateString()}`, 14, 37);
   
   const head = [['Entry / Inv No', 'Bill Date', 'Bill Total', entityType === 'Customer' ? 'Sales Returns' : 'Pur. Returns', entityType === 'Customer' ? 'Received Amount' : 'Paid Amount', 'Pending Balance']];
   
@@ -168,12 +172,12 @@ export const generateBillByBillPdf = (entityName: string, entityType: 'Customer'
   ]);
 
   autoTable(doc, {
-    startY: 35,
+    startY: 42,
     head: head,
     body: body,
     theme: 'grid',
     headStyles: { fillColor: [248, 250, 252], textColor: 0, fontStyle: 'bold' },
-    styles: { fontSize: 9, cellPadding: 2 },
+    styles: { fontSize: 10, cellPadding: 3 },
     columnStyles: {
       0: { fontStyle: 'bold' },
       2: { halign: 'right' },

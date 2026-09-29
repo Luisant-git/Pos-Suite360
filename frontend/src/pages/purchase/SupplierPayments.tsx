@@ -49,7 +49,7 @@ const SupplierPayments = () => {
 
   // Pagination for History
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 20;
+  const itemsPerPage = 10;
 
   const { data: storeSettings } = useQuery({ queryKey: ['settings'], queryFn: async () => (await api.get('/settings')).data });
 
@@ -372,7 +372,8 @@ const SupplierPayments = () => {
                               return acc;
                             }, { total: 0, returned: 0, paid: 0, pending: 0 });
                             const supplier = suppliers.find((s: any) => s.id === selectedSupplierId);
-                            const url = generateBillByBillPdf(supplier?.name || 'Unknown', 'Supplier', displayedBills, totals) as unknown as string;
+                            const companyName = storeSettings?.companyName || 'NJ FRESH AND FROZEN SDN BHD';
+                            const url = generateBillByBillPdf(companyName, supplier?.name || 'Unknown', 'Supplier', displayedBills, totals) as unknown as string;
                             setPdfUrl(url);
                             setPdfModalOpen(true);
                           }}

@@ -332,33 +332,33 @@ const CustomerReceiptsReport = () => {
         </div>
 
         {/* Stat Summary Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3 mb-3">
-          <div className="bg-[#EFF6FF] border border-[#BFDBFE] p-3 rounded-md flex justify-between items-center">
+        <div className="flex overflow-x-auto md:grid md:grid-cols-3 gap-2 sm:gap-3 mb-3 pb-1 snap-x scrollbar-hide">
+          <div className="min-w-[220px] md:min-w-0 snap-start bg-[#EFF6FF] border border-[#BFDBFE] p-2.5 rounded-md flex justify-between items-center">
             <div>
-              <p className="text-[11px] font-bold text-[#1E40AF] uppercase">Total Credit Invoiced</p>
-              <p className="text-lg font-bold text-[#1E3A8A]">{formatCurrency(totalSales)}</p>
+              <p className="text-[10px] font-bold text-[#1E40AF] uppercase">Total Credit Invoiced</p>
+              <p className="text-base font-bold text-[#1E3A8A]">{formatCurrency(totalSales)}</p>
             </div>
-            <DollarSign className="text-[#3B82F6]" size={24} />
+            <DollarSign className="text-[#3B82F6]" size={20} />
           </div>
-          <div className="bg-[#ECFDF5] border border-[#A7F3D0] p-3 rounded-md flex justify-between items-center">
+          <div className="min-w-[220px] md:min-w-0 snap-start bg-[#ECFDF5] border border-[#A7F3D0] p-2.5 rounded-md flex justify-between items-center">
             <div>
-              <p className="text-[11px] font-bold text-[#065F46] uppercase">Total Receipts Collected</p>
-              <p className="text-lg font-bold text-[#047857]">{formatCurrency(totalCollected)}</p>
+              <p className="text-[10px] font-bold text-[#065F46] uppercase">Total Receipts Collected</p>
+              <p className="text-base font-bold text-[#047857]">{formatCurrency(totalCollected)}</p>
             </div>
-            <CheckCircle2 className="text-[#10B981]" size={24} />
+            <CheckCircle2 className="text-[#10B981]" size={20} />
           </div>
-          <div className="bg-[#FEF2F2] border border-[#FECACA] p-3 rounded-md flex justify-between items-center">
+          <div className="min-w-[220px] md:min-w-0 snap-start bg-[#FEF2F2] border border-[#FECACA] p-2.5 rounded-md flex justify-between items-center">
             <div>
-              <p className="text-[11px] font-bold text-[#991B1B] uppercase">Overall Outstanding Dues</p>
-              <p className="text-lg font-bold text-[#DC2626]">{formatCurrency(totalPendingDues)}</p>
+              <p className="text-[10px] font-bold text-[#991B1B] uppercase">Overall Outstanding Dues</p>
+              <p className="text-base font-bold text-[#DC2626]">{formatCurrency(totalPendingDues)}</p>
             </div>
-            <AlertCircle className="text-[#EF4444]" size={24} />
+            <AlertCircle className="text-[#EF4444]" size={20} />
           </div>
         </div>
 
         {/* Filter Controls */}
-        <div className="flex flex-wrap 2xl:flex-nowrap items-end gap-3 pt-2 border-t border-dashed border-[#E2E8F0]">
-          <div className="flex-1 min-w-[200px]">
+        <div className="grid grid-cols-2 md:flex flex-wrap md:flex-nowrap items-end gap-2 md:gap-3 pt-2 border-t border-dashed border-[#E2E8F0]">
+          <div className="col-span-2 md:col-span-1 md:flex-1 md:min-w-[200px]">
             <label className="block text-[12px] font-bold text-black mb-1 whitespace-nowrap">Search Customer</label>
             <SearchableSelect
               options={searchOptions}
@@ -368,7 +368,7 @@ const CustomerReceiptsReport = () => {
               className="w-full"
             />
           </div>
-          <div className="w-[130px] shrink-0">
+          <div className="w-full md:w-[130px] shrink-0">
             <label className="block text-[12px] font-bold text-black font-bold mb-1">From Date</label>
             <input
               type="date"
@@ -377,7 +377,7 @@ const CustomerReceiptsReport = () => {
               className="w-full px-2 py-1.5 border border-[#CBD5E1] rounded text-[13px] outline-none focus:border-[#3B82F6] bg-white h-[34px]"
             />
           </div>
-          <div className="w-[130px] shrink-0">
+          <div className="w-full md:w-[130px] shrink-0">
             <label className="block text-[12px] font-bold text-black font-bold mb-1">To Date</label>
             <input
               type="date"
@@ -386,7 +386,7 @@ const CustomerReceiptsReport = () => {
               className="w-full px-2 py-1.5 border border-[#CBD5E1] rounded text-[13px] outline-none focus:border-[#3B82F6] bg-white h-[34px]"
             />
           </div>
-          <div className="w-[100px] shrink-0">
+          <div className="w-full md:w-[100px] shrink-0">
             <label className="block text-[12px] font-bold text-black font-bold mb-1">Entries</label>
             <select
               value={entriesPerPage}
@@ -402,7 +402,7 @@ const CustomerReceiptsReport = () => {
               <option value={100}>100</option>
             </select>
           </div>
-          <div className="flex items-center gap-1.5 shrink-0 overflow-x-auto pb-1 sm:pb-0">
+          <div className="col-span-2 md:col-span-1 flex flex-wrap md:flex-nowrap items-center gap-1.5 shrink-0 pb-1 sm:pb-0">
             <button type="button" onClick={() => handleDatePreset('today')} className="text-[11px] font-bold bg-[#EFF6FF] hover:bg-[#DBEAFE] text-[#1E40AF] px-2.5 py-1.5 rounded transition-colors h-[34px] whitespace-nowrap">Today</button>
             <button type="button" onClick={() => handleDatePreset('thisMonth')} className="text-[11px] font-bold bg-[#EFF6FF] hover:bg-[#DBEAFE] text-[#1E40AF] px-2.5 py-1.5 rounded transition-colors h-[34px] whitespace-nowrap">This Month</button>
             <button
@@ -553,3 +553,4 @@ const CustomerReceiptsReport = () => {
 };
 
 export default CustomerReceiptsReport;
+

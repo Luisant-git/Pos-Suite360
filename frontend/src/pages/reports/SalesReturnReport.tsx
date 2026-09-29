@@ -225,6 +225,7 @@ const SalesReturnReport = () => {
               </div>
             </div>
           </div>
+        </div>
 
           {/* Table */}
           <div id="sales-return-export" className="flex-1 flex flex-col min-h-0 overflow-hidden">
@@ -312,5 +313,6 @@ const SalesReturnReport = () => {
 };
 
 export default SalesReturnReport;
+
 
 

@@ -219,6 +219,7 @@ const PurchaseReturnReport = () => {
               </div>
             </div>
           </div>
+        </div>
 
           {/* Table */}
           <div id="purchase-return-export" className="flex-1 flex flex-col min-h-0 overflow-hidden">
@@ -302,5 +303,6 @@ const PurchaseReturnReport = () => {
 };
 
 export default PurchaseReturnReport;
+
 
 

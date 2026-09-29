@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Download, FileText, Search, Calendar, FileDigit, Users, CreditCard, RotateCcw, Printer, Share2, Eye , X} from 'lucide-react';
+import { Download, FileText, Search, Calendar, FileDigit, Users, CreditCard, RotateCcw, Printer, Share2, Eye, X, Filter } from 'lucide-react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useSettings } from '../../contexts/SettingsContext';
 import api from '../../services/api';
@@ -96,25 +96,24 @@ const SalesReport = () => {
       <div className="print:hidden flex flex-col flex-1 overflow-hidden p-2">
         <ReportTabs />
 
-        {/* Mobile Quick Bar (Date & Filter Toggle) */}
-      <div className="md:hidden flex items-center justify-between gap-2 mb-2 shrink-0">
-        <div className="flex gap-2 flex-1">
-          <input type="date" value={fromDate} onChange={(e) => setFromDate(e.target.value)} className="w-1/2 px-2 py-1.5 border border-[#CBD5E1] rounded text-[12px] font-bold text-black" />
-          <input type="date" value={toDate} onChange={(e) => setToDate(e.target.value)} className="w-1/2 px-2 py-1.5 border border-[#CBD5E1] rounded text-[12px] font-bold text-black" />
+        {/* Mobile Quick Bar */}
+      <div className="md:hidden flex items-center gap-2 mb-2 shrink-0">
+        <input type="date" value={fromDate} onChange={(e) => setFromDate(e.target.value)} className="flex-1 min-w-0 px-2 py-1.5 border border-[#CBD5E1] rounded text-[12px] font-bold text-black" />
+        <input type="date" value={toDate} onChange={(e) => setToDate(e.target.value)} className="flex-1 min-w-0 px-2 py-1.5 border border-[#CBD5E1] rounded text-[12px] font-bold text-black" />
+        <div className="relative shrink-0">
+          <Search size={13} className="absolute left-2 top-2 text-gray-400" />
+          <input type="text" value={quickSearch} onChange={(e) => setQuickSearch(e.target.value)} placeholder="Search" className="pl-6 pr-2 py-1.5 border border-[#CBD5E1] rounded text-[12px] font-bold text-black w-24" />
         </div>
-        <button onClick={() => setIsFilterOpen(true)} className="flex items-center gap-1 bg-[#1E3A8A] text-white px-3 py-1.5 rounded text-[12px] font-bold shrink-0">
-          <i className="fa fa-filter"></i> Filter
-        </button>
+        <button type="button" onClick={() => { const exportData = filteredSales.map((s: any) => ({ 'Invoice No': s.invoiceNo, 'Date': s.date, 'Customer Name': s.customerName, 'Payment Mode': s.paymentMode, 'No. of Items': s.noOfItems, 'Total Amount': s.netPayable })); exportToExcel(exportData, `Sales_Report_${fromDate}_to_${toDate}`, { shopName: settings?.shopName || 'MY SHOP', title: 'Sales Report', totalCount: filteredSales.length }); }} className="shrink-0 bg-[#10B981] text-white p-1.5 rounded"><Download size={14} /></button>
+        <button onClick={() => setIsFilterOpen(true)} className="shrink-0 bg-[#1E3A8A] text-white p-1.5 rounded"><Filter size={14} /></button>
       </div>
 
       {/* Filter Section */}
-      <div className={`bg-white border border-[#E2E8F0] shadow-sm rounded-md mb-2 p-3 ${isFilterOpen ? 'fixed inset-0 z-[100] m-0 rounded-none overflow-y-auto block' : 'hidden md:block'}`}>
-        {isFilterOpen && (
-          <div className="flex justify-between items-center pb-3 border-b border-[#E2E8F0] mb-3 md:hidden">
-            <h3 className="font-bold text-[15px] text-[#1E3A8A]">Advanced Filters</h3>
-            <button onClick={() => setIsFilterOpen(false)} className="p-1.5 bg-red-50 text-red-600 rounded-full"><X size={16} /></button>
-          </div>
-        )}
+      <div className={`bg-white border border-[#E2E8F0] shadow-sm rounded-md mb-2 p-3 ${isFilterOpen ? 'fixed inset-0 z-[100] m-0 rounded-none overflow-y-auto' : 'hidden md:block'}`}>
+        <div className="flex justify-between items-center pb-3 border-b border-[#E2E8F0] mb-3 md:hidden">
+          <h3 className="font-bold text-[15px] text-[#1E3A8A]">Advanced Filters</h3>
+          <button onClick={() => setIsFilterOpen(false)} className="p-1.5 bg-red-50 text-red-600 rounded-full"><X size={16} /></button>
+        </div>
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3 items-end mb-2 sm:mb-3">
           
           <div>
@@ -195,7 +194,7 @@ const SalesReport = () => {
         </div>
 
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center pt-2 border-t border-dashed border-[#E2E8F0] gap-3 md:gap-0">
-          <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
+          <div className="flex items-center gap-2 w-full md:w-auto">
             <button type="button" onClick={() => refetch()} className="bg-[#0F172A] hover:bg-[#1E293B] text-white px-4 py-1.5 rounded-md flex items-center gap-2 text-[13px] font-bold transition-colors">
               <Search size={14} /> Apply Filter
             </button>
@@ -210,7 +209,7 @@ const SalesReport = () => {
               <RotateCcw size={14} /> Reset Filters
             </button>
           </div>
-          <div className="flex flex-wrap items-center gap-2 w-full md:w-auto">
+          <div className="flex items-center gap-2 w-full md:w-auto">
             <button type="button" onClick={() => {
               setFromDate(todayStr);
               setToDate(todayStr);
@@ -230,15 +229,15 @@ const SalesReport = () => {
             <FileText size={16} />
             <h2 className="font-bold text-[13px] tracking-wide text-[#1E3A8A]">SALES REPORT DISPLAY</h2>
           </div>
-          <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
-            <div className="relative">
+          <div className="flex items-center gap-2 w-full md:w-auto">
+            <div className="relative flex-1 min-w-[120px]">
               <Search size={14} className="absolute left-2.5 top-2.5 text-black font-bold" />
               <input 
                 type="text" 
                 value={quickSearch}
                 onChange={(e) => setQuickSearch(e.target.value)}
                 placeholder="Quick search table..."
-                className="pl-8 pr-3 py-1.5 border border-[#CBD5E1] rounded outline-none text-[12px] w-64 focus:border-[#3B82F6]"
+                className="w-full pl-8 pr-3 py-1.5 border border-[#CBD5E1] rounded outline-none text-[12px] md:w-48 focus:border-[#3B82F6]"
               />
             </div>
             <button type="button" 
@@ -265,7 +264,7 @@ const SalesReport = () => {
                   totalCount: filteredSales.length
                 });
               }}
-              className="bg-[#10B981] hover:bg-[#059669] text-white px-3 py-1.5 rounded flex items-center gap-1.5 text-[12px] font-bold transition-colors"
+              className="shrink-0 bg-[#10B981] hover:bg-[#059669] text-white px-2 py-1.5 rounded flex items-center gap-1.5 text-[12px] font-bold transition-colors"
             >
               <Download size={14} /> <span className="hidden lg:inline">Export Excel</span>
             </button>
@@ -289,7 +288,7 @@ const SalesReport = () => {
                 }];
                 exportTableToPdf(cols, pdfData, `Sales_Report_${fromDate}_to_${toDate}`, 'Sales Report', settings?.shopName, filteredSales.length);
               }}
-              className="bg-[#EF4444] hover:bg-[#DC2626] text-white px-3 py-1.5 rounded flex items-center gap-1.5 text-[12px] font-bold transition-colors"
+              className="shrink-0 bg-[#EF4444] hover:bg-[#DC2626] text-white px-3 py-1.5 rounded flex items-center gap-1.5 text-[12px] font-bold transition-colors"
             >
               <Download size={14} /> <span className="hidden lg:inline">Export PDF</span>
             </button>
@@ -443,5 +442,7 @@ const SalesReport = () => {
 };
 
 export default SalesReport;
+
+
 
 

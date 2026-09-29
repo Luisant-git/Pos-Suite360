@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Download, Users, FileText, RefreshCw, DollarSign, AlertCircle, CheckCircle2, Printer, Loader2 , X} from 'lucide-react';
+import { Download, Users, FileText, RefreshCw, DollarSign, AlertCircle, CheckCircle2, Printer, Loader2 } from 'lucide-react';
 import { exportTableToPdf, type PdfColumn } from '../../utils/exportPdf';
 import { exportToExcel } from '../../utils/exportExcel';
 import { useSettings } from '../../contexts/SettingsContext';
@@ -107,22 +107,7 @@ const CustomerReceiptsReport = () => {
 
   const isReset = !searchTerm && !startDate && !endDate;
 
-  const handleDatePreset = (preset: 'today' | 'thisMonth' | 'clear') => {
-    const today = new Date();
-    if (preset === 'today') {
-      const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
-      setStartDate(todayStr);
-      setEndDate(todayStr);
-    } else if (preset === 'thisMonth') {
-      const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
-      const lastDay = new Date(today.getFullYear(), today.getMonth() + 1, 0);
-      setStartDate(`${firstDay.getFullYear()}-${String(firstDay.getMonth() + 1).padStart(2, '0')}-01`);
-      setEndDate(`${lastDay.getFullYear()}-${String(lastDay.getMonth() + 1).padStart(2, '0')}-${String(lastDay.getDate()).padStart(2, '0')}`);
-    } else if (preset === 'clear') {
-      setStartDate('');
-      setEndDate('');
-    }
-  };
+
 
   const handlePdfExport = () => {
     if (reportMode === 'consolidation') {
@@ -387,8 +372,6 @@ const CustomerReceiptsReport = () => {
           </div>
         </div>
       </div>
-      </div>
-
       {/* Main Content Area */}
       <div className="bg-white border border-[#E2E8F0] shadow-sm rounded-md overflow-hidden flex flex-col flex-1">
         <div className="bg-[#F8FAFC] border-b border-[#E2E8F0] px-4 py-3 flex justify-between items-center shrink-0">
@@ -522,6 +505,9 @@ const CustomerReceiptsReport = () => {
 };
 
 export default CustomerReceiptsReport;
+
+
+
 
 
 

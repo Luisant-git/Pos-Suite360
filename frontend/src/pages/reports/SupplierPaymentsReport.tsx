@@ -106,22 +106,7 @@ const SupplierPaymentsReport = () => {
 
   const isReset = !searchTerm && !startDate && !endDate;
 
-  const handleDatePreset = (preset: 'today' | 'thisMonth' | 'clear') => {
-    const today = new Date();
-    if (preset === 'today') {
-      const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
-      setStartDate(todayStr);
-      setEndDate(todayStr);
-    } else if (preset === 'thisMonth') {
-      const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
-      const lastDay = new Date(today.getFullYear(), today.getMonth() + 1, 0);
-      setStartDate(`${firstDay.getFullYear()}-${String(firstDay.getMonth() + 1).padStart(2, '0')}-01`);
-      setEndDate(`${lastDay.getFullYear()}-${String(lastDay.getMonth() + 1).padStart(2, '0')}-${String(lastDay.getDate()).padStart(2, '0')}`);
-    } else if (preset === 'clear') {
-      setStartDate('');
-      setEndDate('');
-    }
-  };
+
 
   const handlePdfExport = () => {
     if (reportMode === 'consolidation') {
@@ -384,9 +369,6 @@ const SupplierPaymentsReport = () => {
           </div>
         </div>
       </div>
-        </div>
-      </div>
-
       {/* Main Table Section */}
       <div className="bg-white border border-[#E2E8F0] shadow-sm rounded-md overflow-hidden flex flex-col flex-1">
         <div className="bg-[#F8FAFC] border-b border-[#E2E8F0] px-3 py-2 flex justify-between items-center shrink-0 gap-2">
@@ -520,6 +502,8 @@ const SupplierPaymentsReport = () => {
 };
 
 export default SupplierPaymentsReport;
+
+
 
 
 

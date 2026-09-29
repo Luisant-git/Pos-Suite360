@@ -5,12 +5,13 @@ import { useNavigate } from 'react-router-dom';
 import { useForm, Controller } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Save, X, Filter, FileText, Maximize2, Minimize2, Download, Printer } from 'lucide-react';
+import { Save, X, Filter, FileText, Maximize2, Minimize2, Download, Printer, ChevronLeft, ChevronRight } from 'lucide-react';
 import toast from 'react-hot-toast';
 import Select from 'react-select';
 import * as XLSX from 'xlsx';
 import api from '../../services/api';
 import { useSettings } from '../../contexts/SettingsContext';
+import { generateBillByBillPdf } from '../../utils/pdfGenerator';
 
 const receiptSchema = z.object({
   receiptNo: z.string(),
@@ -40,6 +41,10 @@ const CustomerReceipts = () => {
   const [billFilter, setBillFilter] = useState<'Unpaid' | 'Paid' | 'All'>('Unpaid');
   const [allocations, setAllocations] = useState<Record<string, number>>({});
   const [editingId, setEditingId] = useState<number | null>(null);
+
+  // Pagination for History
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 20;
 
   const { data: storeSettings } = useQuery({ queryKey: ['settings'], queryFn: async () => (await api.get('/settings')).data });
 
@@ -172,6 +177,14 @@ const CustomerReceipts = () => {
     if (filterToDate && new Date(r.date) > new Date(filterToDate)) return false;
     return true;
   });
+
+  // Reset page to 1 when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filterCustomer, filterFromDate, filterToDate]);
+
+  const totalPages = Math.ceil(filteredHistory.length / itemsPerPage);
+  const paginatedHistory = filteredHistory.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
   const handleExportExcel = () => {
     const exportData = filteredHistory.map((r: any) => ({
@@ -344,7 +357,18 @@ const CustomerReceipts = () => {
                         </span>
                         <button 
                           type="button" 
-                          onClick={() => window.print()}
+                          onClick={() => {
+                            const displayedBills = unpaidBills.filter(b => billFilter === 'All' ? true : billFilter === 'Paid' ? b.pending < 0.01 : b.pending >= 0.01);
+                            const totals = displayedBills.reduce((acc, bill) => {
+                              acc.total += Number(bill.total || 0);
+                              acc.returned += Number(bill.returned || 0);
+                              acc.received += Number(bill.received || 0);
+                              acc.pending += Number(bill.pending || 0);
+                              return acc;
+                            }, { total: 0, returned: 0, received: 0, pending: 0 });
+                            const customer = customers.find((c: any) => c.id === selectedCustomerId);
+                            generateBillByBillPdf(customer?.name || 'Unknown', 'Customer', displayedBills, totals);
+                          }}
                           className="bg-white text-[#10B981] hover:bg-gray-100 p-1 rounded transition-colors"
                           title="Print Breakdown"
                         >
@@ -417,6 +441,31 @@ const CustomerReceipts = () => {
                             );
                           })()}
                         </tbody>
+                        <tfoot className="bg-[#F8FAFC] border-t-2 border-[#E2E8F0] sticky bottom-0 z-10 print:table-row-group">
+                          {(() => {
+                            const displayedBills = unpaidBills.filter(b => billFilter === 'All' ? true : billFilter === 'Paid' ? b.pending < 0.01 : b.pending >= 0.01);
+                            const totals = displayedBills.reduce((acc, bill) => {
+                              acc.total += Number(bill.total || 0);
+                              acc.returned += Number(bill.returned || 0);
+                              acc.received += Number(bill.received || 0);
+                              acc.pending += Number(bill.pending || 0);
+                              return acc;
+                            }, { total: 0, returned: 0, received: 0, pending: 0 });
+                            
+                            if (displayedBills.length === 0) return null;
+                            
+                            return (
+                              <tr>
+                                <td colSpan={2} className="px-3 py-2 text-right font-bold text-black uppercase">Totals:</td>
+                                <td className="px-3 py-2 text-right font-bold text-black">{formatCurrency(totals.total)}</td>
+                                <td className="px-3 py-2 text-right font-bold text-[#E11D48]">{formatCurrency(totals.returned)}</td>
+                                <td className="px-3 py-2 text-right font-bold text-[#10B981]">{formatCurrency(totals.received)}</td>
+                                <td className="px-3 py-2 text-right font-bold text-[#059669]">{formatCurrency(totals.pending)}</td>
+                                <td colSpan={2} className="print:hidden"></td>
+                              </tr>
+                            );
+                          })()}
+                        </tfoot>
                       </table>
                     </div>
                   </div>
@@ -566,6 +615,35 @@ const CustomerReceipts = () => {
             </div>
           </div>
 
+          {totalPages > 1 && (
+            <div className="bg-white border-b border-[#E2E8F0] p-2 px-3 flex justify-between items-center print:hidden">
+              <span className="text-[12px] text-gray-500 font-bold">
+                Showing {((currentPage - 1) * itemsPerPage) + 1} to {Math.min(currentPage * itemsPerPage, filteredHistory.length)} of {filteredHistory.length} entries
+              </span>
+              <div className="flex items-center gap-1">
+                <button
+                  type="button"
+                  disabled={currentPage === 1}
+                  onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                  className="p-1 border border-[#CBD5E1] rounded text-black hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <ChevronLeft size={16} />
+                </button>
+                <span className="px-3 text-[12px] font-bold text-black">
+                  Page {currentPage} of {totalPages}
+                </span>
+                <button
+                  type="button"
+                  disabled={currentPage === totalPages}
+                  onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                  className="p-1 border border-[#CBD5E1] rounded text-black hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <ChevronRight size={16} />
+                </button>
+              </div>
+            </div>
+          )}
+
           <div className="flex-1 overflow-auto bg-[#F8FAFC] overflow-x-auto">
             <table className="w-full text-left text-[12px] whitespace-nowrap">
               <thead>
@@ -584,7 +662,7 @@ const CustomerReceipts = () => {
                 ) : filteredHistory.length === 0 ? (
                   <tr><td colSpan={storeSettings?.allowEditReceipts ? 6 : 5} className="text-center p-4 text-black font-bold">No receipt records found.</td></tr>
                 ) : (
-                  filteredHistory.map((r: any, idx: number) => (
+                  paginatedHistory.map((r: any, idx: number) => (
                     <tr key={r.id} className={`border-b border-[#E2E8F0] ${idx % 2 === 0 ? 'bg-white' : 'bg-[#F8FAFC]'}`}>
                       <td className="px-3 py-2 border-r border-[#E2E8F0] font-bold text-[#059669]">{r.receiptNo}</td>
                       <td className="px-3 py-2 border-r border-[#E2E8F0] text-black font-bold">{new Date(r.date).toISOString().split('T')[0]}</td>

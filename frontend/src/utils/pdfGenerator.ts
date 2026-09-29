@@ -131,3 +131,65 @@ export const generateNativePdf = (sale: any, settings: any): string => {
   
   return doc.output('datauristring');
 };
+
+export const generateBillByBillPdf = (entityName: string, entityType: 'Customer' | 'Supplier', bills: any[], totals: any) => {
+  const doc = new jsPDF('p', 'mm', 'a4');
+  
+  // Header
+  doc.setFontSize(14);
+  doc.setFont("helvetica", "bold");
+  doc.text('BILL-BY-BILL BREAKDOWN', 105, 15, { align: 'center' });
+  
+  doc.setFontSize(11);
+  doc.setFont("helvetica", "bold");
+  doc.text(`${entityType.toUpperCase()}: ${entityName}`, 14, 25);
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text(`Date: ${new Date().toLocaleDateString()}`, 14, 30);
+  
+  const head = [['Entry / Inv No', 'Bill Date', 'Bill Total', entityType === 'Customer' ? 'Sales Returns' : 'Pur. Returns', entityType === 'Customer' ? 'Received Amount' : 'Paid Amount', 'Pending Balance']];
+  
+  const body = bills.map(b => [
+    b.entryNo || '',
+    new Date(b.date).toISOString().split('T')[0],
+    Number(b.total).toFixed(2),
+    Number(b.returned || 0).toFixed(2),
+    Number(b.received || b.paid || 0).toFixed(2),
+    Number(b.pending).toFixed(2)
+  ]);
+  
+  body.push([
+    'TOTAL',
+    '',
+    Number(totals.total).toFixed(2),
+    Number(totals.returned).toFixed(2),
+    Number(totals.received || totals.paid).toFixed(2),
+    Number(totals.pending).toFixed(2)
+  ]);
+
+  const color = entityType === 'Customer' ? [16, 185, 129] : [225, 29, 72]; // Emerald for Customer, Rose for Supplier
+
+  autoTable(doc, {
+    startY: 35,
+    head: head,
+    body: body,
+    theme: 'grid',
+    headStyles: { fillColor: color as [number, number, number], fontStyle: 'bold' },
+    styles: { fontSize: 9, cellPadding: 2 },
+    columnStyles: {
+      0: { fontStyle: 'bold' },
+      2: { halign: 'right' },
+      3: { halign: 'right' },
+      4: { halign: 'right' },
+      5: { halign: 'right', fontStyle: 'bold' }
+    },
+    didParseCell: function (data) {
+      if (data.row.index === body.length - 1) { // Total row
+        data.cell.styles.fontStyle = 'bold';
+        data.cell.styles.fillColor = [245, 245, 245];
+      }
+    }
+  });
+
+  window.open(doc.output('bloburl'));
+};

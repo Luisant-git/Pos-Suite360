@@ -149,74 +149,39 @@ const PurchaseReturnReport = () => {
               <h3 className="font-bold text-[15px] text-[#1E3A8A]">Advanced Filters</h3>
               <button onClick={() => setIsFilterOpen(false)} className="p-1.5 bg-red-50 text-red-600 rounded-full"><X size={16} /></button>
             </div>
-            <div className="flex flex-col md:flex-row gap-3">
-            <div className="relative flex-1">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Search size={14} className="text-black font-bold" />
-              </div>
-              <input
-                type="text"
-                placeholder="Search by return no or supplier name..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="w-full pl-9 pr-3 py-2 border border-[#E5E7EB] rounded text-[13px] outline-none focus:border-[#F59E0B]"
-              />
-            </div>
-            
-            <div className="flex flex-col sm:flex-row gap-3">
-              <div className="w-full sm:w-[130px]">
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-2 items-end">
+              <div className="col-span-2 md:col-span-2 relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <Search size={14} className="text-black font-bold" />
+                </div>
                 <input
-                  type="date"
-                  value={filterFromDate}
-                  onChange={(e) => setFilterFromDate(e.target.value)}
-                  className="w-full px-3 py-2 border border-[#E5E7EB] rounded text-[13px] outline-none focus:border-[#F59E0B]"
+                  type="text"
+                  placeholder="Search by return no or supplier name..."
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  className="w-full pl-9 pr-3 py-1.5 border border-[#E5E7EB] rounded text-[13px] outline-none focus:border-[#F59E0B]"
                 />
               </div>
-              
-              <div className="w-full sm:w-[130px]">
-                <input
-                  type="date"
-                  value={filterToDate}
-                  onChange={(e) => setFilterToDate(e.target.value)}
-                  className="w-full px-3 py-2 border border-[#E5E7EB] rounded text-[13px] outline-none focus:border-[#F59E0B]"
-                />
+              <div>
+                <input type="date" value={filterFromDate} onChange={(e) => setFilterFromDate(e.target.value)} className="w-full px-3 py-1.5 border border-[#E5E7EB] rounded text-[13px] outline-none focus:border-[#F59E0B]" />
               </div>
-              
-              <div className="flex gap-2 shrink-0">
-                <button className="bg-[#F59E0B] text-white px-3 py-2 rounded flex items-center justify-center hover:bg-[#D97706] transition-colors">
-                  <Filter size={14} />
-                </button>
-                <button 
-                  type="button" 
-                  onClick={() => {
-                    setSearch('');
-                    setFilterFromDate('');
-                    setFilterToDate('');
-                  }}
-                  className={`px-3 py-2 rounded flex items-center justify-center transition-colors border shadow-sm text-[12px] font-bold ${!isReset ? 'bg-white text-red-600 border-red-200 hover:bg-red-50' : 'bg-white text-black font-bold border-[#E5E7EB] hover:bg-gray-50'}`}
-                  title="Reset Filters"
-                >
-                  <RefreshCw size={14} className="mr-1" /> Reset
-                </button>
+              <div>
+                <input type="date" value={filterToDate} onChange={(e) => setFilterToDate(e.target.value)} className="w-full px-3 py-1.5 border border-[#E5E7EB] rounded text-[13px] outline-none focus:border-[#F59E0B]" />
               </div>
-              
-              <div className="w-full sm:w-[110px]">
-                <select
-                  value={entriesPerPage}
-                  onChange={(e) => {
-                    setEntriesPerPage(Number(e.target.value));
-                    setCurrentPage(1);
-                  }}
-                  className="w-full px-3 py-2 border border-[#E5E7EB] rounded text-[13px] outline-none bg-white focus:border-[#F59E0B]"
-                >
+              <div>
+                <select value={entriesPerPage} onChange={(e) => { setEntriesPerPage(Number(e.target.value)); setCurrentPage(1); }} className="w-full px-3 py-1.5 border border-[#E5E7EB] rounded text-[13px] outline-none bg-white focus:border-[#F59E0B]">
                   <option value={10}>10 Entries</option>
                   <option value={25}>25 Entries</option>
                   <option value={50}>50 Entries</option>
                   <option value={100}>100 Entries</option>
                 </select>
               </div>
+              <div className="flex gap-2">
+                <button type="button" onClick={() => { setSearch(''); setFilterFromDate(''); setFilterToDate(''); }} className={`flex-1 px-3 py-1.5 rounded flex items-center justify-center gap-1 transition-colors border text-[12px] font-bold ${!isReset ? 'bg-white text-red-600 border-red-200 hover:bg-red-50' : 'bg-white text-black border-[#E5E7EB] hover:bg-gray-50'}`}>
+                  <RefreshCw size={13} /> Reset
+                </button>
+              </div>
             </div>
-          </div>
         </div>
 
           {/* Table */}

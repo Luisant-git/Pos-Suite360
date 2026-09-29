@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Download, FileText, Filter, RefreshCw, X } from 'lucide-react';
+import { Download, FileText, Filter, RefreshCw, X, Search } from 'lucide-react';
 import { exportTableToPdf, type PdfColumn } from '../../utils/exportPdf';
 import { exportToExcel } from '../../utils/exportExcel';
 import { useSettings } from '../../contexts/SettingsContext';
@@ -22,17 +22,14 @@ const ExpenseReport = () => {
   const [categoryId, setCategoryId] = useState('');
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-
   const [entriesPerPage, setEntriesPerPage] = useState(25);
   const [currentPage, setCurrentPage] = useState(1);
 
-  // Fetch Expense Categories for filter dropdown
   const { data: categories = [] } = useQuery({
     queryKey: ['expenseCategories'],
     queryFn: async () => (await api.get('/expense-categories')).data
   });
 
-  // Fetch Expenses
   const { data: expenses = [], isLoading, refetch } = useQuery({
     queryKey: ['expensesReport', startDate, endDate, categoryId, searchQuery],
     queryFn: async () => {
@@ -89,14 +86,7 @@ const ExpenseReport = () => {
       _notes: e.notes || '-',
       _amount: Number(e.amount),
     }));
-    rows.push({
-      _sno: '',
-      _date: '',
-      _category: '',
-      _mode: '',
-      _notes: 'TOTAL AMOUNT:',
-      _amount: formatCurrency(totalExpenseAmount)
-    });
+    rows.push({ _sno: '', _date: '', _category: '', _mode: '', _notes: 'TOTAL AMOUNT:', _amount: formatCurrency(totalExpenseAmount) });
     exportTableToPdf(cols, rows, 'Expense_Report', 'Expense Report', settings?.shopName, expenses.length);
   };
 
@@ -109,122 +99,37 @@ const ExpenseReport = () => {
       'Notes': e.notes || '-',
       'Amount': Number(e.amount),
     }));
-    exportData.push({
-      'S.No': '',
-      'Date': '',
-      'Category': '',
-      'Payment Mode': '',
-      'Notes': 'TOTAL AMOUNT:',
-      'Amount': formatCurrency(totalExpenseAmount) as any
-    });
-    exportToExcel(exportData, 'Expense_Report', {
-      shopName: settings?.shopName || 'MY SHOP',
-      title: 'Expense Report',
-      totalCount: expenses.length
-    });
+    exportData.push({ 'S.No': '', 'Date': '', 'Category': '', 'Payment Mode': '', 'Notes': 'TOTAL AMOUNT:', 'Amount': formatCurrency(totalExpenseAmount) as any });
+    exportToExcel(exportData, 'Expense_Report', { shopName: settings?.shopName || 'MY SHOP', title: 'Expense Report', totalCount: expenses.length });
   };
 
   return (
     <div className="absolute inset-0 bg-[#F8FAFC] flex flex-col font-sans overflow-y-auto lg:overflow-hidden z-10 p-2 sm:p-4">
-      
       <ReportTabs />
 
-            {/* Mobile Quick Bar (Date, Search & Filter Toggle) */}
-      <div className="md:hidden flex items-center justify-between gap-2 p-2 bg-white border border-[#E2E8F0] shadow-sm rounded-md mb-2 shrink-0">
+            {/* Mobile Quick Bar */}
+      <div className="md:hidden flex items-center justify-between gap-2 mb-2 shrink-0">
         <div className="flex gap-2 flex-1">
           <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} className="w-1/2 px-2 py-1.5 border border-[#CBD5E1] rounded text-[12px] font-bold text-black" />
-          <input type="text" placeholder="Search..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="w-1/2 px-2 py-1.5 border border-[#CBD5E1] rounded text-[12px] font-bold text-black" />
+          <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} className="w-1/2 px-2 py-1.5 border border-[#CBD5E1] rounded text-[12px] font-bold text-black" />
         </div>
-        <button onClick={() => setIsFilterOpen(true)} className="flex items-center gap-1 bg-[#10B981] text-white px-3 py-1.5 rounded text-[12px] font-bold shrink-0">
+        <button onClick={() => setIsFilterOpen(true)} className="flex items-center gap-1 shrink-0 bg-[#10B981] text-white px-3 py-1.5 rounded text-[12px] font-bold">
           <Filter size={14} /> Filter
         </button>
       </div>
-
-      {/* Filter Section */}
-      <div className={g-white border border-[#E2E8F0] shadow-sm rounded-md mb-2 p-3 sm:mb-3 shrink-0 }>
-        {isFilterOpen && (
-          <div className="flex justify-between items-center pb-3 border-b border-[#E2E8F0] mb-3 md:hidden">
-            <h3 className="font-bold text-[15px] text-[#1E3A8A]">Advanced Filters</h3>
-            <button onClick={() => setIsFilterOpen(false)} className="p-1.5 bg-red-50 text-red-600 rounded-full"><X size={16} /></button>
-          </div>
-        )}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2 sm:gap-3 items-end mb-2 sm:mb-3">
-          <div>
-            <label className="flex items-center gap-1 text-[12px] text-black font-bold mb-1 font-bold">From Date</label>
-            <input 
-              type="date" 
-              value={startDate} 
-              onChange={(e) => setStartDate(e.target.value)}
-              className="w-full px-3 py-1.5 border border-[#CBD5E1] rounded outline-none text-[13px] text-black font-bold bg-white focus:border-[#3B82F6]"
-            />
-          </div>
-          <div>
-            <label className="flex items-center gap-1 text-[12px] text-black font-bold mb-1 font-bold">To Date</label>
-            <input 
-              type="date" 
-              value={endDate} 
-              onChange={(e) => setEndDate(e.target.value)}
-              className="w-full px-3 py-1.5 border border-[#CBD5E1] rounded outline-none text-[13px] text-black font-bold bg-white focus:border-[#3B82F6]"
-            />
-          </div>
-          <div>
-            <label className="flex items-center gap-1 text-[12px] text-black font-bold mb-1 font-bold">Expense Category</label>
-            <SearchableSelect
-              options={[{ value: '', label: 'All Categories' }, ...categories.map((c: any) => ({ value: c.id, label: c.name }))]}
-              value={categoryId}
-              onChange={(val) => setCategoryId(val || '')}
-              placeholder="All Categories"
-            />
-          </div>
-          <div>
-            <label className="flex items-center gap-1 text-[12px] text-black font-bold mb-1 font-bold">Search Notes / Description</label>
-            <input 
-              type="text" 
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search notes..."
-              className="w-full px-3 py-1.5 border border-[#CBD5E1] rounded outline-none text-[13px] text-black font-bold focus:border-[#3B82F6]"
-            />
-          </div>
-          <div>
-            <label className="flex items-center gap-1 text-[12px] text-black font-bold mb-1 font-bold">Entries Per Page</label>
-            <select
-              value={entriesPerPage}
-              onChange={(e) => {
-                setEntriesPerPage(Number(e.target.value));
-                setCurrentPage(1);
-              }}
-              className="w-full px-3 py-1.5 border border-[#CBD5E1] rounded outline-none text-[13px] text-black font-bold bg-white focus:border-[#3B82F6]"
-            >
-              <option value={10}>10 Entries</option>
-              <option value={25}>25 Entries</option>
-              <option value={50}>50 Entries</option>
-              <option value={100}>100 Entries</option>
-            </select>
-          </div>
-        </div>
 
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center pt-2 border-t border-dashed border-[#E2E8F0] gap-3 md:gap-0">
           <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
             <button type="button" onClick={() => refetch()} className="bg-[#0F172A] hover:bg-[#1E293B] text-white px-4 py-1.5 rounded-md flex items-center gap-2 text-[13px] font-bold transition-colors">
               <Filter size={14} /> Apply Filter
             </button>
-            <button type="button" onClick={() => setQuickDate('today')} className="bg-gray-100 hover:bg-gray-200 text-black font-bold text-[12px] font-bold px-3 py-1.5 rounded transition-colors">
-              Today
-            </button>
-            <button type="button" onClick={() => setQuickDate('thisMonth')} className="bg-gray-100 hover:bg-gray-200 text-black font-bold text-[12px] font-bold px-3 py-1.5 rounded transition-colors">
-              This Month
-            </button>
-            <button type="button" onClick={() => {
-              setEndDate('');
-              setCategoryId('');
-              setSearchQuery('');
-            }} className={`flex items-center gap-1 px-3 py-1.5 rounded-md text-[12px] font-bold transition-colors shadow-sm border ${!isReset ? 'bg-white text-red-600 border-red-200 hover:bg-red-50' : 'bg-white text-black font-bold border-[#CBD5E1] hover:bg-gray-100'}`}>
+            <button type="button" onClick={() => setQuickDate('today')} className="bg-gray-100 hover:bg-gray-200 text-black font-bold text-[12px] px-3 py-1.5 rounded transition-colors">Today</button>
+            <button type="button" onClick={() => setQuickDate('thisMonth')} className="bg-gray-100 hover:bg-gray-200 text-black font-bold text-[12px] px-3 py-1.5 rounded transition-colors">This Month</button>
+            <button type="button" onClick={() => { setEndDate(''); setCategoryId(''); setSearchQuery(''); }} className={`flex items-center gap-1 px-3 py-1.5 rounded-md text-[12px] font-bold transition-colors shadow-sm border ${!isReset ? 'bg-white text-red-600 border-red-200 hover:bg-red-50' : 'bg-white text-black border-[#CBD5E1] hover:bg-gray-100'}`}>
               <RefreshCw size={12} /> Reset Filters
             </button>
           </div>
-          
-          <div className="flex items-center gap-2 sm:gap-3 text-xs font-bold text-black font-bold">
+          <div className="flex items-center gap-2 sm:gap-3 text-xs font-bold text-black">
             <span>Total Entries: <strong className="text-[#0F172A]">{totalEntries}</strong></span>
             <span>Total Expense: <strong className="text-[#EF4444]">{formatCurrency(totalExpenseAmount)}</strong></span>
           </div>
@@ -233,25 +138,23 @@ const ExpenseReport = () => {
 
       {/* Report Table Section */}
       <div className="bg-white border border-[#E2E8F0] shadow-sm rounded-md overflow-hidden flex flex-col flex-1">
-        <div className="bg-[#F8FAFC] border-b border-[#E2E8F0] px-4 py-3 flex flex-col md:flex-row justify-between items-start md:items-center gap-3 md:gap-0 shrink-0">
+        <div className="bg-[#F8FAFC] border-b border-[#E2E8F0] px-3 py-3 flex flex-col md:flex-row justify-between items-start md:items-center gap-2 md:gap-0 shrink-0">
           <div className="flex items-center gap-2 text-black font-bold">
             <FileText size={16} />
-            <h2 className="font-bold text-[13px] tracking-wide text-black font-bold">EXPENSE TRANSACTIONS REPORT</h2>
+            <h2 className="font-bold text-[13px] tracking-wide text-black">EXPENSE TRANSACTIONS REPORT</h2>
           </div>
-          <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
-            <button type="button" 
-              onClick={handleExcelExport}
-              className="bg-[#10B981] hover:bg-[#059669] text-white px-3 py-1.5 rounded flex items-center justify-center gap-1.5 text-[12px] font-bold whitespace-nowrap transition-colors"
-            >
-              <Download size={14} /> <span className="hidden lg:inline">Export Excel</span>
-            </button>
-            <button type="button"
-              onClick={handlePdfExport}
-              className="bg-[#EF4444] hover:bg-[#DC2626] text-white px-3 py-1.5 rounded flex items-center justify-center gap-1.5 text-[12px] font-bold whitespace-nowrap transition-colors"
-            >
-              <Download size={14} /> <span className="hidden lg:inline">Export PDF</span>
-            </button>
-          </div>
+                      <div className="flex items-center gap-2 w-full md:w-auto mt-2 md:mt-0">
+              <div className="relative flex-1 min-w-[120px]">
+                <Search size={14} className="absolute left-2.5 top-2.5 text-black font-bold" />
+                <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Quick search..." className="w-full pl-8 pr-3 py-1.5 border border-[#CBD5E1] rounded outline-none text-[12px] md:w-48 focus:border-[#3B82F6]" />
+              </div>
+              <button type="button" onClick={handleExcelExport} className="shrink-0 bg-[#10B981] hover:bg-[#059669] text-white px-3 py-1.5 rounded flex items-center justify-center gap-1.5 text-[12px] font-bold whitespace-nowrap transition-colors">
+                <Download size={14} /> <span className="hidden lg:inline">Export Excel</span>
+              </button>
+              <button type="button" onClick={handlePdfExport} className="shrink-0 bg-[#EF4444] hover:bg-[#DC2626] text-white px-3 py-1.5 rounded flex items-center justify-center gap-1.5 text-[12px] font-bold whitespace-nowrap transition-colors">
+                <Download size={14} /> <span className="hidden lg:inline">Export PDF</span>
+              </button>
+            </div>
         </div>
 
         <div id="expense-report-export" className="flex-1 flex flex-col min-h-0 overflow-hidden">
@@ -259,7 +162,7 @@ const ExpenseReport = () => {
             <div className="flex justify-between items-end">
               <div>
                 <h1 className="text-xl font-bold uppercase">{settings?.shopName || 'MY SHOP'}</h1>
-                <h2 className="text-sm font-bold text-black font-bold uppercase tracking-wider">EXPENSE REPORT BY DATE</h2>
+                <h2 className="text-sm font-bold uppercase tracking-wider">EXPENSE REPORT BY DATE</h2>
               </div>
               <div className="text-right">
                 <p className="text-black font-bold text-xs">Date Range: {startDate || 'All'} to {endDate || 'All'}</p>
@@ -290,7 +193,7 @@ const ExpenseReport = () => {
                     <tr key={e.id} className={`border-b border-[#E2E8F0] ${index % 2 === 0 ? 'bg-white' : 'bg-[#F8FAFC]'} hover:bg-[#EFF6FF]`}>
                       <td className="px-4 py-3 border-r border-[#E2E8F0] text-center text-black font-bold">{(currentPage - 1) * entriesPerPage + index + 1}</td>
                       <td className="px-4 py-3 border-r border-[#E2E8F0] text-black font-bold">{new Date(e.date).toLocaleDateString()}</td>
-                      <td className="px-4 py-3 border-r border-[#E2E8F0] font-bold text-black font-bold">{e.category?.name || '-'}</td>
+                      <td className="px-4 py-3 border-r border-[#E2E8F0] font-bold text-black">{e.category?.name || '-'}</td>
                       <td className="px-4 py-3 border-r border-[#E2E8F0] text-black font-bold">{e.paymentMode?.name || '-'}</td>
                       <td className="px-4 py-3 border-r border-[#E2E8F0] text-black font-bold">{e.notes || '-'}</td>
                       <td className="px-4 py-3 text-right font-bold text-[#EF4444]">{formatCurrency(e.amount)}</td>
@@ -302,7 +205,7 @@ const ExpenseReport = () => {
           </div>
 
           <div className="pdf-footer hidden mt-6 text-right border-t-2 border-[#1E293B] pt-4 pb-8 pr-6">
-            <h3 className="text-xl font-bold text-black font-bold inline-block">Total Expense Amount: {formatCurrency(totalExpenseAmount)}</h3>
+            <h3 className="text-xl font-bold text-black inline-block">Total Expense Amount: {formatCurrency(totalExpenseAmount)}</h3>
           </div>
         </div>
 
@@ -316,7 +219,6 @@ const ExpenseReport = () => {
           />
         )}
       </div>
-      
     </div>
   );
 };

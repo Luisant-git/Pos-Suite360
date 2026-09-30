@@ -17,47 +17,47 @@ import api from '../../services/api';
 import { useSettings } from '../../contexts/SettingsContext';
 
 const StatCard = ({ title, value, icon: Icon, colorClass, desc, layout = 'topbar', reportUrl }: any) => {
-    const strValue = String(value);
-    let valueSizeClass = "text-xl sm:text-2xl"; // Normal size
-  
-    if (layout === 'sidebar') {
-      if (strValue.length > 14) {
-        valueSizeClass = "text-sm sm:text-base tracking-tighter";
-      } else if (strValue.length > 11) {
-        valueSizeClass = "text-base sm:text-lg tracking-tight";
-      } else if (strValue.length > 9) {
-        valueSizeClass = "text-lg sm:text-xl tracking-tight";
-      }
-    } else {
-      if (strValue.length > 15) {
-        valueSizeClass = "text-sm sm:text-base lg:text-lg tracking-tighter";
-      } else if (strValue.length > 12) {
-        valueSizeClass = "text-base sm:text-lg lg:text-xl tracking-tight";
-      }
-    }
-  
-    return (
-      <div className="bg-white border border-[#E6E9ED] shadow-sm p-3 relative flex flex-col justify-between hover:shadow-md transition-shadow gap-2 group h-full rounded-xl">
-        <div className="flex items-start justify-between gap-2 w-full">
-          <div className="min-w-0 flex-1">
-            <h3 className={`${valueSizeClass} font-bold text-black whitespace-nowrap`}>{value}</h3>
-            <p className="text-[11px] sm:text-[12px] text-black font-bold mt-0.5 uppercase tracking-wide leading-tight">{title}</p>
-            {desc && <p className="text-[10px] sm:text-[11px] text-gray-500 mt-0.5 truncate">{desc}</p>}
-          </div>
-          <div className={`p-2.5 ${colorClass} text-white flex-shrink-0 flex items-center justify-center shadow-inner rounded-xl`}>
-            <Icon className="w-5 h-5 sm:w-6 sm:h-6" />
-          </div>
-        </div>
-        {reportUrl && (
-          <div className="mt-2 pt-2 border-t border-gray-100 flex justify-end">
-            <Link to={reportUrl} className="inline-flex items-center justify-center bg-blue-50 text-blue-700 px-3 py-1 rounded-md text-[11px] font-bold hover:bg-blue-600 hover:text-white transition-colors duration-300">
-              View Report <span aria-hidden="true" className="ml-1 transition-transform duration-300 group-hover:translate-x-0.5"><ArrowRight size={14} className="ml-1.5" /></span>
-            </Link>
-          </div>
-        )}
-      </div>
-    );
+  const strValue = String(value);
+  let valueSizeClass = "text-xl sm:text-2xl"; // Normal size
 
+  if (layout === 'sidebar') {
+    if (strValue.length > 14) {
+      valueSizeClass = "text-sm sm:text-base tracking-tighter";
+    } else if (strValue.length > 11) {
+      valueSizeClass = "text-base sm:text-lg tracking-tight";
+    } else if (strValue.length > 9) {
+      valueSizeClass = "text-lg sm:text-xl tracking-tight";
+    }
+  } else {
+    if (strValue.length > 15) {
+      valueSizeClass = "text-sm sm:text-base lg:text-lg tracking-tighter";
+    } else if (strValue.length > 12) {
+      valueSizeClass = "text-base sm:text-lg lg:text-xl tracking-tight";
+    }
+  }
+
+  return (
+    <div className="bg-white border border-[#E6E9ED] shadow-sm p-3 relative flex flex-col justify-between hover:shadow-md transition-shadow gap-2 group h-full rounded-xl">
+      <div className="flex items-start justify-between gap-2 w-full">
+        <div className="min-w-0 flex-1">
+          <h3 className={`${valueSizeClass} font-bold text-black whitespace-nowrap`}>{value}</h3>
+          <p className="text-[11px] sm:text-[12px] text-black font-bold mt-0.5 uppercase tracking-wide leading-tight">{title}</p>
+          {desc && <p className="text-[10px] sm:text-[11px] text-gray-500 mt-0.5 truncate">{desc}</p>}
+        </div>
+        <div className={`p-2.5 ${colorClass} text-white flex-shrink-0 flex items-center justify-center shadow-inner rounded-xl`}>
+          <Icon className="w-5 h-5 sm:w-6 sm:h-6" />
+        </div>
+      </div>
+      {reportUrl && (
+        <div className="mt-2 pt-2 border-t border-gray-100 flex justify-end">
+          <Link to={reportUrl} className="inline-flex items-center justify-center bg-blue-50 text-blue-700 px-3 py-1 rounded-md text-[11px] font-bold hover:bg-blue-600 hover:text-white transition-colors duration-300">
+            View Report <span aria-hidden="true" className="ml-1 transition-transform duration-300 group-hover:translate-x-0.5"><ArrowRight size={14} className="ml-1.5" /></span>
+          </Link>
+        </div>
+      )}
+    </div>
+  );
+};
 
 const Dashboard = () => {
   const { desktopLayout } = useOutletContext<any>() || { desktopLayout: 'topbar' };
@@ -73,6 +73,8 @@ const Dashboard = () => {
   const [filterStartDate, setFilterStartDate] = useState(getMalaysiaDate());
   const [filterEndDate, setFilterEndDate] = useState(getMalaysiaDate());
   const [currentDateTime, setCurrentDateTime] = useState(new Date());
+  const [supplierSearch, setSupplierSearch] = useState('');
+  const [customerSearch, setCustomerSearch] = useState('');
 
   useEffect(() => {
     const timer = setInterval(() => setCurrentDateTime(new Date()), 60000);
@@ -126,28 +128,25 @@ const Dashboard = () => {
             {data.lowStockProducts && data.lowStockProducts.length > 0 ? (
               <ul className="divide-y divide-gray-100">
                 {data.lowStockProducts.map((product: any, idx: number) => (
-                  <li key={idx} className="p-4 flex items-center justify-between hover:bg-rose-50/50 transition-colors group">
-                    <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center text-black font-bold group-hover:bg-white group-hover:shadow-sm transition-all">
-                        <Package size={24} />
-                      </div>
-                      <div>
-                        <p className="font-bold text-black font-bold text-[14px]">{product.name}</p>
-                        <p className="text-[12px] text-black font-bold mt-0.5">Min Stock: {product.minStock}</p>
-                      </div>
+                  <li key={idx} className="p-4 hover:bg-gray-50 transition-colors flex justify-between items-center">
+                    <div>
+                      <p className="text-[13px] font-bold text-black font-bold break-words pr-2">{product.name}</p>
+                      <p className="text-[11px] font-bold text-gray-500 font-bold mt-1">Code: {product.code}</p>
                     </div>
-                    <div className="font-bold text-rose-500 bg-rose-100 px-3 py-1.5 rounded-lg text-[13px]">
-                      {Number(Number(product.currentStock).toFixed(4))} left
+                    <div className="text-right flex-shrink-0">
+                      <span className="inline-flex items-center justify-center px-2.5 py-1 bg-rose-100 text-rose-700 text-[12px] font-bold rounded-full font-bold">
+                        {product.currentStock} left
+                      </span>
                     </div>
                   </li>
                 ))}
               </ul>
             ) : (
-              <div className="h-full flex flex-col items-center justify-center text-black font-bold p-6 text-center gap-3">
-                <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center">
-                  <Package size={32} className="text-black font-bold" />
+              <div className="flex flex-col items-center justify-center h-full text-gray-500 space-y-3 px-4">
+                <div className="w-12 h-12 bg-gray-50 rounded-full flex items-center justify-center">
+                  <Package className="text-gray-400" size={24} />
                 </div>
-                <p className="font-bold text-[14px]">All stock levels are optimal</p>
+                <p className="text-[13px] font-bold text-black font-bold text-center">All stock levels are optimal</p>
               </div>
             )}
           </div>
@@ -168,6 +167,19 @@ const Dashboard = () => {
               </Link>
             </div>
           </div>
+          {/* Supplier Search Bar */}
+          <div className="px-4 py-2 border-b border-gray-100 bg-white">
+            <div className="relative">
+              <svg className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+              <input
+                type="text"
+                placeholder="Search supplier or bill..."
+                value={supplierSearch}
+                onChange={e => setSupplierSearch(e.target.value)}
+                className="w-full pl-8 pr-3 py-1.5 text-[12px] border border-gray-200 rounded-md focus:outline-none focus:ring-1 focus:ring-rose-300 bg-gray-50"
+              />
+            </div>
+          </div>
           <div className="flex-1 p-0 h-[350px] overflow-y-auto custom-scrollbar bg-white">
             <table className="w-full text-left text-[12px]">
               <thead className="bg-[#F8FAFC] border-b border-[#E2E8F0] sticky top-0">
@@ -177,7 +189,15 @@ const Dashboard = () => {
                 </tr>
               </thead>
               <tbody>
-                {data.unpaidSupplierBills?.length > 0 ? data.unpaidSupplierBills.map((bill: any, idx: number) => (
+                {data.unpaidSupplierBills?.filter((bill: any) =>
+                  !supplierSearch ||
+                  bill.entityName?.toLowerCase().includes(supplierSearch.toLowerCase()) ||
+                  bill.entryNo?.toLowerCase().includes(supplierSearch.toLowerCase())
+                ).length > 0 ? data.unpaidSupplierBills.filter((bill: any) =>
+                  !supplierSearch ||
+                  bill.entityName?.toLowerCase().includes(supplierSearch.toLowerCase()) ||
+                  bill.entryNo?.toLowerCase().includes(supplierSearch.toLowerCase())
+                ).map((bill: any, idx: number) => (
                   <tr key={idx} className="border-b border-[#E2E8F0] hover:bg-[#F8FAFC]">
                     <td className="px-4 py-3">
                       <div className="font-bold text-black font-bold break-words">{bill.entityName}</div>
@@ -195,7 +215,7 @@ const Dashboard = () => {
                 )) : (
                   <tr>
                     <td colSpan={2} className="px-4 py-8 text-center text-black font-bold">
-                      No pending supplier bills
+                      {supplierSearch ? 'No results found' : 'No pending supplier bills'}
                     </td>
                   </tr>
                 )}
@@ -219,6 +239,19 @@ const Dashboard = () => {
               </Link>
             </div>
           </div>
+          {/* Customer Search Bar */}
+          <div className="px-4 py-2 border-b border-gray-100 bg-white">
+            <div className="relative">
+              <svg className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+              <input
+                type="text"
+                placeholder="Search customer or bill..."
+                value={customerSearch}
+                onChange={e => setCustomerSearch(e.target.value)}
+                className="w-full pl-8 pr-3 py-1.5 text-[12px] border border-gray-200 rounded-md focus:outline-none focus:ring-1 focus:ring-amber-300 bg-gray-50"
+              />
+            </div>
+          </div>
           <div className="flex-1 p-0 h-[350px] overflow-y-auto custom-scrollbar bg-white">
             <table className="w-full text-left text-[12px]">
               <thead className="bg-[#F8FAFC] border-b border-[#E2E8F0] sticky top-0">
@@ -228,7 +261,15 @@ const Dashboard = () => {
                 </tr>
               </thead>
               <tbody>
-                {data.unpaidCustomerBills?.length > 0 ? data.unpaidCustomerBills.map((bill: any, idx: number) => (
+                {data.unpaidCustomerBills?.filter((bill: any) =>
+                  !customerSearch ||
+                  bill.entityName?.toLowerCase().includes(customerSearch.toLowerCase()) ||
+                  bill.entryNo?.toLowerCase().includes(customerSearch.toLowerCase())
+                ).length > 0 ? data.unpaidCustomerBills.filter((bill: any) =>
+                  !customerSearch ||
+                  bill.entityName?.toLowerCase().includes(customerSearch.toLowerCase()) ||
+                  bill.entryNo?.toLowerCase().includes(customerSearch.toLowerCase())
+                ).map((bill: any, idx: number) => (
                   <tr key={idx} className="border-b border-[#E2E8F0] hover:bg-[#F8FAFC]">
                     <td className="px-4 py-3">
                       <div className="font-bold text-black font-bold break-words">{bill.entityName}</div>
@@ -246,7 +287,7 @@ const Dashboard = () => {
                 )) : (
                   <tr>
                     <td colSpan={2} className="px-4 py-8 text-center text-black font-bold">
-                      No pending customer bills
+                      {customerSearch ? 'No results found' : 'No pending customer bills'}
                     </td>
                   </tr>
                 )}
@@ -517,4 +558,3 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
-

@@ -32,14 +32,14 @@ export default function ViewSalesModal({ saleId, onClose }: Props) {
   if (!sale) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="bg-white w-full max-w-5xl rounded-md shadow-lg overflow-hidden flex flex-col max-h-[90vh]">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-2 sm:p-4">
+      <div className="bg-white w-full max-w-5xl rounded-md shadow-lg overflow-hidden flex flex-col max-h-[95vh] sm:max-h-[90vh]">
         
         {/* Header */}
-        <div className="bg-[#3B82F6] text-white px-4 py-3 flex items-center justify-between shrink-0">
-          <div className="flex items-center gap-4">
-            <h2 className="font-bold text-[16px]">Sales Invoice - {sale.invoiceNo}</h2>
-            <div className="flex gap-2 items-center text-[12px] text-blue-100">
+        <div className="bg-[#3B82F6] text-white px-3 sm:px-4 py-2 sm:py-3 flex items-start sm:items-center justify-between shrink-0 gap-2">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4 min-w-0">
+            <h2 className="font-bold text-[14px] sm:text-[16px] truncate">Sales Invoice - {sale.invoiceNo}</h2>
+            <div className="flex gap-2 items-center text-[11px] sm:text-[12px] text-blue-100">
               <span>{new Date(sale.date).toISOString().split('T')[0]}</span>
               <span>•</span>
               <span className={`flex items-center gap-1 font-bold px-2 py-0.5 rounded ${sale.paymentMode?.name === 'Credit' ? 'text-rose-800 bg-rose-100' : 'text-emerald-800 bg-[#D1FAE5]'}`}>
@@ -47,55 +47,55 @@ export default function ViewSalesModal({ saleId, onClose }: Props) {
               </span>
             </div>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
             <button 
               onClick={() => setIsPrintModalOpen(true)}
-              className="flex items-center gap-1.5 bg-blue-700 hover:bg-blue-800 px-3 py-1.5 rounded font-bold text-[12px] transition-colors"
+              className="flex items-center gap-1 sm:gap-1.5 bg-blue-700 hover:bg-blue-800 px-2 sm:px-3 py-1.5 rounded font-bold text-[11px] sm:text-[12px] transition-colors"
             >
-              <Printer size={14} /> Print
+              <Printer size={13} /> <span className="hidden sm:inline">Print</span>
             </button>
             <button 
               onClick={() => { setAutoShare(true); setIsPrintModalOpen(true); }}
-              className="flex items-center gap-1.5 bg-[#25D366] hover:bg-[#1EBE55] px-3 py-1.5 rounded font-bold text-[12px] transition-colors"
+              className="flex items-center gap-1 sm:gap-1.5 bg-[#25D366] hover:bg-[#1EBE55] px-2 sm:px-3 py-1.5 rounded font-bold text-[11px] sm:text-[12px] transition-colors"
             >
-              <Share2 size={14} /> Share Invoice
+              <Share2 size={13} /> <span className="hidden sm:inline">Share</span>
             </button>
-            <button onClick={onClose} className="hover:bg-blue-600 p-1.5 rounded transition-colors ml-2"><X size={18} /></button>
+            <button onClick={onClose} className="hover:bg-blue-600 p-1.5 rounded transition-colors"><X size={16} /></button>
           </div>
         </div>
 
         {/* Content */}
-        <div className="p-6 overflow-y-auto bg-[#F8FAFC]">
-          <div className="flex gap-6 flex-col md:flex-row">
+        <div className="p-3 sm:p-6 overflow-y-auto bg-[#F8FAFC]">
+          <div className="flex gap-4 sm:gap-6 flex-col md:flex-row">
             
             {/* Left Column - Details */}
-            <div className="flex-1 space-y-6">
+            <div className="flex-1 space-y-4 sm:space-y-6">
               <div className="bg-white rounded shadow-sm border border-gray-200 overflow-hidden">
-                <div className="bg-[#1E293B] px-4 py-2 flex items-center gap-2 text-white">
-                  <FileText size={16} />
-                  <h3 className="font-bold text-[14px]">INVOICE DETAILS</h3>
+                <div className="bg-[#1E293B] px-3 sm:px-4 py-2 flex items-center gap-2 text-white">
+                  <FileText size={15} />
+                  <h3 className="font-bold text-[13px] sm:text-[14px]">INVOICE DETAILS</h3>
                 </div>
-                <div className="p-5 flex justify-between">
+                <div className="p-3 sm:p-5 flex flex-col sm:flex-row justify-between gap-3">
                   <div>
-                    <p className="text-[11px] font-bold text-black font-bold uppercase tracking-wide mb-1">Bill To</p>
-                    <p className="font-bold text-[15px] text-black font-bold">{sale.customer?.name || 'Counter Sale'}</p>
-                    <p className="text-[13px] text-black font-bold mt-1">{sale.customer?.phone || 'No phone number'}</p>
-                    {sale.customer?.address && <p className="text-[13px] text-black font-bold mt-1 max-w-[250px]">{sale.customer.address}</p>}
+                    <p className="text-[11px] font-bold text-black uppercase tracking-wide mb-1">Bill To</p>
+                    <p className="font-bold text-[14px] sm:text-[15px] text-black">{sale.customer?.name || 'Counter Sale'}</p>
+                    <p className="text-[12px] sm:text-[13px] text-black font-bold mt-1">{sale.customer?.phone || 'No phone number'}</p>
+                    {sale.customer?.address && <p className="text-[12px] sm:text-[13px] text-black font-bold mt-1">{sale.customer.address}</p>}
                   </div>
-                  <div className="text-right">
-                    <p className="text-[11px] font-bold text-black font-bold uppercase tracking-wide mb-1">Payment Details</p>
-                    <p className={`font-bold text-[14px] inline-block px-2 py-0.5 rounded ${sale.paymentMode?.name === 'Credit' ? 'bg-rose-100 text-rose-600' : 'bg-[#D1FAE5] text-[#10B981]'}`}>{sale.paymentMode?.name || 'CASH'}</p>
-                    <p className="text-[13px] text-black font-bold mt-1">Status: {sale.paymentMode?.name === 'Credit' ? 'Credit' : 'Paid'}</p>
+                  <div className="sm:text-right">
+                    <p className="text-[11px] font-bold text-black uppercase tracking-wide mb-1">Payment Details</p>
+                    <p className={`font-bold text-[13px] sm:text-[14px] inline-block px-2 py-0.5 rounded ${sale.paymentMode?.name === 'Credit' ? 'bg-rose-100 text-rose-600' : 'bg-[#D1FAE5] text-[#10B981]'}`}>{sale.paymentMode?.name || 'CASH'}</p>
+                    <p className="text-[12px] sm:text-[13px] text-black font-bold mt-1">Status: {sale.paymentMode?.name === 'Credit' ? 'Credit' : 'Paid'}</p>
                   </div>
                 </div>
               </div>
 
               <div className="bg-white rounded shadow-sm border border-gray-200 overflow-hidden">
-                <div className="bg-[#F8FAFC] px-4 py-2 border-b border-gray-200">
-                  <h3 className="font-bold text-[14px] text-black font-bold">ITEMIZED BILLING</h3>
+                <div className="bg-[#F8FAFC] px-3 sm:px-4 py-2 border-b border-gray-200">
+                  <h3 className="font-bold text-[13px] sm:text-[14px] text-black">ITEMIZED BILLING</h3>
                 </div>
-                <div className="overflow-x-auto p-4">
-                  <table className="w-full text-left text-[13px] whitespace-nowrap">
+                <div className="overflow-x-auto p-2 sm:p-4">
+                  <table className="w-full text-left text-[12px] sm:text-[13px] whitespace-nowrap">
                     <thead>
                       <tr className="border-b-2 border-gray-200 text-black font-bold">
                         <th className="py-2 px-2 font-bold">Code</th>
@@ -103,20 +103,20 @@ export default function ViewSalesModal({ saleId, onClose }: Props) {
                         <th className="py-2 px-2 font-bold text-right">Qty</th>
                         <th className="py-2 px-2 font-bold text-center">Unit</th>
                         <th className="py-2 px-2 font-bold text-right">Rate</th>
-                        <th className="py-2 px-2 font-bold text-right">Discount</th>
+                        <th className="py-2 px-2 font-bold text-right">Disc</th>
                         <th className="py-2 px-2 font-bold text-right">Amount</th>
                       </tr>
                     </thead>
                     <tbody>
                       {sale.items?.map((item: any, idx: number) => (
                         <tr key={idx} className="border-b border-gray-100 last:border-0 hover:bg-gray-50">
-                          <td className="py-3 px-2 font-bold text-black font-bold">{item.product?.code || '-'}</td>
-                          <td className="py-3 px-2 font-bold text-black font-bold">{item.product?.name}</td>
-                          <td className="py-3 px-2 text-right">{Number(Number(item.quantity).toFixed(4))}</td>
-                          <td className="py-3 px-2 text-center text-black font-bold">{item.product?.unit?.name || 'Nos'}</td>
-                          <td className="py-3 px-2 text-right font-bold">{formatCurrency(item.rate)}</td>
-                          <td className="py-3 px-2 text-right text-red-500">{item.discount > 0 ? formatCurrency(item.discount) : '-'}</td>
-                          <td className="py-3 px-2 text-right font-bold text-black font-bold">{formatCurrency(item.amount)}</td>
+                          <td className="py-2 px-2 font-bold text-black">{item.product?.code || '-'}</td>
+                          <td className="py-2 px-2 font-bold text-black">{item.product?.name}</td>
+                          <td className="py-2 px-2 text-right">{Number(Number(item.quantity).toFixed(4))}</td>
+                          <td className="py-2 px-2 text-center text-black font-bold">{item.product?.unit?.name || 'Nos'}</td>
+                          <td className="py-2 px-2 text-right font-bold">{formatCurrency(item.rate)}</td>
+                          <td className="py-2 px-2 text-right text-red-500">{item.discount > 0 ? formatCurrency(item.discount) : '-'}</td>
+                          <td className="py-2 px-2 text-right font-bold text-black">{formatCurrency(item.amount)}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -126,12 +126,12 @@ export default function ViewSalesModal({ saleId, onClose }: Props) {
             </div>
 
             {/* Right Column - Summary */}
-            <div className="w-full md:w-[320px] shrink-0">
+            <div className="w-full md:w-[280px] shrink-0">
               <div className="bg-white rounded shadow-sm border border-gray-200 overflow-hidden">
-                <div className="bg-[#F8FAFC] px-4 py-2 border-b border-gray-200">
-                  <h3 className="font-bold text-[14px] text-black font-bold">SUMMARY</h3>
+                <div className="bg-[#F8FAFC] px-3 sm:px-4 py-2 border-b border-gray-200">
+                  <h3 className="font-bold text-[13px] sm:text-[14px] text-black">SUMMARY</h3>
                 </div>
-                <div className="p-4 space-y-3 text-[14px]">
+                <div className="p-3 sm:p-4 space-y-3 text-[13px] sm:text-[14px]">
                   <div className="flex justify-between items-center text-black font-bold">
                     <span>Subtotal</span>
                     <span className="font-bold">{formatCurrency(sale.subtotal)}</span>
@@ -140,13 +140,9 @@ export default function ViewSalesModal({ saleId, onClose }: Props) {
                     <span>Discount</span>
                     <span className="font-bold">- {formatCurrency(sale.discount)}</span>
                   </div>
-                  {/* <div className="flex justify-between items-center text-black font-bold">
-                    <span>Tax</span>
-                    <span className="font-bold">{formatCurrency(sale.tax || 0)}</span>
-                  </div> */}
                   <div className="flex justify-between items-center pt-2">
-                    <span className="text-[16px] font-black text-black font-bold">GRAND TOTAL</span>
-                    <span className="text-[20px] font-black text-[#2563EB]">{formatCurrency(sale.grandTotal)}</span>
+                    <span className="text-[15px] sm:text-[16px] font-black text-black">GRAND TOTAL</span>
+                    <span className="text-[18px] sm:text-[20px] font-black text-[#2563EB]">{formatCurrency(sale.grandTotal)}</span>
                   </div>
                 </div>
               </div>

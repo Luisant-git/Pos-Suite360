@@ -92,7 +92,7 @@ const SalesReturnReport = () => {
                     rows.push({ _sno: '', returnNo: '', _date: '', _invoiceNo: '', _customer: '', remarks: 'TOTAL AMOUNT:', _amount: formatCurrency(totalReturnsAmount) });
                     exportTableToPdf(cols, rows, 'Sales_Return_Report', 'Sales Return Report', settings?.shopName, filteredReturns.length);
                   }}
-                  className="flex-1 sm:flex-none bg-[#EF4444] hover:bg-[#DC2626] text-white px-3 py-1.5 rounded flex items-center justify-center gap-1.5 text-[12px] font-bold whitespace-nowrap transition-colors"
+                  className="bg-[#EF4444] hover:bg-[#DC2626] text-white px-3 py-1.5 rounded flex items-center justify-center gap-1.5 text-[12px] font-bold whitespace-nowrap transition-colors shrink-0"
                 >
                   <Download size={13} /> <span className="hidden sm:inline">Export PDF</span>
                 </button>
@@ -110,7 +110,7 @@ const SalesReturnReport = () => {
                     exportData.push({ 'S.No': '', 'Return No': '', 'Return Date': '', 'Invoice No': '', 'Customer Name': '', 'Remarks': 'TOTAL AMOUNT:', 'Refund Amount': formatCurrency(totalReturnsAmount) as any });
                     exportToExcel(exportData, 'Sales_Return_Report', { shopName: settings?.shopName || 'MY SHOP', title: 'Sales Return Report', totalCount: filteredReturns.length });
                   }}
-                  className="flex-1 sm:flex-none bg-[#10B981] hover:bg-[#059669] text-white px-3 py-1.5 rounded flex items-center justify-center gap-1.5 text-[12px] font-bold whitespace-nowrap transition-colors"
+                  className="bg-[#10B981] hover:bg-[#059669] text-white px-3 py-1.5 rounded flex items-center justify-center gap-1.5 text-[12px] font-bold whitespace-nowrap transition-colors shrink-0"
                 >
                   <Download size={13} /> <span className="hidden sm:inline">Export Excel</span>
                 </button>
@@ -143,16 +143,10 @@ const SalesReturnReport = () => {
                   <RefreshCw size={13} /> <span className="hidden sm:inline">Reset</span>
                 </button>
               </div>
-              {/* Row 2: Dates + Entries */}
-              <div className="grid grid-cols-3 gap-2">
-                <input type="date" value={filterFromDate} onChange={(e) => setFilterFromDate(e.target.value)} className="w-full px-2 py-1.5 border border-[#E5E7EB] rounded text-[12px] outline-none focus:border-[#EF4444]" />
-                <input type="date" value={filterToDate} onChange={(e) => setFilterToDate(e.target.value)} className="w-full px-2 py-1.5 border border-[#E5E7EB] rounded text-[12px] outline-none focus:border-[#EF4444]" />
-                <select value={entriesPerPage} onChange={(e) => { setEntriesPerPage(Number(e.target.value)); setCurrentPage(1); }} className="w-full px-2 py-1.5 border border-[#E5E7EB] rounded text-[12px] outline-none bg-white focus:border-[#EF4444]">
-                  <option value={10}>10 / page</option>
-                  <option value={25}>25 / page</option>
-                  <option value={50}>50 / page</option>
-                  <option value={100}>100 / page</option>
-                </select>
+              {/* Row 2: Dates */}
+              <div className="grid grid-cols-2 sm:flex sm:gap-2 gap-2">
+                <input type="date" value={filterFromDate} onChange={(e) => setFilterFromDate(e.target.value)} className="w-full sm:w-[150px] px-2 py-1.5 border border-[#E5E7EB] rounded text-[12px] outline-none focus:border-[#EF4444]" />
+                <input type="date" value={filterToDate} onChange={(e) => setFilterToDate(e.target.value)} className="w-full sm:w-[150px] px-2 py-1.5 border border-[#E5E7EB] rounded text-[12px] outline-none focus:border-[#EF4444]" />
               </div>
             </div>
           </div>

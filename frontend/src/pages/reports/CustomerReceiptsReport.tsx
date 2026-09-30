@@ -263,36 +263,36 @@ const CustomerReceiptsReport = () => {
 
       {/* Top Header Card with Summary Stats */}
       <div className="bg-white border border-[#E2E8F0] shadow-sm rounded-md mb-2 p-2 sm:p-3 sm:mb-3 shrink-0">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-2 sm:gap-3 mb-4 border-b border-[#E2E8F0] pb-3">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-3 border-b border-[#E2E8F0] pb-3">
           
-          <div className="flex items-center gap-3">
-            <div className="bg-[#3B82F6] text-white p-2.5 rounded-lg shadow-sm">
-              <Users size={20} />
+          <div className="flex items-center gap-2">
+            <div className="bg-[#3B82F6] text-white p-2 rounded-lg shadow-sm shrink-0">
+              <Users size={18} />
             </div>
             <div>
-              <h1 className="font-bold text-[14px] md:text-[16px] text-[#0F172A] uppercase tracking-wide truncate max-w-[230px] md:max-w-none">
-                CUSTOMER RECEIPTS & OVERALL DUES CONSOLIDATION REPORT
+              <h1 className="font-bold text-[13px] sm:text-[15px] text-[#0F172A] uppercase tracking-wide">
+                CUSTOMER RECEIPTS & OVERDUE REPORT
               </h1>
-              <p className="text-xs text-black font-bold hidden md:block">Complete overview of customer pending balances, total receipts, and ledger dues</p>
+              <p className="text-xs text-black font-bold hidden sm:block">Complete overview of customer pending balances, total receipts, and ledger dues</p>
             </div>
           </div>
 
-          <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide w-full pb-1 -mx-2 px-2 sm:mx-0 sm:px-0">
-            <div className="bg-gray-100 p-1 rounded-md flex items-center gap-1 border border-gray-200 shrink-0">
+          <div className="flex items-center gap-2 w-full sm:w-auto">
+            <div className="bg-gray-100 p-1 rounded-md flex items-center gap-1 border border-gray-200 flex-1 sm:flex-none">
               <button
                 type="button"
                 onClick={() => { setReportMode('consolidation'); setCurrentPage(1); }}
-                className={`px-3 py-1.5 text-[12px] font-bold rounded transition-colors ${
-                  reportMode === 'consolidation' ? 'bg-[#0F172A] text-white shadow-sm' : 'text-black font-bold hover:text-black hover:font-bold'
+                className={`flex-1 sm:flex-none px-2 sm:px-3 py-1.5 text-[11px] sm:text-[12px] font-bold rounded transition-colors ${
+                  reportMode === 'consolidation' ? 'bg-[#0F172A] text-white shadow-sm' : 'text-black hover:text-black'
                 }`}
               >
-                Overall Pending Dues
+                Pending Dues
               </button>
               <button
                 type="button"
                 onClick={() => { setReportMode('history'); setCurrentPage(1); }}
-                className={`px-3 py-1.5 text-[12px] font-bold rounded transition-colors ${
-                  reportMode === 'history' ? 'bg-[#0F172A] text-white shadow-sm' : 'text-black font-bold hover:text-black hover:font-bold'
+                className={`flex-1 sm:flex-none px-2 sm:px-3 py-1.5 text-[11px] sm:text-[12px] font-bold rounded transition-colors ${
+                  reportMode === 'history' ? 'bg-[#0F172A] text-white shadow-sm' : 'text-black hover:text-black'
                 }`}
               >
                 Receipts History
@@ -301,11 +301,11 @@ const CustomerReceiptsReport = () => {
 
             <button type="button" onClick={handleExcelExport} className="bg-[#10B981] hover:bg-[#059669] text-white px-3 py-1.5 rounded text-[12px] font-bold flex items-center gap-1.5 transition-colors shrink-0"
             >
-              <Download size={14} /> <span className="hidden lg:inline">Export Excel</span>
+              <Download size={14} /> <span className="hidden sm:inline">Excel</span>
             </button>
             <button type="button" onClick={handlePdfExport} className="bg-[#EF4444] hover:bg-[#DC2626] text-white px-3 py-1.5 rounded text-[12px] font-bold flex items-center gap-1.5 transition-colors shrink-0"
             >
-              <Download size={14} /> <span className="hidden lg:inline">Export PDF</span>
+              <Download size={14} /> <span className="hidden sm:inline">PDF</span>
             </button>
           </div>
         </div>
@@ -358,30 +358,62 @@ const CustomerReceiptsReport = () => {
                 <RefreshCw size={13} /> <span className="hidden sm:inline">Reset</span>
               </button>
             </div>
-            {/* Row 2: Dates + Entries */}
-            <div className="grid grid-cols-3 gap-2">
-              <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} className="w-full px-2 py-1.5 border border-[#E5E7EB] rounded text-[12px] outline-none focus:border-[#3B82F6] h-[38px]" />
-              <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} className="w-full px-2 py-1.5 border border-[#E5E7EB] rounded text-[12px] outline-none focus:border-[#3B82F6] h-[38px]" />
-              <select value={entriesPerPage} onChange={(e) => { setEntriesPerPage(Number(e.target.value)); setCurrentPage(1); }} className="w-full px-2 py-1.5 border border-[#E5E7EB] rounded text-[12px] outline-none bg-white focus:border-[#3B82F6] h-[38px]">
-                <option value={10}>10 / page</option>
-                <option value={25}>25 / page</option>
-                <option value={50}>50 / page</option>
-                <option value={100}>100 / page</option>
-              </select>
+            {/* Row 2: Dates */}
+            <div className="grid grid-cols-2 sm:flex sm:gap-2 gap-2">
+              <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} className="w-full sm:w-[150px] px-2 py-1.5 border border-[#E5E7EB] rounded text-[12px] outline-none focus:border-[#3B82F6] h-[38px]" />
+              <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} className="w-full sm:w-[150px] px-2 py-1.5 border border-[#E5E7EB] rounded text-[12px] outline-none focus:border-[#3B82F6] h-[38px]" />
+              <div className="hidden sm:flex items-center gap-1.5 ml-1">
+                {(() => {
+                  const d = new Date();
+                  const pad = (n: number) => n.toString().padStart(2, '0');
+                  const todayStr = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+                  const firstDay = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-01`;
+                  const lastDayDate = new Date(d.getFullYear(), d.getMonth() + 1, 0);
+                  const lastDay = `${lastDayDate.getFullYear()}-${pad(lastDayDate.getMonth() + 1)}-${pad(lastDayDate.getDate())}`;
+                  
+                  const isToday = startDate === todayStr && endDate === todayStr;
+                  const isMonth = startDate === firstDay && endDate === lastDay;
+
+                  return (
+                    <>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setStartDate(todayStr);
+                          setEndDate(todayStr);
+                        }}
+                        className={`px-3 py-1.5 flex items-center gap-1.5 text-[12px] font-bold rounded h-[38px] transition-colors border ${isToday ? 'bg-blue-50 text-blue-600 border-blue-200 shadow-sm' : 'bg-gray-100 hover:bg-gray-200 border-gray-200 text-black'}`}
+                      >
+                        {isToday && <CheckCircle2 size={14} className="text-blue-600" />} Today
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setStartDate(firstDay);
+                          setEndDate(lastDay);
+                        }}
+                        className={`px-3 py-1.5 flex items-center gap-1.5 text-[12px] font-bold rounded h-[38px] transition-colors border ${isMonth ? 'bg-blue-50 text-blue-600 border-blue-200 shadow-sm' : 'bg-gray-100 hover:bg-gray-200 border-gray-200 text-black'}`}
+                      >
+                        {isMonth && <CheckCircle2 size={14} className="text-blue-600" />} This Month
+                      </button>
+                    </>
+                  );
+                })()}
+              </div>
             </div>
           </div>
         </div>
       </div>
       {/* Main Content Area */}
       <div className="bg-white border border-[#E2E8F0] shadow-sm rounded-md overflow-hidden flex flex-col flex-1">
-        <div className="bg-[#F8FAFC] border-b border-[#E2E8F0] px-4 py-3 flex justify-between items-center shrink-0">
-          <div className="flex items-center gap-2 text-black font-bold">
-            <FileText size={16} />
-            <h2 className="font-bold text-[13px] tracking-wide text-black font-bold uppercase">
+        <div className="bg-[#F8FAFC] border-b border-[#E2E8F0] px-3 py-2 flex justify-between items-center shrink-0 gap-2">
+          <div className="flex items-center gap-1.5 text-black font-bold min-w-0">
+            <FileText size={14} className="shrink-0" />
+            <h2 className="font-bold text-[11px] sm:text-[13px] tracking-wide text-black uppercase truncate">
               {reportMode === 'consolidation' ? 'OVERALL CUSTOMER DUES CONSOLIDATION' : 'CUSTOMER RECEIPTS HISTORY'}
             </h2>
           </div>
-          <span className="text-xs font-bold text-black font-bold">{activeList.length} Records Found</span>
+          <span className="text-[11px] font-bold text-black whitespace-nowrap shrink-0">{activeList.length} Records Found</span>
         </div>
 
         <div id="customer-receipts-report-export" className="flex-1 flex flex-col min-h-0 overflow-hidden p-4">

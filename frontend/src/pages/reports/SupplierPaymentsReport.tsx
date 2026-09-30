@@ -355,16 +355,48 @@ const SupplierPaymentsReport = () => {
                 <RefreshCw size={13} /> <span className="hidden sm:inline">Reset</span>
               </button>
             </div>
-            {/* Row 2: Dates + Entries */}
-            <div className="grid grid-cols-3 gap-2">
-              <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} className="w-full px-2 py-1.5 border border-[#E5E7EB] rounded text-[12px] outline-none focus:border-[#3B82F6] h-[38px]" />
-              <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} className="w-full px-2 py-1.5 border border-[#E5E7EB] rounded text-[12px] outline-none focus:border-[#3B82F6] h-[38px]" />
-              <select value={entriesPerPage} onChange={(e) => { setEntriesPerPage(Number(e.target.value)); setCurrentPage(1); }} className="w-full px-2 py-1.5 border border-[#E5E7EB] rounded text-[12px] outline-none bg-white focus:border-[#3B82F6] h-[38px]">
-                <option value={10}>10 / page</option>
-                <option value={25}>25 / page</option>
-                <option value={50}>50 / page</option>
-                <option value={100}>100 / page</option>
-              </select>
+            {/* Row 2: Dates */}
+            <div className="grid grid-cols-2 sm:flex sm:gap-2 gap-2">
+              <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} className="w-full sm:w-[150px] px-2 py-1.5 border border-[#E5E7EB] rounded text-[12px] outline-none focus:border-[#3B82F6] h-[38px]" />
+              <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} className="w-full sm:w-[150px] px-2 py-1.5 border border-[#E5E7EB] rounded text-[12px] outline-none focus:border-[#3B82F6] h-[38px]" />
+              <div className="hidden sm:flex items-center gap-1.5 ml-1">
+                {(() => {
+                  const d = new Date();
+                  const pad = (n: number) => n.toString().padStart(2, '0');
+                  const todayStr = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+                  const firstDay = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-01`;
+                  const lastDayDate = new Date(d.getFullYear(), d.getMonth() + 1, 0);
+                  const lastDay = `${lastDayDate.getFullYear()}-${pad(lastDayDate.getMonth() + 1)}-${pad(lastDayDate.getDate())}`;
+                  
+                  const isToday = startDate === todayStr && endDate === todayStr;
+                  const isMonth = startDate === firstDay && endDate === lastDay;
+
+                  return (
+                    <>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setStartDate(todayStr);
+                          setEndDate(todayStr);
+                        }}
+                        className={`px-3 py-1.5 flex items-center gap-1.5 text-[12px] font-bold rounded h-[38px] transition-colors border ${isToday ? 'bg-blue-50 text-blue-600 border-blue-200 shadow-sm' : 'bg-gray-100 hover:bg-gray-200 border-gray-200 text-black'}`}
+                      >
+                        {isToday && <CheckCircle2 size={14} className="text-blue-600" />} Today
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setStartDate(firstDay);
+                          setEndDate(lastDay);
+                        }}
+                        className={`px-3 py-1.5 flex items-center gap-1.5 text-[12px] font-bold rounded h-[38px] transition-colors border ${isMonth ? 'bg-blue-50 text-blue-600 border-blue-200 shadow-sm' : 'bg-gray-100 hover:bg-gray-200 border-gray-200 text-black'}`}
+                      >
+                        {isMonth && <CheckCircle2 size={14} className="text-blue-600" />} This Month
+                      </button>
+                    </>
+                  );
+                })()}
+              </div>
             </div>
           </div>
         </div>

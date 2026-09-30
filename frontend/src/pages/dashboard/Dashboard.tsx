@@ -8,44 +8,83 @@ import {
   CreditCard,
   Wallet,
   Landmark,
-  Users
+  Users,
+  BarChart3,
+  ArrowRight,
+  LayoutDashboard,
+  ListTodo
 } from 'lucide-react';
 import api from '../../services/api';
 import { useSettings } from '../../contexts/SettingsContext';
 
-const StatCard = ({ title, value, icon: Icon, colorClass, desc, layout = 'topbar' }: any) => {
+const StatCard = ({ title, value, icon: Icon, colorClass, desc, layout = 'topbar', reportUrl }: any) => {
   const strValue = String(value);
-  let valueSizeClass = "text-2xl sm:text-3xl"; // Normal size
+  let valueSizeClass = "text-xl sm:text-2xl"; // Normal size
 
   if (layout === 'sidebar') {
-    // Shrink slightly for sidebar layout because cards are narrower
     if (strValue.length > 14) {
-      valueSizeClass = "text-base sm:text-lg tracking-tighter";
+      valueSizeClass = "text-sm sm:text-base tracking-tighter";
     } else if (strValue.length > 11) {
-      valueSizeClass = "text-lg sm:text-xl tracking-tight";
+      valueSizeClass = "text-base sm:text-lg tracking-tight";
     } else if (strValue.length > 9) {
-      valueSizeClass = "text-xl sm:text-2xl tracking-tight";
+      valueSizeClass = "text-lg sm:text-xl tracking-tight";
     }
   } else {
-    // Topbar layout has plenty of space, only shrink if gigantic
     if (strValue.length > 15) {
-      valueSizeClass = "text-base sm:text-lg lg:text-xl tracking-tighter";
+      valueSizeClass = "text-sm sm:text-base lg:text-lg tracking-tighter";
     } else if (strValue.length > 12) {
-      valueSizeClass = "text-lg sm:text-xl lg:text-2xl tracking-tight";
+      valueSizeClass = "text-base sm:text-lg lg:text-xl tracking-tight";
     }
   }
 
+  let blob1 = "bg-blue-50";
+  let blob2 = "bg-purple-50";
+  let btnClasses = "bg-blue-50/80 text-blue-600 group-hover:bg-blue-600 group-hover:text-white group-hover:shadow-[0_4px_12px_rgba(37,99,235,0.25)]";
+  
+  if (colorClass.includes("emerald")) { 
+    blob1 = "bg-emerald-50"; blob2 = "bg-teal-50"; 
+    btnClasses = "bg-emerald-50/80 text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white group-hover:shadow-[0_4px_12px_rgba(5,150,105,0.25)]"; 
+  } else if (colorClass.includes("rose")) { 
+    blob1 = "bg-rose-50"; blob2 = "bg-orange-50"; 
+    btnClasses = "bg-rose-50/80 text-rose-600 group-hover:bg-rose-600 group-hover:text-white group-hover:shadow-[0_4px_12px_rgba(225,29,72,0.25)]"; 
+  } else if (colorClass.includes("purple")) { 
+    blob1 = "bg-purple-50"; blob2 = "bg-pink-50"; 
+    btnClasses = "bg-purple-50/80 text-purple-600 group-hover:bg-purple-600 group-hover:text-white group-hover:shadow-[0_4px_12px_rgba(147,51,234,0.25)]"; 
+  } else if (colorClass.includes("indigo")) { 
+    blob1 = "bg-indigo-50"; blob2 = "bg-violet-50"; 
+    btnClasses = "bg-indigo-50/80 text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white group-hover:shadow-[0_4px_12px_rgba(79,70,229,0.25)]"; 
+  } else if (colorClass.includes("amber")) {
+    blob1 = "bg-amber-50"; blob2 = "bg-yellow-50";
+    btnClasses = "bg-amber-50/80 text-amber-600 group-hover:bg-amber-600 group-hover:text-white group-hover:shadow-[0_4px_12px_rgba(245,158,11,0.25)]";
+  }
+
+  const CardWrapper = reportUrl ? Link : 'div';
+  const wrapperProps = reportUrl ? { to: reportUrl } : {};
+
   return (
-    <div className="bg-white border border-[#E6E9ED] shadow-sm p-4 sm:p-5 relative flex items-center justify-between hover:shadow-md transition-shadow gap-3">
-      <div className="min-w-0 flex-1">
-        <h3 className={`${valueSizeClass} font-bold text-black font-bold whitespace-nowrap`}>{value}</h3>
-        <p className="text-[12px] sm:text-[13px] text-black font-bold mt-1 uppercase tracking-wide leading-tight">{title}</p>
-        {desc && <p className="text-[11px] sm:text-[12px] text-black font-bold mt-1 truncate">{desc}</p>}
+    <CardWrapper {...(wrapperProps as any)} className={`bg-white rounded-xl shadow-[0_10px_30px_rgba(0,0,0,0.15)] hover:shadow-[0_20px_40px_rgba(0,0,0,0.3)] transition-all duration-300 border border-gray-100 p-4 sm:p-5 min-h-[150px] flex flex-col relative overflow-hidden h-full ${reportUrl ? 'group cursor-pointer' : ''}`}>
+      <div className={`absolute top-0 right-0 w-24 h-24 ${blob1} rounded-full mix-blend-multiply filter blur-2xl opacity-50 group-hover:opacity-100 transition-opacity`}></div>
+      <div className={`absolute bottom-0 left-0 w-20 h-20 ${blob2} rounded-full mix-blend-multiply filter blur-xl opacity-50 group-hover:opacity-100 transition-opacity`}></div>
+      
+      <div className="relative z-10 flex items-start justify-between gap-2">
+        <div className="min-w-0 flex-1">
+          <h3 className="text-[13px] font-bold text-gray-500 mb-1 truncate">{title}</h3>
+          <p className={`${valueSizeClass} font-bold text-gray-900 tracking-tight whitespace-nowrap`}>{value}</p>
+          {desc && <p className="text-[11px] font-medium text-gray-400 mt-1 truncate">{desc}</p>}
+        </div>
+        <div className={`w-10 h-10 rounded-xl ${colorClass} text-white shadow-inner flex-shrink-0 flex items-center justify-center`}>
+          <Icon className="w-5 h-5" strokeWidth={1.5} />
+        </div>
       </div>
-      <div className={`p-3 sm:p-4 ${colorClass} text-white flex-shrink-0 flex items-center justify-center shadow-inner rounded-xl`}>
-        <Icon className="w-6 h-6 sm:w-8 sm:h-8" />
-      </div>
-    </div>
+      
+      {reportUrl && (
+        <div className="relative z-10 mt-auto pt-3 flex justify-end">
+          <span className={`inline-flex items-center justify-center px-3 py-1.5 rounded-lg text-[11px] font-bold shadow-sm transition-all duration-300 ${btnClasses}`}>
+            View Report <ArrowRight size={14} className="ml-1.5" />
+          </span>
+        </div>
+      )}
+    </CardWrapper>
   );
 };
 
@@ -54,6 +93,7 @@ const Dashboard = () => {
   const { formatCurrency } = useSettings();
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState('overview');
   const getMalaysiaDate = () => {
     const d = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Kuala_Lumpur" }));
     return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
@@ -101,6 +141,150 @@ const Dashboard = () => {
   const isToday = filterStartDate === todayStr && filterEndDate === todayStr;
   const prefix = isToday ? "Today's" : "Filtered";
   const descPrefix = isToday ? "Today's" : "Period";
+
+  const renderOperationalGrid = (isOverviewTab: boolean) => (
+    <div className={`grid grid-cols-1 lg:grid-cols-3 gap-6 ${isOverviewTab ? 'hidden lg:grid mt-6' : ''}`}>
+        {/* Low Stock Products */}
+        <div className="bg-white border border-gray-200 shadow-sm rounded-xl overflow-hidden lg:col-span-1">
+          <div className="border-b border-gray-100 px-4 sm:px-5 py-3 sm:py-4 flex justify-between items-center bg-gray-50/50">
+            <h2 className="text-[15px] sm:text-[16px] font-bold text-black font-bold flex items-center gap-2">
+              <Package size={18} className="text-rose-500" /> Low Stock Alerts
+            </h2>
+          </div>
+          <div className="p-0 h-[350px] overflow-y-auto custom-scrollbar bg-white">
+            {data.lowStockProducts && data.lowStockProducts.length > 0 ? (
+              <ul className="divide-y divide-gray-100">
+                {data.lowStockProducts.map((product: any, idx: number) => (
+                  <li key={idx} className="p-4 flex items-center justify-between hover:bg-rose-50/50 transition-colors group">
+                    <div className="flex items-center gap-4">
+                      <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center text-black font-bold group-hover:bg-white group-hover:shadow-sm transition-all">
+                        <Package size={24} />
+                      </div>
+                      <div>
+                        <p className="font-bold text-black font-bold text-[14px]">{product.name}</p>
+                        <p className="text-[12px] text-black font-bold mt-0.5">Min Stock: {product.minStock}</p>
+                      </div>
+                    </div>
+                    <div className="font-bold text-rose-500 bg-rose-100 px-3 py-1.5 rounded-lg text-[13px]">
+                      {Number(Number(product.currentStock).toFixed(4))} left
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <div className="h-full flex flex-col items-center justify-center text-black font-bold p-6 text-center gap-3">
+                <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center">
+                  <Package size={32} className="text-black font-bold" />
+                </div>
+                <p className="font-bold text-[14px]">All stock levels are optimal</p>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Supplier Payments Due */}
+        <div className="bg-white border border-gray-200 shadow-sm rounded-xl overflow-hidden lg:col-span-1 flex flex-col">
+          <div className="border-b border-gray-100 px-4 sm:px-5 py-3 sm:py-4 flex flex-col sm:flex-row justify-between items-start sm:items-center bg-gray-50/50 gap-3 sm:gap-2">
+            <h2 className="text-[15px] sm:text-[16px] font-bold text-black font-bold flex items-center gap-2">
+              <Landmark size={18} className="text-rose-500" /> Supplier Payments Due
+            </h2>
+            <div className="flex items-center justify-start sm:justify-end gap-2 w-full sm:w-auto">
+              <Link to="/reports/supplier-payments" className="flex-1 sm:flex-none text-center px-3 py-1.5 sm:py-1 bg-white border border-gray-200 text-gray-700 font-bold rounded hover:bg-gray-50 transition-colors text-[12px]">
+                View All
+              </Link>
+              <Link to="/purchase/payments" className="flex-1 sm:flex-none text-center px-3 py-1.5 sm:py-1 bg-rose-50 text-rose-600 font-bold rounded hover:bg-rose-100 transition-colors text-[12px]">
+                Settle
+              </Link>
+            </div>
+          </div>
+          <div className="flex-1 p-0 h-[350px] overflow-y-auto custom-scrollbar bg-white">
+            <table className="w-full text-left text-[12px]">
+              <thead className="bg-[#F8FAFC] border-b border-[#E2E8F0] sticky top-0">
+                <tr>
+                  <th className="px-4 py-3 font-bold text-black font-bold">Supplier / Bill</th>
+                  <th className="px-4 py-3 font-bold text-[#059669] text-right whitespace-nowrap">Pending</th>
+                </tr>
+              </thead>
+              <tbody>
+                {data.unpaidSupplierBills?.length > 0 ? data.unpaidSupplierBills.map((bill: any, idx: number) => (
+                  <tr key={idx} className="border-b border-[#E2E8F0] hover:bg-[#F8FAFC]">
+                    <td className="px-4 py-3">
+                      <div className="font-bold text-black font-bold break-words">{bill.entityName}</div>
+                      <div className="text-black font-bold text-[11px] mt-0.5">
+                        {bill.entryNo} • {new Date(bill.date).toLocaleDateString('en-GB')}
+                      </div>
+                    </td>
+                    <td className="px-4 py-3 text-right">
+                      <div className="font-bold text-[#059669]">{formatCurrency(bill.pending)}</div>
+                      <div className="text-black font-bold text-[11px] mt-0.5">
+                        Total: {formatCurrency(bill.total)}
+                      </div>
+                    </td>
+                  </tr>
+                )) : (
+                  <tr>
+                    <td colSpan={2} className="px-4 py-8 text-center text-black font-bold">
+                      No pending supplier bills
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* Customer Payments Expected */}
+        <div className="bg-white border border-gray-200 shadow-sm rounded-xl overflow-hidden lg:col-span-1 flex flex-col">
+          <div className="border-b border-gray-100 px-4 sm:px-5 py-3 sm:py-4 flex flex-col sm:flex-row justify-between items-start sm:items-center bg-gray-50/50 gap-3 sm:gap-2">
+            <h2 className="text-[15px] sm:text-[16px] font-bold text-black font-bold flex items-center gap-2">
+              <Users size={18} className="text-amber-500" /> Customer Payments Due
+            </h2>
+            <div className="flex items-center justify-start sm:justify-end gap-2 w-full sm:w-auto">
+              <Link to="/reports/customer-receipts" className="flex-1 sm:flex-none text-center px-3 py-1.5 sm:py-1 bg-white border border-gray-200 text-gray-700 font-bold rounded hover:bg-gray-50 transition-colors text-[12px]">
+                View All
+              </Link>
+              <Link to="/sales/receipts" className="flex-1 sm:flex-none text-center px-3 py-1.5 sm:py-1 bg-amber-50 text-amber-600 font-bold rounded hover:bg-amber-100 transition-colors text-[12px]">
+                Collect
+              </Link>
+            </div>
+          </div>
+          <div className="flex-1 p-0 h-[350px] overflow-y-auto custom-scrollbar bg-white">
+            <table className="w-full text-left text-[12px]">
+              <thead className="bg-[#F8FAFC] border-b border-[#E2E8F0] sticky top-0">
+                <tr>
+                  <th className="px-4 py-3 font-bold text-black font-bold">Customer / Bill</th>
+                  <th className="px-4 py-3 font-bold text-[#059669] text-right whitespace-nowrap">Pending</th>
+                </tr>
+              </thead>
+              <tbody>
+                {data.unpaidCustomerBills?.length > 0 ? data.unpaidCustomerBills.map((bill: any, idx: number) => (
+                  <tr key={idx} className="border-b border-[#E2E8F0] hover:bg-[#F8FAFC]">
+                    <td className="px-4 py-3">
+                      <div className="font-bold text-black font-bold break-words">{bill.entityName}</div>
+                      <div className="text-black font-bold text-[11px] mt-0.5">
+                        {bill.entryNo} • {new Date(bill.date).toLocaleDateString('en-GB')}
+                      </div>
+                    </td>
+                    <td className="px-4 py-3 text-right">
+                      <div className="font-bold text-[#059669]">{formatCurrency(bill.pending)}</div>
+                      <div className="text-black font-bold text-[11px] mt-0.5">
+                        Total: {formatCurrency(bill.total)}
+                      </div>
+                    </td>
+                  </tr>
+                )) : (
+                  <tr>
+                    <td colSpan={2} className="px-4 py-8 text-center text-black font-bold">
+                      No pending customer bills
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+    </div>
+  );
 
   return (
     <div className="bg-[#F3F5F8] min-h-full pb-8">
@@ -157,56 +341,89 @@ const Dashboard = () => {
       </div>
       */}
 
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-4">
         <div>
           <h1 className="text-[20px] font-bold text-black font-bold">Financial Overview</h1>
           <p className="text-[13px] font-bold text-blue-600 mt-1 flex items-center gap-1.5">
             <i className="fa fa-clock-o"></i> {formattedDateTime}
           </p>
         </div>
-        <div className="flex flex-col sm:flex-row sm:items-center gap-3 bg-white px-4 py-3 sm:py-2 border border-gray-200 rounded-xl shadow-sm w-full sm:w-auto">
-          <div className="flex items-center justify-between sm:justify-start gap-2 sm:border-r border-gray-200 sm:pr-4">
-            <label className="text-[13px] font-bold text-black font-bold w-10 sm:w-auto">From:</label>
+        <div className="flex items-center gap-1.5 sm:gap-2 bg-white px-2 sm:px-2.5 py-1.5 sm:py-2 border border-gray-200 rounded-xl shadow-sm w-full sm:w-auto">
+          <div className="flex items-center gap-1.5 bg-gray-50/80 border border-gray-100 px-2 py-1.5 rounded-lg flex-1 sm:flex-none overflow-hidden">
+            <span className="text-[11px] text-gray-500 font-bold uppercase tracking-wider hidden sm:inline">From</span>
             <input 
               type="date" 
               value={filterStartDate} 
               onChange={(e) => setFilterStartDate(e.target.value)}
-              className="text-[14px] font-bold text-black font-bold outline-none bg-transparent cursor-pointer flex-1 text-right sm:text-left"
+              className="text-[12px] sm:text-[13px] font-bold text-black bg-transparent outline-none cursor-pointer w-full sm:w-auto"
             />
           </div>
-          <div className="flex items-center justify-between sm:justify-start gap-2 sm:pl-2 sm:border-r border-gray-200 sm:pr-4">
-            <label className="text-[13px] font-bold text-black font-bold w-10 sm:w-auto">To:</label>
+          <span className="text-gray-300 font-bold">-</span>
+          <div className="flex items-center gap-1.5 bg-gray-50/80 border border-gray-100 px-2 py-1.5 rounded-lg flex-1 sm:flex-none overflow-hidden">
+            <span className="text-[11px] text-gray-500 font-bold uppercase tracking-wider hidden sm:inline">To</span>
             <input 
               type="date" 
               value={filterEndDate} 
               onChange={(e) => setFilterEndDate(e.target.value)}
-              className="text-[14px] font-bold text-black font-bold outline-none bg-transparent cursor-pointer flex-1 text-right sm:text-left"
+              className="text-[12px] sm:text-[13px] font-bold text-black bg-transparent outline-none cursor-pointer w-full sm:w-auto"
             />
           </div>
-          <div className="flex justify-end w-full sm:w-auto sm:block mt-1 sm:mt-0 border-t border-gray-100 pt-2 sm:border-t-0 sm:pt-0">
-            <button 
-              onClick={() => {
-                const today = getMalaysiaDate();
-                setFilterStartDate(today);
-                setFilterEndDate(today);
-              }}
-              className="flex items-center gap-1.5 text-[13px] font-bold text-black font-bold hover:text-blue-600 transition-colors sm:pl-2"
-              title="Reset to Today"
-            >
-              <RotateCcw size={16} /> Reset
-            </button>
-          </div>
+          <button 
+            onClick={() => {
+              const today = getMalaysiaDate();
+              setFilterStartDate(today);
+              setFilterEndDate(today);
+            }}
+            className={`flex items-center justify-center p-1.5 sm:px-3 sm:py-1.5 rounded-lg transition-all duration-300 ${
+              (filterStartDate !== getMalaysiaDate() || filterEndDate !== getMalaysiaDate())
+                ? 'bg-rose-100 text-rose-600 hover:bg-rose-200 shadow-sm'
+                : 'text-gray-400 hover:text-gray-600 hover:bg-gray-100'
+            }`}
+            title="Reset to Today"
+          >
+            <RotateCcw size={16} strokeWidth={2.5} className={`transition-transform duration-300 ${(filterStartDate !== getMalaysiaDate() || filterEndDate !== getMalaysiaDate()) ? '-rotate-180' : ''}`} />
+            <span className="hidden sm:inline ml-1.5 text-[13px] font-bold">Reset</span>
+          </button>
         </div>
       </div>
-      
-      {/* Top Tiles */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8">
+      <div className="flex w-full space-x-1 sm:space-x-2 border-b border-gray-200 mb-4 px-1">
+        <button
+          onClick={() => setActiveTab('overview')}
+          className={`whitespace-nowrap flex-1 sm:flex-none justify-center sm:justify-start px-2 sm:px-4 py-2 text-[13px] sm:text-[14px] font-bold flex items-center gap-1.5 sm:gap-2 border-b-2 transition-all duration-200 ${
+            activeTab === 'overview'
+              ? 'border-blue-600 text-blue-600'
+              : 'border-transparent text-gray-500 hover:text-gray-900 hover:border-gray-300'
+          }`}
+        >
+          <LayoutDashboard size={16} className="sm:w-[18px] sm:h-[18px]" />
+          Executive Overview
+        </button>
+        <button
+          onClick={() => setActiveTab('operational')}
+          className={`whitespace-nowrap flex-1 sm:flex-none justify-center sm:justify-start px-2 sm:px-4 py-2 text-[13px] sm:text-[14px] font-bold flex items-center gap-1.5 sm:gap-2 border-b-2 transition-all duration-200 ${
+            activeTab === 'operational'
+              ? 'border-blue-600 text-blue-600'
+              : 'border-transparent text-gray-500 hover:text-gray-900 hover:border-gray-300'
+          }`}
+        >
+          <ListTodo size={16} className="sm:w-[18px] sm:h-[18px]" />
+          Action Center
+        </button>
+      </div>
+
+
+
+      {activeTab === 'overview' && (
+        <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
+      {/* Top Tiles (Commented out per user request)
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-4">
         <StatCard layout={desktopLayout}
           title={`${prefix} Cash Sales`}
           value={formatCurrency(data.cashSalesToday)}
           desc={`${descPrefix} cash sales`}
           icon={Wallet}
           colorClass="bg-gradient-to-br from-emerald-400 to-emerald-600"
+          reportUrl="/reports/sales"
         />
         <StatCard layout={desktopLayout}
           title={`${prefix} Credit Sales`}
@@ -214,6 +431,7 @@ const Dashboard = () => {
           desc={`${descPrefix} credit sales`}
           icon={CreditCard}
           colorClass="bg-gradient-to-br from-teal-400 to-teal-600"
+          reportUrl="/reports/sales"
         />
         <StatCard layout={desktopLayout}
           title={`${prefix} Cash Purchases`}
@@ -221,6 +439,7 @@ const Dashboard = () => {
           desc={`${descPrefix} cash purchases`}
           icon={ShoppingCart}
           colorClass="bg-gradient-to-br from-blue-400 to-blue-600"
+          reportUrl="/reports/purchase"
         />
         <StatCard layout={desktopLayout}
           title={`${prefix} Credit Purchases`}
@@ -228,20 +447,23 @@ const Dashboard = () => {
           desc={`${descPrefix} credit purchases`}
           icon={CreditCard}
           colorClass="bg-gradient-to-br from-indigo-400 to-indigo-600"
+          reportUrl="/reports/purchase"
         />
         <StatCard layout={desktopLayout}
           title={`Pending Payables`}
           value={formatCurrency(data.pendingPayables)}
-          desc={`Amount owed to suppliers`}
+          desc={`Supplier Outstanding`}
           icon={Landmark}
           colorClass="bg-gradient-to-br from-rose-400 to-rose-600"
+          reportUrl="/reports/supplier-payments"
         />
         <StatCard layout={desktopLayout}
           title={`Pending Receivables`}
           value={formatCurrency(data.pendingReceivables)}
-          desc={`Amount owed by customers`}
+          desc={`Customer Outstanding / Due Collection`}
           icon={Users}
           colorClass="bg-gradient-to-br from-amber-400 to-amber-600"
+          reportUrl="/reports/customer-receipts"
         />
         <StatCard layout={desktopLayout}
           title={`${prefix} Expenses`}
@@ -249,6 +471,7 @@ const Dashboard = () => {
           desc="Operational costs"
           icon={TrendingDown}
           colorClass="bg-gradient-to-br from-purple-400 to-purple-600"
+          reportUrl="/reports/expenses"
         />
         <StatCard layout={desktopLayout}
           title="Products"
@@ -256,140 +479,68 @@ const Dashboard = () => {
           desc="Total items"
           icon={Package}
           colorClass="bg-gradient-to-br from-fuchsia-400 to-fuchsia-600"
+          reportUrl="/reports/stock"
         />
       </div>
+      */}
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Low Stock Products */}
-        <div className="bg-white border border-gray-200 shadow-sm rounded-xl overflow-hidden lg:col-span-1">
-          <div className="border-b border-gray-100 px-5 py-4 flex justify-between items-center bg-gray-50/50">
-            <h2 className="text-[16px] font-bold text-black font-bold flex items-center gap-2">
-              <Package size={18} className="text-rose-500" /> Low Stock Alerts
-            </h2>
-          </div>
-          <div className="p-0 h-[350px] overflow-y-auto custom-scrollbar bg-white">
-            {data.lowStockProducts && data.lowStockProducts.length > 0 ? (
-              <ul className="divide-y divide-gray-100">
-                {data.lowStockProducts.map((product: any, idx: number) => (
-                  <li key={idx} className="p-4 flex items-center justify-between hover:bg-rose-50/50 transition-colors group">
-                    <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center text-black font-bold group-hover:bg-white group-hover:shadow-sm transition-all">
-                        <Package size={24} />
-                      </div>
-                      <div>
-                        <p className="font-bold text-black font-bold text-[14px]">{product.name}</p>
-                        <p className="text-[12px] text-black font-bold mt-0.5">Min Stock: {product.minStock}</p>
-                      </div>
-                    </div>
-                    <div className="font-bold text-rose-500 bg-rose-100 px-3 py-1.5 rounded-lg text-[13px]">
-                      {Number(Number(product.currentStock).toFixed(4))} left
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <div className="h-full flex flex-col items-center justify-center text-black font-bold p-6 text-center gap-3">
-                <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center">
-                  <Package size={32} className="text-black font-bold" />
-                </div>
-                <p className="font-bold text-[14px]">All stock levels are optimal</p>
-              </div>
-            )}
-          </div>
+      {/* Key Reports Section */}
+      <div className="mb-4">
+        <h2 className="text-[16px] font-bold text-black mb-3 flex items-center gap-2 px-1">
+          <BarChart3 className="text-blue-500" size={18} /> Quick Reports
+        </h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 h-full">
+          <StatCard layout={desktopLayout}
+            title="Customer Outstanding"
+            value={formatCurrency(data.pendingReceivables)}
+            desc="Pending from customers"
+            icon={Users}
+            colorClass="bg-gradient-to-br from-blue-500 to-blue-600"
+            reportUrl="/reports/customer-receipts"
+          />
+          <StatCard layout={desktopLayout}
+            title="Supplier Outstanding"
+            value={formatCurrency(data.pendingPayables)}
+            desc="Pending to suppliers"
+            icon={Landmark}
+            colorClass="bg-gradient-to-br from-rose-500 to-rose-600"
+            reportUrl="/reports/supplier-payments"
+          />
+          <StatCard layout={desktopLayout}
+            title="Expense Report"
+            value={formatCurrency(data.expensesToday)}
+            desc="Total operational costs"
+            icon={TrendingDown}
+            colorClass="bg-gradient-to-br from-purple-500 to-purple-600"
+            reportUrl="/reports/expenses"
+          />
+          <StatCard layout={desktopLayout}
+            title="Due Collection Report"
+            value={formatCurrency(data.pendingReceivables)}
+            desc="Pending collections"
+            icon={Wallet}
+            colorClass="bg-gradient-to-br from-emerald-500 to-emerald-600"
+            reportUrl="/reports/customer-receipts"
+          />
+          <StatCard layout={desktopLayout}
+            title="Sales Report"
+            value={formatCurrency((Number(data.cashSalesToday) || 0) + (Number(data.creditSalesToday) || 0))}
+            desc="Total sales today"
+            icon={ShoppingCart}
+            colorClass="bg-gradient-to-br from-indigo-500 to-indigo-600"
+            reportUrl="/reports/sales"
+          />
         </div>
-
-        {/* Supplier Payments Due */}
-        <div className="bg-white border border-gray-200 shadow-sm rounded-xl overflow-hidden lg:col-span-1 flex flex-col">
-          <div className="border-b border-gray-100 px-5 py-4 flex justify-between items-center bg-gray-50/50">
-            <h2 className="text-[16px] font-bold text-black font-bold flex items-center gap-2">
-              <Landmark size={18} className="text-rose-500" /> Supplier Payments Due
-            </h2>
-            <Link to="/purchase/payments" className="px-3 py-1 bg-rose-50 text-rose-600 font-bold rounded hover:bg-rose-100 transition-colors text-[12px]">
-              Settle
-            </Link>
-          </div>
-          <div className="flex-1 p-0 h-[350px] overflow-y-auto custom-scrollbar bg-white">
-            <table className="w-full text-left text-[12px]">
-              <thead className="bg-[#F8FAFC] border-b border-[#E2E8F0] sticky top-0">
-                <tr>
-                  <th className="px-4 py-3 font-bold text-black font-bold">Supplier / Bill</th>
-                  <th className="px-4 py-3 font-bold text-[#059669] text-right whitespace-nowrap">Pending</th>
-                </tr>
-              </thead>
-              <tbody>
-                {data.unpaidSupplierBills?.length > 0 ? data.unpaidSupplierBills.map((bill: any, idx: number) => (
-                  <tr key={idx} className="border-b border-[#E2E8F0] hover:bg-[#F8FAFC]">
-                    <td className="px-4 py-3">
-                      <div className="font-bold text-black font-bold break-words">{bill.entityName}</div>
-                      <div className="text-black font-bold text-[11px] mt-0.5">
-                        {bill.entryNo} • {new Date(bill.date).toLocaleDateString('en-GB')}
-                      </div>
-                    </td>
-                    <td className="px-4 py-3 text-right">
-                      <div className="font-bold text-[#059669]">{formatCurrency(bill.pending)}</div>
-                      <div className="text-black font-bold text-[11px] mt-0.5">
-                        Total: {formatCurrency(bill.total)}
-                      </div>
-                    </td>
-                  </tr>
-                )) : (
-                  <tr>
-                    <td colSpan={2} className="px-4 py-8 text-center text-black font-bold">
-                      No pending supplier bills
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        {/* Customer Payments Expected */}
-        <div className="bg-white border border-gray-200 shadow-sm rounded-xl overflow-hidden lg:col-span-1 flex flex-col">
-          <div className="border-b border-gray-100 px-5 py-4 flex justify-between items-center bg-gray-50/50">
-            <h2 className="text-[16px] font-bold text-black font-bold flex items-center gap-2">
-              <Users size={18} className="text-amber-500" /> Customer Payments Due
-            </h2>
-            <Link to="/sales/receipts" className="px-3 py-1 bg-amber-50 text-amber-600 font-bold rounded hover:bg-amber-100 transition-colors text-[12px]">
-              Collect
-            </Link>
-          </div>
-          <div className="flex-1 p-0 h-[350px] overflow-y-auto custom-scrollbar bg-white">
-            <table className="w-full text-left text-[12px]">
-              <thead className="bg-[#F8FAFC] border-b border-[#E2E8F0] sticky top-0">
-                <tr>
-                  <th className="px-4 py-3 font-bold text-black font-bold">Customer / Bill</th>
-                  <th className="px-4 py-3 font-bold text-[#059669] text-right whitespace-nowrap">Pending</th>
-                </tr>
-              </thead>
-              <tbody>
-                {data.unpaidCustomerBills?.length > 0 ? data.unpaidCustomerBills.map((bill: any, idx: number) => (
-                  <tr key={idx} className="border-b border-[#E2E8F0] hover:bg-[#F8FAFC]">
-                    <td className="px-4 py-3">
-                      <div className="font-bold text-black font-bold break-words">{bill.entityName}</div>
-                      <div className="text-black font-bold text-[11px] mt-0.5">
-                        {bill.entryNo} • {new Date(bill.date).toLocaleDateString('en-GB')}
-                      </div>
-                    </td>
-                    <td className="px-4 py-3 text-right">
-                      <div className="font-bold text-[#059669]">{formatCurrency(bill.pending)}</div>
-                      <div className="text-black font-bold text-[11px] mt-0.5">
-                        Total: {formatCurrency(bill.total)}
-                      </div>
-                    </td>
-                  </tr>
-                )) : (
-                  <tr>
-                    <td colSpan={2} className="px-4 py-8 text-center text-black font-bold">
-                      No pending customer bills
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-        </div>
+        {renderOperationalGrid(true)}
       </div>
+        </div>
+      )}
+
+      {activeTab === 'operational' && (
+        <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
+          {renderOperationalGrid(false)}
+        </div>
+      )}
     </div>
   );
 };

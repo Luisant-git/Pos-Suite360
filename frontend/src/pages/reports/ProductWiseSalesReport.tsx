@@ -74,7 +74,7 @@ const ProductWiseSalesReport = () => {
                   className="w-full px-3 py-1.5 border border-[#CBD5E1] rounded outline-none text-[13px] text-black font-bold focus:border-[#3B82F6]"
                 />
               </div>
-              <div className="md:col-span-2">
+              <div className="col-span-2 md:col-span-2">
                 <label className="flex items-center gap-1 text-[12px] text-black font-bold mb-1"><Package size={12} /> Product Name</label>
                 <SearchableSelect
                   options={[{ value: '', label: 'All Products' }, ...products.map((p: any) => ({ value: p.id, label: `${p.code} - ${p.name}` }))]}

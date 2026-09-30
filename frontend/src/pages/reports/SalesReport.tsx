@@ -107,32 +107,34 @@ const SalesReport = () => {
           </button>
         </div>
 
-      {/* Filter Section */}
-      <div className={`bg-white border border-[#E2E8F0] shadow-sm rounded-md mb-2 p-3 ${isFilterOpen ? 'fixed inset-0 z-[100] m-0 rounded-none overflow-y-auto' : 'hidden md:block'}`}>
+      {isFilterOpen && <div className="fixed inset-0 bg-black/50 z-[9998] md:hidden" onClick={() => setIsFilterOpen(false)} />} 
+        {/* Filter Section */}
+      <div className={`bg-white border border-[#E2E8F0] shadow-sm rounded-md mb-2 p-3 ${isFilterOpen ? 'fixed inset-y-0 right-0 w-[280px] z-[9999] m-0 rounded-none rounded-l-xl overflow-y-auto shadow-2xl animate-in slide-in-from-right-full duration-300' : 'hidden md:block'}`}>
         <div className="flex justify-between items-center pb-3 border-b border-[#E2E8F0] mb-3 md:hidden">
           <h3 className="font-bold text-[15px] text-[#1E3A8A]">Advanced Filters</h3>
           <button onClick={() => setIsFilterOpen(false)} className="p-1.5 bg-red-50 text-red-600 rounded-full"><X size={16} /></button>
         </div>
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3 items-end mb-2 sm:mb-3">
+        <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-6 gap-3 items-end mb-3">
           
-          <div>
-            <label className="flex items-center gap-1 text-[12px] text-black font-bold mb-1 font-bold"><Calendar size={12} /> From Date</label>
-            <input
-              type="date"
-              value={fromDate}
-              onChange={(e) => setFromDate(e.target.value)}
-              className="w-full px-3 py-1.5 border border-[#CBD5E1] rounded outline-none text-[13px] text-black font-bold focus:border-[#3B82F6]"
-            />
-          </div>
-
-          <div>
-            <label className="flex items-center gap-1 text-[12px] text-black font-bold mb-1 font-bold"><Calendar size={12} /> To Date</label>
-            <input
-              type="date"
-              value={toDate}
-              onChange={(e) => setToDate(e.target.value)}
-              className="w-full px-3 py-1.5 border border-[#CBD5E1] rounded outline-none text-[13px] text-black font-bold focus:border-[#3B82F6]"
-            />
+          <div className="col-span-1 md:col-span-2 grid grid-cols-2 gap-2">
+            <div>
+              <label className="flex items-center gap-1 text-[12px] text-black font-bold mb-1 font-bold"><Calendar size={12} /> From Date</label>
+              <input
+                type="date"
+                value={fromDate}
+                onChange={(e) => setFromDate(e.target.value)}
+                className="w-full px-3 py-1.5 border border-[#CBD5E1] rounded outline-none text-[13px] text-black font-bold focus:border-[#3B82F6]"
+              />
+            </div>
+            <div>
+              <label className="flex items-center gap-1 text-[12px] text-black font-bold mb-1 font-bold"><Calendar size={12} /> To Date</label>
+              <input
+                type="date"
+                value={toDate}
+                onChange={(e) => setToDate(e.target.value)}
+                className="w-full px-3 py-1.5 border border-[#CBD5E1] rounded outline-none text-[13px] text-black font-bold focus:border-[#3B82F6]"
+              />
+            </div>
           </div>
 
           <div>

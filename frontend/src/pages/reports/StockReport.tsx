@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Download, Box, Activity } from 'lucide-react';
+import { Download, Box, Activity, Filter, X } from 'lucide-react';
 import { exportTableToPdf, type PdfColumn } from '../../utils/exportPdf';
 import api from '../../services/api';
 import ReportTabs from '../../components/ReportTabs';
@@ -46,6 +46,7 @@ const StockReport = () => {
 
   const [entriesPerPage, setEntriesPerPage] = useState(25);
   const [currentPage, setCurrentPage] = useState(1);
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
 
   const totalStockValue = products.reduce((sum: number, p: any) => sum + (Number(p.rawStockValue) || 0), 0);
 
@@ -59,9 +60,37 @@ const StockReport = () => {
       
       <ReportTabs />
 
+      {/* Mobile Quick Search and Filter Button */}
+      <div className="md:hidden flex items-center gap-2 mb-2 shrink-0">
+        <div className="relative flex-1">
+          <input 
+            type="text" 
+            value={quickSearch}
+            onChange={(e) => setQuickSearch(e.target.value)}
+            placeholder="Search by name or code..."
+            className="w-full px-3 py-1.5 border border-[#CBD5E1] rounded outline-none text-[12px] text-black font-bold focus:border-[#3B82F6]"
+          />
+        </div>
+        <button onClick={() => setIsFilterOpen(true)} className="flex items-center gap-1 shrink-0 bg-[#1E3A8A] text-white px-3 py-1.5 rounded text-[12px] font-bold shadow-sm">
+          <Filter size={14} /> Filter
+        </button>
+      </div>
+
+      {/* Filter Overlay (Mobile Only) */}
+      {isFilterOpen && (
+        <div 
+          className="fixed inset-0 bg-black/50 z-[9998] md:hidden" 
+          onClick={() => setIsFilterOpen(false)}
+        />
+      )}
+
       {/* Filter Section */}
-      <div className="bg-white border border-[#E2E8F0] shadow-sm rounded-md mb-2 p-2 sm:p-3 sm:mb-3 shrink-0">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3 items-end mb-2 sm:mb-3">
+      <div className={`bg-white border border-[#E2E8F0] shadow-sm rounded-md mb-2 p-3 sm:mb-3 shrink-0 ${isFilterOpen ? 'fixed inset-y-0 right-0 w-[280px] z-[9999] m-0 rounded-none rounded-l-xl overflow-y-auto shadow-2xl animate-in slide-in-from-right-full duration-300' : 'hidden md:block'}`}>
+        <div className="flex justify-between items-center pb-3 border-b border-[#E2E8F0] mb-3 md:hidden">
+          <h3 className="font-bold text-[15px] text-[#1E3A8A]">Advanced Filters</h3>
+          <button onClick={() => setIsFilterOpen(false)} className="p-1.5 bg-red-50 hover:bg-red-100 text-red-600 rounded-full transition-colors"><X size={16} /></button>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 items-end mb-3">
           <div>
             <label className="flex items-center gap-1 text-[12px] text-black font-bold mb-1 font-bold">Category</label>
             <SearchableSelect
@@ -80,7 +109,7 @@ const StockReport = () => {
               placeholder="All Brands"
             />
           </div>
-          <div>
+          <div className="hidden md:block">
             <label className="flex items-center gap-1 text-[12px] text-black font-bold mb-1 font-bold">Search Product</label>
             <input 
               type="text" 

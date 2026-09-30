@@ -17,75 +17,47 @@ import api from '../../services/api';
 import { useSettings } from '../../contexts/SettingsContext';
 
 const StatCard = ({ title, value, icon: Icon, colorClass, desc, layout = 'topbar', reportUrl }: any) => {
-  const strValue = String(value);
-  let valueSizeClass = "text-xl sm:text-2xl"; // Normal size
-
-  if (layout === 'sidebar') {
-    if (strValue.length > 14) {
-      valueSizeClass = "text-sm sm:text-base tracking-tighter";
-    } else if (strValue.length > 11) {
-      valueSizeClass = "text-base sm:text-lg tracking-tight";
-    } else if (strValue.length > 9) {
-      valueSizeClass = "text-lg sm:text-xl tracking-tight";
-    }
-  } else {
-    if (strValue.length > 15) {
-      valueSizeClass = "text-sm sm:text-base lg:text-lg tracking-tighter";
-    } else if (strValue.length > 12) {
-      valueSizeClass = "text-base sm:text-lg lg:text-xl tracking-tight";
-    }
-  }
-
-  let blob1 = "bg-blue-50";
-  let blob2 = "bg-purple-50";
-  let btnClasses = "bg-blue-50/80 text-blue-600 group-hover:bg-blue-600 group-hover:text-white group-hover:shadow-[0_4px_12px_rgba(37,99,235,0.25)]";
+    const strValue = String(value);
+    let valueSizeClass = "text-xl sm:text-2xl"; // Normal size
   
-  if (colorClass.includes("emerald")) { 
-    blob1 = "bg-emerald-50"; blob2 = "bg-teal-50"; 
-    btnClasses = "bg-emerald-50/80 text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white group-hover:shadow-[0_4px_12px_rgba(5,150,105,0.25)]"; 
-  } else if (colorClass.includes("rose")) { 
-    blob1 = "bg-rose-50"; blob2 = "bg-orange-50"; 
-    btnClasses = "bg-rose-50/80 text-rose-600 group-hover:bg-rose-600 group-hover:text-white group-hover:shadow-[0_4px_12px_rgba(225,29,72,0.25)]"; 
-  } else if (colorClass.includes("purple")) { 
-    blob1 = "bg-purple-50"; blob2 = "bg-pink-50"; 
-    btnClasses = "bg-purple-50/80 text-purple-600 group-hover:bg-purple-600 group-hover:text-white group-hover:shadow-[0_4px_12px_rgba(147,51,234,0.25)]"; 
-  } else if (colorClass.includes("indigo")) { 
-    blob1 = "bg-indigo-50"; blob2 = "bg-violet-50"; 
-    btnClasses = "bg-indigo-50/80 text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white group-hover:shadow-[0_4px_12px_rgba(79,70,229,0.25)]"; 
-  } else if (colorClass.includes("amber")) {
-    blob1 = "bg-amber-50"; blob2 = "bg-yellow-50";
-    btnClasses = "bg-amber-50/80 text-amber-600 group-hover:bg-amber-600 group-hover:text-white group-hover:shadow-[0_4px_12px_rgba(245,158,11,0.25)]";
-  }
-
-  const CardWrapper = reportUrl ? Link : 'div';
-  const wrapperProps = reportUrl ? { to: reportUrl } : {};
-
-  return (
-    <CardWrapper {...(wrapperProps as any)} className={`bg-white rounded-xl shadow-[0_10px_30px_rgba(0,0,0,0.15)] hover:shadow-[0_20px_40px_rgba(0,0,0,0.3)] transition-all duration-300 border border-gray-100 p-4 sm:p-5 min-h-[150px] flex flex-col relative overflow-hidden h-full ${reportUrl ? 'group cursor-pointer' : ''}`}>
-      <div className={`absolute top-0 right-0 w-24 h-24 ${blob1} rounded-full mix-blend-multiply filter blur-2xl opacity-50 group-hover:opacity-100 transition-opacity`}></div>
-      <div className={`absolute bottom-0 left-0 w-20 h-20 ${blob2} rounded-full mix-blend-multiply filter blur-xl opacity-50 group-hover:opacity-100 transition-opacity`}></div>
-      
-      <div className="relative z-10 flex items-start justify-between gap-2">
-        <div className="min-w-0 flex-1">
-          <h3 className="text-[13px] font-bold text-gray-500 mb-1 truncate">{title}</h3>
-          <p className={`${valueSizeClass} font-bold text-gray-900 tracking-tight whitespace-nowrap`}>{value}</p>
-          {desc && <p className="text-[11px] font-medium text-gray-400 mt-1 truncate">{desc}</p>}
+    if (layout === 'sidebar') {
+      if (strValue.length > 14) {
+        valueSizeClass = "text-sm sm:text-base tracking-tighter";
+      } else if (strValue.length > 11) {
+        valueSizeClass = "text-base sm:text-lg tracking-tight";
+      } else if (strValue.length > 9) {
+        valueSizeClass = "text-lg sm:text-xl tracking-tight";
+      }
+    } else {
+      if (strValue.length > 15) {
+        valueSizeClass = "text-sm sm:text-base lg:text-lg tracking-tighter";
+      } else if (strValue.length > 12) {
+        valueSizeClass = "text-base sm:text-lg lg:text-xl tracking-tight";
+      }
+    }
+  
+    return (
+      <div className="bg-white border border-[#E6E9ED] shadow-sm p-3 relative flex flex-col justify-between hover:shadow-md transition-shadow gap-2 group h-full rounded-xl">
+        <div className="flex items-start justify-between gap-2 w-full">
+          <div className="min-w-0 flex-1">
+            <h3 className={`${valueSizeClass} font-bold text-black whitespace-nowrap`}>{value}</h3>
+            <p className="text-[11px] sm:text-[12px] text-black font-bold mt-0.5 uppercase tracking-wide leading-tight">{title}</p>
+            {desc && <p className="text-[10px] sm:text-[11px] text-gray-500 mt-0.5 truncate">{desc}</p>}
+          </div>
+          <div className={`p-2.5 ${colorClass} text-white flex-shrink-0 flex items-center justify-center shadow-inner rounded-xl`}>
+            <Icon className="w-5 h-5 sm:w-6 sm:h-6" />
+          </div>
         </div>
-        <div className={`w-10 h-10 rounded-xl ${colorClass} text-white shadow-inner flex-shrink-0 flex items-center justify-center`}>
-          <Icon className="w-5 h-5" strokeWidth={1.5} />
-        </div>
+        {reportUrl && (
+          <div className="mt-2 pt-2 border-t border-gray-100 flex justify-end">
+            <Link to={reportUrl} className="inline-flex items-center justify-center bg-blue-50 text-blue-700 px-3 py-1 rounded-md text-[11px] font-bold hover:bg-blue-600 hover:text-white transition-colors duration-300">
+              View Report <span aria-hidden="true" className="ml-1 transition-transform duration-300 group-hover:translate-x-0.5"><ArrowRight size={14} className="ml-1.5" /></span>
+            </Link>
+          </div>
+        )}
       </div>
-      
-      {reportUrl && (
-        <div className="relative z-10 mt-auto pt-3 flex justify-end">
-          <span className={`inline-flex items-center justify-center px-3 py-1.5 rounded-lg text-[11px] font-bold shadow-sm transition-all duration-300 ${btnClasses}`}>
-            View Report <ArrowRight size={14} className="ml-1.5" />
-          </span>
-        </div>
-      )}
-    </CardWrapper>
-  );
-};
+    );
+
 
 const Dashboard = () => {
   const { desktopLayout } = useOutletContext<any>() || { desktopLayout: 'topbar' };
@@ -545,3 +517,4 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+

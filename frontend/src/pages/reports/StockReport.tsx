@@ -36,6 +36,7 @@ const StockReport = () => {
         name: p.name,
         brandName: p.brand?.name || '-',
         categoryName: p.category?.name || '-',
+        currentBirds: p.currentBirds || 0,
         currentQty: `${Number(Number(p.currentStock).toFixed(4))} ${p.unit?.shortCode || p.unit?.name || ''}`.trim(),
         purRate: formatCurrency(p.purchaseRate),
         stockValue: formatCurrency(Number(p.currentStock) * Number(p.purchaseRate)),
@@ -167,6 +168,7 @@ const StockReport = () => {
                   'Product Name': p.name,
                   'Brand': p.brandName,
                   'Category': p.categoryName,
+                  'Current Birds': p.currentBirds,
                   'Current Qty': p.currentQty,
                   'Pur Rate': p.purRate,
                   'Stock Value': p.stockValue,
@@ -176,6 +178,7 @@ const StockReport = () => {
                   'Product Name': '',
                   'Brand': '',
                   'Category': '',
+                  'Current Birds': '',
                   'Current Qty': '',
                   'Pur Rate': 'TOTAL VALUE:',
                   'Stock Value': formatCurrency(totalStockValue) as any,
@@ -197,6 +200,7 @@ const StockReport = () => {
                   { header: 'Product Name', dataKey: 'name' },
                   { header: 'Brand', dataKey: 'brandName' },
                   { header: 'Category', dataKey: 'categoryName' },
+                  { header: 'Current Birds', dataKey: 'currentBirds' },
                   { header: 'Current Qty', dataKey: 'currentQty' },
                   { header: 'Pur Rate', dataKey: 'purRate' },
                   { header: 'Stock Value', dataKey: 'stockValue' },
@@ -206,6 +210,7 @@ const StockReport = () => {
                   name: '',
                   brandName: '',
                   categoryName: '',
+                  currentBirds: '',
                   currentQty: '',
                   purRate: 'TOTAL VALUE:',
                   stockValue: formatCurrency(totalStockValue)
@@ -239,6 +244,7 @@ const StockReport = () => {
                 <th className="px-4 py-3 border-r border-[#1E293B]">Product Name</th>
                 <th className="px-4 py-3 border-r border-[#1E293B]">Brand</th>
                 <th className="px-4 py-3 border-r border-[#1E293B]">Category</th>
+                <th className="px-4 py-3 border-r border-[#1E293B] text-right">Birds</th>
                 <th className="px-4 py-3 border-r border-[#1E293B] text-right">Current Qty</th>
                 <th className="px-4 py-3 border-r border-[#1E293B] text-right">Pur Rate</th>
                 <th className="px-4 py-3 text-right">Stock Value</th>
@@ -246,9 +252,9 @@ const StockReport = () => {
             </thead>
             <tbody>
               {isLoading ? (
-                <TableLoader columns={8} />
+                <TableLoader columns={9} />
               ) : products.length === 0 ? (
-                <tr><td colSpan={8} className="text-center p-6 text-black font-bold">No stock records found.</td></tr>
+                <tr><td colSpan={9} className="text-center p-6 text-black font-bold">No stock records found.</td></tr>
               ) : (
                 paginatedProducts.map((p: any, index: number) => (
                   <tr key={p.id} className={`border-b border-[#E2E8F0] ${index % 2 === 0 ? 'bg-white' : 'bg-[#F8FAFC]'} hover:bg-[#EFF6FF]`}>
@@ -257,6 +263,7 @@ const StockReport = () => {
                     <td className="px-4 py-3 border-r border-[#E2E8F0] font-bold text-black font-bold">{p.name}</td>
                     <td className="px-4 py-3 border-r border-[#E2E8F0] text-black font-bold">{p.brandName}</td>
                     <td className="px-4 py-3 border-r border-[#E2E8F0] text-black font-bold">{p.categoryName}</td>
+                    <td className="px-4 py-3 border-r border-[#E2E8F0] text-right text-black font-bold">{p.currentBirds}</td>
                     <td className="px-4 py-3 border-r border-[#E2E8F0] text-right font-bold text-black font-bold">{p.currentQty}</td>
                     <td className="px-4 py-3 border-r border-[#E2E8F0] text-right text-black font-bold">{p.purRate}</td>
                     <td className="px-4 py-3 text-right font-bold text-[#3B82F6]">{p.stockValue}</td>

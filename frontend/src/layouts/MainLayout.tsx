@@ -396,7 +396,7 @@ const MainLayout = () => {
                 </div>
                 <div className="hidden sm:flex flex-col items-start text-left">
                   <span className="font-bold text-sm leading-tight">{user?.name || 'User'}</span>
-                  <span className="text-[10px] text-blue-200 font-bold">Admin</span>
+                  <span className="text-[10px] text-blue-200 font-bold uppercase tracking-wider">{user?.role?.name || 'User'}</span>
                 </div>
                 <ChevronDown size={14} className={`opacity-70 transition-transform duration-300 ${isProfileOpen ? 'rotate-180' : ''}`} />
               </button>
@@ -404,7 +404,7 @@ const MainLayout = () => {
               <div className={`absolute right-0 top-[90%] mt-2 w-56 bg-white border border-gray-100 shadow-2xl rounded-2xl transition-all duration-300 z-50 overflow-hidden transform origin-top-right ${isProfileOpen ? 'opacity-100 visible scale-100' : 'opacity-0 invisible scale-95'}`}>
                 <div className="p-4 bg-gray-50 border-b border-gray-100">
                   <p className="text-base font-bold text-black font-bold">{user?.name || 'User'}</p>
-                  <p className="text-xs font-bold text-blue-600 uppercase tracking-wide mt-1">Administrator</p>
+                  <p className="text-xs font-bold text-blue-600 uppercase tracking-wide mt-1">{user?.role?.name || 'User'}</p>
                 </div>
                 <div className="py-2 px-2">
                   {hasPerm('master_store_settings') && (

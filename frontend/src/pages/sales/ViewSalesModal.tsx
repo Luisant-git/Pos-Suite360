@@ -149,8 +149,15 @@ export default function ViewSalesModal({ saleId, onClose }: Props) {
             </div>
 
           </div>
-        </div>
       </div>
+
+      {/* Footer */}
+      <div className="bg-gray-100 border-t border-gray-200 px-3 sm:px-5 py-2 sm:py-3 flex justify-end rounded-b-md">
+        <button onClick={onClose} className="bg-gray-600 hover:bg-gray-700 text-white px-4 sm:px-5 py-2 rounded text-[12px] sm:text-[13px] font-bold transition-colors shadow-sm">
+          Close Window
+        </button>
+      </div>
+    </div>
 
       <InvoicePrintModal 
         isOpen={isPrintModalOpen} 

@@ -113,6 +113,13 @@ export class DashboardService {
     });
     const expensesToday = expensesAggregate._sum.amount ? Number(expensesAggregate._sum.amount) : 0;
 
+    // Collections received from customers in the selected period (Due Collections)
+    const collectionsAggregate = await this.prisma.customerReceipt.aggregate({
+      _sum: { amount: true },
+      where: { date: { gte: start, lt: end } },
+    });
+    const collectionsInPeriod = collectionsAggregate._sum.amount ? Number(collectionsAggregate._sum.amount) : 0;
+
     // Products Count
     const productsCount = await this.prisma.product.count();
 
@@ -167,6 +174,7 @@ export class DashboardService {
       pendingPayables,
       pendingReceivables,
       expensesToday,
+      collectionsInPeriod,
       productsCount,
       lowStockCount,
       billsToday,

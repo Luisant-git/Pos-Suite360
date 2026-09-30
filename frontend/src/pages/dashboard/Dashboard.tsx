@@ -487,8 +487,8 @@ const Dashboard = () => {
           />
           <StatCard layout={desktopLayout}
             title="Due Collection Report"
-            value={formatCurrency(data.pendingReceivables)}
-            desc="Pending collections"
+            value={formatCurrency(data.collectionsInPeriod || 0)}
+            desc="Collections received today"
             icon={Wallet}
             colorClass="bg-gradient-to-br from-emerald-500 to-emerald-600"
             reportUrl="/reports/customer-receipts"

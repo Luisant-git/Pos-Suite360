@@ -6,6 +6,15 @@ import api from '../../services/api';
 
 const MODULES = [
   {
+    id: 'dashboard_quickstart',
+    name: 'Dashboard & Quick Start',
+    icon: <Settings2 size={18} />,
+    permissions: [
+      { id: 'dashboard_access', name: 'Dashboard' },
+      { id: 'quick_start', name: 'Quick Start' },
+    ]
+  },
+  {
     id: 'master',
     name: 'Master / Settings',
     icon: <Settings2 size={18} />,
@@ -28,6 +37,7 @@ const MODULES = [
     icon: <Shield size={18} />,
     permissions: [
       { id: 'purchase_entry', name: 'Purchase Entry' },
+      { id: 'purchase_list', name: 'Purchase List' },
       { id: 'purchase_return', name: 'Purchase Return' },
       { id: 'purchase_payments', name: 'Supplier Payments' },
     ]
@@ -38,6 +48,7 @@ const MODULES = [
     icon: <Shield size={18} />,
     permissions: [
       { id: 'sales_pos', name: 'Sales Entry (POS)' },
+      { id: 'sales_list', name: 'Sales List' },
       { id: 'sales_return', name: 'Sales Return' },
       { id: 'sales_receipts', name: 'Customer Receipts' },
     ]
@@ -55,9 +66,16 @@ const MODULES = [
     name: 'Reports',
     icon: <Shield size={18} />,
     permissions: [
-      { id: 'reports_sales', name: 'Sales Reports' },
-      { id: 'reports_purchase', name: 'Purchase Reports' },
-      { id: 'reports_financial', name: 'Financial & Stock Reports' },
+      { id: 'reports_purchase', name: 'Purchase Report' },
+      { id: 'reports_purchase_return', name: 'Purchase Return Report' },
+      { id: 'reports_sales', name: 'Sales Report' },
+      { id: 'reports_sales_return', name: 'Sales Return Report' },
+      { id: 'reports_product_wise_sales', name: 'Product Wise Sales' },
+      { id: 'reports_stock', name: 'Stock As On Date' },
+      { id: 'reports_profit_ledger', name: 'Profit / Ledger' },
+      { id: 'reports_expense', name: 'Expense Report' },
+      { id: 'reports_customer_receipts', name: 'Customer Receipts & Dues Report' },
+      { id: 'reports_supplier_payments', name: 'Supplier Payments & Payables Report' },
     ]
   },
   {

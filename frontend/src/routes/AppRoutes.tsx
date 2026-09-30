@@ -69,8 +69,8 @@ const AppRoutes = () => {
       <Route element={<ProtectedRoute />}>
         <Route element={<MainLayout />}>
         <Route path="/" element={<Navigate to="/dashboard" replace />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/quick-start" element={<QuickStart />} />
+        <Route element={<ProtectedRoute requiredPerms="dashboard_access" />}><Route path="/dashboard" element={<Dashboard />} /></Route>
+        <Route element={<ProtectedRoute requiredPerms="quick_start" />}><Route path="/quick-start" element={<QuickStart />} /></Route>
         
         {/* Master Routes */}
         <Route element={<ProtectedRoute requiredPerms="master_products" />}><Route path="/master/products" element={<Products />} /></Route>
@@ -82,25 +82,22 @@ const AppRoutes = () => {
         <Route element={<ProtectedRoute requiredPerms="master_payment_modes" />}><Route path="/master/payment-modes" element={<PaymentModes />} /></Route>
         <Route element={<ProtectedRoute requiredPerms="master_payment_types" />}><Route path="/master/payment-types" element={<PaymentTypes />} /></Route>
         <Route element={<ProtectedRoute requiredPerms="master_expense_categories" />}><Route path="/master/expense-categories" element={<ExpenseCategories />} /></Route>
-        <Route element={<ProtectedRoute requiredPerms="master_users" />}>
-          <Route path="/master/users" element={<Users />} />
-          <Route path="/master/permissions" element={<MenuPermissions />} />
-        </Route>
+        <Route element={<ProtectedRoute requiredPerms="master_users" />}><Route path="/master/users" element={<Users />} /></Route><Route element={<ProtectedRoute requiredPerms="master_permissions" />}><Route path="/master/permissions" element={<MenuPermissions />} /></Route>
 
         {/* Purchase Routes */}
-        <Route element={<ProtectedRoute requiredPerms={['purchase_entry', 'purchase_return', 'purchase_payments']} />}><Route path="/purchase" element={<PurchaseList />} /></Route>
+        <Route element={<ProtectedRoute requiredPerms="purchase_list" />}><Route path="/purchase" element={<PurchaseList />} /></Route>
         <Route element={<ProtectedRoute requiredPerms="purchase_entry" />}><Route path="/purchase/new" element={<PurchaseEntry />} /></Route>
         <Route element={<ProtectedRoute requiredPerms="purchase_payments" />}><Route path="/purchase/payments" element={<SupplierPayments />} /></Route>
         <Route element={<ProtectedRoute requiredPerms="purchase_return" />}><Route path="/purchase/return" element={<PurchaseReturn />} /></Route>
-        <Route element={<ProtectedRoute requiredPerms={['purchase_entry', 'purchase_return', 'purchase_payments']} />}><Route path="/purchase/:id" element={<PurchaseView />} /></Route>
+        <Route element={<ProtectedRoute requiredPerms={['purchase_entry', 'purchase_list', 'purchase_return', 'purchase_payments']} />}><Route path="/purchase/:id" element={<PurchaseView />} /></Route>
 
         {/* Sales Routes */}
-        <Route element={<ProtectedRoute requiredPerms={['sales_pos', 'sales_return', 'sales_receipts']} />}><Route path="/sales" element={<SalesList />} /></Route>
+        <Route element={<ProtectedRoute requiredPerms="sales_list" />}><Route path="/sales" element={<SalesList />} /></Route>
         <Route element={<ProtectedRoute requiredPerms="sales_pos" />}><Route path="/sales/pos" element={<POS />} /></Route>
         <Route element={<ProtectedRoute requiredPerms="sales_receipts" />}><Route path="/sales/receipts" element={<CustomerReceipts />} /></Route>
         <Route element={<ProtectedRoute requiredPerms="sales_return" />}><Route path="/sales/return" element={<SalesReturn />} /></Route>
         <Route element={<ProtectedRoute requiredPerms={['sales_pos', 'sales_return', 'sales_receipts']} />}><Route path="/sales/history" element={<SalesHistory />} /></Route>
-        <Route element={<ProtectedRoute requiredPerms={['sales_pos', 'sales_return', 'sales_receipts']} />}><Route path="/sales/:id" element={<SalesView />} /></Route>
+        <Route element={<ProtectedRoute requiredPerms={['sales_pos', 'sales_list', 'sales_return', 'sales_receipts']} />}><Route path="/sales/:id" element={<SalesView />} /></Route>
 
         {/* Inventory Routes (accessible to master_products or mfg_product_master typically, or all) */}
         <Route element={<ProtectedRoute requiredPerms="reports_financial" />}><Route path="/inventory/stock" element={<Stock />} /></Route>
@@ -114,16 +111,16 @@ const AppRoutes = () => {
 
         {/* Report Routes */}
         <Route element={<ProtectedRoute requiredPerms="reports_sales" />}><Route path="/reports/sales" element={<SalesReport />} /></Route>
-        <Route element={<ProtectedRoute requiredPerms="reports_sales" />}><Route path="/reports/sales-return" element={<SalesReturnReport />} /></Route>
-        <Route element={<ProtectedRoute requiredPerms="reports_sales" />}><Route path="/reports/product-wise-sales" element={<ProductWiseSalesReport />} /></Route>
+        <Route element={<ProtectedRoute requiredPerms="reports_sales_return" />}><Route path="/reports/sales-return" element={<SalesReturnReport />} /></Route>
+        <Route element={<ProtectedRoute requiredPerms="reports_product_wise_sales" />}><Route path="/reports/product-wise-sales" element={<ProductWiseSalesReport />} /></Route>
         <Route element={<ProtectedRoute requiredPerms="reports_purchase" />}><Route path="/reports/purchase" element={<PurchaseReport />} /></Route>
-        <Route element={<ProtectedRoute requiredPerms="reports_purchase" />}><Route path="/reports/purchase-return" element={<PurchaseReturnReport />} /></Route>
-        <Route element={<ProtectedRoute requiredPerms="reports_financial" />}><Route path="/reports/stock" element={<StockReport />} /></Route>
-        <Route element={<ProtectedRoute requiredPerms="reports_financial" />}><Route path="/reports/profit-ledger" element={<ProfitLossReport />} /></Route>
-        <Route element={<ProtectedRoute requiredPerms="reports_financial" />}><Route path="/reports/expenses" element={<ExpenseReport />} /></Route>
+        <Route element={<ProtectedRoute requiredPerms="reports_purchase_return" />}><Route path="/reports/purchase-return" element={<PurchaseReturnReport />} /></Route>
+        <Route element={<ProtectedRoute requiredPerms="reports_stock" />}><Route path="/reports/stock" element={<StockReport />} /></Route>
+        <Route element={<ProtectedRoute requiredPerms="reports_profit_ledger" />}><Route path="/reports/profit-ledger" element={<ProfitLossReport />} /></Route>
+        <Route element={<ProtectedRoute requiredPerms="reports_expense" />}><Route path="/reports/expenses" element={<ExpenseReport />} /></Route>
         <Route element={<ProtectedRoute requiredPerms="reports_financial" />}><Route path="/reports/stock-ledger" element={<StockLedgerReport />} /></Route>
-        <Route element={<ProtectedRoute requiredPerms="reports_financial" />}><Route path="/reports/customer-receipts" element={<CustomerReceiptsReport />} /></Route>
-        <Route element={<ProtectedRoute requiredPerms="reports_financial" />}><Route path="/reports/supplier-payments" element={<SupplierPaymentsReport />} /></Route>
+        <Route element={<ProtectedRoute requiredPerms="reports_customer_receipts" />}><Route path="/reports/customer-receipts" element={<CustomerReceiptsReport />} /></Route>
+        <Route element={<ProtectedRoute requiredPerms="reports_supplier_payments" />}><Route path="/reports/supplier-payments" element={<SupplierPaymentsReport />} /></Route>
 
         {/* Settings */}
         <Route element={<ProtectedRoute requiredPerms="master_store_settings" />}><Route path="/settings" element={<Settings />} /></Route>

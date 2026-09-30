@@ -229,18 +229,18 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
         
         {/* Header - Screen Only */}
         {!hiddenRenderer && (
-          <div className="flex flex-col sm:flex-row justify-between items-center bg-[#111827] text-white p-3 rounded-t-md print:hidden">
+          <div className="flex justify-between items-center bg-[#111827] text-white p-3 rounded-t-md print:hidden">
           <div className="flex items-center gap-2 font-bold text-sm sm:gap-4">
             <Printer size={16} />
             <span>Invoice - {invoiceNo}</span>
           </div>
-          <div className="flex items-center gap-3">
-            <button type="button" onClick={handleShare} disabled={isSharing} className="bg-[#25D366] hover:bg-[#1EBE55] disabled:opacity-70 text-white px-3 py-1 rounded flex items-center gap-1 text-[12px] font-bold transition-colors">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <button type="button" onClick={handleShare} disabled={isSharing} className="bg-[#25D366] hover:bg-[#1EBE55] disabled:opacity-70 text-white px-2 sm:px-3 py-1.5 rounded flex items-center gap-1 text-[12px] font-bold transition-colors">
               {isSharing ? <Loader2 size={14} className="animate-spin" /> : <Share2 size={14} />}
-              {isSharing ? 'Sharing...' : 'Share Invoice'}
+              <span className="hidden sm:inline">{isSharing ? 'Sharing...' : 'Share Invoice'}</span>
             </button>
-            <button type="button" onClick={handlePrint} className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded flex items-center gap-1 text-[12px] font-bold transition-colors">
-              <Printer size={14} /> Print
+            <button type="button" onClick={handlePrint} className="bg-blue-600 hover:bg-blue-700 text-white px-2 sm:px-3 py-1.5 rounded flex items-center gap-1 text-[12px] font-bold transition-colors">
+              <Printer size={14} /> <span className="hidden sm:inline">Print</span>
             </button>
             <button type="button" onClick={onClose} className="hover:text-red-400 transition-colors ml-2">
               <X size={20} />
@@ -370,10 +370,11 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
               <button 
                 type="button"
                 onClick={handlePrint}
-                className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-[#1E3A8A] hover:bg-[#1E40AF] text-white font-bold py-2 px-4 rounded transition-colors shadow-sm"
+                className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-[#1E3A8A] hover:bg-[#1E40AF] text-white font-bold py-2 px-2 sm:px-4 rounded transition-colors shadow-sm whitespace-nowrap"
               >
                 <Printer size={16} />
-                Print / Save PDF
+                <span className="hidden sm:inline">Print / Save PDF</span>
+                <span className="sm:hidden">Print PDF</span>
               </button>
               <button 
                 type="button"

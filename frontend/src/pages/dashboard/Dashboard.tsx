@@ -10,7 +10,8 @@ import {
   Users,
   BarChart3,
   LayoutDashboard,
-  ListTodo
+  ListTodo,
+  ArrowRight
 } from 'lucide-react';
 import api from '../../services/api';
 import { useSettings } from '../../contexts/SettingsContext';

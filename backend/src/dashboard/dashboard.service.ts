@@ -129,7 +129,7 @@ export class DashboardService {
 
     // Low Stock Products Details
     const lowStockProductsRaw: any[] = await this.prisma.$queryRaw`
-      SELECT id, name, "currentStock", "minStock" 
+      SELECT id, name, code, "currentStock", "minStock" 
       FROM "Product" 
       WHERE "currentStock" <= "minStock" 
       ORDER BY "currentStock" ASC 
@@ -138,6 +138,7 @@ export class DashboardService {
     const lowStockProducts = lowStockProductsRaw.map((p) => ({
       id: Number(p.id),
       name: p.name,
+        code: p.code,
       currentStock: Number(p.currentStock),
       minStock: Number(p.minStock),
     }));

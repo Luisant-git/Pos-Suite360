@@ -495,7 +495,7 @@ const MainLayout = () => {
               {hasAnyPerm(['purchase_entry', 'purchase_list', 'purchase_return', 'purchase_payments']) && (
                 <MobileNavDropdown title="Purchases" icon="fa-truck" isActive={isPurchaseActive}>
                   {hasPerm('purchase_entry') && <MobileDropdownItem to="/purchase/new" icon="fa-shopping-basket" title="Purchase Entry" onClick={closeMobileMenu} />}
-                  {hasPerm('purchase_entry') && <MobileDropdownItem to="/purchase" icon="fa-list-alt" title="Purchase List" onClick={closeMobileMenu} />}
+                  {hasPerm('purchase_list') && <MobileDropdownItem to="/purchase" icon="fa-list-alt" title="Purchase List" onClick={closeMobileMenu} />}
                   {hasPerm('purchase_return') && <MobileDropdownItem to="/purchase/return" icon="fa-undo" title="Purchase Return" isWarning onClick={closeMobileMenu} />}
                   {hasPerm('purchase_payments') && <MobileDropdownItem to="/purchase/payments" icon="fa-credit-card" title="Supplier Payments" onClick={closeMobileMenu} />}
                 </MobileNavDropdown>
@@ -504,7 +504,7 @@ const MainLayout = () => {
               {hasAnyPerm(['sales_pos', 'sales_list', 'sales_return', 'sales_receipts']) && (
                 <MobileNavDropdown title="Sales" icon="fa-shopping-cart" isActive={isSalesActive}>
                   {hasPerm('sales_pos') && <MobileDropdownItem to="/sales/pos" icon="fa-th-large" title="Sales Entry (POS)" onClick={closeMobileMenu} />}
-                  {hasPerm('sales_pos') && <MobileDropdownItem to="/sales" icon="fa-list-alt" title="Sales List" onClick={closeMobileMenu} />}
+                  {hasPerm('sales_list') && <MobileDropdownItem to="/sales" icon="fa-list-alt" title="Sales List" onClick={closeMobileMenu} />}
                   {hasPerm('sales_return') && <MobileDropdownItem to="/sales/return" icon="fa-reply" title="Sales Return" isDanger onClick={closeMobileMenu} />}
                   {hasPerm('sales_receipts') && <MobileDropdownItem to="/sales/receipts" icon="fa-money" title="Customer Receipts" onClick={closeMobileMenu} />}
                 </MobileNavDropdown>

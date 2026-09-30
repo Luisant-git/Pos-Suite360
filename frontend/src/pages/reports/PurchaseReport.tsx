@@ -53,6 +53,7 @@ const PurchaseReport = () => {
         date: new Date(p.date).toISOString().split('T')[0],
         supplierName: p.supplier?.name || '-',
         mode: p.paymentMode?.name || '-',
+        noOfBirds: p.items?.reduce((sum: number, item: any) => sum + (Number(item.noOfBirds) || 0), 0) || 0,
         totalAmount: formatCurrency(p.subtotal),
         taxAmount: formatCurrency(p.tax),
         netAmount: formatCurrency(p.grandTotal),
@@ -241,6 +242,7 @@ const PurchaseReport = () => {
                   'Date': p.date,
                   'Supplier Name': p.supplierName,
                   'Payment Mode': p.mode,
+                  'No. of Birds': p.noOfBirds,
                   'Total Amount': p.totalAmount,
                   'Tax Amount': p.taxAmount,
                   'Net Amount': p.netAmount
@@ -251,6 +253,7 @@ const PurchaseReport = () => {
                   'Date': '',
                   'Supplier Name': '',
                   'Payment Mode': '',
+                  'No. of Birds': '',
                   'Total Amount': '',
                   'Tax Amount': 'TOTAL AMOUNT:',
                   'Net Amount': formatCurrency(totalPurchasesAmount)
@@ -273,6 +276,7 @@ const PurchaseReport = () => {
                   { header: 'Date', dataKey: 'date' },
                   { header: 'Supplier Name', dataKey: 'supplierName' },
                   { header: 'Mode', dataKey: 'mode' },
+                  { header: 'No. of Birds', dataKey: 'noOfBirds' },
                   { header: 'Total Amount', dataKey: 'totalAmount' },
                   { header: 'Tax Amount', dataKey: 'taxAmount' },
                   { header: 'Net Amount', dataKey: 'netAmount' },
@@ -313,6 +317,7 @@ const PurchaseReport = () => {
                 <th className="px-4 py-3 border-r border-[#1E293B]">Date</th>
                 <th className="px-4 py-3 border-r border-[#1E293B]">Supplier Name</th>
                 <th className="px-4 py-3 border-r border-[#1E293B]">Mode</th>
+                <th className="px-4 py-3 border-r border-[#1E293B] text-center">No. of Birds</th>
                 <th className="px-4 py-3 border-r border-[#1E293B] text-right">Total Amount</th>
                 {/* <th className="px-4 py-3 border-r border-[#1E293B] text-right">Tax Amount</th> */}
                 <th className="px-4 py-3 border-r border-[#1E293B] text-right">Net Amount</th>
@@ -321,9 +326,9 @@ const PurchaseReport = () => {
             </thead>
             <tbody>
               {isLoading ? (
-                <TableLoader columns={9} />
+                <TableLoader columns={10} />
               ) : filteredPurchases.length === 0 ? (
-                <tr><td colSpan={9} className="text-center p-6 text-black font-bold">No purchase records found.</td></tr>
+                <tr><td colSpan={10} className="text-center p-6 text-black font-bold">No purchase records found.</td></tr>
               ) : (
                 paginatedPurchases.map((p: any, index: number) => (
                   <tr key={p.id} className={`border-b border-[#E2E8F0] ${index % 2 === 0 ? 'bg-white' : 'bg-[#F8FAFC]'} hover:bg-[#EFF6FF]`}>

@@ -153,6 +153,7 @@ const PurchaseList = () => {
                 <th className="px-3 py-2.5 border-r border-[#444] relative">Entry No</th>
                 <th className="px-3 py-2.5 border-r border-[#444] relative">Supp. Inv. No.</th>
                 <th className="px-3 py-2.5 border-r border-[#444] relative">Supplier</th>
+                <th className="px-3 py-2.5 border-r border-[#444] relative text-center">No. of Birds</th>
                 <th className="px-3 py-2.5 border-r border-[#444] relative text-right">Total Amount (₹)</th>
                 <th className="px-3 py-2.5 border-r border-[#444] relative text-center">Payment Mode</th>
                 <th className="px-3 py-2.5 text-center w-32">Actions</th>
@@ -160,10 +161,10 @@ const PurchaseList = () => {
             </thead>
             <tbody>
               {isLoading ? (
-                <TableLoader columns={6} />
+                <TableLoader columns={7} />
               ) : filteredPurchases.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-3 py-4 text-center text-[#73879C]">No purchase invoices found matching your criteria.</td>
+                  <td colSpan={7} className="px-3 py-4 text-center text-[#73879C]">No purchase invoices found matching your criteria.</td>
                 </tr>
               ) : (
                 paginatedPurchases.map((purchase: any, index: number) => (
@@ -172,6 +173,7 @@ const PurchaseList = () => {
                     <td className="px-3 py-2.5 border-r border-[#E5E7EB] text-black font-bold">{purchase.invoiceNo}</td>
                     <td className="px-3 py-2.5 border-r border-[#E5E7EB] text-[#3B82F6] font-bold cursor-pointer hover:underline">{purchase.supplierInvoiceNo || '-'}</td>
                     <td className="px-3 py-2.5 border-r border-[#E5E7EB] text-[#333] font-bold">{purchase.supplier?.name || 'Unknown Supplier'}</td>
+                    <td className="px-3 py-2.5 border-r border-[#E5E7EB] text-[#333] font-bold text-center">{purchase.items?.reduce((sum: number, item: any) => sum + (Number(item.noOfBirds) || 0), 0) || 0}</td>
                     <td className="px-3 py-2.5 border-r border-[#E5E7EB] text-[#333] font-bold text-right">{formatCurrency(purchase.grandTotal)}</td>
                     <td className="px-3 py-2.5 border-r border-[#E5E7EB] text-center">
                       <span className={`px-2 py-0.5 rounded text-[11px] font-bold tracking-wide ${

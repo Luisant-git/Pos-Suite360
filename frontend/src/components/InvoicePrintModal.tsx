@@ -279,7 +279,7 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
             </div>
             
             <div className="w-full sm:w-1/2 print:w-1/2 sm:pl-12 print:pl-12 text-[12px]">
-               <div className="grid grid-cols-[80px_10px_1fr] sm:grid-cols-[100px_10px_1fr] gap-y-1">
+               <div className="grid grid-cols-[80px_10px_1fr] sm:grid-cols-[100px_10px_1fr] print:grid-cols-[100px_10px_1fr] gap-y-1">
                  <span className="font-bold">NO.</span><span className="font-bold">:</span><span className="font-bold">{invoiceNo}</span>
                  <span className="font-bold">DATE</span><span className="font-bold">:</span><span className="font-bold">{date}</span>
                  <span className="font-bold">PAY TYPE</span><span className="font-bold">:</span><span>{sale?.paymentMode?.name || 'Cash'}</span>
@@ -288,7 +288,7 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
             </div>
           </div>
           
-          <div className="w-full overflow-x-auto">
+          <div className="w-full overflow-x-auto print:overflow-visible">
           <table className="w-full text-left border-y border-[#000000] mb-4 text-[11px] sm:text-[12px] min-w-[400px]">
             <thead>
               <tr className="border-b border-[#000000] uppercase">
@@ -326,11 +326,11 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
                 dangerouslySetInnerHTML={{ __html: settings?.invoiceNotes || `Note:<br/>1. All Cheques should be crossed and made payable to NJ FRESH AND FROZEN SDN BHD<br/>2. ACCOUNT DETAILS:<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NJ FRESH AND FROZEN SDN BHD<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ACCOUNT NO- 21419200050230, BANK NAME: RHB bank<br/>3. Goods sold are neither returnable nor refundable. Otherwise a cancellation fee of 20% on the purchase price will be imposed` }}
               />
               <div className="flex-none flex flex-col items-end gap-2 font-bold text-sm whitespace-nowrap w-full sm:w-auto print:w-auto">
-                <div className="flex justify-between items-center w-full sm:w-[250px] mb-2">
+                <div className="flex justify-between items-center w-full sm:w-[250px] print:w-[250px] mb-2">
                   <span>TOTAL : RM</span>
                   <span className="border-b-2 border-[#000000] w-[100px] text-center inline-block pb-1">{Number(grandTotal).toFixed(2)}</span>
                 </div>
-                <div className="flex justify-between items-center border-2 border-[#000000] px-2.5 py-1 w-full sm:w-[250px] rounded-sm bg-[#F9FAFB] print:bg-transparent">
+                <div className="flex justify-between items-center border-2 border-[#000000] px-2.5 py-1 w-full sm:w-[250px] print:w-[250px] rounded-sm bg-[#F9FAFB] print:bg-transparent">
                   <span>PENDING AMT : RM</span>
                   <span className="w-[100px] text-center inline-block font-bold">{Number(pendingAmount).toFixed(2)}</span>
                 </div>

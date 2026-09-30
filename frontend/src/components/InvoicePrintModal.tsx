@@ -279,13 +279,13 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
           <table className="w-full text-left border-y border-[#000000] mb-4 text-[12px]">
             <thead>
               <tr className="border-b border-[#000000] uppercase">
-                <th className="py-2 w-[15%] font-bold">Code</th>
-                <th className="py-2 w-[35%] font-bold">Description</th>
+                <th className="py-2 w-[13%] font-bold">Code</th>
+                <th className="py-2 w-[32%] font-bold">Description</th>
                 <th className="py-2 w-[10%] font-bold"><div className="flex justify-center w-full">Birds</div></th>
                 <th className="py-2 w-[10%] font-bold"><div className="flex justify-end w-full">Qty</div></th>
                 <th className="py-2 w-[10%] font-bold"><div className="flex justify-center w-full">UOM</div></th>
-                <th className="py-2 w-[15%] font-bold"><div className="flex justify-end w-full">U.Price</div></th>
-                <th className="py-2 w-[15%] font-bold"><div className="flex justify-end w-full">Amount</div></th>
+                <th className="py-2 w-[12%] font-bold"><div className="flex justify-end w-full">U.Price</div></th>
+                <th className="py-2 w-[13%] font-bold"><div className="flex justify-end w-full">Amount</div></th>
               </tr>
             </thead>
             <tbody className="align-top">

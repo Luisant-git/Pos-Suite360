@@ -44,7 +44,7 @@ const PurchaseReturnReport = () => {
   const totalReturnsAmount = filteredReturns.reduce((sum: number, ret: any) => sum + (Number(ret.totalAmount) || 0), 0);
   const isReset = !search && !filterFromDate && !filterToDate;
 
-  const [entriesPerPage, setEntriesPerPage] = useState(25);
+  const [entriesPerPage] = useState(25);
   const [currentPage, setCurrentPage] = useState(1);
 
   const totalPages = Math.ceil(filteredReturns.length / entriesPerPage);

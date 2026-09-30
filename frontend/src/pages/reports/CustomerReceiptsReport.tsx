@@ -20,7 +20,7 @@ const CustomerReceiptsReport = () => {
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
 
-  const [entriesPerPage, setEntriesPerPage] = useState(25);
+  const [entriesPerPage] = useState(25);
   const [currentPage, setCurrentPage] = useState(1);
 
   const [pdfModalOpen, setPdfModalOpen] = useState(false);

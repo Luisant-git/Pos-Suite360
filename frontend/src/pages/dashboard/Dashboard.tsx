@@ -139,8 +139,8 @@ const Dashboard = () => {
 
   const todayStr = getMalaysiaDate();
   const isToday = filterStartDate === todayStr && filterEndDate === todayStr;
-  const prefix = isToday ? "Today's" : "Filtered";
-  const descPrefix = isToday ? "Today's" : "Period";
+  // const prefix = isToday ? "Today's" : "Filtered";
+  // const descPrefix = isToday ? "Today's" : "Period";
 
   const renderOperationalGrid = (isOverviewTab: boolean) => (
     <div className={`grid grid-cols-1 lg:grid-cols-3 gap-6 ${isOverviewTab ? 'hidden lg:grid mt-6' : ''}`}>

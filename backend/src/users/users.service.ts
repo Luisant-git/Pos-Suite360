@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, ConflictException } from '@nestjs/common';
 import { User } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 
@@ -52,14 +52,21 @@ export class UsersService {
 
   async createUser(data: any) {
     const { username, password, name, roleId } = data;
-    return this.prisma.user.create({
-      data: {
-        username,
-        password,
-        name,
-        roleId,
-      },
-    });
+    try {
+      return await this.prisma.user.create({
+        data: {
+          username,
+          password,
+          name,
+          roleId,
+        },
+      });
+    } catch (error: any) {
+      if (error.code === 'P2002') {
+        throw new ConflictException('Username already exists');
+      }
+      throw error;
+    }
   }
 
   async updatePassword(userId: number, hash: string): Promise<User> {
@@ -72,16 +79,21 @@ export class UsersService {
   async updateUser(id: number, data: any) {
     const updateData: any = { ...data };
     if (updateData.password) {
-      // Password hashing should ideally be in a service that calls this, but we'll let controller handle it or do it here
-      // For safety, remove it if it's empty
       if (updateData.password.trim() === '') {
         delete updateData.password;
       }
     }
-    return this.prisma.user.update({
-      where: { id },
-      data: updateData,
-    });
+    try {
+      return await this.prisma.user.update({
+        where: { id },
+        data: updateData,
+      });
+    } catch (error: any) {
+      if (error.code === 'P2002') {
+        throw new ConflictException('Username already exists');
+      }
+      throw error;
+    }
   }
 
   async deleteUser(id: number) {

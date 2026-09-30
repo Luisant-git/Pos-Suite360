@@ -135,7 +135,7 @@ const Dashboard = () => {
     );
   }
 
-  const todayStr = getMalaysiaDate();
+  // const todayStr = getMalaysiaDate();
   // const isToday = filterStartDate === todayStr && filterEndDate === todayStr;
   // const prefix = isToday ? "Today's" : "Filtered";
   // const descPrefix = isToday ? "Today's" : "Period";

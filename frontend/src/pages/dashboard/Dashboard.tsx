@@ -64,7 +64,9 @@ const Dashboard = () => {
   const { formatCurrency } = useSettings();
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState('overview');
+  const [activeTab, setActiveTab] = useState(() =>
+    typeof window !== 'undefined' && window.innerWidth < 1024 ? 'operational' : 'overview'
+  );
   const getMalaysiaDate = () => {
     const d = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Kuala_Lumpur" }));
     return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;

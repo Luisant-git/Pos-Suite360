@@ -64,7 +64,7 @@ const Dashboard = () => {
   const { formatCurrency } = useSettings();
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState('overview');
+  const [activeTab, setActiveTab] = useState('operational');
   const getMalaysiaDate = () => {
     const d = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Kuala_Lumpur" }));
     return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
@@ -400,17 +400,6 @@ const Dashboard = () => {
       </div>
       <div className="flex w-full space-x-1 sm:space-x-2 border-b border-gray-200 mb-4 px-1">
         <button
-          onClick={() => setActiveTab('overview')}
-          className={`whitespace-nowrap flex-1 sm:flex-none justify-center sm:justify-start px-2 sm:px-4 py-2 text-[13px] sm:text-[14px] font-bold flex items-center gap-1.5 sm:gap-2 border-b-2 transition-all duration-200 ${
-            activeTab === 'overview'
-              ? 'border-blue-600 text-blue-600'
-              : 'border-transparent text-gray-500 hover:text-gray-900 hover:border-gray-300'
-          }`}
-        >
-          <LayoutDashboard size={16} className="sm:w-[18px] sm:h-[18px]" />
-          Executive Overview
-        </button>
-        <button
           onClick={() => setActiveTab('operational')}
           className={`whitespace-nowrap flex-1 sm:flex-none justify-center sm:justify-start px-2 sm:px-4 py-2 text-[13px] sm:text-[14px] font-bold flex items-center gap-1.5 sm:gap-2 border-b-2 transition-all duration-200 ${
             activeTab === 'operational'
@@ -420,6 +409,17 @@ const Dashboard = () => {
         >
           <ListTodo size={16} className="sm:w-[18px] sm:h-[18px]" />
           Action Center
+        </button>
+        <button
+          onClick={() => setActiveTab('overview')}
+          className={`whitespace-nowrap flex-1 sm:flex-none justify-center sm:justify-start px-2 sm:px-4 py-2 text-[13px] sm:text-[14px] font-bold flex items-center gap-1.5 sm:gap-2 border-b-2 transition-all duration-200 ${
+            activeTab === 'overview'
+              ? 'border-blue-600 text-blue-600'
+              : 'border-transparent text-gray-500 hover:text-gray-900 hover:border-gray-300'
+          }`}
+        >
+          <LayoutDashboard size={16} className="sm:w-[18px] sm:h-[18px]" />
+          Executive Overview
         </button>
       </div>
 

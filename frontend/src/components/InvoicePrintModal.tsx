@@ -64,6 +64,7 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
   const customerName = sale?.customer?.name || 'CASH A/C\nCounter Sale';
   const items = sale?.items || [];
   const grandTotal = sale?.grandTotal || 0;
+  const totalBirds = items.reduce((sum: number, item: any) => sum + (Number(item.noOfBirds) || 0), 0);
 
   const [pregeneratedBlob, setPregeneratedBlob] = useState<Blob | null>(null);
 
@@ -116,7 +117,7 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
     }
   };
 
-  // No pre-generation - generate on demand when user clicks Share to avoid background violations
+  // No pre-generation - generate on demand when user clicks Share
 
   const handleShare = useCallback(async () => {
     const performShare = async (blob: Blob) => {
@@ -127,7 +128,6 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
         } catch (err: any) {
           if (err.name !== 'AbortError') {
             console.error('Share with file error:', err);
-            toast.error('Could not share file directly, downloading instead.');
             downloadFallback(blob);
           }
         }
@@ -154,7 +154,6 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
       return;
     }
 
-    // Fallback if not pre-generated yet
     setIsSharing(true);
     try {
       const blob = await generatePdf();
@@ -185,17 +184,6 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
     return () => document.body.classList.remove('printing-modal');
   }, [isOpen]);
 
-  // Auto-print for hidden renderer
-  useEffect(() => {
-    if (isOpen && hiddenRenderer && !isLoading && fullSale) {
-      const timer = setTimeout(() => {
-        handlePrint();
-        onClose();
-      }, 500);
-      return () => clearTimeout(timer);
-    }
-  }, [isOpen, hiddenRenderer, isLoading, fullSale, onClose]);
-
   if (!isOpen) return null;
 
   if ((isLoading || !fullSale || customerBalance === undefined) && !hiddenRenderer) {
@@ -225,11 +213,11 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
           </div>
         </div>
       )}
-      <div className={`bg-[#FFFFFF] flex flex-col relative print:w-full print:shadow-none print:h-auto ${hiddenRenderer ? 'w-[794px] h-[1123px]' : 'w-[210mm] h-[97vh] rounded-md shadow-2xl'}`}>
+        <div className={`bg-[#FFFFFF] flex flex-col relative print:w-full print:shadow-none print:h-auto ${hiddenRenderer ? 'w-[794px] h-[1123px]' : 'w-[210mm] h-[97vh] rounded-md shadow-2xl'}`}>
         
         {/* Header - Screen Only */}
-        {!hiddenRenderer && (
-          <div className="flex justify-between items-center bg-[#111827] text-white p-3 rounded-t-md print:hidden">
+          {!hiddenRenderer && (
+            <div className="flex justify-between items-center bg-[#111827] text-white p-3 rounded-t-md print:hidden">
           <div className="flex items-center gap-2 font-bold text-sm">
             <Printer size={16} />
             <span>Invoice - {invoiceNo}</span>
@@ -245,14 +233,14 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
             <button type="button" onClick={onClose} className="hover:text-red-400 transition-colors ml-2">
               <X size={20} />
             </button>
+            </div>
           </div>
-        </div>
-        )}
+          )}
 
-        {/* Printable Area */}
+          {/* Printable Area */}
         <div id={hiddenRenderer ? "hidden-printable-invoice" : "printable-invoice"} className={`flex-1 flex flex-col p-8 font-sans text-[#000000] print:p-6 bg-[#FFFFFF] ${hiddenRenderer ? 'overflow-visible' : 'overflow-auto'}`}>
           <div className="w-full flex flex-col items-center justify-center mb-3 print:pt-4 text-center">
-            <div className="text-lg font-bold uppercase">NJ FRESH & FROZEN SDN BHD <span className="text-xs font-normal">(202001027405(1383725-H))</span></div>
+            <div className="text-lg font-bold uppercase">NASA FRESH MART <span className="text-xs font-normal">(001634825-A)</span></div>
             <p className="mt-1 text-[12px]">NO 8G, JLN 3/2 PANDAN JAYA, 55100 KUALA LUMPUR.</p>
             <p className="text-[12px]">Tel : {settings?.phone || '0392856786'}</p>
           </div>
@@ -293,7 +281,7 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
               <tr className="border-b border-[#000000] uppercase">
                 <th className="py-2 w-[15%] font-bold">Code</th>
                 <th className="py-2 w-[35%] font-bold">Description</th>
-                
+                <th className="py-2 w-[10%] font-bold"><div className="flex justify-center w-full">Birds</div></th>
                 <th className="py-2 w-[10%] font-bold"><div className="flex justify-end w-full">Qty</div></th>
                 <th className="py-2 w-[10%] font-bold"><div className="flex justify-center w-full">UOM</div></th>
                 <th className="py-2 w-[15%] font-bold"><div className="flex justify-end w-full">U.Price</div></th>
@@ -305,6 +293,7 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
                 <tr key={idx}>
                   <td className="py-1 font-bold">{item.product?.code || ''}</td>
                   <td className="py-1 font-bold">{item.product?.name || ''}</td>
+                  <td className="py-1 font-bold"><div className="flex justify-center w-full">{Number(item.noOfBirds) || '-'}</div></td>
                   <td className="py-1 font-bold"><div className="flex justify-end w-full">{Number(Number(item.quantity).toFixed(4))}</div></td>
                   <td className="py-1 font-bold"><div className="flex justify-center w-full">{item.product?.unit?.name || item.product?.unit?.shortCode || 'Nos'}</div></td>
                   <td className="py-1 font-bold"><div className="flex justify-end w-full">{Number(item.rate || 0).toFixed(2)}</div></td>
@@ -314,16 +303,22 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
             </tbody>
           </table>
           
-          <div className="flex-1 invoice-spacer"></div>
+                  <div className="flex-1 invoice-spacer"></div>
           <div className="mb-8 invoice-bottom-section">
             <p className="uppercase mb-4 text-[13px] font-bold">RINGGIT MALAYSIA {numberToWords(grandTotal)} ONLY</p>
             
             <div className="flex justify-between items-start border-t border-[#000000] pt-2 gap-4">
               <div 
                 className="flex-1 text-[11px] text-[#000000] pr-4 html-content leading-tight"
-                dangerouslySetInnerHTML={{ __html: settings?.invoiceNotes || `Note:<br/>1. All Cheques should be crossed and made payable to NJ FRESH AND FROZEN SDN BHD<br/>2. ACCOUNT DETAILS:<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NJ FRESH AND FROZEN SDN BHD<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ACCOUNT NO- 21419200050230, BANK NAME: RHB bank<br/>3. Goods sold are neither returnable nor refundable. Otherwise a cancellation fee of 20% on the purchase price will be imposed` }}
+                dangerouslySetInnerHTML={{ __html: settings?.invoiceNotes || `Note:<br/>All Cheques should be crossed and made payable to NASA WORLD SDN BHD<br/>ACCOUNT DETAILS:<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NASA FRESH MART<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ACCOUNT NO- 21419200030833, BANK NAME:   RHB bank<br/>Goods sold are neither returnable nor refundable. Otherwise a cancellation fee of 20% on the purchase price will be imposed` }}
               />
               <div className="flex-none flex flex-col items-end gap-2 font-bold text-sm whitespace-nowrap">
+                {totalBirds > 0 && (
+                  <div className="flex justify-between items-center w-[250px] mb-2">
+                    <span>TOTAL BIRDS :</span>
+                    <span className="w-[100px] text-center inline-block">{totalBirds}</span>
+                  </div>
+                )}
                 <div className="flex justify-between items-center w-[250px] mb-2">
                   <span>TOTAL : RM</span>
                   <span className="border-b-2 border-[#000000] w-[100px] text-center inline-block pb-1">{Number(grandTotal).toFixed(2)}</span>
@@ -352,36 +347,37 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
         </div>
 
         {/* Footer Actions - Screen Only */}
-        {!hiddenRenderer && (
-          <div className="flex justify-between items-center p-4 bg-[#F9FAFB] border-t border-[#E5E7EB] rounded-b-md print:hidden">
+          {!hiddenRenderer && (
+            <div className="flex justify-between items-center p-4 bg-[#F9FAFB] border-t border-[#E5E7EB] rounded-b-md print:hidden">
+          <button 
+            type="button"
+            onClick={handleShare}
+            disabled={isSharing}
+            className="flex items-center gap-2 bg-[#25D366] hover:bg-[#1DA851] disabled:opacity-70 text-white font-bold py-2 px-4 rounded transition-colors shadow-sm"
+          >
+            {isSharing ? <Loader2 size={16} className="animate-spin" /> : <Share2 size={16} />}
+            {isSharing ? 'Sharing...' : 'Share Invoice'}
+          </button>
+          
+          <div className="flex gap-2">
             <button 
               type="button"
-              onClick={handleShare}
-              disabled={isSharing}
-              className="flex items-center gap-2 bg-[#25D366] hover:bg-[#1DA851] disabled:opacity-70 text-white font-bold py-2 px-4 rounded transition-colors shadow-sm"
+              onClick={handlePrint}
+              className="flex items-center gap-2 bg-[#1E3A8A] hover:bg-[#1E40AF] text-white font-bold py-2 px-4 rounded transition-colors shadow-sm"
             >
-              {isSharing ? <Loader2 size={16} className="animate-spin" /> : <Share2 size={16} />}
-              {isSharing ? 'Sharing...' : 'Share Invoice'}
+              <Printer size={16} />
+              Print / Save PDF
             </button>
-            
-            <div className="flex gap-2">
-              <button 
-                type="button"
-                onClick={handlePrint}
-                className="flex items-center gap-2 bg-[#1E3A8A] hover:bg-[#1E40AF] text-white font-bold py-2 px-4 rounded transition-colors shadow-sm"
-              >
-                <Printer size={16} />
-                Print / Save PDF
-              </button>
-              <button 
-                type="button"
-                onClick={onClose}
-                className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded transition-colors shadow-sm"
-              >
-                Close
-              </button>
-            </div>
+            <button 
+              type="button"
+              onClick={onClose}
+              className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded transition-colors shadow-sm"
+            >
+              Close
+            </button>
           </div>
+        </div>
+
         )}
 
       </div>

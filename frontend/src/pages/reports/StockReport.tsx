@@ -72,7 +72,7 @@ const StockReport = () => {
           />
         </div>
         <button onClick={() => setIsFilterOpen(true)} className="flex items-center gap-1 shrink-0 bg-[#1E3A8A] text-white px-3 py-1.5 rounded text-[12px] font-bold shadow-sm">
-          <Filter size={14} /> Filter
+          <Filter size={16} />
         </button>
       </div>
 

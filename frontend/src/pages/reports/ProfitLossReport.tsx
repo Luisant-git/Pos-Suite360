@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts';
-import { Download, Printer, Filter, PieChart as PieChartIcon, Loader2 } from 'lucide-react';
+import {  Download, Printer, Filter, PieChart as PieChartIcon, Loader2 , Calendar } from 'lucide-react';
 import { format, startOfMonth, startOfYear } from 'date-fns';
 import { useSettings } from '../../contexts/SettingsContext';
 import api from '../../services/api';
@@ -159,8 +159,8 @@ const ProfitLossReport = () => {
         <div className="flex flex-wrap items-center gap-2">
           {/* Quick Presets */}
           <div className="flex bg-[#F3F4F6] p-1 rounded border border-[#E5E7EB] gap-1 items-center flex-wrap">
-            <button onClick={() => handleDatePreset('today')} className={presetBtnClass('today')}>Today</button>
-            <button onClick={() => handleDatePreset('month')} className={presetBtnClass('month')}>This Month</button>
+            <button onClick={() => handleDatePreset('today')} className={presetBtnClass('today')}><Calendar size={14} /> <span className="hidden sm:inline">Today</span></button>
+            <button onClick={() => handleDatePreset('month')} className={presetBtnClass('month')}><Calendar size={14} /> <span className="hidden sm:inline">This Month</span></button>
             <button onClick={() => handleDatePreset('year')} className={presetBtnClass('year')}>This Year</button>
             <button onClick={() => handleDatePreset('all')} className={presetBtnClass('all')}>All Time</button>
           </div>

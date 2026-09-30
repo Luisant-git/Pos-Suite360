@@ -225,7 +225,7 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
           </div>
         </div>
       )}
-      <div className={`bg-[#FFFFFF] flex flex-col relative print:w-full print:shadow-none print:h-auto ${hiddenRenderer ? 'w-[794px] h-[1123px]' : 'w-full max-w-[210mm] mx-auto max-h-[85vh] h-full overflow-y-auto rounded-md shadow-2xl'} `}>
+      <div className={`bg-[#FFFFFF] flex flex-col relative print:w-full print:shadow-none print:h-auto print:max-h-none print:overflow-visible ${hiddenRenderer ? 'w-[794px] h-[1123px]' : 'w-full max-w-[210mm] mx-auto max-h-[85vh] h-full overflow-y-auto rounded-md shadow-2xl'} `}>
         
         {/* Header - Screen Only */}
         {!hiddenRenderer && (
@@ -250,7 +250,7 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
         )}
 
         {/* Printable Area */}
-        <div id={hiddenRenderer ? "hidden-printable-invoice" : "printable-invoice"} className={`flex-1 flex flex-col p-4 sm:p-8 font-sans text-[#000000] print:p-6 bg-[#FFFFFF] ${hiddenRenderer ? 'overflow-visible' : 'overflow-auto'}`}>
+        <div id={hiddenRenderer ? "hidden-printable-invoice" : "printable-invoice"} className={`flex-1 flex flex-col p-4 sm:p-8 font-sans text-[#000000] print:p-6 bg-[#FFFFFF] print:overflow-visible ${hiddenRenderer ? 'overflow-visible' : 'overflow-auto'}`}>
           <div className="w-full flex flex-col items-center justify-center mb-3 print:pt-4 text-center">
             <div className="text-lg font-bold uppercase">NJ FRESH & FROZEN SDN BHD <span className="text-xs font-normal">(202001027405(1383725-H))</span></div>
             <p className="mt-1 text-[12px]">NO 8G, JLN 3/2 PANDAN JAYA, 55100 KUALA LUMPUR.</p>
@@ -261,8 +261,8 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
             INVOICE
           </div>
           
-          <div className="flex flex-col sm:flex-row justify-between mb-4 sm:mb-6 text-[12px] gap-3 sm:gap-0">
-            <div className="w-full sm:w-1/2 sm:pr-4">
+          <div className="flex flex-col sm:flex-row print:flex-row justify-between mb-4 sm:mb-6 text-[12px] gap-3 sm:gap-0 print:gap-0">
+            <div className="w-full sm:w-1/2 print:w-1/2 sm:pr-4 print:pr-4">
                <div className="flex">
                  <span className="w-16 font-bold">Bill To:</span>
                  <div>
@@ -278,7 +278,7 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
                <p className="font-bold">Attn:</p>
             </div>
             
-            <div className="w-full sm:w-1/2 sm:pl-12 text-[12px]">
+            <div className="w-full sm:w-1/2 print:w-1/2 sm:pl-12 print:pl-12 text-[12px]">
                <div className="grid grid-cols-[80px_10px_1fr] sm:grid-cols-[100px_10px_1fr] gap-y-1">
                  <span className="font-bold">NO.</span><span className="font-bold">:</span><span className="font-bold">{invoiceNo}</span>
                  <span className="font-bold">DATE</span><span className="font-bold">:</span><span className="font-bold">{date}</span>
@@ -320,12 +320,12 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
           <div className="mb-8 invoice-bottom-section">
             <p className="uppercase mb-4 text-[13px] font-bold">RINGGIT MALAYSIA {numberToWords(grandTotal)} ONLY</p>
             
-            <div className="flex flex-col sm:flex-row justify-between items-start border-t border-[#000000] pt-2 gap-4">
+            <div className="flex flex-col sm:flex-row print:flex-row justify-between items-start border-t border-[#000000] pt-2 gap-4 print:gap-4">
               <div 
                 className="flex-1 text-[11px] text-[#000000] pr-4 html-content leading-tight"
                 dangerouslySetInnerHTML={{ __html: settings?.invoiceNotes || `Note:<br/>1. All Cheques should be crossed and made payable to NJ FRESH AND FROZEN SDN BHD<br/>2. ACCOUNT DETAILS:<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NJ FRESH AND FROZEN SDN BHD<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ACCOUNT NO- 21419200050230, BANK NAME: RHB bank<br/>3. Goods sold are neither returnable nor refundable. Otherwise a cancellation fee of 20% on the purchase price will be imposed` }}
               />
-              <div className="flex-none flex flex-col items-end gap-2 font-bold text-sm whitespace-nowrap w-full sm:w-auto">
+              <div className="flex-none flex flex-col items-end gap-2 font-bold text-sm whitespace-nowrap w-full sm:w-auto print:w-auto">
                 <div className="flex justify-between items-center w-full sm:w-[250px] mb-2">
                   <span>TOTAL : RM</span>
                   <span className="border-b-2 border-[#000000] w-[100px] text-center inline-block pb-1">{Number(grandTotal).toFixed(2)}</span>

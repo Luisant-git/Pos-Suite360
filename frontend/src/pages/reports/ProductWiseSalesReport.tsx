@@ -57,7 +57,7 @@ const ProductWiseSalesReport = () => {
           <div className="bg-white border-b border-[#E2E8F0] shadow-sm mb-2 p-3">
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3 items-end">
               <div>
-                <label className="shrink-0 flex items-center gap-1 text-[12px] text-black font-bold mb-1"><Calendar size={12} /> From Date</label>
+                <label className="flex items-center gap-1 text-[12px] text-black font-bold mb-1"><Calendar size={12} /> From Date</label>
                 <input
                   type="date"
                   value={filterFromDate}
@@ -66,7 +66,7 @@ const ProductWiseSalesReport = () => {
                 />
               </div>
               <div>
-                <label className="shrink-0 flex items-center gap-1 text-[12px] text-black font-bold mb-1"><Calendar size={12} /> To Date</label>
+                <label className="flex items-center gap-1 text-[12px] text-black font-bold mb-1"><Calendar size={12} /> To Date</label>
                 <input
                   type="date"
                   value={filterToDate}

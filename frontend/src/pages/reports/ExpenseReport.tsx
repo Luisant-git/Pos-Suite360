@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import {  Download, FileText, Filter, RefreshCw, Search , Calendar } from 'lucide-react';
+import { Download, FileText, Filter, RefreshCw, Search } from 'lucide-react';
 import { exportTableToPdf, type PdfColumn } from '../../utils/exportPdf';
 import { exportToExcel } from '../../utils/exportExcel';
 import { useSettings } from '../../contexts/SettingsContext';
@@ -105,8 +105,8 @@ const ExpenseReport = () => {
             <button type="button" onClick={() => refetch()} className="bg-[#0F172A] hover:bg-[#1E293B] text-white px-4 py-1.5 rounded-md flex items-center gap-2 text-[13px] font-bold transition-colors">
               <Filter size={14} /> Apply Filter
             </button>
-            <button type="button" onClick={() => setQuickDate('today')} className="shrink-0 bg-gray-100 hover:bg-gray-200 text-black font-bold text-[12px] px-3 py-1.5 rounded transition-colors"><Calendar size={14} /> <span className="hidden sm:inline">Today</span></button>
-            <button type="button" onClick={() => setQuickDate('thisMonth')} className="shrink-0 bg-gray-100 hover:bg-gray-200 text-black font-bold text-[12px] px-3 py-1.5 rounded transition-colors"><Calendar size={14} /> <span className="hidden sm:inline">This Month</span></button>
+            <button type="button" onClick={() => setQuickDate('today')} className="bg-gray-100 hover:bg-gray-200 text-black font-bold text-[12px] px-3 py-1.5 rounded transition-colors">Today</button>
+            <button type="button" onClick={() => setQuickDate('thisMonth')} className="bg-gray-100 hover:bg-gray-200 text-black font-bold text-[12px] px-3 py-1.5 rounded transition-colors">This Month</button>
             <button type="button" onClick={() => { setEndDate(''); setCategoryId(''); setSearchQuery(''); }} className={`flex items-center gap-1 px-3 py-1.5 rounded-md text-[12px] font-bold transition-colors shadow-sm border ${!isReset ? 'bg-white text-red-600 border-red-200 hover:bg-red-50' : 'bg-white text-black border-[#CBD5E1] hover:bg-gray-100'}`}>
               <RefreshCw size={12} /> Reset Filters
             </button>

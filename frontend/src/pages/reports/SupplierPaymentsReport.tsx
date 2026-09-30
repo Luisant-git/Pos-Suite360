@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import {  Download, Truck, FileText, RefreshCw, DollarSign, AlertCircle, CheckCircle2, Printer, Loader2 , Calendar } from 'lucide-react';
+import { Download, Truck, FileText, RefreshCw, DollarSign, AlertCircle, CheckCircle2, Printer, Loader2 } from 'lucide-react';
 import { exportTableToPdf, type PdfColumn } from '../../utils/exportPdf';
 import { exportToExcel } from '../../utils/exportExcel';
 import { useSettings } from '../../contexts/SettingsContext';
@@ -381,7 +381,7 @@ const SupplierPaymentsReport = () => {
                         }}
                         className={`px-3 py-1.5 flex items-center gap-1.5 text-[12px] font-bold rounded h-[38px] transition-colors border ${isToday ? 'bg-blue-50 text-blue-600 border-blue-200 shadow-sm' : 'bg-gray-100 hover:bg-gray-200 border-gray-200 text-black'}`}
                       >
-                        {isToday ? <CheckCircle2 size={14} className="text-blue-600" /> : <Calendar size={14} />} <span className="hidden sm:inline">Today</span>
+                        {isToday && <CheckCircle2 size={14} className="text-blue-600" />} Today
                       </button>
                       <button
                         type="button"
@@ -391,7 +391,7 @@ const SupplierPaymentsReport = () => {
                         }}
                         className={`px-3 py-1.5 flex items-center gap-1.5 text-[12px] font-bold rounded h-[38px] transition-colors border ${isMonth ? 'bg-blue-50 text-blue-600 border-blue-200 shadow-sm' : 'bg-gray-100 hover:bg-gray-200 border-gray-200 text-black'}`}
                       >
-                        {isMonth ? <CheckCircle2 size={14} className="text-blue-600" /> : <Calendar size={14} />} <span className="hidden sm:inline">This Month</span>
+                        {isMonth && <CheckCircle2 size={14} className="text-blue-600" />} This Month
                       </button>
                     </>
                   );

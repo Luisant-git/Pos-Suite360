@@ -116,7 +116,7 @@ const PurchaseReport = () => {
           
           <div className="col-span-1 md:col-span-2 grid grid-cols-2 gap-2">
             <div>
-              <label className="shrink-0 flex items-center gap-1 text-[12px] text-black font-bold mb-1 font-bold"><Calendar size={12} /> From Date</label>
+              <label className="flex items-center gap-1 text-[12px] text-black font-bold mb-1 font-bold"><Calendar size={12} /> From Date</label>
               <input
                 type="date"
                 value={fromDate}
@@ -125,7 +125,7 @@ const PurchaseReport = () => {
               />
             </div>
             <div>
-              <label className="shrink-0 flex items-center gap-1 text-[12px] text-black font-bold mb-1 font-bold"><Calendar size={12} /> To Date</label>
+              <label className="flex items-center gap-1 text-[12px] text-black font-bold mb-1 font-bold"><Calendar size={12} /> To Date</label>
               <input
                 type="date"
                 value={toDate}
@@ -195,7 +195,7 @@ const PurchaseReport = () => {
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center pt-2 border-t border-dashed border-[#E2E8F0] gap-3 md:gap-0">
           <div className="flex items-center gap-2 w-full md:w-auto">
             <button type="button" onClick={() => refetch()} className="bg-[#0F172A] hover:bg-[#1E293B] text-white px-4 py-1.5 rounded-md flex items-center gap-2 text-[13px] font-bold transition-colors">
-              <Search size={14} /> <span className="hidden sm:inline">Apply Filter</span>
+              <Search size={14} /> Apply Filter
             </button>
             <button type="button" onClick={() => {
               setFromDate('');
@@ -205,18 +205,18 @@ const PurchaseReport = () => {
               setPaymentMode('');
               setQuickSearch('');
             }} className={`flex items-center gap-1 px-3 py-1.5 rounded-md text-[12px] font-bold transition-colors shadow-sm border ${!isReset ? 'bg-white text-red-600 border-red-200 hover:bg-red-50' : 'bg-white text-black font-bold border-[#E5E7EB] hover:bg-[#F9FAFB]'}`}>
-              <RotateCcw size={14} /> <span className="hidden sm:inline">Reset Filters</span>
+              <RotateCcw size={14} /> Reset Filters
             </button>
           </div>
           <div className="flex items-center gap-2 w-full md:w-auto">
             <button type="button" onClick={() => {
               setFromDate(todayStr);
               setToDate(todayStr);
-            }} className={`px-3 py-1.5 rounded-md text-[12px] font-bold transition-colors shadow-sm border ${isToday ? 'bg-[#3B82F6] text-white border-[#2563EB]' : 'bg-[#EFF6FF] text-[#3B82F6] border-[#BFDBFE] hover:bg-[#DBEAFE]'}`}><Calendar size={14} /> <span className="hidden sm:inline">Today</span></button>
+            }} className={`px-3 py-1.5 rounded-md text-[12px] font-bold transition-colors shadow-sm border ${isToday ? 'bg-[#3B82F6] text-white border-[#2563EB]' : 'bg-[#EFF6FF] text-[#3B82F6] border-[#BFDBFE] hover:bg-[#DBEAFE]'}`}>Today</button>
             <button type="button" onClick={() => {
               setFromDate(startOfMonthStr);
               setToDate(todayStr);
-            }} className={`px-3 py-1.5 rounded-md text-[12px] font-bold transition-colors shadow-sm border ${isMonth ? 'bg-[#3B82F6] text-white border-[#2563EB]' : 'bg-[#EFF6FF] text-[#3B82F6] border-[#BFDBFE] hover:bg-[#DBEAFE]'}`}><Calendar size={14} /> <span className="hidden sm:inline">This Month</span></button>
+            }} className={`px-3 py-1.5 rounded-md text-[12px] font-bold transition-colors shadow-sm border ${isMonth ? 'bg-[#3B82F6] text-white border-[#2563EB]' : 'bg-[#EFF6FF] text-[#3B82F6] border-[#BFDBFE] hover:bg-[#DBEAFE]'}`}>This Month</button>
           </div>
         </div>
       </div>

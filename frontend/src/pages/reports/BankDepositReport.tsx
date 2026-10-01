@@ -232,8 +232,8 @@ const BankDepositReport = () => {
               currentPage={currentPage}
               totalPages={totalPages}
               entriesPerPage={entriesPerPage}
+              totalEntries={deposits.length}
               onPageChange={setCurrentPage}
-              onEntriesChange={setEntriesPerPage}
             />
           </div>
         </div>

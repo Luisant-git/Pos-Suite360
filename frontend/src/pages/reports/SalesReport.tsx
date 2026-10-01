@@ -66,6 +66,8 @@ const SalesReport = () => {
           noOfBirds: s.items?.reduce((sum: number, item: any) => sum + (Number(item.noOfBirds) || 0), 0) || 0,
           netPayable: formatCurrency(s.grandTotal || 0),
           rawTotalAmount: s.grandTotal || 0,
+          rawNoOfBirds: s.items?.reduce((sum: number, item: any) => sum + (Number(item.noOfBirds) || 0), 0) || 0,
+          rawNoOfItems: s.items?.length || 0,
           items: s.items || [],
         };
       });
@@ -81,6 +83,8 @@ const SalesReport = () => {
     : sales;
 
   const totalSalesAmount = filteredSales.reduce((sum: number, sale: any) => sum + (Number(sale.rawTotalAmount) || 0), 0);
+  const totalBirds = filteredSales.reduce((sum: number, sale: any) => sum + (Number(sale.rawNoOfBirds) || 0), 0);
+  const totalItems = filteredSales.reduce((sum: number, sale: any) => sum + (Number(sale.rawNoOfItems) || 0), 0);
 
   const totalPages = Math.ceil(filteredSales.length / entriesPerPage);
   const paginatedSales = filteredSales.slice((currentPage - 1) * entriesPerPage, currentPage * entriesPerPage);
@@ -257,9 +261,9 @@ const SalesReport = () => {
                   'Invoice No': '',
                   'Date': '',
                   'Customer Name': '',
-                  'Payment Mode': '',
-                  'No. of Items': '',
-                  'No. of Birds': 'TOTAL AMOUNT:',
+                  'Payment Mode': 'TOTAL:',
+                  'No. of Items': totalItems,
+                  'No. of Birds': totalBirds,
                   'Total Amount': formatCurrency(totalSalesAmount)
                 });
                 exportToExcel(exportData, `Sales_Report_${fromDate}_to_${toDate}`, {
@@ -287,9 +291,9 @@ const SalesReport = () => {
                   invoiceNo: '',
                   date: '',
                   customerName: '',
-                  paymentMode: '',
-                  noOfItems: '',
-                  noOfBirds: 'TOTAL AMOUNT:',
+                  paymentMode: 'TOTAL:',
+                  noOfItems: totalItems.toString(),
+                  noOfBirds: totalBirds.toString(),
                   netPayable: formatCurrency(totalSalesAmount)
                 }];
                 exportTableToPdf(cols, pdfData, `Sales_Report_${fromDate}_to_${toDate}`, 'Sales Report', settings?.shopName, filteredSales.length);
@@ -344,7 +348,7 @@ const SalesReport = () => {
                       </div>
                     </td>
                     <td className="px-4 py-3 border-r border-[#E2E8F0] text-center font-bold text-black font-bold">{s.noOfItems}</td>
-                    <td className="px-4 py-3 border-r border-[#E2E8F0] text-center font-bold text-black font-bold">{s.noOfBirds}</td>
+                    <td className="px-4 py-3 border-r border-[#E2E8F0] text-center font-bold text-black font-bold">{s.noOfBirds === 0 ? '0' : s.noOfBirds}</td>
                     <td className="px-4 py-3 border-r border-[#E2E8F0] text-center font-bold text-[#3B82F6]">{s.netPayable}</td>
                     <td data-html2canvas-ignore="true" className="px-4 py-3 text-center">
                       <div className="flex justify-center items-center gap-2">

@@ -100,6 +100,7 @@ export default function ViewSalesModal({ saleId, onClose }: Props) {
                       <tr className="border-b-2 border-gray-200 text-black font-bold">
                         <th className="py-2 px-2 font-bold">Code</th>
                         <th className="py-2 px-2 font-bold">Product</th>
+                        <th className="py-2 px-2 font-bold text-center">Birds</th>
                         <th className="py-2 px-2 font-bold text-right">Qty</th>
                         <th className="py-2 px-2 font-bold text-center">Unit</th>
                         <th className="py-2 px-2 font-bold text-right">Rate</th>
@@ -112,6 +113,7 @@ export default function ViewSalesModal({ saleId, onClose }: Props) {
                         <tr key={idx} className="border-b border-gray-100 last:border-0 hover:bg-gray-50">
                           <td className="py-2 px-2 font-bold text-black">{item.product?.code || '-'}</td>
                           <td className="py-2 px-2 font-bold text-black">{item.product?.name}</td>
+                          <td className="py-2 px-2 text-center text-black font-bold">{item.noOfBirds === 0 ? '0' : (item.noOfBirds || '0')}</td>
                           <td className="py-2 px-2 text-right">{Number(Number(item.quantity).toFixed(4))}</td>
                           <td className="py-2 px-2 text-center text-black font-bold">{item.product?.unit?.name || 'Nos'}</td>
                           <td className="py-2 px-2 text-right font-bold">{formatCurrency(item.rate)}</td>

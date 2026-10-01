@@ -58,6 +58,10 @@ const PurchaseReport = () => {
         taxAmount: formatCurrency(p.tax),
         netAmount: formatCurrency(p.grandTotal),
         rawGrandTotal: p.grandTotal,
+        rawSubtotal: p.subtotal,
+        rawNoOfBirds: p.items?.reduce((sum: number, item: any) => sum + (Number(item.noOfBirds) || 0), 0) || 0,
+        rawNoOfItems: p.items?.length || 0,
+        noOfItems: p.items?.length || 0,
       }));
     },
   });
@@ -76,6 +80,9 @@ const PurchaseReport = () => {
   });
 
   const totalPurchasesAmount = filteredPurchases.reduce((sum: number, p: any) => sum + (Number(p.rawGrandTotal) || 0), 0);
+  const totalSubtotal = filteredPurchases.reduce((sum: number, p: any) => sum + (Number(p.rawSubtotal) || 0), 0);
+  const totalBirds = filteredPurchases.reduce((sum: number, p: any) => sum + (Number(p.rawNoOfBirds) || 0), 0);
+  const totalItems = filteredPurchases.reduce((sum: number, p: any) => sum + (Number(p.rawNoOfItems) || 0), 0);
 
   const [entriesPerPage, setEntriesPerPage] = useState(25);
   const [currentPage, setCurrentPage] = useState(1);
@@ -242,9 +249,10 @@ const PurchaseReport = () => {
                   'Date': p.date,
                   'Supplier Name': p.supplierName,
                   'Payment Mode': p.mode,
+                  'No. of Items': p.noOfItems,
                   'No. of Birds': p.noOfBirds,
                   'Total Amount': p.totalAmount,
-                  'Tax Amount': p.taxAmount,
+
                   'Net Amount': p.netAmount
                 }));
                 exportData.push({
@@ -252,10 +260,12 @@ const PurchaseReport = () => {
                   'Supplier Invoice No': '',
                   'Date': '',
                   'Supplier Name': '',
-                  'Payment Mode': '',
-                  'No. of Birds': '',
-                  'Total Amount': '',
-                  'Tax Amount': 'TOTAL AMOUNT:',
+                  'Payment Mode': 'TOTAL:',
+                  'No. of Items': totalItems,
+                  'No. of Birds': totalBirds,
+
+                  'Total Amount': formatCurrency(totalSubtotal),
+
                   'Net Amount': formatCurrency(totalPurchasesAmount)
                 });
                 exportToExcel(exportData, `Purchase_Report_${fromDate}_to_${toDate}`, {
@@ -276,19 +286,22 @@ const PurchaseReport = () => {
                   { header: 'Date', dataKey: 'date' },
                   { header: 'Supplier Name', dataKey: 'supplierName' },
                   { header: 'Mode', dataKey: 'mode' },
+                  { header: 'No. of Items', dataKey: 'noOfItems' },
                   { header: 'No. of Birds', dataKey: 'noOfBirds' },
                   { header: 'Total Amount', dataKey: 'totalAmount' },
-                  { header: 'Tax Amount', dataKey: 'taxAmount' },
                   { header: 'Net Amount', dataKey: 'netAmount' },
+
                 ];
                 const pdfData = [...filteredPurchases, {
                   entryNo: '',
                   invoiceNo: '',
                   date: '',
                   supplierName: '',
-                  mode: '',
-                  totalAmount: '',
-                  taxAmount: 'TOTAL AMOUNT:',
+                  mode: 'TOTAL:',
+                  noOfItems: totalItems.toString(),
+                  noOfBirds: totalBirds.toString(),
+                  totalAmount: formatCurrency(totalSubtotal),
+
                   netAmount: formatCurrency(totalPurchasesAmount)
                 }];
                 exportTableToPdf(cols, pdfData, `Purchase_Report_${fromDate}_to_${toDate}`, 'Purchase Report', settings?.shopName, filteredPurchases.length);
@@ -317,9 +330,10 @@ const PurchaseReport = () => {
                 <th className="px-4 py-3 border-r border-[#1E293B]">Date</th>
                 <th className="px-4 py-3 border-r border-[#1E293B]">Supplier Name</th>
                 <th className="px-4 py-3 border-r border-[#1E293B]">Mode</th>
+                <th className="px-4 py-3 border-r border-[#1E293B] text-center">No. of Items</th>
                 <th className="px-4 py-3 border-r border-[#1E293B] text-center">No. of Birds</th>
                 <th className="px-4 py-3 border-r border-[#1E293B] text-right">Total Amount</th>
-                {/* <th className="px-4 py-3 border-r border-[#1E293B] text-right">Tax Amount</th> */}
+                {/* hidden */}
                 <th className="px-4 py-3 border-r border-[#1E293B] text-right">Net Amount</th>
                 <th data-html2canvas-ignore="true" className="px-4 py-3 text-center">Actions</th>
               </tr>
@@ -350,8 +364,9 @@ const PurchaseReport = () => {
                         </span>
                       </div>
                     </td>
+                    <td className="px-4 py-3 border-r border-[#E2E8F0] text-center text-black font-bold">{p.noOfItems}</td>
+                    <td className="px-4 py-3 border-r border-[#E2E8F0] text-center text-black font-bold">{p.noOfBirds === 0 ? '0' : p.noOfBirds}</td>
                     <td className="px-4 py-3 border-r border-[#E2E8F0] text-right text-black font-bold">{p.totalAmount}</td>
-                    {/* <td className="px-4 py-3 border-r border-[#E2E8F0] text-right text-black font-bold">{p.taxAmount}</td> */}
                     <td className="px-4 py-3 border-r border-[#E2E8F0] text-right font-bold text-[#10B981]">{p.netAmount}</td>
                     <td data-html2canvas-ignore="true" className="px-4 py-3 text-center">
                       <button type="button" 

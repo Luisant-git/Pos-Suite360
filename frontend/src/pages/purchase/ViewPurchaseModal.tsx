@@ -63,6 +63,7 @@ export default function ViewPurchaseModal({ purchaseId, onClose }: Props) {
                 <tr>
                   <th className="px-2 sm:px-3 py-2 sm:py-2.5 border border-gray-300">#</th>
                   <th className="px-2 sm:px-3 py-2 sm:py-2.5 border border-gray-300">Product</th>
+                  <th className="px-2 sm:px-3 py-2 sm:py-2.5 border border-gray-300 text-center">Birds</th>
                   <th className="px-2 sm:px-3 py-2 sm:py-2.5 border border-gray-300 text-right">Qty</th>
                   <th className="px-2 sm:px-3 py-2 sm:py-2.5 border border-gray-300 text-right">Rate</th>
                   <th className="px-2 sm:px-3 py-2 sm:py-2.5 border border-gray-300 text-right">Amount</th>
@@ -76,6 +77,7 @@ export default function ViewPurchaseModal({ purchaseId, onClose }: Props) {
                       {item.product?.name}
                       <span className="block text-[11px] text-black font-normal">Code: {item.product?.code}</span>
                     </td>
+                    <td className="px-2 sm:px-3 py-2 border border-gray-300 text-center font-bold text-black">{item.noOfBirds === 0 ? '0' : (item.noOfBirds || '0')}</td>
                     <td className="px-2 sm:px-3 py-2 border border-gray-300 text-right font-bold text-[#3B82F6]">{Number(Number(item.quantity).toFixed(4))}</td>
                     <td className="px-2 sm:px-3 py-2 border border-gray-300 text-right">{formatCurrency(item.rate)}</td>
                     <td className="px-2 sm:px-3 py-2 border border-gray-300 text-right font-bold">{formatCurrency(item.amount)}</td>

@@ -1,10 +1,8 @@
 import { useState } from 'react';
-import { X, Briefcase, PlusSquare, Download, Filter, RefreshCw, Building } from 'lucide-react';
+import { X, Briefcase, PlusSquare, Filter, Building } from 'lucide-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 import api from '../../services/api';
-import { exportTableToPdf, type PdfColumn } from '../../utils/exportPdf';
-import { exportToExcel } from '../../utils/exportExcel';
 import { useSettings } from '../../contexts/SettingsContext';
 import TableLoader from '../../components/TableLoader';
 

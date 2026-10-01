@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Download, Building, Filter, RefreshCw, X, FileText, FileDigit } from 'lucide-react';
+import { Download, Building, Filter, RefreshCw, X, FileText } from 'lucide-react';
 import { useSettings } from '../../contexts/SettingsContext';
 import api from '../../services/api';
 import ReportTabs from '../../components/ReportTabs';
@@ -232,7 +232,6 @@ const BankDepositReport = () => {
               currentPage={currentPage}
               totalPages={totalPages}
               entriesPerPage={entriesPerPage}
-              totalRecords={deposits.length}
               onPageChange={setCurrentPage}
               onEntriesChange={setEntriesPerPage}
             />

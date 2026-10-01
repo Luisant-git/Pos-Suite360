@@ -81,6 +81,16 @@ const MobileDropdownItem = ({ to, icon, title, onClick, isDanger = false, isWarn
   </NavLink>
 );
 
+const MobileNavItem = ({ title, icon, to, onClick }: { title: string, icon: string, to: string, onClick?: () => void }) => (
+  <NavLink 
+    to={to} 
+    onClick={onClick}
+    className={({ isActive }) => `flex items-center gap-3 px-4 py-3 text-sm font-bold transition-colors border-b border-[#2A3F54]/30 ${isActive ? 'bg-[#1E3A8A]/50 text-white' : 'text-[#E0E7FF] hover:bg-[#1E40AF]'}`}
+  >
+    <i className={`fa ${icon} w-5 text-center`}></i>
+    <span>{title}</span>
+  </NavLink>
+);
 
 const MainLayout = () => {
   const navigate = useNavigate();
@@ -474,7 +484,7 @@ const MainLayout = () => {
             </div>
             
             <nav className="flex-1 py-2 overflow-y-auto custom-scrollbar">
-              <NavItem to="/dashboard" icon="fa-dashboard" title="Dashboard" onClick={closeMobileMenu} />
+              <MobileNavItem to="/dashboard" icon="fa-dashboard" title="Dashboard" onClick={closeMobileMenu} />
               
               {hasAnyPerm(['master_products', 'master_brands', 'master_categories', 'master_units', 'master_suppliers', 'master_customers', 'master_payment_modes', 'master_payment_types', 'master_expense_categories']) && (
                 <MobileNavDropdown title="Master" icon="fa-database" isActive={isMasterActive}>
@@ -510,8 +520,8 @@ const MainLayout = () => {
                 </MobileNavDropdown>
               )}
 
-              {hasPerm('expenses_entry') && <NavItem to="/expenses/new" icon="fa-calculator" title="Expenses" onClick={closeMobileMenu} />}
-              {hasPerm('reports_financial') && <NavItem to="/bank-deposits" icon="fa-building" title="Bank Deposit Entry" onClick={closeMobileMenu} />}
+              {hasPerm('expenses_entry') && <MobileNavItem to="/expenses/new" icon="fa-calculator" title="Expenses" onClick={closeMobileMenu} />}
+              {hasPerm('reports_financial') && <MobileNavItem to="/bank-deposits" icon="fa-building" title="Bank Deposit Entry" onClick={closeMobileMenu} />}
 
               {hasAnyPerm(['reports_sales', 'reports_purchase', 'reports_financial', 'reports_purchase_return', 'reports_sales_return', 'reports_product_wise_sales', 'reports_stock', 'reports_profit_ledger', 'reports_expense', 'reports_customer_receipts', 'reports_supplier_payments']) && (
                 <MobileNavDropdown title="Reports" icon="fa-pie-chart" isActive={isReportsActive}>

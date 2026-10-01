@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Download, Building, Filter, RefreshCw, X, FileText } from 'lucide-react';
+import { Download, Building, RefreshCw, FileText } from 'lucide-react';
 import { useSettings } from '../../contexts/SettingsContext';
 import api from '../../services/api';
 import ReportTabs from '../../components/ReportTabs';
@@ -11,7 +11,6 @@ import TableLoader from '../../components/TableLoader';
 
 const BankDepositReport = () => {
   const { formatCurrency, settings } = useSettings();
-  const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [fromDate, setFromDate] = useState('');
   const [toDate, setToDate] = useState('');
   
@@ -40,153 +39,117 @@ const BankDepositReport = () => {
   const todayStr = new Date().toISOString().split('T')[0];
   const startOfMonthStr = new Date(new Date().setDate(1)).toISOString().split('T')[0];
   
+  const isAllTime = !fromDate && !toDate;
   const isToday = fromDate === todayStr && toDate === todayStr;
-  const isMonth = fromDate === startOfMonthStr && toDate === todayStr;
-  const isReset = !fromDate && !toDate;
+  const isMonth = fromDate === startOfMonthStr && toDate === todayStr && !isToday;
 
   return (
-    <div className="absolute inset-0 bg-[#F8FAFC] flex flex-col font-sans overflow-y-auto lg:overflow-hidden z-10 p-2 sm:p-4">
+    <div className="absolute inset-0 bg-[#F7F7F7] flex flex-col font-sans overflow-y-auto lg:overflow-hidden z-10 p-2 sm:p-4">
       
       <ReportTabs />
 
-      {/* Mobile Quick Bar */}
-      <div className="md:hidden flex items-center justify-between gap-2 mb-2 shrink-0">
-        <div className="flex gap-2 flex-1">
-          <input type="date" value={fromDate} onChange={(e) => setFromDate(e.target.value)} className="w-1/2 px-2 py-1.5 border border-[#CBD5E1] rounded text-[12px] font-bold text-black" />
-          <input type="date" value={toDate} onChange={(e) => setToDate(e.target.value)} className="w-1/2 px-2 py-1.5 border border-[#CBD5E1] rounded text-[12px] font-bold text-black" />
-        </div>
-        <button onClick={() => setIsFilterOpen(true)} className="p-1.5 bg-[#1E293B] text-white rounded shrink-0">
-          <Filter size={16} />
-        </button>
-      </div>
-
-      <div className="flex-1 flex flex-col lg:flex-row gap-4 min-h-0">
-        {/* Desktop Sidebar */}
-        <div className={`
-          fixed inset-y-0 right-0 w-[280px] bg-white shadow-xl z-50 transform transition-transform duration-300 ease-in-out
-          lg:relative lg:transform-none lg:shadow-none lg:w-64 lg:rounded lg:border lg:border-[#E2E8F0] lg:bg-white lg:flex lg:flex-col lg:shrink-0
-          ${isFilterOpen ? 'translate-x-0' : 'translate-x-full'}
-        `}>
-          <div className="flex items-center justify-between p-4 border-b border-[#E2E8F0] bg-[#1E293B] text-white lg:bg-transparent lg:text-black">
-            <h2 className="font-bold text-[14px] uppercase tracking-wider flex items-center gap-2">
-              <Filter size={16} className="text-[#3B82F6]" />
-              Filters
-            </h2>
-            <button onClick={() => setIsFilterOpen(false)} className="lg:hidden p-1 hover:bg-white/20 rounded transition-colors">
-              <X size={18} />
-            </button>
-          </div>
-
-          <div className="p-4 flex flex-col gap-4 overflow-y-auto flex-1">
-            <div className="space-y-1.5">
-              <label className="text-[11px] font-bold text-[#64748B] uppercase tracking-wider">Date Range</label>
-              <input type="date" value={fromDate} onChange={(e) => setFromDate(e.target.value)} className="w-full px-3 py-2 border border-[#CBD5E1] rounded focus:outline-none focus:border-[#3B82F6] text-[13px] font-bold text-black transition-colors" />
-              <input type="date" value={toDate} onChange={(e) => setToDate(e.target.value)} className="w-full px-3 py-2 border border-[#CBD5E1] rounded focus:outline-none focus:border-[#3B82F6] text-[13px] font-bold text-black transition-colors" />
-            </div>
-
-            <div className="grid grid-cols-2 gap-2 pt-2">
-              <button 
-                onClick={() => {
-                  setFromDate(todayStr);
-                  setToDate(todayStr);
-                }}
-                className={`py-1.5 text-[11px] font-bold rounded border transition-colors ${isToday ? 'bg-[#3B82F6] text-white border-[#3B82F6]' : 'bg-white text-black border-[#CBD5E1] hover:bg-gray-50'}`}
-              >
-                Today
-              </button>
-              <button 
-                onClick={() => {
-                  setFromDate(startOfMonthStr);
-                  setToDate(todayStr);
-                }}
-                className={`py-1.5 text-[11px] font-bold rounded border transition-colors ${isMonth ? 'bg-[#3B82F6] text-white border-[#3B82F6]' : 'bg-white text-black border-[#CBD5E1] hover:bg-gray-50'}`}
-              >
-                This Month
-              </button>
-            </div>
-
-            <button 
-              onClick={() => {
-                setFromDate('');
-                setToDate('');
-              }}
-              className={`mt-2 py-2 flex items-center justify-center gap-2 text-[12px] font-bold rounded transition-colors ${isReset ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-[#F1F5F9] text-[#475569] hover:bg-[#E2E8F0]'}`}
-              disabled={isReset}
-            >
-              <RefreshCw size={14} />
-              Reset Filters
-            </button>
-          </div>
-        </div>
-
-        {/* Desktop Overlay */}
-        {isFilterOpen && (
-          <div className="fixed inset-0 bg-black/20 z-40 lg:hidden" onClick={() => setIsFilterOpen(false)} />
-        )}
-
-        {/* Main Content */}
-        <div className="flex-1 bg-white rounded border border-[#E2E8F0] shadow-sm flex flex-col min-w-0 overflow-hidden relative">
+      <div className="flex flex-col flex-1 overflow-hidden mt-4">
+        <div className="bg-white border border-[#E6E9ED] shadow-sm rounded-sm flex flex-col flex-1 overflow-hidden">
           
-          {/* Action Bar */}
-          <div className="p-3 border-b border-[#E2E8F0] bg-gray-50/50 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shrink-0">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-blue-100 flex items-center justify-center rounded shadow-inner">
-                <Building size={16} className="text-blue-600" />
+          {/* Header */}
+          <div className="bg-[#F8F9FA] border-b border-[#E6E9ED] px-3 py-2 sm:px-4 sm:py-3">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-[#2563EB]">
+              <div className="flex items-center gap-2">
+                <Building size={18} className="shrink-0" />
+                <h2 className="font-bold text-[13px] md:text-[14px] uppercase tracking-wide">Bank Deposit Report</h2>
               </div>
-              <div>
-                <h2 className="text-[14px] font-bold text-black uppercase tracking-wider">Bank Deposit Report</h2>
-                <p className="text-[11px] text-[#64748B] font-bold hidden sm:block">View and export deposit history</p>
+              <div className="flex items-center gap-2 w-full sm:w-auto">
+                <div className="bg-[#2563EB] text-white font-bold text-[11px] px-3 py-1.5 rounded shadow-sm whitespace-nowrap flex items-center h-[30px]">
+                  {deposits.length} Records
+                </div>
+                <button type="button" 
+                  onClick={() => {
+                    const exportData = deposits.map((d: any) => ({
+                      'Date': new Date(d.date).toLocaleDateString(),
+                      'Type': d.depositType,
+                      'Amount': d.amount
+                    }));
+                    exportData.push({
+                      'Date': '',
+                      'Type': 'TOTAL:',
+                      'Amount': formatCurrency(totalDepositAmount) as any
+                    });
+                    exportToExcel(exportData, `Bank_Deposit_Report_${fromDate}_to_${toDate}`, {
+                      shopName: settings?.shopName || 'MY SHOP',
+                      title: 'Bank Deposit Report',
+                      totalCount: deposits.length
+                    });
+                  }}
+                  className="bg-[#10B981] hover:bg-[#059669] text-white px-3 py-1.5 rounded flex items-center justify-center gap-1.5 text-[12px] font-bold whitespace-nowrap transition-colors shrink-0"
+                >
+                  <Download size={13} /> <span className="hidden sm:inline">Export Excel</span>
+                </button>
+                <button type="button"
+                  onClick={() => {
+                    const cols: PdfColumn[] = [
+                      { header: 'Date', dataKey: 'date' },
+                      { header: 'Deposit Type', dataKey: 'depositType' },
+                      { header: 'Amount', dataKey: 'amount' },
+                    ];
+                    const pdfData = [...deposits.map((d:any) => ({
+                      ...d, 
+                      date: new Date(d.date).toLocaleDateString(),
+                      amount: formatCurrency(d.amount)
+                    })), {
+                      date: '',
+                      depositType: 'TOTAL:',
+                      amount: formatCurrency(totalDepositAmount)
+                    }];
+                    exportTableToPdf(cols, pdfData, `Bank_Deposit_Report_${fromDate}_to_${toDate}`, 'Bank Deposit Report', settings?.shopName, deposits.length);
+                  }}
+                  className="bg-[#EF4444] hover:bg-[#DC2626] text-white px-3 py-1.5 rounded flex items-center justify-center gap-1.5 text-[12px] font-bold whitespace-nowrap transition-colors shrink-0"
+                >
+                  <FileText size={13} /> <span className="hidden sm:inline">Export PDF</span>
+                </button>
               </div>
-            </div>
-
-            <div className="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0">
-              <button type="button" 
-                onClick={() => {
-                  const exportData = deposits.map((d: any) => ({
-                    'Date': new Date(d.date).toLocaleDateString(),
-                    'Type': d.depositType,
-                    'Amount': d.amount
-                  }));
-                  exportData.push({
-                    'Date': '',
-                    'Type': 'TOTAL:',
-                    'Amount': formatCurrency(totalDepositAmount)
-                  });
-                  exportToExcel(exportData, `Bank_Deposit_Report_${fromDate}_to_${toDate}`, {
-                    shopName: settings?.shopName || 'MY SHOP',
-                    title: 'Bank Deposit Report',
-                    totalCount: deposits.length
-                  });
-                }}
-                className="shrink-0 bg-[#10B981] hover:bg-[#059669] text-white px-3 py-1.5 rounded flex items-center justify-center gap-1.5 text-[12px] font-bold whitespace-nowrap transition-colors"
-              >
-                <Download size={14} /> <span className="hidden lg:inline">Export Excel</span>
-              </button>
-              <button type="button"
-                onClick={() => {
-                  const cols: PdfColumn[] = [
-                    { header: 'Date', dataKey: 'date' },
-                    { header: 'Deposit Type', dataKey: 'depositType' },
-                    { header: 'Amount', dataKey: 'amount' },
-                  ];
-                  const pdfData = [...deposits.map((d:any) => ({
-                    ...d, 
-                    date: new Date(d.date).toLocaleDateString(),
-                    amount: formatCurrency(d.amount)
-                  })), {
-                    date: '',
-                    depositType: 'TOTAL:',
-                    amount: formatCurrency(totalDepositAmount)
-                  }];
-                  exportTableToPdf(cols, pdfData, `Bank_Deposit_Report_${fromDate}_to_${toDate}`, 'Bank Deposit Report', settings?.shopName, deposits.length);
-                }}
-                className="shrink-0 bg-[#EF4444] hover:bg-[#DC2626] text-white px-3 py-1.5 rounded flex items-center justify-center gap-1.5 text-[12px] font-bold whitespace-nowrap transition-colors"
-              >
-                <FileText size={14} /> <span className="hidden lg:inline">Export PDF</span>
-              </button>
             </div>
           </div>
 
+          {/* Filters */}
+          <div className="bg-white p-2 sm:p-3 border-b border-[#E6E9ED] shrink-0">
+            <div className="flex flex-col gap-2">
+              <div className="flex flex-wrap sm:flex-nowrap gap-2 items-center">
+                <input type="date" value={fromDate} onChange={(e) => setFromDate(e.target.value)} className="w-full sm:w-[150px] px-2 py-1.5 border border-[#E5E7EB] rounded text-[12px] font-bold outline-none focus:border-[#2563EB]" />
+                <input type="date" value={toDate} onChange={(e) => setToDate(e.target.value)} className="w-full sm:w-[150px] px-2 py-1.5 border border-[#E5E7EB] rounded text-[12px] font-bold outline-none focus:border-[#2563EB]" />
+                
+                <div className="flex gap-2 shrink-0">
+                  <button 
+                    onClick={() => { setFromDate(todayStr); setToDate(todayStr); }}
+                    className={`px-3 py-1.5 text-[11px] font-bold rounded border transition-colors ${isToday ? 'bg-[#3B82F6] text-white border-[#3B82F6]' : 'bg-white text-black border-[#E5E7EB] hover:bg-gray-50'}`}
+                  >
+                    Today
+                  </button>
+                  <button 
+                    onClick={() => { setFromDate(startOfMonthStr); setToDate(todayStr); }}
+                    className={`px-3 py-1.5 text-[11px] font-bold rounded border transition-colors ${isMonth ? 'bg-[#3B82F6] text-white border-[#3B82F6]' : 'bg-white text-black border-[#E5E7EB] hover:bg-gray-50'}`}
+                  >
+                    This Month
+                  </button>
+                  <button 
+                    onClick={() => { setFromDate(''); setToDate(''); }}
+                    className={`px-3 py-1.5 text-[11px] font-bold rounded border transition-colors ${isAllTime ? 'bg-[#3B82F6] text-white border-[#3B82F6]' : 'bg-white text-black border-[#E5E7EB] hover:bg-gray-50'}`}
+                  >
+                    All Time
+                  </button>
+                </div>
+                
+                <button
+                  type="button"
+                  onClick={() => { setFromDate(''); setToDate(''); }}
+                  className={`ml-auto shrink-0 px-3 py-1.5 rounded flex items-center gap-1 transition-colors border text-[12px] font-bold ${!isAllTime ? 'bg-white text-[#2563EB] border-blue-200 hover:bg-blue-50' : 'bg-white text-black border-[#E5E7EB] hover:bg-gray-50'}`}
+                >
+                  <RefreshCw size={13} /> <span className="hidden sm:inline">Reset</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Table */}
           <div className="flex-1 overflow-auto bg-[#F8FAFC]">
             <table className="w-full text-left border-collapse text-[12px] lg:text-[13px] whitespace-nowrap">
               <thead className="bg-[#1E293B] text-white sticky top-0 z-10">
@@ -204,7 +167,7 @@ const BankDepositReport = () => {
                   <tr><td colSpan={4} className="text-center p-6 text-black font-bold">No deposit records found.</td></tr>
                 ) : (
                   paginatedDeposits.map((d: any, index: number) => (
-                    <tr key={d.id} className={`border-b border-[#E2E8F0] ${index % 2 === 0 ? 'bg-white' : 'bg-[#F8FAFC]'} hover:bg-[#EFF6FF]`}>
+                    <tr key={d.id} className={`border-b border-[#E2E8F0] ${index % 2 === 0 ? 'bg-white' : 'bg-[#FAFAFA]'} hover:bg-[#EFF6FF]`}>
                       <td className="px-4 py-3 border-r border-[#E2E8F0] text-center text-black font-bold">{(currentPage - 1) * entriesPerPage + index + 1}</td>
                       <td className="px-4 py-3 border-r border-[#E2E8F0] text-black font-bold">{new Date(d.date).toLocaleDateString()}</td>
                       <td className="px-4 py-3 border-r border-[#E2E8F0] font-bold text-black">
@@ -236,6 +199,7 @@ const BankDepositReport = () => {
               onPageChange={setCurrentPage}
             />
           </div>
+
         </div>
       </div>
     </div>

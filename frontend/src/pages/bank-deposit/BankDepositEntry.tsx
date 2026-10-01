@@ -105,6 +105,14 @@ const BankDepositEntry = () => {
     }
   };
 
+  const now = new Date();
+  const todayStr = now.toISOString().split('T')[0];
+  const startOfMonthStr = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
+  
+  const isAllTime = !filterStartDate && !filterEndDate;
+  const isToday = filterStartDate === todayStr && filterEndDate === todayStr;
+  const isThisMonth = filterStartDate === startOfMonthStr && filterEndDate === todayStr && !isToday;
+
   return (
     <div className="absolute inset-0 bg-[#F8FAFC] flex flex-col font-sans overflow-hidden z-10">
       
@@ -187,9 +195,18 @@ const BankDepositEntry = () => {
           {/* Quick Filters */}
           <div className="p-3 bg-white border-b border-gray-200 flex flex-wrap items-center justify-between gap-3 shadow-sm shrink-0">
             <div className="flex items-center gap-2">
-              <button onClick={() => setQuickDate('today')} className="px-3 py-1 bg-white border border-gray-300 rounded text-[11px] font-bold text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors shadow-sm">Today</button>
-              <button onClick={() => setQuickDate('thisMonth')} className="px-3 py-1 bg-white border border-gray-300 rounded text-[11px] font-bold text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors shadow-sm">This Month</button>
-              <button onClick={() => setQuickDate('all')} className="px-3 py-1 bg-white border border-gray-300 rounded text-[11px] font-bold text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors shadow-sm">All Time</button>
+              <button 
+                onClick={() => setQuickDate('today')} 
+                className={`px-3 py-1 rounded text-[11px] font-bold transition-colors shadow-sm border ${isToday ? 'bg-[#3B82F6] text-white border-[#3B82F6]' : 'bg-white text-gray-600 border-gray-300 hover:bg-gray-50 hover:text-gray-900'}`}
+              >Today</button>
+              <button 
+                onClick={() => setQuickDate('thisMonth')} 
+                className={`px-3 py-1 rounded text-[11px] font-bold transition-colors shadow-sm border ${isThisMonth ? 'bg-[#3B82F6] text-white border-[#3B82F6]' : 'bg-white text-gray-600 border-gray-300 hover:bg-gray-50 hover:text-gray-900'}`}
+              >This Month</button>
+              <button 
+                onClick={() => setQuickDate('all')} 
+                className={`px-3 py-1 rounded text-[11px] font-bold transition-colors shadow-sm border ${isAllTime ? 'bg-[#3B82F6] text-white border-[#3B82F6]' : 'bg-white text-gray-600 border-gray-300 hover:bg-gray-50 hover:text-gray-900'}`}
+              >All Time</button>
             </div>
             
             <div className="flex items-center gap-2">

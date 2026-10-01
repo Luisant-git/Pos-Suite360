@@ -123,9 +123,9 @@ const Dashboard = () => {
     <div className={`grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-6 ${isOverviewTab ? 'hidden lg:grid mt-6' : ''}`}>
         {/* Low Stock Products */}
         <div className="bg-white border border-gray-200 shadow-sm rounded-xl overflow-hidden lg:col-span-1">
-          <div className="border-b border-gray-100 px-4 sm:px-5 py-3 sm:py-4 flex justify-between items-center bg-gray-50/50">
-            <h2 className="text-[15px] sm:text-[16px] font-bold text-black font-bold flex items-center gap-2">
-              <Package size={18} className="text-rose-500" /> Low Stock Alerts
+          <div className="border-b border-gray-100 px-4 sm:px-5 py-3 sm:py-4 flex flex-wrap justify-between items-center bg-gray-50/50 gap-3">
+            <h2 className="text-[14px] xl:text-[15px] font-bold text-black flex items-center gap-2 whitespace-nowrap">
+              <Package size={18} className="text-rose-500 shrink-0" /> Low Stock Alerts
             </h2>
           </div>
           <div className="p-0 h-[350px] overflow-y-auto custom-scrollbar bg-white">
@@ -158,11 +158,11 @@ const Dashboard = () => {
 
         {/* Supplier Payments Due */}
         <div className="bg-white border border-gray-200 shadow-sm rounded-xl overflow-hidden lg:col-span-1 flex flex-col">
-          <div className="border-b border-gray-100 px-4 sm:px-5 py-3 sm:py-4 flex flex-col sm:flex-row justify-between items-start sm:items-center bg-gray-50/50 gap-3 sm:gap-2">
-            <h2 className="text-[15px] sm:text-[16px] font-bold text-black font-bold flex items-center gap-2">
-              <Landmark size={18} className="text-rose-500" /> Supplier Payments Due
+          <div className="border-b border-gray-100 px-3 sm:px-4 py-3 sm:py-4 flex flex-wrap justify-between items-center bg-gray-50/50 gap-3">
+            <h2 className="text-[14px] xl:text-[15px] font-bold text-black flex items-center gap-2 whitespace-nowrap">
+              <Landmark size={18} className="text-rose-500 shrink-0" /> Supplier Payments Due
             </h2>
-            <div className="flex items-center justify-start sm:justify-end gap-2 w-full sm:w-auto">
+            <div className="flex items-center gap-2">
               <Link to="/reports/supplier-payments" className="flex-1 sm:flex-none text-center px-3 py-1.5 sm:py-1 bg-white border border-gray-200 text-gray-700 font-bold rounded hover:bg-gray-50 transition-colors text-[12px]">
                 View All
               </Link>
@@ -230,11 +230,11 @@ const Dashboard = () => {
 
         {/* Customer Payments Expected */}
         <div className="bg-white border border-gray-200 shadow-sm rounded-xl overflow-hidden lg:col-span-1 flex flex-col">
-          <div className="border-b border-gray-100 px-4 sm:px-5 py-3 sm:py-4 flex flex-col sm:flex-row justify-between items-start sm:items-center bg-gray-50/50 gap-3 sm:gap-2">
-            <h2 className="text-[15px] sm:text-[16px] font-bold text-black font-bold flex items-center gap-2">
-              <Users size={18} className="text-amber-500" /> Customer Payments Due
+          <div className="border-b border-gray-100 px-3 sm:px-4 py-3 sm:py-4 flex flex-wrap justify-between items-center bg-gray-50/50 gap-3">
+            <h2 className="text-[14px] xl:text-[15px] font-bold text-black flex items-center gap-2 whitespace-nowrap">
+              <Users size={18} className="text-amber-500 shrink-0" /> Customer Payments Due
             </h2>
-            <div className="flex items-center justify-start sm:justify-end gap-2 w-full sm:w-auto">
+            <div className="flex items-center gap-2">
               <Link to="/reports/customer-receipts" className="flex-1 sm:flex-none text-center px-3 py-1.5 sm:py-1 bg-white border border-gray-200 text-gray-700 font-bold rounded hover:bg-gray-50 transition-colors text-[12px]">
                 View All
               </Link>
@@ -302,11 +302,11 @@ const Dashboard = () => {
 
         {/* Bank Deposits */}
         <div className="bg-white border border-gray-200 shadow-sm rounded-xl overflow-hidden lg:col-span-1 flex flex-col">
-          <div className="border-b border-gray-100 px-4 sm:px-5 py-3 sm:py-4 flex flex-col sm:flex-row justify-between items-start sm:items-center bg-gray-50/50 gap-3 sm:gap-2">
-            <h2 className="text-[15px] sm:text-[16px] font-bold text-black flex items-center gap-2">
-              <Building size={18} className="text-blue-500" /> Recent Bank Deposits
+          <div className="border-b border-gray-100 px-3 sm:px-4 py-3 sm:py-4 flex flex-wrap justify-between items-center bg-gray-50/50 gap-3">
+            <h2 className="text-[14px] xl:text-[15px] font-bold text-black flex items-center gap-2 whitespace-nowrap">
+              <Building size={18} className="text-blue-500 shrink-0" /> Recent Bank Deposits
             </h2>
-            <div className="flex items-center justify-start sm:justify-end gap-2 w-full sm:w-auto">
+            <div className="flex items-center gap-2">
               <Link to="/reports/bank-deposits" className="flex-1 sm:flex-none text-center px-3 py-1.5 sm:py-1 bg-white border border-gray-200 text-gray-700 font-bold rounded hover:bg-gray-50 transition-colors text-[12px]">
                 View All
               </Link>

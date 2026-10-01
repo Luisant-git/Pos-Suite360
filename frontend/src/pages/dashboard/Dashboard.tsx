@@ -68,6 +68,7 @@ const Dashboard = () => {
   const [activeTab, setActiveTab] = useState(() =>
     typeof window !== 'undefined' && window.innerWidth < 1024 ? 'operational' : 'overview'
   );
+  const [activeMobileCard, setActiveMobileCard] = useState('supplier');
   const getMalaysiaDate = () => {
     const d = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Kuala_Lumpur" }));
     return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
@@ -121,6 +122,34 @@ const Dashboard = () => {
 
   const renderOperationalGrid = (isOverviewTab: boolean) => (
     <div className={`grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-6 ${isOverviewTab ? 'hidden lg:grid mt-6' : ''}`}>
+      {/* Mobile Card Switcher */}
+      <div className="lg:hidden flex overflow-x-auto gap-2 pb-2 custom-scrollbar hide-scrollbar snap-x col-span-1 mt-4 -mb-2">
+        <button
+          onClick={() => setActiveMobileCard('supplier')}
+          className={`flex items-center gap-2 px-4 py-2 rounded-full whitespace-nowrap font-bold text-[13px] transition-all snap-center shrink-0 border ${
+            activeMobileCard === 'supplier' ? 'bg-white shadow-sm border-rose-200 text-rose-600' : 'bg-gray-200/50 border-transparent text-gray-500 hover:bg-white'
+          }`}
+        >
+          <Landmark size={14} /> Supplier Due
+        </button>
+        <button
+          onClick={() => setActiveMobileCard('customer')}
+          className={`flex items-center gap-2 px-4 py-2 rounded-full whitespace-nowrap font-bold text-[13px] transition-all snap-center shrink-0 border ${
+            activeMobileCard === 'customer' ? 'bg-white shadow-sm border-amber-200 text-amber-600' : 'bg-gray-200/50 border-transparent text-gray-500 hover:bg-white'
+          }`}
+        >
+          <Users size={14} /> Customer Due
+        </button>
+        <button
+          onClick={() => setActiveMobileCard('bank')}
+          className={`flex items-center gap-2 px-4 py-2 rounded-full whitespace-nowrap font-bold text-[13px] transition-all snap-center shrink-0 border ${
+            activeMobileCard === 'bank' ? 'bg-white shadow-sm border-blue-200 text-blue-600' : 'bg-gray-200/50 border-transparent text-gray-500 hover:bg-white'
+          }`}
+        >
+          <Building size={14} /> Bank Deposits
+        </button>
+      </div>
+
         {/* Low Stock Products */}
         <div className="bg-white border border-gray-200 shadow-sm rounded-xl overflow-hidden lg:col-span-1">
           <div className="border-b border-gray-100 px-4 sm:px-5 py-3 sm:py-4 flex flex-wrap justify-between items-center bg-gray-50/50 gap-3">
@@ -157,7 +186,7 @@ const Dashboard = () => {
         </div>
 
         {/* Supplier Payments Due */}
-        <div className="bg-white border border-gray-200 shadow-sm rounded-xl overflow-hidden lg:col-span-1 flex flex-col">
+        <div className={`bg-white border border-gray-200 shadow-sm rounded-xl overflow-hidden lg:col-span-1 flex-col ${activeMobileCard === 'supplier' ? 'flex' : 'hidden lg:flex'}`}>
           <div className="border-b border-gray-100 px-3 sm:px-4 py-3 sm:py-4 flex flex-wrap justify-between items-center bg-gray-50/50 gap-3">
             <h2 className="text-[14px] xl:text-[15px] font-bold text-black flex items-center gap-2 whitespace-nowrap">
               <Landmark size={18} className="text-rose-500 shrink-0" /> Supplier Payments Due
@@ -229,7 +258,7 @@ const Dashboard = () => {
         </div>
 
         {/* Customer Payments Expected */}
-        <div className="bg-white border border-gray-200 shadow-sm rounded-xl overflow-hidden lg:col-span-1 flex flex-col">
+        <div className={`bg-white border border-gray-200 shadow-sm rounded-xl overflow-hidden lg:col-span-1 flex-col ${activeMobileCard === 'customer' ? 'flex' : 'hidden lg:flex'}`}>
           <div className="border-b border-gray-100 px-3 sm:px-4 py-3 sm:py-4 flex flex-wrap justify-between items-center bg-gray-50/50 gap-3">
             <h2 className="text-[14px] xl:text-[15px] font-bold text-black flex items-center gap-2 whitespace-nowrap">
               <Users size={18} className="text-amber-500 shrink-0" /> Customer Payments Due
@@ -301,7 +330,7 @@ const Dashboard = () => {
         </div>
 
         {/* Bank Deposits */}
-        <div className="bg-white border border-gray-200 shadow-sm rounded-xl overflow-hidden lg:col-span-1 flex flex-col">
+        <div className={`bg-white border border-gray-200 shadow-sm rounded-xl overflow-hidden lg:col-span-1 flex-col ${activeMobileCard === 'bank' ? 'flex' : 'hidden lg:flex'}`}>
           <div className="border-b border-gray-100 px-3 sm:px-4 py-3 sm:py-4 flex flex-wrap justify-between items-center bg-gray-50/50 gap-3">
             <h2 className="text-[14px] xl:text-[15px] font-bold text-black flex items-center gap-2 whitespace-nowrap">
               <Building size={18} className="text-blue-500 shrink-0" /> Recent Bank Deposits

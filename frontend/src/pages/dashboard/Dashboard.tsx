@@ -162,7 +162,7 @@ const Dashboard = () => {
             <h2 className="text-[14px] xl:text-[15px] font-bold text-black flex items-center gap-2 whitespace-nowrap">
               <Landmark size={18} className="text-rose-500 shrink-0" /> Supplier Payments Due
             </h2>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center justify-start sm:justify-end gap-2 w-full sm:w-auto">
               <Link to="/reports/supplier-payments" className="flex-1 sm:flex-none text-center px-3 py-1.5 sm:py-1 bg-white border border-gray-200 text-gray-700 font-bold rounded hover:bg-gray-50 transition-colors text-[12px]">
                 View All
               </Link>
@@ -234,7 +234,7 @@ const Dashboard = () => {
             <h2 className="text-[14px] xl:text-[15px] font-bold text-black flex items-center gap-2 whitespace-nowrap">
               <Users size={18} className="text-amber-500 shrink-0" /> Customer Payments Due
             </h2>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center justify-start sm:justify-end gap-2 w-full sm:w-auto">
               <Link to="/reports/customer-receipts" className="flex-1 sm:flex-none text-center px-3 py-1.5 sm:py-1 bg-white border border-gray-200 text-gray-700 font-bold rounded hover:bg-gray-50 transition-colors text-[12px]">
                 View All
               </Link>
@@ -306,7 +306,7 @@ const Dashboard = () => {
             <h2 className="text-[14px] xl:text-[15px] font-bold text-black flex items-center gap-2 whitespace-nowrap">
               <Building size={18} className="text-blue-500 shrink-0" /> Recent Bank Deposits
             </h2>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center justify-start sm:justify-end gap-2 w-full sm:w-auto">
               <Link to="/reports/bank-deposits" className="flex-1 sm:flex-none text-center px-3 py-1.5 sm:py-1 bg-white border border-gray-200 text-gray-700 font-bold rounded hover:bg-gray-50 transition-colors text-[12px]">
                 View All
               </Link>

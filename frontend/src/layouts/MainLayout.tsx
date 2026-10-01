@@ -46,7 +46,7 @@ const DropdownItem = ({ to, icon, title, isDanger = false, isWarning = false, on
 
 // Mobile specific components
 const MobileNavDropdown = ({ title, icon, children, isActive }: { title: string, icon: string, children: React.ReactNode, isActive?: boolean }) => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(isActive || false);
   return (
     <div className="flex flex-col border-b border-[#2A3F54]/30">
       <button 
@@ -460,7 +460,7 @@ const MainLayout = () => {
       {isMobileMenuOpen && (
         <div className="fixed inset-0 z-50 flex lg:hidden">
           <div className="fixed inset-0 bg-black/50 backdrop-blur-sm" onClick={closeMobileMenu}></div>
-          <div className="relative flex flex-col w-72 max-w-sm h-full bg-gradient-to-b from-[#1E40AF] to-[#1E3A8A] text-white shadow-2xl overflow-y-auto">
+          <div className="relative flex flex-col w-72 max-w-sm h-full bg-gradient-to-b from-[#1E40AF] to-[#1E3A8A] text-white shadow-2xl">
             <div className="flex items-center justify-between p-4 border-b border-[#2563EB]">
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 bg-white rounded-xl flex items-center justify-center shadow-md">

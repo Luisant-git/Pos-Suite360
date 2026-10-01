@@ -122,33 +122,6 @@ const Dashboard = () => {
 
   const renderOperationalGrid = (isOverviewTab: boolean) => (
     <div className={`grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-6 ${isOverviewTab ? 'hidden lg:grid mt-6' : ''}`}>
-      {/* Mobile Card Switcher */}
-      <div className="lg:hidden flex overflow-x-auto gap-2 pb-2 custom-scrollbar hide-scrollbar snap-x col-span-1 mt-4 -mb-2">
-        <button
-          onClick={() => setActiveMobileCard('supplier')}
-          className={`flex items-center gap-2 px-4 py-2 rounded-full whitespace-nowrap font-bold text-[13px] transition-all snap-center shrink-0 border ${
-            activeMobileCard === 'supplier' ? 'bg-white shadow-sm border-rose-200 text-rose-600' : 'bg-gray-200/50 border-transparent text-gray-500 hover:bg-white'
-          }`}
-        >
-          <Landmark size={14} /> Supplier Due
-        </button>
-        <button
-          onClick={() => setActiveMobileCard('customer')}
-          className={`flex items-center gap-2 px-4 py-2 rounded-full whitespace-nowrap font-bold text-[13px] transition-all snap-center shrink-0 border ${
-            activeMobileCard === 'customer' ? 'bg-white shadow-sm border-amber-200 text-amber-600' : 'bg-gray-200/50 border-transparent text-gray-500 hover:bg-white'
-          }`}
-        >
-          <Users size={14} /> Customer Due
-        </button>
-        <button
-          onClick={() => setActiveMobileCard('bank')}
-          className={`flex items-center gap-2 px-4 py-2 rounded-full whitespace-nowrap font-bold text-[13px] transition-all snap-center shrink-0 border ${
-            activeMobileCard === 'bank' ? 'bg-white shadow-sm border-blue-200 text-blue-600' : 'bg-gray-200/50 border-transparent text-gray-500 hover:bg-white'
-          }`}
-        >
-          <Building size={14} /> Bank Deposits
-        </button>
-      </div>
 
         {/* Low Stock Products */}
         <div className="bg-white border border-gray-200 shadow-sm rounded-xl overflow-hidden lg:col-span-1">
@@ -185,6 +158,33 @@ const Dashboard = () => {
           </div>
         </div>
 
+      {/* Mobile Card Switcher */}
+      <div className="lg:hidden flex overflow-x-auto gap-2 pb-2 custom-scrollbar hide-scrollbar snap-x col-span-1 mt-4 -mb-2">
+        <button
+          onClick={() => setActiveMobileCard('supplier')}
+          className={`flex items-center gap-2 px-4 py-2 rounded-full whitespace-nowrap font-bold text-[13px] transition-all snap-center shrink-0 border ${
+            activeMobileCard === 'supplier' ? 'bg-white shadow-sm border-rose-200 text-rose-600' : 'bg-gray-200/50 border-transparent text-gray-500 hover:bg-white'
+          }`}
+        >
+          <Landmark size={14} /> Supplier Due
+        </button>
+        <button
+          onClick={() => setActiveMobileCard('customer')}
+          className={`flex items-center gap-2 px-4 py-2 rounded-full whitespace-nowrap font-bold text-[13px] transition-all snap-center shrink-0 border ${
+            activeMobileCard === 'customer' ? 'bg-white shadow-sm border-amber-200 text-amber-600' : 'bg-gray-200/50 border-transparent text-gray-500 hover:bg-white'
+          }`}
+        >
+          <Users size={14} /> Customer Due
+        </button>
+        <button
+          onClick={() => setActiveMobileCard('bank')}
+          className={`flex items-center gap-2 px-4 py-2 rounded-full whitespace-nowrap font-bold text-[13px] transition-all snap-center shrink-0 border ${
+            activeMobileCard === 'bank' ? 'bg-white shadow-sm border-blue-200 text-blue-600' : 'bg-gray-200/50 border-transparent text-gray-500 hover:bg-white'
+          }`}
+        >
+          <Building size={14} /> Bank Deposits
+        </button>
+      </div>
         {/* Supplier Payments Due */}
         <div className={`bg-white border border-gray-200 shadow-sm rounded-xl overflow-hidden lg:col-span-1 flex-col ${activeMobileCard === 'supplier' ? 'flex' : 'hidden lg:flex'}`}>
           <div className="border-b border-gray-100 px-3 sm:px-4 py-3 sm:py-4 flex flex-wrap justify-between items-center bg-gray-50/50 gap-3">

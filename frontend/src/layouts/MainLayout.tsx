@@ -511,6 +511,7 @@ const MainLayout = () => {
               )}
 
               {hasPerm('expenses_entry') && <NavItem to="/expenses/new" icon="fa-calculator" title="Expenses" onClick={closeMobileMenu} />}
+              {hasPerm('reports_financial') && <NavItem to="/bank-deposits" icon="fa-building" title="Bank Deposit Entry" onClick={closeMobileMenu} />}
 
               {hasAnyPerm(['reports_sales', 'reports_purchase', 'reports_financial', 'reports_purchase_return', 'reports_sales_return', 'reports_product_wise_sales', 'reports_stock', 'reports_profit_ledger', 'reports_expense', 'reports_customer_receipts', 'reports_supplier_payments']) && (
                 <MobileNavDropdown title="Reports" icon="fa-pie-chart" isActive={isReportsActive}>
@@ -522,6 +523,7 @@ const MainLayout = () => {
                   {hasPerm('reports_stock') && <MobileDropdownItem to="/reports/stock" icon="fa-cubes" title="Stock As On Date" onClick={closeMobileMenu} />}
                   {hasPerm('reports_profit_ledger') && <MobileDropdownItem to="/reports/profit-ledger" icon="fa-bar-chart" title="Profit / Ledger" onClick={closeMobileMenu} />}
                   {hasPerm('reports_expense') && <MobileDropdownItem to="/reports/expenses" icon="fa-calculator" title="Expense Report" onClick={closeMobileMenu} />}
+                  {hasPerm('reports_financial') && <MobileDropdownItem to="/reports/bank-deposits" icon="fa-building" title="Bank Deposit Report" onClick={closeMobileMenu} />}
                   {hasPerm('reports_customer_receipts') && <MobileDropdownItem to="/reports/customer-receipts" icon="fa-users" title="Customer Receipts & Dues" onClick={closeMobileMenu} />}
                   {hasPerm('reports_supplier_payments') && <MobileDropdownItem to="/reports/supplier-payments" icon="fa-truck" title="Supplier Payments & Payables" onClick={closeMobileMenu} />}
                 </MobileNavDropdown>

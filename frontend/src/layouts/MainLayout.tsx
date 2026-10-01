@@ -393,14 +393,10 @@ const MainLayout = () => {
             >
               <button 
                 onClick={() => setIsProfileOpen(!isProfileOpen)}
-                className="flex items-center gap-2 sm:gap-3 hover:bg-[#1E3A8A] px-2 sm:px-3 py-2 rounded-xl transition-all duration-200"
+                className="flex items-center gap-2 hover:bg-[#1E3A8A] px-2 py-2 rounded-xl transition-all duration-200"
               >
-                <div className="w-7 h-7 sm:w-8 sm:h-8 bg-white text-[#2563EB] rounded-full flex items-center justify-center font-bold text-xs sm:text-sm shadow-md ring-2 ring-blue-400/50">
+                <div className="w-7 h-7 sm:w-8 sm:h-8 bg-white text-[#2563EB] rounded-full flex items-center justify-center font-bold text-xs sm:text-sm shadow-md ring-2 ring-blue-400/50 shrink-0">
                   {user?.name?.charAt(0).toUpperCase() || 'U'}
-                </div>
-                <div className="hidden sm:flex flex-col items-start text-left">
-                  <span className="font-bold text-sm leading-tight">{user?.name || 'User'}</span>
-                  <span className="text-[10px] text-blue-200 font-bold uppercase tracking-wider">{user?.role?.name || 'User'}</span>
                 </div>
                 <ChevronDown size={14} className={`opacity-70 transition-transform duration-300 ${isProfileOpen ? 'rotate-180' : ''}`} />
               </button>

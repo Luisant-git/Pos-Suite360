@@ -31,7 +31,7 @@ const BankDepositReport = () => {
 
   const totalDepositAmount = deposits.reduce((sum: number, p: any) => sum + (Number(p.amount) || 0), 0);
 
-  const [entriesPerPage, setEntriesPerPage] = useState(25);
+  const [entriesPerPage] = useState(25);
   const [currentPage, setCurrentPage] = useState(1);
 
   const totalPages = Math.ceil(deposits.length / entriesPerPage);

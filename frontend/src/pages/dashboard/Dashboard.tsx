@@ -158,7 +158,7 @@ const Dashboard = () => {
           </div>
         </div>
 
-      {/* Mobile Card Switcher */}
+      {/* Mobile Card Switcher (Temporarily commented out)
       <div className="lg:hidden flex overflow-x-auto gap-2 pb-2 custom-scrollbar hide-scrollbar snap-x col-span-1 mt-4 -mb-2">
         <button
           onClick={() => setActiveMobileCard('supplier')}
@@ -185,8 +185,9 @@ const Dashboard = () => {
           <Building size={14} /> Bank Deposits
         </button>
       </div>
+      */}
         {/* Supplier Payments Due */}
-        <div className={`bg-white border border-gray-200 shadow-sm rounded-xl overflow-hidden lg:col-span-1 flex-col ${activeMobileCard === 'supplier' ? 'flex' : 'hidden lg:flex'}`}>
+        <div className={`bg-white border border-gray-200 shadow-sm rounded-xl overflow-hidden lg:col-span-1 flex flex-col`}>
           <div className="border-b border-gray-100 px-3 sm:px-4 py-3 sm:py-4 flex flex-wrap justify-between items-center bg-gray-50/50 gap-3">
             <h2 className="text-[14px] xl:text-[15px] font-bold text-black flex items-center gap-2 whitespace-nowrap">
               <Landmark size={18} className="text-rose-500 shrink-0" /> Supplier Payments Due
@@ -258,7 +259,7 @@ const Dashboard = () => {
         </div>
 
         {/* Customer Payments Expected */}
-        <div className={`bg-white border border-gray-200 shadow-sm rounded-xl overflow-hidden lg:col-span-1 flex-col ${activeMobileCard === 'customer' ? 'flex' : 'hidden lg:flex'}`}>
+        <div className={`bg-white border border-gray-200 shadow-sm rounded-xl overflow-hidden lg:col-span-1 flex flex-col`}>
           <div className="border-b border-gray-100 px-3 sm:px-4 py-3 sm:py-4 flex flex-wrap justify-between items-center bg-gray-50/50 gap-3">
             <h2 className="text-[14px] xl:text-[15px] font-bold text-black flex items-center gap-2 whitespace-nowrap">
               <Users size={18} className="text-amber-500 shrink-0" /> Customer Payments Due
@@ -330,7 +331,7 @@ const Dashboard = () => {
         </div>
 
         {/* Bank Deposits */}
-        <div className={`bg-white border border-gray-200 shadow-sm rounded-xl overflow-hidden lg:col-span-1 flex-col ${activeMobileCard === 'bank' ? 'flex' : 'hidden lg:flex'}`}>
+        <div className={`bg-white border border-gray-200 shadow-sm rounded-xl overflow-hidden lg:col-span-1 flex flex-col`}>
           <div className="border-b border-gray-100 px-3 sm:px-4 py-3 sm:py-4 flex flex-wrap justify-between items-center bg-gray-50/50 gap-3">
             <h2 className="text-[14px] xl:text-[15px] font-bold text-black flex items-center gap-2 whitespace-nowrap">
               <Building size={18} className="text-blue-500 shrink-0" /> Recent Bank Deposits

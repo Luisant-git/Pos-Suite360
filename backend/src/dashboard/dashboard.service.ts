@@ -187,12 +187,12 @@ export class DashboardService {
       lowStockProducts,
       chartData,
       recentBankDeposits,
-      unpaidCustomerBills: await this.getTopUnpaidCustomerBills(15),
-      unpaidSupplierBills: await this.getTopUnpaidSupplierBills(15)
+      unpaidCustomerBills: await this.getTopUnpaidCustomerBills(15, start, end),
+      unpaidSupplierBills: await this.getTopUnpaidSupplierBills(15, start, end)
     };
   }
 
-  private async getTopUnpaidCustomerBills(limit: number) {
+  private async getTopUnpaidCustomerBills(limit: number, start: Date, end: Date) {
     const customers = await this.prisma.customer.findMany();
     let allUnpaidBills: any[] = [];
     
@@ -202,11 +202,17 @@ export class DashboardService {
         const { balance } = await this.customerReceiptsService.getBalance(customer.id);
         if (balance > 0) {
           const unpaid = await this.customerReceiptsService.getUnpaidBills(customer.id);
-          const pendingBills = unpaid.filter(b => b.pending > 0).map(b => ({
+          let pendingBills = unpaid.filter(b => b.pending > 0).map(b => ({
             ...b,
             entityName: customer.name,
             entityId: customer.id
           }));
+          
+          pendingBills = pendingBills.filter(b => {
+            const bDate = new Date(b.date);
+            return bDate >= start && bDate < end;
+          });
+          
           allUnpaidBills.push(...pendingBills);
         }
       } catch(e) {
@@ -219,7 +225,7 @@ export class DashboardService {
     return allUnpaidBills.slice(0, limit);
   }
 
-  private async getTopUnpaidSupplierBills(limit: number) {
+  private async getTopUnpaidSupplierBills(limit: number, start: Date, end: Date) {
     const suppliers = await this.prisma.supplier.findMany();
     let allUnpaidBills: any[] = [];
     
@@ -229,11 +235,17 @@ export class DashboardService {
         const { balance } = await this.supplierPaymentsService.getBalance(supplier.id);
         if (balance > 0) {
           const unpaid = await this.supplierPaymentsService.getUnpaidBills(supplier.id);
-          const pendingBills = unpaid.filter(b => b.pending > 0).map(b => ({
+          let pendingBills = unpaid.filter(b => b.pending > 0).map(b => ({
             ...b,
             entityName: supplier.name,
             entityId: supplier.id
           }));
+
+          pendingBills = pendingBills.filter(b => {
+            const bDate = new Date(b.date);
+            return bDate >= start && bDate < end;
+          });
+
           allUnpaidBills.push(...pendingBills);
         }
       } catch(e) {

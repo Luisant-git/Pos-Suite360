@@ -11,7 +11,8 @@ import {
   BarChart3,
   LayoutDashboard,
   ListTodo,
-  ArrowRight
+  ArrowRight,
+  Building
 } from 'lucide-react';
 import api from '../../services/api';
 import { useSettings } from '../../contexts/SettingsContext';
@@ -77,6 +78,7 @@ const Dashboard = () => {
   const [currentDateTime, setCurrentDateTime] = useState(new Date());
   const [supplierSearch, setSupplierSearch] = useState('');
   const [customerSearch, setCustomerSearch] = useState('');
+  const [depositSearch, setDepositSearch] = useState('');
 
   useEffect(() => {
     const timer = setInterval(() => setCurrentDateTime(new Date()), 60000);
@@ -118,7 +120,7 @@ const Dashboard = () => {
   // const descPrefix = isToday ? "Today's" : "Period";
 
   const renderOperationalGrid = (isOverviewTab: boolean) => (
-    <div className={`grid grid-cols-1 lg:grid-cols-3 gap-6 ${isOverviewTab ? 'hidden lg:grid mt-6' : ''}`}>
+    <div className={`grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-6 ${isOverviewTab ? 'hidden lg:grid mt-6' : ''}`}>
         {/* Low Stock Products */}
         <div className="bg-white border border-gray-200 shadow-sm rounded-xl overflow-hidden lg:col-span-1">
           <div className="border-b border-gray-100 px-4 sm:px-5 py-3 sm:py-4 flex justify-between items-center bg-gray-50/50">
@@ -290,6 +292,79 @@ const Dashboard = () => {
                   <tr>
                     <td colSpan={2} className="px-4 py-8 text-center text-black font-bold">
                       {customerSearch ? 'No results found' : 'No pending customer bills'}
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* Bank Deposits */}
+        <div className="bg-white border border-gray-200 shadow-sm rounded-xl overflow-hidden lg:col-span-1 flex flex-col">
+          <div className="border-b border-gray-100 px-4 sm:px-5 py-3 sm:py-4 flex flex-col sm:flex-row justify-between items-start sm:items-center bg-gray-50/50 gap-3 sm:gap-2">
+            <h2 className="text-[15px] sm:text-[16px] font-bold text-black flex items-center gap-2">
+              <Building size={18} className="text-blue-500" /> Recent Bank Deposits
+            </h2>
+            <div className="flex items-center justify-start sm:justify-end gap-2 w-full sm:w-auto">
+              <Link to="/reports/bank-deposits" className="flex-1 sm:flex-none text-center px-3 py-1.5 sm:py-1 bg-white border border-gray-200 text-gray-700 font-bold rounded hover:bg-gray-50 transition-colors text-[12px]">
+                View All
+              </Link>
+              <Link to="/bank-deposits" className="flex-1 sm:flex-none text-center px-3 py-1.5 sm:py-1 bg-blue-50 text-blue-600 font-bold rounded hover:bg-blue-100 transition-colors text-[12px]">
+                New
+              </Link>
+            </div>
+          </div>
+          {/* Deposit Search Bar */}
+          <div className="px-4 py-2 border-b border-gray-100 bg-white">
+            <div className="relative">
+              <svg className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+              <input
+                type="text"
+                placeholder="Search deposit type..."
+                value={depositSearch}
+                onChange={e => setDepositSearch(e.target.value)}
+                className="w-full pl-8 pr-3 py-1.5 text-[12px] border border-gray-200 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-300 bg-gray-50"
+              />
+            </div>
+          </div>
+          <div className="flex-1 p-0 h-[350px] overflow-y-auto custom-scrollbar bg-white">
+            <table className="w-full text-left text-[12px]">
+              <thead className="bg-[#F8FAFC] border-b border-[#E2E8F0] sticky top-0">
+                <tr>
+                  <th className="px-4 py-3 font-bold text-black">Date / Type</th>
+                  <th className="px-4 py-3 font-bold text-[#059669] text-right whitespace-nowrap">Amount</th>
+                </tr>
+              </thead>
+              <tbody>
+                {data.recentBankDeposits?.filter((dep: any) =>
+                  !depositSearch ||
+                  dep.depositType?.toLowerCase().includes(depositSearch.toLowerCase())
+                ).length > 0 ? data.recentBankDeposits.filter((dep: any) =>
+                  !depositSearch ||
+                  dep.depositType?.toLowerCase().includes(depositSearch.toLowerCase())
+                ).map((dep: any, idx: number) => (
+                  <tr key={idx} className="border-b border-[#E2E8F0] hover:bg-[#F8FAFC]">
+                    <td className="px-4 py-3">
+                      <div className="font-bold text-black break-words">{new Date(dep.date).toLocaleDateString('en-GB')}</div>
+                      <div className="mt-1.5">
+                        <span className={`text-[10px] px-2 py-0.5 rounded font-bold uppercase border ${
+                          dep.depositType === 'BANK' ? 'bg-blue-100 text-blue-800 border-blue-200' :
+                          dep.depositType === 'ATM MACHINE' ? 'bg-purple-100 text-purple-800 border-purple-200' :
+                          'bg-gray-100 text-gray-800 border-gray-200'
+                        }`}>
+                          {dep.depositType}
+                        </span>
+                      </div>
+                    </td>
+                    <td className="px-4 py-3 text-right align-top">
+                      <div className="font-bold text-[#059669] text-[13px]">{formatCurrency(dep.amount)}</div>
+                    </td>
+                  </tr>
+                )) : (
+                  <tr>
+                    <td colSpan={2} className="px-4 py-8 text-center text-black font-bold">
+                      {depositSearch ? 'No results found' : 'No recent deposits'}
                     </td>
                   </tr>
                 )}

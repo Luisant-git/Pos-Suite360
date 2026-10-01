@@ -165,6 +165,12 @@ export class DashboardService {
         sales: Number(d.sales),
       };
     });
+    // Recent Bank Deposits
+    const recentBankDeposits = await this.prisma.bankDeposit.findMany({
+      where: { date: { gte: start, lt: end } },
+      orderBy: { date: 'desc' },
+      take: 15
+    });
 
     return {
       cashSalesToday,
@@ -180,6 +186,7 @@ export class DashboardService {
       billsToday,
       lowStockProducts,
       chartData,
+      recentBankDeposits,
       unpaidCustomerBills: await this.getTopUnpaidCustomerBills(15),
       unpaidSupplierBills: await this.getTopUnpaidSupplierBills(15)
     };

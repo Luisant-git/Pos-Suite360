@@ -545,3 +545,18 @@ model CustomerProductRate {
 
   @@unique([customerId, productId])
 }
+
+// ------------------------------------------------------
+// Bank Deposit Model
+// ------------------------------------------------------
+
+model BankDeposit {
+  id          Int      @id @default(autoincrement())
+  date        DateTime @default(now())
+  amount      Decimal
+  depositType String   @default("BANK") // ATM MACHINE, BANK
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+

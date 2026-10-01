@@ -42,12 +42,14 @@ import StockAdjustment from '../pages/inventory/StockAdjustment';
 // Expenses
 import ExpenseList from '../pages/expenses/ExpenseList';
 import ExpenseEntry from '../pages/expenses/ExpenseEntry';
+import BankDepositEntry from '../pages/bank-deposit/BankDepositEntry';
 
 // Reports
 import SalesReport from '../pages/reports/SalesReport';
 import SalesReturnReport from '../pages/reports/SalesReturnReport';
 import PurchaseReport from '../pages/reports/PurchaseReport';
 import PurchaseReturnReport from '../pages/reports/PurchaseReturnReport';
+import BankDepositReport from '../pages/reports/BankDepositReport';
 import StockReport from '../pages/reports/StockReport';
 import StockLedgerReport from '../pages/reports/StockLedgerReport';
 import ExpenseReport from '../pages/reports/ExpenseReport';
@@ -108,6 +110,7 @@ const AppRoutes = () => {
         <Route element={<ProtectedRoute requiredPerms="expenses_entry" />}><Route path="/expenses" element={<ExpenseList />} /></Route>
         <Route element={<ProtectedRoute requiredPerms="expenses_entry" />}><Route path="/expenses/new" element={<ExpenseEntry />} /></Route>
         <Route element={<ProtectedRoute requiredPerms="expenses_entry" />}><Route path="/expenses/history" element={<ExpenseList />} /></Route>
+        <Route element={<ProtectedRoute requiredPerms="reports_financial" />}><Route path="/bank-deposits" element={<BankDepositEntry />} /></Route>
 
         {/* Report Routes */}
         <Route element={<ProtectedRoute requiredPerms="reports_sales" />}><Route path="/reports/sales" element={<SalesReport />} /></Route>
@@ -121,6 +124,7 @@ const AppRoutes = () => {
         <Route element={<ProtectedRoute requiredPerms="reports_financial" />}><Route path="/reports/stock-ledger" element={<StockLedgerReport />} /></Route>
         <Route element={<ProtectedRoute requiredPerms="reports_customer_receipts" />}><Route path="/reports/customer-receipts" element={<CustomerReceiptsReport />} /></Route>
         <Route element={<ProtectedRoute requiredPerms="reports_supplier_payments" />}><Route path="/reports/supplier-payments" element={<SupplierPaymentsReport />} /></Route>
+        <Route element={<ProtectedRoute requiredPerms="reports_financial" />}><Route path="/reports/bank-deposits" element={<BankDepositReport />} /></Route>
 
         {/* Settings */}
         <Route element={<ProtectedRoute requiredPerms="master_store_settings" />}><Route path="/settings" element={<Settings />} /></Route>

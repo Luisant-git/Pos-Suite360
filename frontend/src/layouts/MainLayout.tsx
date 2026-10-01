@@ -7,19 +7,19 @@ const NavItem = ({ title, icon, to, onClick }: { title: string, icon: string, to
   <NavLink 
     to={to} 
     onClick={onClick}
-    className={({ isActive }) => `flex items-center gap-2 px-4 py-3 text-sm font-bold transition-colors ${isActive ? 'bg-[#1E3A8A] text-white border-b-2 lg:border-white' : 'text-[#E0E7FF] hover:bg-[#1E40AF] hover:text-white border-b-2 lg:border-transparent'}`}
+    className={({ isActive }) => `flex items-center gap-2 px-2 xl:px-3 h-full text-sm font-bold transition-colors ${isActive ? 'bg-[#1E3A8A] text-white border-b-2 lg:border-white' : 'text-[#E0E7FF] hover:bg-[#1E40AF] hover:text-white border-b-2 lg:border-transparent'}`}
   >
     <i className={`fa ${icon}`}></i>
-    <span>{title}</span>
+    <span className="whitespace-nowrap">{title}</span>
   </NavLink>
 );
 
 const NavDropdown = ({ title, icon, children, isActive }: { title: string, icon: string, children: React.ReactNode, isActive?: boolean }) => {
   return (
     <div className="relative group h-full flex items-center">
-      <button className={`flex items-center gap-2 px-4 py-3 h-full text-sm font-bold transition-colors ${isActive ? 'bg-[#1E3A8A] text-white border-b-2 border-white' : 'text-[#E0E7FF] hover:bg-[#1E40AF] hover:text-white border-b-2 border-transparent'}`}>
+      <button className={`flex items-center gap-2 px-2 xl:px-3 h-full text-sm font-bold transition-colors ${isActive ? 'bg-[#1E3A8A] text-white border-b-2 border-white' : 'text-[#E0E7FF] hover:bg-[#1E40AF] hover:text-white border-b-2 border-transparent'}`}>
         <i className={`fa ${icon}`}></i>
-        <span>{title}</span>
+        <span className="whitespace-nowrap">{title}</span>
         <ChevronDown size={14} className="ml-1 opacity-70" />
       </button>
       <div className="absolute left-0 top-full mt-0 w-64 bg-white border border-gray-200 shadow-2xl rounded-b-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 overflow-hidden transform origin-top group-hover:scale-100 scale-95">

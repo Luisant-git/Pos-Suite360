@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { X, Briefcase, PlusSquare, Filter, Building } from 'lucide-react';
+import { Briefcase, PlusSquare, Filter, Building, Trash2 } from 'lucide-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 import api from '../../services/api';
@@ -22,6 +22,7 @@ const BankDepositEntry = () => {
     return d.toISOString().split('T')[0];
   });
   const [filterEndDate, setFilterEndDate] = useState(() => new Date().toISOString().split('T')[0]);
+  const [filterType, setFilterType] = useState('ALL');
 
   // Fetch Deposits List with date filter
   const { data: deposits = [], isLoading: historyLoading } = useQuery({
@@ -37,7 +38,8 @@ const BankDepositEntry = () => {
     }
   });
 
-  const totalDepositAmount = deposits.reduce((sum: number, e: any) => sum + Number(e.amount || 0), 0);
+  const filteredDeposits = deposits.filter((d: any) => filterType === 'ALL' || d.depositType === filterType);
+  const totalDepositAmount = filteredDeposits.reduce((sum: number, e: any) => sum + Number(e.amount || 0), 0);
 
   const createMutation = useMutation({
     mutationFn: async (payload: any) => {
@@ -112,6 +114,12 @@ const BankDepositEntry = () => {
   const isAllTime = !filterStartDate && !filterEndDate;
   const isToday = filterStartDate === todayStr && filterEndDate === todayStr;
   const isThisMonth = filterStartDate === startOfMonthStr && filterEndDate === todayStr && !isToday;
+
+  const getBadgeColor = (type: string) => {
+    if (type === 'BANK') return 'bg-blue-100 text-blue-800 border-blue-200';
+    if (type === 'ATM MACHINE') return 'bg-purple-100 text-purple-800 border-purple-200';
+    return 'bg-gray-100 text-gray-800 border-gray-200';
+  };
 
   return (
     <div className="absolute inset-0 bg-[#F8FAFC] flex flex-col font-sans overflow-hidden z-10">
@@ -213,6 +221,17 @@ const BankDepositEntry = () => {
               <input type="date" value={filterStartDate} onChange={(e) => setFilterStartDate(e.target.value)} className="p-1.5 border border-gray-300 rounded text-[11px] font-bold" title="From Date" />
               <span className="text-gray-400 font-medium text-[11px]">to</span>
               <input type="date" value={filterEndDate} onChange={(e) => setFilterEndDate(e.target.value)} className="p-1.5 border border-gray-300 rounded text-[11px] font-bold" title="To Date" />
+              
+              <select
+                value={filterType}
+                onChange={(e) => setFilterType(e.target.value)}
+                className="p-1.5 ml-2 border border-gray-300 rounded text-[11px] font-bold"
+                title="Deposit Type"
+              >
+                <option value="ALL">All Types</option>
+                <option value="BANK">BANK</option>
+                <option value="ATM MACHINE">ATM MACHINE</option>
+              </select>
             </div>
           </div>
 
@@ -223,7 +242,7 @@ const BankDepositEntry = () => {
                 <h3 className="font-bold text-gray-800 flex items-center gap-2">
                   <Filter className="w-4 h-4 text-gray-500" /> DEPOSIT HISTORY
                 </h3>
-                <span className="text-xs font-bold text-black bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full">{deposits.length} Records</span>
+                <span className="text-xs font-bold text-black bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full">{filteredDeposits.length} Records</span>
               </div>
               
               <div className="flex-1 overflow-auto">
@@ -240,7 +259,7 @@ const BankDepositEntry = () => {
                   <tbody>
                     {historyLoading ? (
                       <tr><td colSpan={5} className="p-0"><TableLoader columns={5} /></td></tr>
-                    ) : deposits.length === 0 ? (
+                    ) : filteredDeposits.length === 0 ? (
                       <tr>
                         <td colSpan={5} className="text-center p-8 text-gray-500 font-bold bg-gray-50/50">
                           <div className="flex flex-col items-center justify-center">
@@ -250,12 +269,12 @@ const BankDepositEntry = () => {
                         </td>
                       </tr>
                     ) : (
-                      deposits.map((dep: any, idx: number) => (
+                      filteredDeposits.map((dep: any, idx: number) => (
                         <tr key={dep.id} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
                           <td className="p-3 text-center text-gray-500 border-r border-gray-100 text-xs font-bold">{idx + 1}</td>
                           <td className="p-3 border-r border-gray-100 text-gray-800 font-bold">{new Date(dep.date).toLocaleDateString()}</td>
                           <td className="p-3 border-r border-gray-100 text-gray-700">
-                            <span className="bg-gray-100 text-gray-800 text-[10px] px-2 py-1 rounded font-bold uppercase border border-gray-200">
+                            <span className={`text-[10px] px-2 py-1 rounded font-bold uppercase border ${getBadgeColor(dep.depositType)}`}>
                               {dep.depositType}
                             </span>
                           </td>
@@ -265,10 +284,10 @@ const BankDepositEntry = () => {
                           <td className="p-3 text-center">
                             <button
                               onClick={() => handleDelete(dep.id)}
-                              className="w-6 h-6 inline-flex items-center justify-center rounded-full bg-red-50 text-red-500 hover:bg-red-500 hover:text-white transition-colors"
+                              className="w-7 h-7 inline-flex items-center justify-center rounded-md bg-red-50 text-red-600 hover:bg-red-600 hover:text-white transition-colors"
                               title="Delete Deposit"
                             >
-                              <X className="w-3.5 h-3.5" />
+                              <Trash2 className="w-4 h-4" />
                             </button>
                           </td>
                         </tr>

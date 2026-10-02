@@ -12,7 +12,7 @@ export class PurchaseReturnsService {
       const purchaseReturn = await tx.purchaseReturn.create({
         data: {
           returnNo: createPurchaseReturnDto.returnNo,
-          date: new Date(createPurchaseReturnDto.date),
+          date: new Date(`${createPurchaseReturnDto.date}T00:00:00+08:00`),
           purchaseId: createPurchaseReturnDto.purchaseId,
           supplierId: createPurchaseReturnDto.supplierId,
           remarks: createPurchaseReturnDto.remarks,
@@ -45,7 +45,7 @@ export class PurchaseReturnsService {
           
           await tx.stockTransaction.create({
             data: {
-              date: new Date(createPurchaseReturnDto.date),
+              date: new Date(`${createPurchaseReturnDto.date}T00:00:00+08:00`),
               productId: item.productId,
               type: 'PURCHASE_RETURN',
               quantityOut: item.returnQty,

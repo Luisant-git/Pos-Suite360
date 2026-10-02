@@ -1,3 +1,4 @@
+import { getMalaysiaDateStr, formatMalaysiaDate } from '../../utils/date';
 import React, { useState } from 'react';
 import { Loader2 } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
@@ -13,7 +14,7 @@ const ProductWiseSalesReport = () => {
   const navigate = useNavigate();
   
   // Default to today
-  const today = new Date().toISOString().split('T')[0];
+  const today = getMalaysiaDateStr();
   const [filterFromDate, setFilterFromDate] = useState(today);
   const [filterToDate, setFilterToDate] = useState(today);
   const [productId, setProductId] = useState<number | string>('');
@@ -130,7 +131,7 @@ const ProductWiseSalesReport = () => {
                             }}
                           >
                             <td className="px-4 py-1.5 border-r border-[#E2E8F0] text-[#2563EB] font-bold pl-8 hover:underline">
-                              {item.invoiceNo} <span className="text-gray-500 font-bold text-[11px] ml-2">({new Date(item.date).toLocaleDateString()})</span>
+                              {item.invoiceNo} <span className="text-gray-500 font-bold text-[11px] ml-2">({formatMalaysiaDate(item.date)})</span>
                             </td>
                             <td className="px-4 py-1.5 border-r border-[#E2E8F0] text-right text-black font-bold">
                               {item.qty}

@@ -6,9 +6,14 @@ export class BankDepositsService {
   constructor(private prisma: PrismaService) {}
 
   create(createBankDepositDto: any) {
+    let dateToSave = new Date();
+    if (createBankDepositDto.date) {
+      dateToSave = new Date(`${createBankDepositDto.date}T00:00:00+08:00`);
+    }
+    
     return this.prisma.bankDeposit.create({
       data: {
-        date: createBankDepositDto.date ? new Date(createBankDepositDto.date) : new Date(),
+        date: dateToSave,
         amount: createBankDepositDto.amount,
         depositType: createBankDepositDto.depositType,
       },
@@ -19,8 +24,8 @@ export class BankDepositsService {
     const where: any = {};
     if (fromDate && toDate) {
       where.date = {
-        gte: new Date(fromDate),
-        lte: new Date(new Date(toDate).setHours(23, 59, 59, 999)),
+        gte: new Date(`${`${fromDate}T00:00:00+08:00`}T00:00:00+08:00`),
+        lte: new Date(`${toDate}T23:59:59.999+08:00`),
       };
     }
     return this.prisma.bankDeposit.findMany({

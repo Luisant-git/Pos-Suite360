@@ -1,3 +1,4 @@
+import { getMalaysiaDateStr, formatMalaysiaDate } from '../../utils/date';
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
@@ -17,7 +18,7 @@ const ExpenseList = () => {
     d.setDate(1);
     return d.toISOString().split('T')[0];
   });
-  const [endDate, setEndDate] = useState(() => new Date().toISOString().split('T')[0]);
+  const [endDate, setEndDate] = useState(() => getMalaysiaDateStr());
   const [categoryId, setCategoryId] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -56,7 +57,7 @@ const ExpenseList = () => {
     ];
     const rows = expenses.map((e: any, i: number) => ({
       _sno: i + 1,
-      _date: new Date(e.date).toLocaleDateString(),
+      _date: formatMalaysiaDate(e.date),
       _category: e.category?.name || '-',
       _mode: e.paymentMode?.name || '-',
       _notes: e.notes || '-',
@@ -68,7 +69,7 @@ const ExpenseList = () => {
   const handleExcelExport = () => {
     const exportData = expenses.map((e: any, index: number) => ({
       'S.No': index + 1,
-      'Date': new Date(e.date).toLocaleDateString(),
+      'Date': formatMalaysiaDate(e.date),
       'Category': e.category?.name || '-',
       'Payment Mode': e.paymentMode?.name || '-',
       'Notes': e.notes || '-',
@@ -200,7 +201,7 @@ const ExpenseList = () => {
                   expenses.map((e: any, index: number) => (
                     <tr key={e.id} className={`border-b border-[#E5E7EB] ${index % 2 === 0 ? 'bg-[#F9F9F9]' : 'bg-white'} hover:bg-blue-50`}>
                       <td className="px-3 py-2.5 border-r border-[#E5E7EB] text-center font-bold text-black font-bold">{index + 1}</td>
-                      <td className="px-3 py-2.5 border-r border-[#E5E7EB] font-bold text-black font-bold">{new Date(e.date).toLocaleDateString()}</td>
+                      <td className="px-3 py-2.5 border-r border-[#E5E7EB] font-bold text-black font-bold">{formatMalaysiaDate(e.date)}</td>
                       <td className="px-3 py-2.5 border-r border-[#E5E7EB] font-bold text-[#16A34A]">{e.category?.name || '-'}</td>
                       <td className="px-3 py-2.5 border-r border-[#E5E7EB] text-black font-bold">{e.paymentMode?.name || '-'}</td>
                       <td className="px-3 py-2.5 border-r border-[#E5E7EB] text-black font-bold">{e.notes || '-'}</td>

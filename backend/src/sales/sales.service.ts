@@ -44,7 +44,7 @@ export class SalesService {
       const sale = await tx.sale.create({
         data: {
           invoiceNo: finalInvoiceNo,
-          date: new Date(createSaleDto.date),
+          date: new Date(`${createSaleDto.date}T00:00:00+08:00`),
           customerId: createSaleDto.customerId,
           userId: userId,
           paymentModeId: createSaleDto.paymentModeId,
@@ -82,7 +82,7 @@ export class SalesService {
         // Add ledger entry
         await tx.stockTransaction.create({
           data: {
-            date: new Date(createSaleDto.date),
+            date: new Date(`${createSaleDto.date}T00:00:00+08:00`),
             productId: item.productId,
             type: TransactionType.SALE,
             quantityIn: 0,
@@ -106,11 +106,9 @@ export class SalesService {
     const where: any = {};
     if (query?.fromDate || query?.toDate) {
       where.date = {};
-      if (query.fromDate) where.date.gte = new Date(query.fromDate);
+      if (query.fromDate) where.date.gte = new Date(`${`${query.fromDate}T00:00:00+08:00`}T00:00:00+08:00`);
       if (query.toDate) {
-        const toDate = new Date(query.toDate);
-        toDate.setHours(23, 59, 59, 999);
-        where.date.lte = toDate;
+        where.date.lte = new Date(`${query.toDate}T23:59:59.999+08:00`);
       }
     }
     if (query?.customerId) {
@@ -291,7 +289,7 @@ export class SalesService {
         where: { id },
         data: {
           invoiceNo: createSaleDto.invoiceNo || existingSale.invoiceNo,
-          date: new Date(createSaleDto.date),
+          date: new Date(`${createSaleDto.date}T00:00:00+08:00`),
           customerId: createSaleDto.customerId,
           userId: userId,
           paymentModeId: createSaleDto.paymentModeId,
@@ -327,7 +325,7 @@ export class SalesService {
 
         await tx.stockTransaction.create({
           data: {
-            date: new Date(createSaleDto.date),
+            date: new Date(`${createSaleDto.date}T00:00:00+08:00`),
             productId: item.productId,
             type: TransactionType.SALE,
             quantityIn: 0,

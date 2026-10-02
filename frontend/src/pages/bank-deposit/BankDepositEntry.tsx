@@ -10,18 +10,26 @@ const BankDepositEntry = () => {
   const { formatCurrency, settings } = useSettings();
   const queryClient = useQueryClient();
 
+  // Helper for Malaysia date string (YYYY-MM-DD)
+  const getMalaysiaDateStr = (date = new Date()) => {
+    return new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Kuala_Lumpur', year: 'numeric', month: '2-digit', day: '2-digit' }).format(date);
+  };
+
+  // Helper for Malaysia display date (DD/MM/YYYY)
+  const formatMalaysiaDate = (dateString: string) => {
+    return new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Kuala_Lumpur', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date(dateString));
+  };
+
   // New Deposit Form State
-  const [depositDate, setDepositDate] = useState(new Date().toISOString().split('T')[0]);
+  const [depositDate, setDepositDate] = useState(getMalaysiaDateStr());
   const [amount, setAmount] = useState('');
   const [depositType, setDepositType] = useState('BANK');
   
   // Date-wise Filter & Search State for History
   const [filterStartDate, setFilterStartDate] = useState(() => {
-    const d = new Date();
-    d.setDate(1);
-    return d.toISOString().split('T')[0];
+    return getMalaysiaDateStr().substring(0, 8) + '01';
   });
-  const [filterEndDate, setFilterEndDate] = useState(() => new Date().toISOString().split('T')[0]);
+  const [filterEndDate, setFilterEndDate] = useState(() => getMalaysiaDateStr());
   const [filterType, setFilterType] = useState('ALL');
 
   // Fetch Deposits List with date filter
@@ -71,16 +79,14 @@ const BankDepositEntry = () => {
   };
 
   const setQuickDate = (type: 'today' | 'thisMonth' | 'all') => {
-    const now = new Date();
+    const todayStr = getMalaysiaDateStr();
     if (type === 'today') {
-      const todayStr = now.toISOString().split('T')[0];
       setFilterStartDate(todayStr);
       setFilterEndDate(todayStr);
     } else if (type === 'thisMonth') {
-      const start = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
-      const end = now.toISOString().split('T')[0];
+      const start = todayStr.substring(0, 8) + '01';
       setFilterStartDate(start);
-      setFilterEndDate(end);
+      setFilterEndDate(todayStr);
     } else {
       setFilterStartDate('');
       setFilterEndDate('');
@@ -107,9 +113,8 @@ const BankDepositEntry = () => {
     }
   };
 
-  const now = new Date();
-  const todayStr = now.toISOString().split('T')[0];
-  const startOfMonthStr = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
+  const todayStr = getMalaysiaDateStr();
+  const startOfMonthStr = todayStr.substring(0, 8) + '01';
   
   const isAllTime = !filterStartDate && !filterEndDate;
   const isToday = filterStartDate === todayStr && filterEndDate === todayStr;
@@ -272,7 +277,7 @@ const BankDepositEntry = () => {
                       filteredDeposits.map((dep: any, idx: number) => (
                         <tr key={dep.id} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
                           <td className="p-3 text-center text-gray-500 border-r border-gray-100 text-xs font-bold">{idx + 1}</td>
-                          <td className="p-3 border-r border-gray-100 text-gray-800 font-bold">{new Date(dep.date).toLocaleDateString()}</td>
+                          <td className="p-3 border-r border-gray-100 text-gray-800 font-bold">{formatMalaysiaDate(dep.date)}</td>
                           <td className="p-3 border-r border-gray-100 text-gray-700">
                             <span className={`text-[10px] px-2 py-1 rounded font-bold uppercase border ${getBadgeColor(dep.depositType)}`}>
                               {dep.depositType}

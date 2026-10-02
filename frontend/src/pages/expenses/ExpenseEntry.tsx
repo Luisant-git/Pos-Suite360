@@ -1,3 +1,4 @@
+import { getMalaysiaDateStr, formatMalaysiaDate } from '../../utils/date';
 import { useState } from 'react';
 import { X, Briefcase, PlusSquare, Download, Filter, RefreshCw } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -15,7 +16,7 @@ const ExpenseEntry = () => {
   const queryClient = useQueryClient();
 
   // New Expense Form State
-  const [expenseDate, setExpenseDate] = useState(new Date().toISOString().split('T')[0]);
+  const [expenseDate, setExpenseDate] = useState(getMalaysiaDateStr());
   const [categoryId, setCategoryId] = useState('');
   const [amount, setAmount] = useState('');
   const [paymentModeId, setPaymentModeId] = useState('');
@@ -27,7 +28,7 @@ const ExpenseEntry = () => {
     d.setDate(1);
     return d.toISOString().split('T')[0];
   });
-  const [filterEndDate, setFilterEndDate] = useState(() => new Date().toISOString().split('T')[0]);
+  const [filterEndDate, setFilterEndDate] = useState(() => getMalaysiaDateStr());
   const [filterCategoryId, setFilterCategoryId] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -100,7 +101,7 @@ const ExpenseEntry = () => {
       setFilterStartDate(todayStr);
       setFilterEndDate(todayStr);
     } else if (type === 'thisMonth') {
-      const firstDay = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
+      const firstDay = (getMalaysiaDateStr().substring(0, 8) + "01");
       const todayStr = now.toISOString().split('T')[0];
       setFilterStartDate(firstDay);
       setFilterEndDate(todayStr);
@@ -121,7 +122,7 @@ const ExpenseEntry = () => {
     ];
     const rows = expenses.map((e: any, i: number) => ({
       _sno: i + 1,
-      _date: new Date(e.date).toLocaleDateString(),
+      _date: formatMalaysiaDate(e.date),
       _category: e.category?.name || '-',
       _mode: e.paymentMode?.name || '-',
       _notes: e.notes || '-',
@@ -133,7 +134,7 @@ const ExpenseEntry = () => {
   const handleExcelExport = () => {
     const exportData = expenses.map((e: any, index: number) => ({
       'S.No': index + 1,
-      'Date': new Date(e.date).toLocaleDateString(),
+      'Date': formatMalaysiaDate(e.date),
       'Category': e.category?.name || '-',
       'Payment Mode': e.paymentMode?.name || '-',
       'Description': e.notes || '-',
@@ -348,7 +349,7 @@ const ExpenseEntry = () => {
                     ) : (
                       expenses.map((exp: any, idx: number) => (
                         <tr key={exp.id} className={`border-b border-gray-200 ${idx % 2 === 0 ? 'bg-white' : 'bg-gray-50'} hover:bg-blue-50 transition-colors`}>
-                          <td className="px-4 py-2.5 text-center text-black font-bold">{new Date(exp.date).toLocaleDateString()}</td>
+                          <td className="px-4 py-2.5 text-center text-black font-bold">{formatMalaysiaDate(exp.date)}</td>
                           <td className="px-4 py-2.5 font-bold text-[#16A34A]">{exp.category?.name || '-'}</td>
                           <td className="px-4 py-2.5 text-center text-black font-bold">{exp.paymentMode?.name || '-'}</td>
                           <td className="px-4 py-2.5 text-black font-bold text-xs">{exp.notes || '-'}</td>

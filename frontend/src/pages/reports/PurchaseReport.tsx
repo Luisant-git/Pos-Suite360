@@ -1,3 +1,4 @@
+import { getMalaysiaDateStr } from '../../utils/date';
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Search, FileText, Download, Calendar, FileDigit, Truck, CreditCard, RotateCcw, Eye, X, Filter } from 'lucide-react';
@@ -90,8 +91,8 @@ const PurchaseReport = () => {
   const totalPages = Math.ceil(filteredPurchases.length / entriesPerPage);
   const paginatedPurchases = filteredPurchases.slice((currentPage - 1) * entriesPerPage, currentPage * entriesPerPage);
 
-  const todayStr = new Date().toISOString().split('T')[0];
-  const startOfMonthStr = new Date(new Date().setDate(1)).toISOString().split('T')[0];
+  const todayStr = getMalaysiaDateStr();
+  const startOfMonthStr = (getMalaysiaDateStr().substring(0, 8) + "01");
   
   const isToday = fromDate === todayStr && toDate === todayStr;
   const isMonth = fromDate === startOfMonthStr && toDate === todayStr;

@@ -1,3 +1,4 @@
+import { getMalaysiaDateStr, formatMalaysiaDate } from '../../utils/date';
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Download, FileText, Filter, RefreshCw, Search } from 'lucide-react';
@@ -17,7 +18,7 @@ const ExpenseReport = () => {
     d.setDate(1);
     return d.toISOString().split('T')[0];
   });
-  const [endDate, setEndDate] = useState(() => new Date().toISOString().split('T')[0]);
+  const [endDate, setEndDate] = useState(() => getMalaysiaDateStr());
   const [categoryId, setCategoryId] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [entriesPerPage] = useState(25);
@@ -52,7 +53,7 @@ const ExpenseReport = () => {
       setStartDate(todayStr);
       setEndDate(todayStr);
     } else if (type === 'thisMonth') {
-      const firstDay = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
+      const firstDay = (getMalaysiaDateStr().substring(0, 8) + "01");
       const todayStr = now.toISOString().split('T')[0];
       setStartDate(firstDay);
       setEndDate(todayStr);
@@ -73,7 +74,7 @@ const ExpenseReport = () => {
     ];
     const rows = expenses.map((e: any, i: number) => ({
       _sno: i + 1,
-      _date: new Date(e.date).toLocaleDateString(),
+      _date: formatMalaysiaDate(e.date),
       _category: e.category?.name || '-',
       _mode: e.paymentMode?.name || '-',
       _notes: e.notes || '-',
@@ -86,7 +87,7 @@ const ExpenseReport = () => {
   const handleExcelExport = () => {
     const exportData = expenses.map((e: any, index: number) => ({
       'S.No': index + 1,
-      'Date': new Date(e.date).toLocaleDateString(),
+      'Date': formatMalaysiaDate(e.date),
       'Category': e.category?.name || '-',
       'Payment Mode': e.paymentMode?.name || '-',
       'Notes': e.notes || '-',
@@ -173,7 +174,7 @@ const ExpenseReport = () => {
                   paginatedExpenses.map((e: any, index: number) => (
                     <tr key={e.id} className={`border-b border-[#E2E8F0] ${index % 2 === 0 ? 'bg-white' : 'bg-[#F8FAFC]'} hover:bg-[#EFF6FF]`}>
                       <td className="px-4 py-3 border-r border-[#E2E8F0] text-center text-black font-bold">{(currentPage - 1) * entriesPerPage + index + 1}</td>
-                      <td className="px-4 py-3 border-r border-[#E2E8F0] text-black font-bold">{new Date(e.date).toLocaleDateString()}</td>
+                      <td className="px-4 py-3 border-r border-[#E2E8F0] text-black font-bold">{formatMalaysiaDate(e.date)}</td>
                       <td className="px-4 py-3 border-r border-[#E2E8F0] font-bold text-black">{e.category?.name || '-'}</td>
                       <td className="px-4 py-3 border-r border-[#E2E8F0] text-black font-bold">{e.paymentMode?.name || '-'}</td>
                       <td className="px-4 py-3 border-r border-[#E2E8F0] text-black font-bold">{e.notes || '-'}</td>

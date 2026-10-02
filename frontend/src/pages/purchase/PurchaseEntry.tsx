@@ -1,3 +1,4 @@
+import { getMalaysiaDateStr, formatMalaysiaDate } from '../../utils/date';
 import { useState, useEffect, useRef } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -316,9 +317,9 @@ const PurchaseEntry = () => {
     reset({
       entryNo: nextEntryData?.entryNo || 'Generating...',
       invoiceNo: '',
-      invoiceDate: new Date().toISOString().split('T')[0],
+      invoiceDate: getMalaysiaDateStr(),
       supplierId: 0,
-      date: new Date().toISOString().split('T')[0],
+      date: getMalaysiaDateStr(),
       paymentModeId: 0,
       items: [{ productId: 0, quantity: '' as any, noOfBirds: '' as any, unit: 'Nos', pRate: '' as any, wRate: '' as any, sRate: '' as any, mrp: '' as any, discPercent: '' as any, discAmt: '' as any, total: 0 }],
       totalAmount: 0,

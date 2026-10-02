@@ -13,6 +13,16 @@ import TableLoader from '../../components/TableLoader';
 const BankDepositReport = () => {
   const { formatCurrency, settings } = useSettings();
   const queryClient = useQueryClient();
+
+  // Helper for Malaysia date string (YYYY-MM-DD)
+  const getMalaysiaDateStr = (date = new Date()) => {
+    return new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Kuala_Lumpur', year: 'numeric', month: '2-digit', day: '2-digit' }).format(date);
+  };
+
+  // Helper for Malaysia display date (DD/MM/YYYY)
+  const formatMalaysiaDate = (dateString: string) => {
+    return new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Kuala_Lumpur', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date(dateString));
+  };
   
   const [fromDate, setFromDate] = useState('');
   const [toDate, setToDate] = useState('');
@@ -61,8 +71,8 @@ const BankDepositReport = () => {
   const totalPages = Math.ceil(filteredDeposits.length / entriesPerPage);
   const paginatedDeposits = filteredDeposits.slice((currentPage - 1) * entriesPerPage, currentPage * entriesPerPage);
 
-  const todayStr = new Date().toISOString().split('T')[0];
-  const startOfMonthStr = new Date(new Date().setDate(1)).toISOString().split('T')[0];
+  const todayStr = getMalaysiaDateStr();
+  const startOfMonthStr = todayStr.substring(0, 8) + '01';
   
   const isAllTime = !fromDate && !toDate;
   const isToday = fromDate === todayStr && toDate === todayStr;
@@ -96,7 +106,7 @@ const BankDepositReport = () => {
                 <button type="button" 
                   onClick={() => {
                     const exportData = filteredDeposits.map((d: any) => ({
-                      'Date': new Date(d.date).toLocaleDateString(),
+                      'Date': formatMalaysiaDate(d.date),
                       'Type': d.depositType,
                       'Amount': d.amount
                     }));
@@ -124,7 +134,7 @@ const BankDepositReport = () => {
                     ];
                     const pdfData = [...filteredDeposits.map((d:any) => ({
                       ...d, 
-                      date: new Date(d.date).toLocaleDateString(),
+                      date: formatMalaysiaDate(d.date),
                       amount: formatCurrency(d.amount)
                     })), {
                       date: '',
@@ -211,7 +221,7 @@ const BankDepositReport = () => {
                   paginatedDeposits.map((d: any, index: number) => (
                     <tr key={d.id} className={`border-b border-[#E2E8F0] ${index % 2 === 0 ? 'bg-white' : 'bg-[#FAFAFA]'} hover:bg-[#EFF6FF]`}>
                       <td className="px-4 py-3 border-r border-[#E2E8F0] text-center text-black font-bold">{(currentPage - 1) * entriesPerPage + index + 1}</td>
-                      <td className="px-4 py-3 border-r border-[#E2E8F0] text-black font-bold">{new Date(d.date).toLocaleDateString()}</td>
+                      <td className="px-4 py-3 border-r border-[#E2E8F0] text-black font-bold">{formatMalaysiaDate(d.date)}</td>
                       <td className="px-4 py-3 border-r border-[#E2E8F0] font-bold text-black">
                         <span className={`text-[10px] px-2 py-1 rounded font-bold uppercase border ${getBadgeColor(d.depositType)}`}>
                           {d.depositType}

@@ -15,7 +15,7 @@ export class SupplierPaymentsService {
       return await this.prisma.supplierPayment.create({
         data: {
           paymentNo: data.paymentNo,
-          date: new Date(data.date || new Date()),
+          date: data.date ? new Date(`${data.date}T00:00:00+08:00`) : new Date(),
           supplierId: Number(data.supplierId),
           amount: Number(data.amount),
           paymentTypeId: Number(data.paymentTypeId),
@@ -49,7 +49,7 @@ export class SupplierPaymentsService {
       return await this.prisma.supplierPayment.update({
         where: { id },
         data: {
-          date: new Date(data.date || new Date()),
+          date: data.date ? new Date(`${data.date}T00:00:00+08:00`) : new Date(),
           supplierId: Number(data.supplierId),
           amount: Number(data.amount),
           paymentTypeId: Number(data.paymentTypeId),
@@ -313,9 +313,8 @@ export class SupplierPaymentsService {
 
     const report = [];
 
-    const start = startDate ? new Date(startDate) : null;
-    const end = endDate ? new Date(endDate) : null;
-    if (end) end.setHours(23, 59, 59, 999);
+    const start = startDate ? new Date(`${startDate}T00:00:00+08:00`) : null;
+    const end = endDate ? new Date(`${endDate}T23:59:59.999+08:00`) : null;
 
     for (const s of suppliers) {
       let forwardingBalance = 0;

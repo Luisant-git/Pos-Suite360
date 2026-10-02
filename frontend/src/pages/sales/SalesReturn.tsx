@@ -1,3 +1,4 @@
+import { getMalaysiaDateStr, formatMalaysiaDate } from '../../utils/date';
 import { useState, useEffect, useMemo, useRef } from 'react';
 import { Save, Trash2, RotateCcw, FileText, X, List } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
@@ -9,7 +10,7 @@ import SearchableSelect from '../../components/SearchableSelect';
 const SalesReturn = () => {
   const navigate = useNavigate();
   const [returnNo, setReturnNo] = useState('');
-  const [returnDate, setReturnDate] = useState(new Date().toISOString().split('T')[0]);
+  const [returnDate, setReturnDate] = useState(getMalaysiaDateStr());
 
   const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
   const [pendingSavePayload, setPendingSavePayload] = useState<any>(null);
@@ -220,7 +221,7 @@ const SalesReturn = () => {
                 onChange={(val) => setSelectedSaleId(String(val))}
                 options={[
                   { label: 'Select Sales Invoice...', value: '' },
-                  ...sales.map((s: any) => ({ label: `${s.invoiceNo} (Date: ${new Date(s.date).toLocaleDateString()})`, value: s.id }))
+                  ...sales.map((s: any) => ({ label: `${s.invoiceNo} (Date: ${formatMalaysiaDate(s.date)})`, value: s.id }))
                 ]}
               />
             </div>

@@ -1,3 +1,4 @@
+import { formatMalaysiaDate } from '../../utils/date';
 import { useState, useEffect } from 'react';
 import { useOutletContext, Link } from 'react-router-dom';
 import {
@@ -236,7 +237,7 @@ const Dashboard = () => {
                     <td className="px-4 py-3">
                       <div className="font-bold text-black font-bold break-words">{bill.entityName}</div>
                       <div className="text-black font-bold text-[11px] mt-0.5">
-                        {bill.entryNo} • {new Date(bill.date).toLocaleDateString('en-GB')}
+                        {bill.entryNo} • {formatMalaysiaDate(bill.date)}
                       </div>
                     </td>
                     <td className="px-4 py-3 text-right">
@@ -308,7 +309,7 @@ const Dashboard = () => {
                     <td className="px-4 py-3">
                       <div className="font-bold text-black font-bold break-words">{bill.entityName}</div>
                       <div className="text-black font-bold text-[11px] mt-0.5">
-                        {bill.entryNo} • {new Date(bill.date).toLocaleDateString('en-GB')}
+                        {bill.entryNo} • {formatMalaysiaDate(bill.date)}
                       </div>
                     </td>
                     <td className="px-4 py-3 text-right">
@@ -376,7 +377,7 @@ const Dashboard = () => {
                 ).map((dep: any, idx: number) => (
                   <tr key={idx} className="border-b border-[#E2E8F0] hover:bg-[#F8FAFC]">
                     <td className="px-4 py-3">
-                      <div className="font-bold text-black break-words">{new Date(dep.date).toLocaleDateString('en-GB')}</div>
+                      <div className="font-bold text-black break-words">{formatMalaysiaDate(dep.date)}</div>
                       <div className="mt-1.5">
                         <span className={`text-[10px] px-2 py-0.5 rounded font-bold uppercase border ${
                           dep.depositType === 'BANK' ? 'bg-blue-100 text-blue-800 border-blue-200' :

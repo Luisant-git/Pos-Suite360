@@ -1,3 +1,4 @@
+import { formatMalaysiaDate } from '../../utils/date';
 import { useQuery } from '@tanstack/react-query';
 import { X } from 'lucide-react';
 import api from '../../services/api';
@@ -47,7 +48,7 @@ export default function ViewPurchaseModal({ purchaseId, onClose }: Props) {
             </div>
             <div className="sm:text-right">
               <p className="text-[11px] text-black font-bold uppercase tracking-wider mb-1">Invoice Info</p>
-              <p className="font-bold text-[#333] text-[13px] sm:text-[14px]">Date: <span className="font-normal">{new Date(purchase.date).toLocaleDateString()}</span></p>
+              <p className="font-bold text-[#333] text-[13px] sm:text-[14px]">Date: <span className="font-normal">{formatMalaysiaDate(purchase.date)}</span></p>
               {purchase.supplierInvoiceNo && (
                 <p className="font-bold text-[#333] text-[13px] sm:text-[14px] mt-1">Supp. Inv. No: <span className="font-normal">{purchase.supplierInvoiceNo}</span></p>
               )}

@@ -1,3 +1,4 @@
+import { formatMalaysiaDate } from '../../utils/date';
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Download, Users, FileText, RefreshCw, DollarSign, AlertCircle, CheckCircle2, Printer, Loader2 } from 'lucide-react';
@@ -156,7 +157,7 @@ const CustomerReceiptsReport = () => {
       const rows = filteredHistory.map((r: any, idx: number) => ({
         _sno: idx + 1,
         receiptNo: r.receiptNo,
-        _date: new Date(r.date).toLocaleDateString(),
+        _date: formatMalaysiaDate(r.date),
         _customer: r.customer?.name || '-',
         _mode: r.paymentType?.name || r.paymentMode?.name || '-',
         reference: r.reference || '-',
@@ -208,7 +209,7 @@ const CustomerReceiptsReport = () => {
       const exportData = filteredHistory.map((r: any, idx: number) => ({
         'S.No': idx + 1,
         'Receipt No': r.receiptNo,
-        'Date': new Date(r.date).toLocaleDateString(),
+        'Date': formatMalaysiaDate(r.date),
         'Customer': r.customer?.name || '-',
         'Payment Mode': r.paymentType?.name || r.paymentMode?.name || '-',
         'Reference': r.reference || '-',
@@ -496,7 +497,7 @@ const CustomerReceiptsReport = () => {
                       <tr key={r.id} className={`border-b border-[#E2E8F0] ${index % 2 === 0 ? 'bg-white' : 'bg-[#F8FAFC]'} hover:bg-[#EFF6FF]`}>
                         <td className="px-3 py-2.5 border-r border-[#E2E8F0] text-center text-black font-bold">{(currentPage - 1) * entriesPerPage + index + 1}</td>
                         <td className="px-3 py-2.5 border-r border-[#E2E8F0] font-bold text-[#3B82F6]">{r.receiptNo}</td>
-                        <td className="px-3 py-2.5 border-r border-[#E2E8F0] text-black font-bold">{new Date(r.date).toLocaleDateString()}</td>
+                        <td className="px-3 py-2.5 border-r border-[#E2E8F0] text-black font-bold">{formatMalaysiaDate(r.date)}</td>
                         <td className="px-3 py-2.5 border-r border-[#E2E8F0] font-bold text-[#0F172A]">{r.customer?.name || '-'}</td>
                         <td className="px-3 py-2.5 border-r border-[#E2E8F0] text-black font-bold">{r.paymentType?.name || r.paymentMode?.name || '-'}</td>
                         <td className="px-3 py-2.5 border-r border-[#E2E8F0] text-black font-bold">{r.reference || '-'}</td>

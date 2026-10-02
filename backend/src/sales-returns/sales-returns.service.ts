@@ -12,7 +12,7 @@ export class SalesReturnsService {
       const salesReturn = await tx.salesReturn.create({
         data: {
           returnNo: createSalesReturnDto.returnNo,
-          date: new Date(createSalesReturnDto.date),
+          date: new Date(`${createSalesReturnDto.date}T00:00:00+08:00`),
           saleId: createSalesReturnDto.saleId,
           customerId: createSalesReturnDto.customerId,
           userId: 1, // Ideally from req.user
@@ -43,7 +43,7 @@ export class SalesReturnsService {
           
           await tx.stockTransaction.create({
             data: {
-              date: new Date(createSalesReturnDto.date),
+              date: new Date(`${createSalesReturnDto.date}T00:00:00+08:00`),
               productId: item.productId,
               type: 'SALE_RETURN',
               quantityIn: item.returnQty,

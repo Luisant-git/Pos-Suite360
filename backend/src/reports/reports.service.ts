@@ -10,12 +10,10 @@ export class ReportsService {
     if (fromDateStr || toDateStr) {
       whereDate.date = {};
       if (fromDateStr) {
-        whereDate.date.gte = new Date(fromDateStr);
+        whereDate.date.gte = new Date(`${fromDateStr}T00:00:00+08:00`);
       }
       if (toDateStr) {
-        const toDate = new Date(toDateStr);
-        toDate.setHours(23, 59, 59, 999);
-        whereDate.date.lte = toDate;
+        whereDate.date.lte = new Date(`${toDateStr}T23:59:59.999+08:00`);
       }
     }
 
@@ -106,14 +104,10 @@ export class ReportsService {
     if (fromDate || toDate) {
       whereDate.date = {};
       if (fromDate) {
-        const fDate = new Date(fromDate);
-        fDate.setHours(0, 0, 0, 0);
-        whereDate.date.gte = fDate;
+        whereDate.date.gte = new Date(`${fromDate}T00:00:00+08:00`);
       }
       if (toDate) {
-        const tDate = new Date(toDate);
-        tDate.setHours(23, 59, 59, 999);
-        whereDate.date.lte = tDate;
+        whereDate.date.lte = new Date(`${toDate}T23:59:59.999+08:00`);
       }
     }
 

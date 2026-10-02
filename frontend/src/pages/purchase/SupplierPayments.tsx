@@ -1,3 +1,4 @@
+import { getMalaysiaDateStr, formatMalaysiaDate } from '../../utils/date';
 import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import TableLoader from '../../components/TableLoader';
@@ -57,7 +58,7 @@ const SupplierPayments = () => {
     resolver: zodResolver(paymentSchema) as any,
     defaultValues: {
       paymentNo: 'Generating...',
-      date: new Date().toISOString().split('T')[0],
+      date: getMalaysiaDateStr(),
       supplierId: 0,
       amount: '' as any,
       paymentTypeId: 0,

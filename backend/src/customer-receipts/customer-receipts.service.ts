@@ -14,7 +14,7 @@ export class CustomerReceiptsService {
       return await this.prisma.customerReceipt.create({
         data: {
           receiptNo: data.receiptNo,
-          date: new Date(data.date || new Date()),
+          date: data.date ? new Date(`${data.date}T00:00:00+08:00`) : new Date(),
           customerId: Number(data.customerId),
           amount: Number(data.amount),
           paymentTypeId: Number(data.paymentTypeId),
@@ -48,7 +48,7 @@ export class CustomerReceiptsService {
       return await this.prisma.customerReceipt.update({
         where: { id },
         data: {
-          date: new Date(data.date || new Date()),
+          date: data.date ? new Date(`${data.date}T00:00:00+08:00`) : new Date(),
           customerId: Number(data.customerId),
           amount: Number(data.amount),
           paymentTypeId: Number(data.paymentTypeId),
@@ -312,9 +312,8 @@ export class CustomerReceiptsService {
 
     const report = [];
 
-    const start = startDate ? new Date(startDate) : null;
-    const end = endDate ? new Date(endDate) : null;
-    if (end) end.setHours(23, 59, 59, 999);
+    const start = startDate ? new Date(`${startDate}T00:00:00+08:00`) : null;
+    const end = endDate ? new Date(`${endDate}T23:59:59.999+08:00`) : null;
 
     for (const c of customers) {
       let forwardingBalance = 0;

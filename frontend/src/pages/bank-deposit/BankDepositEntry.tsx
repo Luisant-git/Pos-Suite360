@@ -206,7 +206,7 @@ const BankDepositEntry = () => {
         {/* Right Side: Recent Deposits & Filters */}
         <div className="flex-1 flex flex-col min-w-0 bg-[#F8FAFC]">
           {/* Quick Filters */}
-          <div className="p-3 bg-white border-b border-gray-200 flex flex-wrap items-center justify-between gap-3 shadow-sm shrink-0">
+          <div className="p-2 bg-white border-b border-gray-200 flex flex-wrap items-center justify-between gap-3 shadow-sm shrink-0">
             <div className="flex items-center gap-2">
               <button 
                 onClick={() => setQuickDate('today')} 
@@ -243,7 +243,7 @@ const BankDepositEntry = () => {
           {/* History List */}
           <div className="flex-1 overflow-auto p-4">
             <div className="bg-white rounded shadow-sm border border-gray-200 flex flex-col h-full">
-              <div className="p-3 border-b border-gray-200 bg-gray-50/50 flex justify-between items-center shrink-0">
+              <div className="p-2 border-b border-gray-200 bg-gray-50/50 flex justify-between items-center shrink-0">
                 <h3 className="font-bold text-gray-800 flex items-center gap-2">
                   <Filter className="w-4 h-4 text-gray-500" /> DEPOSIT HISTORY
                 </h3>
@@ -251,14 +251,14 @@ const BankDepositEntry = () => {
               </div>
               
               <div className="flex-1 overflow-auto">
-                <table className="w-full text-left text-sm whitespace-nowrap">
+                <table className="w-full text-left text-xs whitespace-nowrap">
                   <thead className="bg-[#1E293B] text-white sticky top-0 z-10 shadow-sm">
                     <tr>
-                      <th className="p-3 font-bold uppercase tracking-wider text-[11px] border-r border-[#334155] w-12 text-center">#</th>
-                      <th className="p-3 font-bold uppercase tracking-wider text-[11px] border-r border-[#334155]">Date</th>
-                      <th className="p-3 font-bold uppercase tracking-wider text-[11px] border-r border-[#334155]">Type</th>
-                      <th className="p-3 font-bold uppercase tracking-wider text-[11px] border-r border-[#334155] text-right">Amount</th>
-                      <th className="p-3 font-bold uppercase tracking-wider text-[11px] text-center w-20">Actions</th>
+                      <th className="p-2 font-bold uppercase tracking-wider text-[11px] border-r border-[#334155] w-12 text-center">#</th>
+                      <th className="p-2 font-bold uppercase tracking-wider text-[11px] border-r border-[#334155]">Date</th>
+                      <th className="p-2 font-bold uppercase tracking-wider text-[11px] border-r border-[#334155]">Type</th>
+                      <th className="p-2 font-bold uppercase tracking-wider text-[11px] border-r border-[#334155] text-right">Amount</th>
+                      <th className="p-2 font-bold uppercase tracking-wider text-[11px] text-center w-20">Actions</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -276,23 +276,23 @@ const BankDepositEntry = () => {
                     ) : (
                       filteredDeposits.map((dep: any, idx: number) => (
                         <tr key={dep.id} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                          <td className="p-3 text-center text-gray-500 border-r border-gray-100 text-xs font-bold">{idx + 1}</td>
-                          <td className="p-3 border-r border-gray-100 text-gray-800 font-bold">{formatMalaysiaDate(dep.date)}</td>
-                          <td className="p-3 border-r border-gray-100 text-gray-700">
+                          <td className="p-2 text-center text-gray-500 border-r border-gray-100 text-xs font-bold">{idx + 1}</td>
+                          <td className="p-2 border-r border-gray-100 text-gray-800 font-bold">{formatMalaysiaDate(dep.date)}</td>
+                          <td className="p-2 border-r border-gray-100 text-gray-700">
                             <span className={`text-[10px] px-2 py-1 rounded font-bold uppercase border ${getBadgeColor(dep.depositType)}`}>
                               {dep.depositType}
                             </span>
                           </td>
-                          <td className="p-3 border-r border-gray-100 text-right text-black font-bold text-[15px]">
+                          <td className="p-2 border-r border-gray-100 text-right text-black font-bold text-sm">
                             {formatCurrency(dep.amount)}
                           </td>
-                          <td className="p-3 text-center">
+                          <td className="p-2 text-center">
                             <button
                               onClick={() => handleDelete(dep.id)}
-                              className="w-7 h-7 inline-flex items-center justify-center rounded-md bg-red-50 text-red-600 hover:bg-red-600 hover:text-white transition-colors"
+                              className="w-6 h-6 inline-flex items-center justify-center rounded-md bg-red-50 text-red-600 hover:bg-red-600 hover:text-white transition-colors"
                               title="Delete Deposit"
                             >
-                              <Trash2 className="w-4 h-4" />
+                              <Trash2 className="w-3.5 h-3.5" />
                             </button>
                           </td>
                         </tr>

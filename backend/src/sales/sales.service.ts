@@ -106,7 +106,7 @@ export class SalesService {
     const where: any = {};
     if (query?.fromDate || query?.toDate) {
       where.date = {};
-      if (query.fromDate) where.date.gte = new Date(`${`${query.fromDate}T00:00:00+08:00`}T00:00:00+08:00`);
+      if (query.fromDate) where.date.gte = new Date(`${query.fromDate}T00:00:00+08:00`);
       if (query.toDate) {
         where.date.lte = new Date(`${query.toDate}T23:59:59.999+08:00`);
       }

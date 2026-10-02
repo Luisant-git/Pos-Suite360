@@ -263,7 +263,7 @@ const BankDepositEntry = () => {
                   </thead>
                   <tbody>
                     {historyLoading ? (
-                      <tr><td colSpan={5} className="p-0"><TableLoader columns={5} /></td></tr>
+                      <TableLoader columns={5} />
                     ) : filteredDeposits.length === 0 ? (
                       <tr>
                         <td colSpan={5} className="text-center p-8 text-gray-500 font-bold bg-gray-50/50">

@@ -214,7 +214,7 @@ const BankDepositReport = () => {
               </thead>
               <tbody>
                 {isLoading ? (
-                  <tr><td colSpan={5} className="p-0"><TableLoader columns={5} /></td></tr>
+                  <TableLoader columns={5} />
                 ) : filteredDeposits.length === 0 ? (
                   <tr><td colSpan={5} className="text-center p-6 text-black font-bold">No deposit records found.</td></tr>
                 ) : (

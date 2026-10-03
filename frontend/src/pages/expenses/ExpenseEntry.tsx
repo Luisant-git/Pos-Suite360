@@ -1,4 +1,3 @@
-import { getMalaysiaDateStr } from '../../utils/date';
 import { getMalaysiaDateStr, formatMalaysiaDate } from '../../utils/date';
 import { useState } from 'react';
 import { X, Briefcase, PlusSquare, Download, Filter, RefreshCw } from 'lucide-react';

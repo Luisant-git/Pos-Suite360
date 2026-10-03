@@ -1,3 +1,4 @@
+import { getMalaysiaDateStr } from '../utils/date';
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
@@ -57,7 +58,7 @@ export const generateNativePdf = (sale: any, settings: any): string => {
   doc.text('Attn:', 14, 80);
   
   doc.text('NO.', 120, 50); doc.text(':', 140, 50); doc.text(sale.invoiceNo, 145, 50);
-  doc.text('DATE', 120, 55); doc.text(':', 140, 55); doc.text(new Date(sale.date).toISOString().split('T')[0], 145, 55);
+  doc.text('DATE', 120, 55); doc.text(':', 140, 55); doc.text(getMalaysiaDateStr(sale.date), 145, 55);
   doc.text('PAY TYPE', 120, 60); doc.text(':', 140, 60); doc.text(sale?.paymentMode?.name || 'Cash', 145, 60);
   doc.text('PAGE', 120, 65); doc.text(':', 140, 65); doc.text('1 of 1', 145, 65);
   
@@ -155,7 +156,7 @@ export const generateBillByBillPdf = (companyName: string, entityName: string, e
   
   const body = bills.map(b => [
     b.entryNo || '',
-    new Date(b.date).toISOString().split('T')[0],
+    getMalaysiaDateStr(b.date),
     Number(b.total).toFixed(2),
     Number(b.returned || 0).toFixed(2),
     Number(b.received || b.paid || 0).toFixed(2),

@@ -1,3 +1,4 @@
+import { getMalaysiaDateStr } from '../../utils/date';
 import { useState, useEffect, useRef } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate, useSearchParams } from 'react-router-dom';
@@ -194,7 +195,7 @@ const POS = () => {
     if (editSaleData && editId) {
       reset({
         invoiceNo: editSaleData.invoiceNo,
-        date: new Date(editSaleData.date).toISOString().split('T')[0],
+        date: getMalaysiaDateStr(editSaleData.date),
         customerId: editSaleData.customerId,
         rateType: 'Wholesale Rate',
         paymentModeId: editSaleData.paymentModeId,

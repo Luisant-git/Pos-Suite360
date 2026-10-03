@@ -1,3 +1,4 @@
+import { getMalaysiaDateStr } from '../../utils/date';
 import { useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Plus, Eye, Edit, Trash2 } from 'lucide-react';
@@ -169,7 +170,7 @@ const PurchaseList = () => {
               ) : (
                 paginatedPurchases.map((purchase: any, index: number) => (
                   <tr key={purchase.id} className={`border-b border-[#E5E7EB] ${index % 2 === 0 ? 'bg-[#F9F9F9]' : 'bg-white'} hover:bg-blue-50`}>
-                    <td className="px-3 py-2.5 border-r border-[#E5E7EB] text-[#333] font-bold">{purchase.date ? new Date(purchase.date).toISOString().split('T')[0] : '-'}</td>
+                    <td className="px-3 py-2.5 border-r border-[#E5E7EB] text-[#333] font-bold">{purchase.date ? getMalaysiaDateStr(purchase.date) : '-'}</td>
                     <td className="px-3 py-2.5 border-r border-[#E5E7EB] text-black font-bold">{purchase.invoiceNo}</td>
                     <td className="px-3 py-2.5 border-r border-[#E5E7EB] text-[#3B82F6] font-bold cursor-pointer hover:underline">{purchase.supplierInvoiceNo || '-'}</td>
                     <td className="px-3 py-2.5 border-r border-[#E5E7EB] text-[#333] font-bold">{purchase.supplier?.name || 'Unknown Supplier'}</td>

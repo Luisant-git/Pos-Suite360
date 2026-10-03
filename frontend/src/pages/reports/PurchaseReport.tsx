@@ -51,7 +51,7 @@ const PurchaseReport = () => {
         id: p.id,
         entryNo: `PUR-${p.id.toString().padStart(6, '0')}`,
         invoiceNo: p.supplierInvoiceNo || '-',
-        date: new Date(p.date).toISOString().split('T')[0],
+        date: getMalaysiaDateStr(p.date),
         supplierName: p.supplier?.name || '-',
         mode: p.paymentMode?.name || '-',
         noOfBirds: p.items?.reduce((sum: number, item: any) => sum + (Number(item.noOfBirds) || 0), 0) || 0,

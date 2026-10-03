@@ -195,7 +195,7 @@ const CustomerReceipts = () => {
   const handleExportExcel = () => {
     const exportData = filteredHistory.map((r: any) => ({
       'Receipt No': r.receiptNo,
-      'Date': new Date(r.date).toISOString().split('T')[0],
+      'Date': getMalaysiaDateStr(r.date),
       'Customer': r.customer?.name || 'Unknown',
       'Payment Type': r.paymentType?.name || 'Unknown',
       'Amount Collected': r.amount,
@@ -414,7 +414,7 @@ const CustomerReceipts = () => {
                                   <td className="px-3 py-2 font-bold text-black font-bold">
                                     {bill.entryNo}
                                   </td>
-                                  <td className="px-3 py-2 text-black font-bold">{new Date(bill.date).toISOString().split('T')[0]}</td>
+                                  <td className="px-3 py-2 text-black font-bold">{getMalaysiaDateStr(bill.date)}</td>
                                   <td className="px-3 py-2 text-right text-black font-bold">{formatCurrency(bill.total)}</td>
                                   <td className="px-3 py-2 text-right text-[#E11D48]">{formatCurrency(bill.returned || 0)}</td>
                                   <td className="px-3 py-2 text-right text-[#10B981]">{formatCurrency(bill.received)}</td>
@@ -674,7 +674,7 @@ const CustomerReceipts = () => {
                   paginatedHistory.map((r: any, idx: number) => (
                     <tr key={r.id} className={`border-b border-[#E2E8F0] ${idx % 2 === 0 ? 'bg-white' : 'bg-[#F8FAFC]'}`}>
                       <td className="px-3 py-2 border-r border-[#E2E8F0] font-bold text-[#059669]">{r.receiptNo}</td>
-                      <td className="px-3 py-2 border-r border-[#E2E8F0] text-black font-bold">{new Date(r.date).toISOString().split('T')[0]}</td>
+                      <td className="px-3 py-2 border-r border-[#E2E8F0] text-black font-bold">{getMalaysiaDateStr(r.date)}</td>
                       <td className="px-3 py-2 border-r border-[#E2E8F0] font-bold text-black font-bold">{r.customer?.name}</td>
                       <td className="px-3 py-3 border-r border-[#E5E7EB] text-black font-bold">{r.paymentType?.name || r.paymentMode?.name || '-'}</td>
                       <td className="px-3 py-2 text-right font-bold text-[#059669]">{formatCurrency(r.amount)}</td>
@@ -685,7 +685,7 @@ const CustomerReceipts = () => {
                             onClick={() => {
                               reset({
                                 receiptNo: r.receiptNo,
-                                date: new Date(r.date).toISOString().split('T')[0],
+                                date: getMalaysiaDateStr(r.date),
                                 customerId: r.customerId,
                                 amount: r.amount,
                                 paymentTypeId: r.paymentTypeId || 0,

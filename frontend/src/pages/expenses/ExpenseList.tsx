@@ -1,3 +1,4 @@
+import { getMalaysiaDateStr } from '../../utils/date';
 import { getMalaysiaDateStr, formatMalaysiaDate } from '../../utils/date';
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
@@ -16,7 +17,7 @@ const ExpenseList = () => {
   const [startDate, setStartDate] = useState(() => {
     const d = new Date();
     d.setDate(1);
-    return d.toISOString().split('T')[0];
+    return getMalaysiaDateStr(d);
   });
   const [endDate, setEndDate] = useState(() => getMalaysiaDateStr());
   const [categoryId, setCategoryId] = useState('');

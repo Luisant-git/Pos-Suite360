@@ -60,7 +60,7 @@ const SalesReport = () => {
         return {
           id: s.id,
           invoiceNo: s.invoiceNo,
-          date: new Date(s.date).toISOString().split('T')[0],
+          date: getMalaysiaDateStr(s.date),
           customerName: s.customer?.name || 'Walk-in',
           paymentMode: s.paymentMode?.name || 'Cash',
           noOfItems: s.items?.length || 0,

@@ -1,3 +1,4 @@
+import { getMalaysiaDateStr } from '../../utils/date';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { ArrowLeft, Printer, FileText, CheckCircle2 } from 'lucide-react';
@@ -123,7 +124,7 @@ const SalesView = () => {
           <div>
             <h2 className="text-[22px] font-bold text-black font-bold">Invoice {sale.invoiceNo}</h2>
             <div className="flex gap-2 items-center text-[13px] text-black font-bold mt-1">
-              <span>{new Date(sale.date).toISOString().split('T')[0]}</span>
+              <span>{getMalaysiaDateStr(sale.date)}</span>
               <span>•</span>
               <span className={`flex items-center gap-1 font-bold px-2 py-0.5 rounded ${sale.paymentMode?.name === 'Credit' ? 'text-rose-800 bg-rose-100' : 'text-emerald-600 bg-emerald-100'}`}>
                 {sale.paymentMode?.name === 'Credit' ? 'CREDIT' : <><CheckCircle2 size={12} /> PAID</>}

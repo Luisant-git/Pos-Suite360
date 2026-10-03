@@ -1,3 +1,4 @@
+import { getMalaysiaDateStr } from '../../utils/date';
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { CornerDownLeft, Package, Search, Download, RefreshCw } from 'lucide-react';
@@ -83,7 +84,7 @@ const SalesReturnReport = () => {
                     const rows = filteredReturns.map((ret: any, i: number) => ({
                       _sno: i + 1,
                       returnNo: ret.returnNo,
-                      _date: new Date(ret.date).toISOString().split('T')[0],
+                      _date: getMalaysiaDateStr(ret.date),
                       _invoiceNo: ret.sale?.invoiceNo || '-',
                       _customer: ret.customer?.name || 'Unknown',
                       remarks: ret.remarks || '-',
@@ -101,7 +102,7 @@ const SalesReturnReport = () => {
                     const exportData = filteredReturns.map((ret: any, i: number) => ({
                       'S.No': i + 1,
                       'Return No': ret.returnNo,
-                      'Return Date': new Date(ret.date).toISOString().split('T')[0],
+                      'Return Date': getMalaysiaDateStr(ret.date),
                       'Invoice No': ret.sale?.invoiceNo || '-',
                       'Customer Name': ret.customer?.name || 'Unknown',
                       'Remarks': ret.remarks || '-',
@@ -185,7 +186,7 @@ const SalesReturnReport = () => {
                       <tr key={ret.id} className={`border-b border-[#F3F4F6] ${index % 2 === 0 ? 'bg-white' : 'bg-[#FAFAFA]'}`}>
                         <td className="px-4 py-3 border-r border-[#F3F4F6] text-center text-black font-bold">{(currentPage - 1) * entriesPerPage + index + 1}</td>
                         <td className="px-4 py-3 border-r border-[#F3F4F6] font-bold text-[#EF4444]">{ret.returnNo}</td>
-                        <td className="px-4 py-3 border-r border-[#F3F4F6] font-bold text-black">{new Date(ret.date).toISOString().split('T')[0]}</td>
+                        <td className="px-4 py-3 border-r border-[#F3F4F6] font-bold text-black">{getMalaysiaDateStr(ret.date)}</td>
                         <td className="px-4 py-3 border-r border-[#F3F4F6] font-bold text-black">{ret.sale?.invoiceNo || '-'}</td>
                         <td className="px-4 py-3 border-r border-[#F3F4F6] font-bold text-black">{ret.customer?.name || 'Unknown Customer'}</td>
                         <td className="px-4 py-3 border-r border-[#F3F4F6]">

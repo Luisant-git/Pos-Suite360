@@ -1,3 +1,4 @@
+import { getMalaysiaDateStr } from '../utils/date';
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { X, Printer, Share2, Loader2 } from 'lucide-react';
@@ -60,7 +61,7 @@ const InvoicePrintModal = ({ isOpen, onClose, sale: initialSale, hiddenRenderer 
     : (Number(sale?.customer?.openingBalance || 0));
 
   const invoiceNo = sale?.invoiceNo || '';
-  const date = sale?.date ? new Date(sale.date).toISOString().split('T')[0] : '';
+  const date = sale?.date ? getMalaysiaDateStr(sale.date) : '';
   const customerName = sale?.customer?.name || 'CASH A/C\nCounter Sale';
   const items = sale?.items || [];
   const grandTotal = sale?.grandTotal || 0;

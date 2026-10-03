@@ -1,3 +1,4 @@
+import { getMalaysiaDateStr } from '../../utils/date';
 import { getMalaysiaDateStr, formatMalaysiaDate } from '../../utils/date';
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
@@ -16,7 +17,7 @@ const ExpenseReport = () => {
   const [startDate, setStartDate] = useState(() => {
     const d = new Date();
     d.setDate(1);
-    return d.toISOString().split('T')[0];
+    return getMalaysiaDateStr(d);
   });
   const [endDate, setEndDate] = useState(() => getMalaysiaDateStr());
   const [categoryId, setCategoryId] = useState('');
@@ -49,12 +50,12 @@ const ExpenseReport = () => {
   const setQuickDate = (type: 'today' | 'thisMonth' | 'all') => {
     const now = new Date();
     if (type === 'today') {
-      const todayStr = now.toISOString().split('T')[0];
+      const todayStr = getMalaysiaDateStr(now);
       setStartDate(todayStr);
       setEndDate(todayStr);
     } else if (type === 'thisMonth') {
       const firstDay = (getMalaysiaDateStr().substring(0, 8) + "01");
-      const todayStr = now.toISOString().split('T')[0];
+      const todayStr = getMalaysiaDateStr(now);
       setStartDate(firstDay);
       setEndDate(todayStr);
     } else if (type === 'all') {

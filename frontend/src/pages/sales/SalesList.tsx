@@ -1,3 +1,4 @@
+import { getMalaysiaDateStr } from '../../utils/date';
 import { useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Plus, Eye, Printer, Edit, Trash2 } from 'lucide-react';
@@ -170,7 +171,7 @@ const SalesList = () => {
               ) : (
                 paginatedSales.map((sale: any, index: number) => (
                   <tr key={sale.id} className={`border-b border-[#E5E7EB] ${index % 2 === 0 ? 'bg-[#F9F9F9]' : 'bg-white'} hover:bg-blue-50`}>
-                    <td className="px-2 py-1.5 border-r border-[#E5E7EB] text-[#333] font-bold">{sale.date ? new Date(sale.date).toISOString().split('T')[0] : '-'}</td>
+                    <td className="px-2 py-1.5 border-r border-[#E5E7EB] text-[#333] font-bold">{sale.date ? getMalaysiaDateStr(sale.date) : '-'}</td>
                     <td className="px-2 py-1.5 border-r border-[#E5E7EB] text-[#3B82F6] font-bold cursor-pointer hover:underline">{sale.invoiceNo}</td>
                     <td className="px-2 py-1.5 border-r border-[#E5E7EB] text-[#333] font-bold">{sale.customer?.name || 'Counter Sale'}</td>
                     <td className="px-2 py-1.5 border-r border-[#E5E7EB] text-[#333] font-bold text-right">{formatCurrency(sale.grandTotal)}</td>

@@ -1,3 +1,4 @@
+import { getMalaysiaDateStr } from '../../utils/date';
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { CornerDownLeft, Package, Search, Download, RefreshCw } from 'lucide-react';
@@ -81,7 +82,7 @@ const PurchaseReturnReport = () => {
                     const rows = filteredReturns.map((ret: any, i: number) => ({
                       _sno: i + 1,
                       returnNo: ret.returnNo,
-                      _date: new Date(ret.date).toISOString().split('T')[0],
+                      _date: getMalaysiaDateStr(ret.date),
                       _supplier: ret.supplier?.name || 'Unknown',
                       remarks: ret.remarks || '-',
                       _amount: formatCurrency(ret.totalAmount),
@@ -98,7 +99,7 @@ const PurchaseReturnReport = () => {
                     const exportData = filteredReturns.map((ret: any, i: number) => ({
                       'S.No': i + 1,
                       'Return No': ret.returnNo,
-                      'Return Date': new Date(ret.date).toISOString().split('T')[0],
+                      'Return Date': getMalaysiaDateStr(ret.date),
                       'Supplier Name': ret.supplier?.name || 'Unknown',
                       'Remarks': ret.remarks || '-',
                       'Claim Amount': Number(ret.totalAmount) || 0,
@@ -180,7 +181,7 @@ const PurchaseReturnReport = () => {
                       <tr key={ret.id} className={`border-b border-[#F3F4F6] ${index % 2 === 0 ? 'bg-white' : 'bg-[#FAFAFA]'}`}>
                         <td className="px-4 py-3 border-r border-[#F3F4F6] text-center text-black font-bold">{(currentPage - 1) * entriesPerPage + index + 1}</td>
                         <td className="px-4 py-3 border-r border-[#F3F4F6] font-bold text-[#F59E0B]">{ret.returnNo}</td>
-                        <td className="px-4 py-3 border-r border-[#F3F4F6] font-bold text-black">{new Date(ret.date).toISOString().split('T')[0]}</td>
+                        <td className="px-4 py-3 border-r border-[#F3F4F6] font-bold text-black">{getMalaysiaDateStr(ret.date)}</td>
                         <td className="px-4 py-3 border-r border-[#F3F4F6] font-bold text-black">{ret.supplier?.name || 'Unknown Supplier'}</td>
                         <td className="px-4 py-3 border-r border-[#F3F4F6]">
                           <div className="flex flex-wrap gap-2">

@@ -1,3 +1,4 @@
+import { getMalaysiaDateStr } from '../../utils/date';
 import { getMalaysiaDateStr, formatMalaysiaDate } from '../../utils/date';
 import { useState } from 'react';
 import { X, Briefcase, PlusSquare, Download, Filter, RefreshCw } from 'lucide-react';
@@ -26,7 +27,7 @@ const ExpenseEntry = () => {
   const [filterStartDate, setFilterStartDate] = useState(() => {
     const d = new Date();
     d.setDate(1);
-    return d.toISOString().split('T')[0];
+    return getMalaysiaDateStr(d);
   });
   const [filterEndDate, setFilterEndDate] = useState(() => getMalaysiaDateStr());
   const [filterCategoryId, setFilterCategoryId] = useState('');
@@ -97,12 +98,12 @@ const ExpenseEntry = () => {
   const setQuickDate = (type: 'today' | 'thisMonth' | 'all') => {
     const now = new Date();
     if (type === 'today') {
-      const todayStr = now.toISOString().split('T')[0];
+      const todayStr = getMalaysiaDateStr(now);
       setFilterStartDate(todayStr);
       setFilterEndDate(todayStr);
     } else if (type === 'thisMonth') {
       const firstDay = (getMalaysiaDateStr().substring(0, 8) + "01");
-      const todayStr = now.toISOString().split('T')[0];
+      const todayStr = getMalaysiaDateStr(now);
       setFilterStartDate(firstDay);
       setFilterEndDate(todayStr);
     } else if (type === 'all') {

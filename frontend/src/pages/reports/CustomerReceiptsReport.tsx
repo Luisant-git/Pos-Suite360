@@ -148,32 +148,67 @@ const CustomerReceiptsReport = () => {
       exportTableToPdf(cols, rows, 'Customer_Dues_Consolidation_Report', title, settings?.shopName, filteredConsolidation.length);
     } else {
       const cols: PdfColumn[] = [
-        { header: 'S.No', dataKey: '_sno' },
-        { header: 'Receipt No', dataKey: 'receiptNo' },
-        { header: 'Date', dataKey: '_date' },
-        { header: 'Customer', dataKey: '_customer' },
-        { header: 'Payment Mode', dataKey: '_mode' },
-        { header: 'Reference', dataKey: 'reference' },
-        { header: 'Amount Collected', dataKey: 'amount' },
+        { header: 'RECEIPT', dataKey: 'receiptNo' },
+        { header: 'DATE', dataKey: '_date' },
+        { header: 'CUSTOMER NAME', dataKey: '_customer' },
+        { header: 'AMT. REC.', dataKey: 'amount' },
+        { header: 'OPEN CR', dataKey: 'openCr' },
+        { header: 'PAYMENT FOR', dataKey: 'invoiceNo' },
+        { header: 'ON', dataKey: 'invoiceDate' },
+        { header: 'DAYS', dataKey: 'days' },
+        { header: 'ORIG. AMT', dataKey: 'origAmt' },
+        { header: 'AMT. PAID', dataKey: 'amtPaid' },
+        { header: "OUT'DING", dataKey: 'outstanding' },
       ];
-      const rows = filteredHistory.map((r: any, idx: number) => ({
-        _sno: idx + 1,
-        receiptNo: r.receiptNo,
-        _date: formatMalaysiaDate(r.date),
-        _customer: r.customer?.name || '-',
-        _mode: r.paymentType?.name || r.paymentMode?.name || '-',
-        reference: r.reference || '-',
-        amount: r.amount,
-      }));
+      const rows: any[] = [];
+      filteredHistory.forEach((r: any) => {
+        const openCr = r.amount - (r.allocations?.reduce((sum: number, a: any) => sum + Number(a.amount || 0), 0) || 0);
+        if (!r.allocations || r.allocations.length === 0) {
+          rows.push({
+            receiptNo: r.receiptNo,
+            _date: formatMalaysiaDate(r.date),
+            _customer: r.customer?.name || '-',
+            amount: formatCurrency(r.amount),
+            openCr: formatCurrency(openCr > 0 ? openCr : 0),
+            invoiceNo: '-',
+            invoiceDate: '-',
+            days: '-',
+            origAmt: '-',
+            amtPaid: '-',
+            outstanding: '-',
+          });
+        } else {
+          r.allocations.forEach((a: any, idx: number) => {
+            const isFirst = idx === 0;
+            rows.push({
+              receiptNo: isFirst ? r.receiptNo : '',
+              _date: isFirst ? formatMalaysiaDate(r.date) : '',
+              _customer: isFirst ? (r.customer?.name || '-') : '',
+              amount: isFirst ? formatCurrency(r.amount) : '',
+              openCr: isFirst ? formatCurrency(openCr > 0 ? openCr : 0) : '',
+              invoiceNo: a.sale?.invoiceNo || '-',
+              invoiceDate: a.sale?.date ? formatMalaysiaDate(a.sale.date) : '-',
+              days: a.sale?.date ? Math.floor((new Date(r.date).getTime() - new Date(a.sale.date).getTime()) / (1000 * 3600 * 24)).toString() : '-',
+              origAmt: formatCurrency(a.sale?.grandTotal || 0),
+              amtPaid: formatCurrency(a.amount),
+              outstanding: formatCurrency((a.sale?.grandTotal || 0) - a.amount),
+            });
+          });
+        }
+      });
       const historyTotalAmount = filteredHistory.reduce((sum: number, r: any) => sum + Number(r.amount || 0), 0);
       rows.push({
-        _sno: '',
         receiptNo: '',
         _date: '',
         _customer: '',
-        _mode: '',
-        reference: 'TOTAL AMOUNT:',
-        amount: formatCurrency(historyTotalAmount),
+        amount: '',
+        openCr: '',
+        invoiceNo: '',
+        invoiceDate: '',
+        days: '',
+        origAmt: 'TOTAL AMOUNT:',
+        amtPaid: formatCurrency(historyTotalAmount),
+        outstanding: '',
       });
       const title = `Customer Receipts History Report${startDate || endDate ? ` (${startDate || 'Start'} to ${endDate || 'End'})` : ''}`;
       exportTableToPdf(cols, rows, 'Customer_Receipts_History_Report', title, settings?.shopName, filteredHistory.length);
@@ -208,24 +243,55 @@ const CustomerReceiptsReport = () => {
         totalCount: filteredConsolidation.length
       });
     } else {
-      const exportData = filteredHistory.map((r: any, idx: number) => ({
-        'S.No': idx + 1,
-        'Receipt No': r.receiptNo,
-        'Date': formatMalaysiaDate(r.date),
-        'Customer': r.customer?.name || '-',
-        'Payment Mode': r.paymentType?.name || r.paymentMode?.name || '-',
-        'Reference': r.reference || '-',
-        'Amount Collected': r.amount,
-      }));
+      const exportData: any[] = [];
+      filteredHistory.forEach((r: any) => {
+        const openCr = r.amount - (r.allocations?.reduce((sum: number, a: any) => sum + Number(a.amount || 0), 0) || 0);
+        if (!r.allocations || r.allocations.length === 0) {
+          exportData.push({
+            'RECEIPT': r.receiptNo,
+            'DATE': formatMalaysiaDate(r.date),
+            'CUSTOMER NAME': r.customer?.name || '-',
+            'AMT. REC.': formatCurrency(r.amount),
+            'OPEN CR': formatCurrency(openCr > 0 ? openCr : 0),
+            'PAYMENT FOR': '-',
+            'ON': '-',
+            'DAYS': '-',
+            'ORIG. AMT': '-',
+            'AMT. PAID': '-',
+            "OUT'DING": '-',
+          });
+        } else {
+          r.allocations.forEach((a: any, idx: number) => {
+            const isFirst = idx === 0;
+            exportData.push({
+              'RECEIPT': isFirst ? r.receiptNo : '',
+              'DATE': isFirst ? formatMalaysiaDate(r.date) : '',
+              'CUSTOMER NAME': isFirst ? (r.customer?.name || '-') : '',
+              'AMT. REC.': isFirst ? formatCurrency(r.amount) : '',
+              'OPEN CR': isFirst ? formatCurrency(openCr > 0 ? openCr : 0) : '',
+              'PAYMENT FOR': a.sale?.invoiceNo || '-',
+              'ON': a.sale?.date ? formatMalaysiaDate(a.sale.date) : '-',
+              'DAYS': a.sale?.date ? Math.floor((new Date(r.date).getTime() - new Date(a.sale.date).getTime()) / (1000 * 3600 * 24)).toString() : '-',
+              'ORIG. AMT': formatCurrency(a.sale?.grandTotal || 0),
+              'AMT. PAID': formatCurrency(a.amount),
+              "OUT'DING": formatCurrency((a.sale?.grandTotal || 0) - a.amount),
+            });
+          });
+        }
+      });
       const historyTotalAmount = filteredHistory.reduce((sum: number, r: any) => sum + Number(r.amount || 0), 0);
       exportData.push({
-        'S.No': '',
-        'Receipt No': '',
-        'Date': '',
-        'Customer': '',
-        'Payment Mode': '',
-        'Reference': 'TOTAL AMOUNT:',
-        'Amount Collected': formatCurrency(historyTotalAmount) as any,
+        'RECEIPT': '',
+        'DATE': '',
+        'CUSTOMER NAME': '',
+        'AMT. REC.': '',
+        'OPEN CR': '',
+        'PAYMENT FOR': '',
+        'ON': '',
+        'DAYS': '',
+        'ORIG. AMT': 'TOTAL AMOUNT:',
+        'AMT. PAID': formatCurrency(historyTotalAmount),
+        "OUT'DING": '',
       });
       exportToExcel(exportData, 'Customer_Receipts_History', {
         shopName: settings?.shopName || 'MY SHOP',

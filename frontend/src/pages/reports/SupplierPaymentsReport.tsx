@@ -147,32 +147,67 @@ const SupplierPaymentsReport = () => {
       exportTableToPdf(cols, rows, 'Supplier_Payables_Consolidation_Report', title, settings?.shopName, filteredConsolidation.length);
     } else {
       const cols: PdfColumn[] = [
-        { header: 'S.No', dataKey: '_sno' },
-        { header: 'Payment No', dataKey: 'paymentNo' },
-        { header: 'Date', dataKey: '_date' },
-        { header: 'Supplier', dataKey: '_supplier' },
-        { header: 'Payment Mode', dataKey: '_mode' },
-        { header: 'Reference', dataKey: 'reference' },
-        { header: 'Amount Paid', dataKey: 'amount' },
+        { header: 'PAYMENT NO', dataKey: 'paymentNo' },
+        { header: 'DATE', dataKey: '_date' },
+        { header: 'SUPPLIER NAME', dataKey: '_supplier' },
+        { header: 'AMT. PAID', dataKey: 'amount' },
+        { header: 'OPEN BAL', dataKey: 'openCr' },
+        { header: 'PAYMENT FOR', dataKey: 'invoiceNo' },
+        { header: 'ON', dataKey: 'invoiceDate' },
+        { header: 'DAYS', dataKey: 'days' },
+        { header: 'ORIG. AMT', dataKey: 'origAmt' },
+        { header: 'AMT. ALLOC.', dataKey: 'amtPaid' },
+        { header: "OUT'DING", dataKey: 'outstanding' },
       ];
-      const rows = filteredHistory.map((p: any, idx: number) => ({
-        _sno: idx + 1,
-        paymentNo: p.paymentNo,
-        _date: formatMalaysiaDate(p.date),
-        _supplier: p.supplier?.name || '-',
-        _mode: p.paymentType?.name || p.paymentMode?.name || '-',
-        reference: p.reference || '-',
-        amount: p.amount,
-      }));
+      const rows: any[] = [];
+      filteredHistory.forEach((p: any) => {
+        const openCr = p.amount - (p.allocations?.reduce((sum: number, a: any) => sum + Number(a.amount || 0), 0) || 0);
+        if (!p.allocations || p.allocations.length === 0) {
+          rows.push({
+            paymentNo: p.paymentNo,
+            _date: formatMalaysiaDate(p.date),
+            _supplier: p.supplier?.name || '-',
+            amount: formatCurrency(p.amount),
+            openCr: formatCurrency(openCr > 0 ? openCr : 0),
+            invoiceNo: '-',
+            invoiceDate: '-',
+            days: '-',
+            origAmt: '-',
+            amtPaid: '-',
+            outstanding: '-',
+          });
+        } else {
+          p.allocations.forEach((a: any, idx: number) => {
+            const isFirst = idx === 0;
+            rows.push({
+              paymentNo: isFirst ? p.paymentNo : '',
+              _date: isFirst ? formatMalaysiaDate(p.date) : '',
+              _supplier: isFirst ? (p.supplier?.name || '-') : '',
+              amount: isFirst ? formatCurrency(p.amount) : '',
+              openCr: isFirst ? formatCurrency(openCr > 0 ? openCr : 0) : '',
+              invoiceNo: a.purchase?.entryNo || '-',
+              invoiceDate: a.purchase?.date ? formatMalaysiaDate(a.purchase.date) : '-',
+              days: a.purchase?.date ? Math.floor((new Date(p.date).getTime() - new Date(a.purchase.date).getTime()) / (1000 * 3600 * 24)).toString() : '-',
+              origAmt: formatCurrency(a.purchase?.netTotal || 0),
+              amtPaid: formatCurrency(a.amount),
+              outstanding: formatCurrency((a.purchase?.netTotal || 0) - a.amount),
+            });
+          });
+        }
+      });
       const historyTotal = filteredHistory.reduce((sum: number, p: any) => sum + Number(p.amount || 0), 0);
       rows.push({
-        _sno: '',
         paymentNo: '',
         _date: '',
         _supplier: '',
-        _mode: '',
-        reference: 'TOTAL AMOUNT:',
-        amount: formatCurrency(historyTotal),
+        amount: '',
+        openCr: '',
+        invoiceNo: '',
+        invoiceDate: '',
+        days: '',
+        origAmt: 'TOTAL AMOUNT:',
+        amtPaid: formatCurrency(historyTotal),
+        outstanding: '',
       });
       const title = `Supplier Payments History Report${startDate || endDate ? ` (${startDate || 'Start'} to ${endDate || 'End'})` : ''}`;
       exportTableToPdf(cols, rows, 'Supplier_Payments_History_Report', title, settings?.shopName, filteredHistory.length);
@@ -207,24 +242,55 @@ const SupplierPaymentsReport = () => {
         totalCount: filteredConsolidation.length
       });
     } else {
-      const exportData = filteredHistory.map((p: any, idx: number) => ({
-        'S.No': idx + 1,
-        'Payment No': p.paymentNo,
-        'Date': formatMalaysiaDate(p.date),
-        'Supplier': p.supplier?.name || '-',
-        'Payment Mode': p.paymentType?.name || p.paymentMode?.name || '-',
-        'Reference': p.reference || '-',
-        'Amount Paid': p.amount,
-      }));
+      const exportData: any[] = [];
+      filteredHistory.forEach((p: any) => {
+        const openCr = p.amount - (p.allocations?.reduce((sum: number, a: any) => sum + Number(a.amount || 0), 0) || 0);
+        if (!p.allocations || p.allocations.length === 0) {
+          exportData.push({
+            'PAYMENT NO': p.paymentNo,
+            'DATE': formatMalaysiaDate(p.date),
+            'SUPPLIER NAME': p.supplier?.name || '-',
+            'AMT. PAID': formatCurrency(p.amount),
+            'OPEN BAL': formatCurrency(openCr > 0 ? openCr : 0),
+            'PAYMENT FOR': '-',
+            'ON': '-',
+            'DAYS': '-',
+            'ORIG. AMT': '-',
+            'AMT. ALLOC.': '-',
+            "OUT'DING": '-',
+          });
+        } else {
+          p.allocations.forEach((a: any, idx: number) => {
+            const isFirst = idx === 0;
+            exportData.push({
+              'PAYMENT NO': isFirst ? p.paymentNo : '',
+              'DATE': isFirst ? formatMalaysiaDate(p.date) : '',
+              'SUPPLIER NAME': isFirst ? (p.supplier?.name || '-') : '',
+              'AMT. PAID': isFirst ? formatCurrency(p.amount) : '',
+              'OPEN BAL': isFirst ? formatCurrency(openCr > 0 ? openCr : 0) : '',
+              'PAYMENT FOR': a.purchase?.entryNo || '-',
+              'ON': a.purchase?.date ? formatMalaysiaDate(a.purchase.date) : '-',
+              'DAYS': a.purchase?.date ? Math.floor((new Date(p.date).getTime() - new Date(a.purchase.date).getTime()) / (1000 * 3600 * 24)).toString() : '-',
+              'ORIG. AMT': formatCurrency(a.purchase?.netTotal || 0),
+              'AMT. ALLOC.': formatCurrency(a.amount),
+              "OUT'DING": formatCurrency((a.purchase?.netTotal || 0) - a.amount),
+            });
+          });
+        }
+      });
       const historyTotal = filteredHistory.reduce((sum: number, p: any) => sum + Number(p.amount || 0), 0);
       exportData.push({
-        'S.No': '',
-        'Payment No': '',
-        'Date': '',
-        'Supplier': '',
-        'Payment Mode': '',
-        'Reference': 'TOTAL AMOUNT:',
-        'Amount Paid': formatCurrency(historyTotal) as any,
+        'PAYMENT NO': '',
+        'DATE': '',
+        'SUPPLIER NAME': '',
+        'AMT. PAID': '',
+        'OPEN BAL': '',
+        'PAYMENT FOR': '',
+        'ON': '',
+        'DAYS': '',
+        'ORIG. AMT': 'TOTAL AMOUNT:',
+        'AMT. ALLOC.': formatCurrency(historyTotal),
+        "OUT'DING": '',
       });
       exportToExcel(exportData, 'Supplier_Payments_History', {
         shopName: settings?.shopName || 'MY SHOP',

@@ -1,7 +1,7 @@
 import { formatMalaysiaDate } from '../../utils/date';
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Download, Truck, FileText, RefreshCw, DollarSign, AlertCircle, CheckCircle2, Printer, Loader2 } from 'lucide-react';
+import { Download, Truck, FileText, RefreshCw, DollarSign, AlertCircle, CheckCircle2, Printer, Loader2, Maximize2, Minimize2 } from 'lucide-react';
 import { exportTableToPdf, type PdfColumn } from '../../utils/exportPdf';
 import { exportToExcel } from '../../utils/exportExcel';
 import { useSettings } from '../../contexts/SettingsContext';
@@ -27,6 +27,7 @@ const SupplierPaymentsReport = () => {
   const [pdfModalOpen, setPdfModalOpen] = useState(false);
   const [pdfUrl, setPdfUrl] = useState('');
   const [printingId, setPrintingId] = useState<number | null>(null);
+  const [isExpanded, setIsExpanded] = useState(false);
 
   // Fetch Consolidation Data
   const { data: consolidationData = [], isLoading: consolidationLoading } = useQuery({
@@ -334,7 +335,8 @@ const SupplierPaymentsReport = () => {
         </div>
 
 
-                {/* Filters - always visible, fully responsive */}
+                <div className={isExpanded ? 'fixed inset-4 lg:inset-8 z-[100] bg-[#F8FAFC] flex flex-col overflow-hidden rounded-xl shadow-2xl border border-[#E2E8F0]' : 'flex flex-col flex-1 min-h-0'}>
+        {/* Filters - always visible, fully responsive */}
         <div className="bg-white p-2 sm:p-3 border-b border-[#E6E9ED] shrink-0">
           <div className="flex flex-col gap-2">
             {/* Row 1: Search + Reset */}
@@ -411,7 +413,16 @@ const SupplierPaymentsReport = () => {
               {reportMode === 'consolidation' ? 'OVERALL SUPPLIER PAYABLES CONSOLIDATION' : 'SUPPLIER PAYMENTS HISTORY'}
             </h2>
           </div>
-          <span className="text-[11px] font-bold text-black whitespace-nowrap shrink-0">{activeList.length} Records Found</span>
+          <div className="flex items-center gap-2">
+            <span className="text-[11px] font-bold text-black whitespace-nowrap shrink-0">{activeList.length} Records Found</span>
+            <button
+              onClick={() => setIsExpanded(!isExpanded)}
+              className="p-1 rounded hover:bg-gray-200 text-gray-600 transition-colors shrink-0"
+              title={isExpanded ? "Minimize" : "Maximize"}
+            >
+              {isExpanded ? <Minimize2 size={14} /> : <Maximize2 size={14} />}
+            </button>
+          </div>
         </div>
 
         <div id="supplier-payments-report-export" className="flex-1 flex flex-col min-h-0 overflow-hidden p-4">
@@ -514,7 +525,9 @@ const SupplierPaymentsReport = () => {
 
         </div>
 
-        {!consolidationLoading && !historyLoading && (
+        
+      </div>
+      {!consolidationLoading && !historyLoading && (
           <PaginationControls
             currentPage={currentPage}
             totalPages={totalPages}

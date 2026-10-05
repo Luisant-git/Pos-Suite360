@@ -759,7 +759,14 @@ const CustomerReceipts = () => {
                                     remarks: r.remarks || '',
                                   });
                                   setEditingId(r.id);
-                                  setAllocations({});
+                                  const existingAllocs: Record<string, number> = {};
+                                  if (r.allocations) {
+                                    r.allocations.forEach((a: any) => {
+                                      if (a.saleId) existingAllocs[a.saleId] = Number(a.amount);
+                                      else existingAllocs['OB'] = Number(a.amount);
+                                    });
+                                  }
+                                  setAllocations(existingAllocs);
                                   window.scrollTo({ top: 0, behavior: 'smooth' });
                                 }}
                                 className="bg-[#EFF6FF] text-[#2563EB] hover:bg-[#DBEAFE] px-2 py-1 rounded text-[11px] font-bold border border-[#BFDBFE] transition-colors"

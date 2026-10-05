@@ -72,14 +72,8 @@ const SupplierPaymentsReport = () => {
       return false;
     }
     
-    // Hide suppliers with zero balance and no activity
-    const hasActivity = Number(item.openingBalance || 0) !== 0 || 
-                        Number(item.totalPurchases || 0) !== 0 || 
-                        Number(item.totalPayments || 0) !== 0 || 
-                        Number(item.totalReturns || 0) !== 0 || 
-                        Number(item.netPending || 0) !== 0;
-                        
-    if (!hasActivity) return false;
+    // Only show suppliers with actual pending dues (or overpayments)
+    if (Number(item.netPending || 0) === 0) return false;
 
     return true;
   });

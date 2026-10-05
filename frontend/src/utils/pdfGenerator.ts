@@ -152,7 +152,7 @@ export const generateBillByBillPdf = (companyName: string, entityName: string, e
   doc.setFont("helvetica", "normal");
   doc.text(`Date: ${new Date().toLocaleDateString()}`, 14, 37);
   
-  const head = [['Type', 'Document No.', 'Date', 'Reference No.', 'Amount', 'Outstanding']];
+  const head = [['Type', 'Invoice No.', 'Date', 'Reference No.', 'Amount', 'Outstanding']];
   const typeStr = entityType === 'Customer' ? 'INV' : 'PUR';
   
   const body = bills.map(b => [

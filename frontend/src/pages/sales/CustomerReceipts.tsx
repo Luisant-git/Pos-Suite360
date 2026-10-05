@@ -1,5 +1,5 @@
 import { getMalaysiaDateStr } from '../../utils/date';
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import TableLoader from '../../components/TableLoader';
 import { useNavigate } from 'react-router-dom';
@@ -392,14 +392,14 @@ const CustomerReceipts = () => {
                       <table className="w-full text-left text-[12px] whitespace-nowrap">
                         <thead className="bg-[#F8FAFC] border-b border-[#E2E8F0] sticky top-0">
                           <tr>
-                            <th className="px-3 py-2 font-bold text-black font-bold">Entry / Inv No</th>
-                            <th className="px-3 py-2 font-bold text-black font-bold">Bill Date</th>
-                            <th className="px-3 py-2 font-bold text-black font-bold text-right">Bill Total</th>
-                            <th className="px-3 py-2 font-bold text-[#E11D48] text-right">Sales Returns</th>
-                            <th className="px-3 py-2 font-bold text-black font-bold text-right">Received Amount</th>
-                            <th className="px-3 py-2 font-bold text-[#059669] text-right">Pending Balance</th>
-                            <th className="px-3 py-2 font-bold text-[#3B82F6] text-right print:hidden">Paying Now</th>
-                            <th className="px-3 py-2 font-bold text-[#059669] text-right print:hidden">Balance After</th>
+                            <th className="px-3 py-2 font-bold text-black uppercase">Type</th>
+                            <th className="px-3 py-2 font-bold text-black uppercase">Document No.</th>
+                            <th className="px-3 py-2 font-bold text-black uppercase">Date</th>
+                            <th className="px-3 py-2 font-bold text-black uppercase">Reference No.</th>
+                            <th className="px-3 py-2 font-bold text-black text-right uppercase">Amount</th>
+                            <th className="px-3 py-2 font-bold text-black text-right uppercase">Outstanding</th>
+                            <th className="px-3 py-2 font-bold text-[#3B82F6] text-right uppercase print:hidden">Payment</th>
+                            <th className="px-3 py-2 font-bold text-black text-center uppercase print:hidden">Matched</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -409,18 +409,17 @@ const CustomerReceipts = () => {
                             return displayedBills.length > 0 ? displayedBills.map((bill, idx) => {
                               const currentPending = bill.pending;
                               const payingNow = allocations[bill.id] || 0;
-                              const balanceAfter = currentPending - payingNow;
                               const isCleared = currentPending === 0;
                               
                               return (
                                 <tr key={bill.id || idx} className={`border-b border-[#E2E8F0] hover:bg-[#F8FAFC] ${isCleared ? 'bg-[#ECFDF5]' : ''}`}>
-                                  <td className="px-3 py-2 font-bold text-black font-bold">
+                                  <td className="px-3 py-2 font-bold text-[#3B82F6]">INV</td>
+                                  <td className="px-3 py-2 font-bold text-black">
                                     {bill.entryNo}
                                   </td>
                                   <td className="px-3 py-2 text-black font-bold">{getMalaysiaDateStr(bill.date)}</td>
+                                  <td className="px-3 py-2 text-black">-</td>
                                   <td className="px-3 py-2 text-right text-black font-bold">{formatCurrency(bill.total)}</td>
-                                  <td className="px-3 py-2 text-right text-[#E11D48]">{formatCurrency(bill.returned || 0)}</td>
-                                  <td className="px-3 py-2 text-right text-[#10B981]">{formatCurrency(bill.received)}</td>
                                   <td className="px-3 py-2 text-right font-bold text-[#059669]">{formatCurrency(bill.pending)}</td>
                                   <td className="px-2 py-1 text-right print:hidden">
                                     <input
@@ -443,7 +442,22 @@ const CustomerReceipts = () => {
                                       className={`w-[100px] text-right px-2 py-1 border rounded text-[13px] font-bold outline-none focus:border-[#059669] ${payingNow > 0 ? 'bg-[#ECFDF5] border-[#059669] text-[#059669]' : 'bg-white border-[#CBD5E1]'}`}
                                     />
                                   </td>
-                                  <td className="px-3 py-2 text-right font-bold text-[#059669] print:hidden">{formatCurrency(balanceAfter)}</td>
+                                  <td className="px-3 py-2 text-center print:hidden">
+                                    <input
+                                      type="checkbox"
+                                      checked={payingNow === currentPending && currentPending > 0}
+                                      disabled={isCleared}
+                                      onChange={(e) => {
+                                        const isChecked = e.target.checked;
+                                        const val = isChecked ? currentPending : 0;
+                                        const newAllocations = { ...allocations, [bill.id]: val };
+                                        setAllocations(newAllocations);
+                                        const newTotal = (Object.values(newAllocations) as number[]).reduce((sum: number, curr: number) => sum + (curr || 0), 0);
+                                        setValue('amount', newTotal as any, { shouldValidate: true });
+                                      }}
+                                      className="w-4 h-4 text-[#3B82F6] bg-gray-100 border-gray-300 rounded focus:ring-[#3B82F6] cursor-pointer disabled:cursor-not-allowed"
+                                    />
+                                  </td>
                                 </tr>
                               );
                             }) : (
@@ -468,12 +482,13 @@ const CustomerReceipts = () => {
                             
                             return (
                               <tr>
-                                <td colSpan={2} className="px-3 py-2 text-right font-bold text-black uppercase">Totals:</td>
+                                <td colSpan={4} className="px-3 py-2 text-right font-bold text-black uppercase">Totals:</td>
                                 <td className="px-3 py-2 text-right font-bold text-black">{formatCurrency(totals.total)}</td>
-                                <td className="px-3 py-2 text-right font-bold text-[#E11D48]">{formatCurrency(totals.returned)}</td>
-                                <td className="px-3 py-2 text-right font-bold text-[#10B981]">{formatCurrency(totals.received)}</td>
                                 <td className="px-3 py-2 text-right font-bold text-[#059669]">{formatCurrency(totals.pending)}</td>
-                                <td colSpan={2} className="print:hidden"></td>
+                                <td className="px-3 py-2 text-right font-bold text-[#3B82F6] print:hidden">
+                                  {formatCurrency(Object.values(allocations).reduce((sum: any, curr: any) => sum + (curr || 0), 0))}
+                                </td>
+                                <td className="print:hidden"></td>
                               </tr>
                             );
                           })()}
@@ -668,59 +683,108 @@ const CustomerReceipts = () => {
             <table className="w-full text-left text-[12px] whitespace-nowrap">
               <thead>
                 <tr className="bg-[#1E293B] text-white font-bold">
-                  <th className="px-3 py-2 border-r border-[#334155]">Receipt No</th>
-                  <th className="px-3 py-2 border-r border-[#334155]">Date</th>
-                  <th className="px-3 py-2 border-r border-[#334155]">Customer</th>
-                  <th className="px-3 py-2 border-r border-[#444]">Payment Type</th>
-                  <th className="px-3 py-2 text-right border-r border-[#334155]">Amount Paid</th>
-                  <th className="px-3 py-2 border-r border-[#334155]">Allocated Bills</th>
+                  <th className="px-3 py-2 border-r border-[#334155]">RECEIPT</th>
+                  <th className="px-3 py-2 border-r border-[#334155]">DATE</th>
+                  <th className="px-3 py-2 border-r border-[#334155]">DEBTOR #</th>
+                  <th className="px-3 py-2 border-r border-[#334155]">DEBTOR NAME</th>
+                  <th className="px-3 py-2 text-right border-r border-[#334155]">AMT. REC.</th>
+                  <th className="px-3 py-2 text-right border-r border-[#334155]">OPEN CR</th>
+                  <th className="px-3 py-2 border-r border-[#334155]">PAYMENT FOR</th>
+                  <th className="px-3 py-2 border-r border-[#334155]">ON</th>
+                  <th className="px-3 py-2 text-center border-r border-[#334155]">DAYS</th>
+                  <th className="px-3 py-2 text-right border-r border-[#334155]">ORIG. AMT</th>
+                  <th className="px-3 py-2 text-right border-r border-[#334155]">AMT. PAID</th>
+                  <th className="px-3 py-2 text-right border-r border-[#334155]">OUT'DING</th>
                   {storeSettings?.allowEditReceipts && <th className="px-3 py-2 text-center w-20">Action</th>}
                 </tr>
               </thead>
               <tbody>
                 {historyLoading ? (
-                  <TableLoader columns={storeSettings?.allowEditReceipts ? 7 : 6} text="Loading history..." />
+                  <TableLoader columns={storeSettings?.allowEditReceipts ? 13 : 12} text="Loading history..." />
                 ) : filteredHistory.length === 0 ? (
-                  <tr><td colSpan={storeSettings?.allowEditReceipts ? 7 : 6} className="text-center p-4 text-black font-bold">No receipt records found.</td></tr>
+                  <tr><td colSpan={storeSettings?.allowEditReceipts ? 13 : 12} className="text-center p-4 text-black font-bold">No receipt records found.</td></tr>
                 ) : (
-                  paginatedHistory.map((r: any, idx: number) => (
-                    <tr key={r.id} className={`border-b border-[#E2E8F0] ${idx % 2 === 0 ? 'bg-white' : 'bg-[#F8FAFC]'}`}>
-                      <td className="px-3 py-2 border-r border-[#E2E8F0] font-bold text-[#059669]">{r.receiptNo}</td>
-                      <td className="px-3 py-2 border-r border-[#E2E8F0] text-black font-bold">{getMalaysiaDateStr(r.date)}</td>
-                      <td className="px-3 py-2 border-r border-[#E2E8F0] font-bold text-black font-bold">{r.customer?.name}</td>
-                      <td className="px-3 py-3 border-r border-[#E5E7EB] text-black font-bold">{r.paymentType?.name || r.paymentMode?.name || '-'}</td>
-                      <td className="px-3 py-2 text-right font-bold text-[#059669]">{formatCurrency(r.amount)}</td>
-                      <td className="px-3 py-2 border-r border-[#E2E8F0] text-[11px] text-gray-600 whitespace-pre-wrap min-w-[150px]">
-                        {r.allocations && r.allocations.length > 0 
-                          ? r.allocations.map((a: any) => `${a.sale?.invoiceNo || 'N/A'} (${formatCurrency(a.amount)})`).join(', ')
-                          : '-'}
-                      </td>
-                      {storeSettings?.allowEditReceipts && (
-                        <td className="px-3 py-2 text-center border-l border-[#E2E8F0]">
-                          <button
-                            type="button"
-                            onClick={() => {
-                              reset({
-                                receiptNo: r.receiptNo,
-                                date: getMalaysiaDateStr(r.date),
-                                customerId: r.customerId,
-                                amount: r.amount,
-                                paymentTypeId: r.paymentTypeId || 0,
-                                reference: r.reference || '',
-                                remarks: r.remarks || '',
-                              });
-                              setEditingId(r.id);
-                              setAllocations({});
-                              window.scrollTo({ top: 0, behavior: 'smooth' });
-                            }}
-                            className="bg-[#EFF6FF] text-[#2563EB] hover:bg-[#DBEAFE] px-2 py-1 rounded text-[11px] font-bold border border-[#BFDBFE] transition-colors"
-                          >
-                            Edit
-                          </button>
-                        </td>
-                      )}
-                    </tr>
-                  ))
+                  paginatedHistory.map((r: any, idx: number) => {
+                    const rowSpan = Math.max(r.allocations?.length || 1, 1);
+                    const openCr = r.amount - (r.allocations?.reduce((sum: number, a: any) => sum + Number(a.amount || 0), 0) || 0);
+                    
+                    return (
+                      <React.Fragment key={r.id}>
+                        <tr className={`border-b ${r.allocations && r.allocations.length > 1 ? 'border-dashed border-[#CBD5E1]' : 'border-[#E2E8F0]'} ${idx % 2 === 0 ? 'bg-white' : 'bg-[#F8FAFC]'}`}>
+                          <td rowSpan={rowSpan} className="px-3 py-2 border-r border-[#E2E8F0] font-bold text-[#059669] align-top">{r.receiptNo}</td>
+                          <td rowSpan={rowSpan} className="px-3 py-2 border-r border-[#E2E8F0] text-black font-bold align-top">{getMalaysiaDateStr(r.date)}</td>
+                          <td rowSpan={rowSpan} className="px-3 py-2 border-r border-[#E2E8F0] font-bold text-black align-top">{r.customer?.code || r.customerId}</td>
+                          <td rowSpan={rowSpan} className="px-3 py-2 border-r border-[#E2E8F0] font-bold text-black align-top">{r.customer?.name}</td>
+                          <td rowSpan={rowSpan} className="px-3 py-2 text-right font-bold text-[#059669] border-r border-[#E2E8F0] align-top">{formatCurrency(r.amount)}</td>
+                          <td rowSpan={rowSpan} className="px-3 py-2 text-right font-bold text-black border-r border-[#E2E8F0] align-top">{formatCurrency(openCr > 0 ? openCr : 0)}</td>
+                          
+                          {r.allocations && r.allocations.length > 0 ? (
+                            <>
+                              <td className="px-3 py-2 border-r border-[#E2E8F0] text-black font-bold">{r.allocations[0].sale?.invoiceNo || '-'}</td>
+                              <td className="px-3 py-2 border-r border-[#E2E8F0] text-black">{r.allocations[0].sale?.date ? getMalaysiaDateStr(r.allocations[0].sale.date) : '-'}</td>
+                              <td className="px-3 py-2 border-r border-[#E2E8F0] text-center text-black">
+                                {r.allocations[0].sale?.date ? Math.floor((new Date(r.date).getTime() - new Date(r.allocations[0].sale.date).getTime()) / (1000 * 3600 * 24)) : '-'}
+                              </td>
+                              <td className="px-3 py-2 border-r border-[#E2E8F0] text-right text-black">{formatCurrency(r.allocations[0].sale?.grandTotal || 0)}</td>
+                              <td className="px-3 py-2 border-r border-[#E2E8F0] text-right font-bold text-[#059669]">{formatCurrency(r.allocations[0].amount)}</td>
+                              <td className="px-3 py-2 border-r border-[#E2E8F0] text-right text-black">
+                                {formatCurrency((r.allocations[0].sale?.grandTotal || 0) - r.allocations[0].amount)}
+                              </td>
+                            </>
+                          ) : (
+                            <>
+                              <td className="px-3 py-2 border-r border-[#E2E8F0] text-black text-center">-</td>
+                              <td className="px-3 py-2 border-r border-[#E2E8F0] text-black text-center">-</td>
+                              <td className="px-3 py-2 border-r border-[#E2E8F0] text-black text-center">-</td>
+                              <td className="px-3 py-2 border-r border-[#E2E8F0] text-black text-center">-</td>
+                              <td className="px-3 py-2 border-r border-[#E2E8F0] text-black text-center">-</td>
+                              <td className="px-3 py-2 border-r border-[#E2E8F0] text-black text-center">-</td>
+                            </>
+                          )}
+                          
+                          {storeSettings?.allowEditReceipts && (
+                            <td rowSpan={rowSpan} className="px-3 py-2 text-center align-top border-l border-[#E2E8F0]">
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  reset({
+                                    receiptNo: r.receiptNo,
+                                    date: getMalaysiaDateStr(r.date),
+                                    customerId: r.customerId,
+                                    amount: r.amount,
+                                    paymentTypeId: r.paymentTypeId || 0,
+                                    reference: r.reference || '',
+                                    remarks: r.remarks || '',
+                                  });
+                                  setEditingId(r.id);
+                                  setAllocations({});
+                                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                                }}
+                                className="bg-[#EFF6FF] text-[#2563EB] hover:bg-[#DBEAFE] px-2 py-1 rounded text-[11px] font-bold border border-[#BFDBFE] transition-colors"
+                              >
+                                Edit
+                              </button>
+                            </td>
+                          )}
+                        </tr>
+                        
+                        {r.allocations && r.allocations.slice(1).map((a: any, i: number) => (
+                          <tr key={i} className={`border-b ${i === r.allocations.length - 2 ? 'border-[#E2E8F0]' : 'border-dashed border-[#CBD5E1]'} ${idx % 2 === 0 ? 'bg-white' : 'bg-[#F8FAFC]'}`}>
+                            <td className="px-3 py-2 border-r border-[#E2E8F0] text-black font-bold">{a.sale?.invoiceNo || '-'}</td>
+                            <td className="px-3 py-2 border-r border-[#E2E8F0] text-black">{a.sale?.date ? getMalaysiaDateStr(a.sale.date) : '-'}</td>
+                            <td className="px-3 py-2 border-r border-[#E2E8F0] text-center text-black">
+                              {a.sale?.date ? Math.floor((new Date(r.date).getTime() - new Date(a.sale.date).getTime()) / (1000 * 3600 * 24)) : '-'}
+                            </td>
+                            <td className="px-3 py-2 border-r border-[#E2E8F0] text-right text-black">{formatCurrency(a.sale?.grandTotal || 0)}</td>
+                            <td className="px-3 py-2 border-r border-[#E2E8F0] text-right font-bold text-[#059669]">{formatCurrency(a.amount)}</td>
+                            <td className="px-3 py-2 border-r border-[#E2E8F0] text-right text-black">
+                              {formatCurrency((a.sale?.grandTotal || 0) - a.amount)}
+                            </td>
+                          </tr>
+                        ))}
+                      </React.Fragment>
+                    );
+                  })
                 )}
               </tbody>
             </table>

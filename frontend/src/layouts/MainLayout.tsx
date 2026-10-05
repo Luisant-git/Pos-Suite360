@@ -266,7 +266,7 @@ const MainLayout = () => {
                 {hasPerm('reports_profit_ledger') && <MobileDropdownItem to="/reports/profit-ledger" icon="fa-bar-chart" title="Profit / Ledger" />}
                 {hasPerm('reports_expense') && <MobileDropdownItem to="/reports/expenses" icon="fa-calculator" title="Expense Report" />}
                 {hasPerm('reports_financial') && <MobileDropdownItem to="/reports/bank-deposits" icon="fa-building" title="Bank Deposit Report" />}
-                {hasPerm('reports_customer_receipts') && <MobileDropdownItem to="/reports/customer-receipts" icon="fa-users" title="Customer Receipts & Dues Report" />}
+                {hasPerm('reports_customer_receipts') && <MobileDropdownItem to="/reports/customer-receipts" icon="fa-users" title="Customer Receipts & Overdue Report" />}
                 {hasPerm('reports_supplier_payments') && <MobileDropdownItem to="/reports/supplier-payments" icon="fa-truck" title="Supplier Payments & Payables Report" />}
               </MobileNavDropdown>
             )}
@@ -371,7 +371,7 @@ const MainLayout = () => {
                 {hasPerm('reports_profit_ledger') && <DropdownItem to="/reports/profit-ledger" icon="fa-bar-chart" title="Profit / Ledger" />}
                 {hasPerm('reports_expense') && <DropdownItem to="/reports/expenses" icon="fa-calculator" title="Expense Report" />}
                 {hasPerm('reports_financial') && <DropdownItem to="/reports/bank-deposits" icon="fa-building" title="Bank Deposit Report" />}
-                {hasPerm('reports_customer_receipts') && <DropdownItem to="/reports/customer-receipts" icon="fa-users" title="Customer Receipts & Dues Report" />}
+                {hasPerm('reports_customer_receipts') && <DropdownItem to="/reports/customer-receipts" icon="fa-users" title="Customer Receipts & Overdue Report" />}
                 {hasPerm('reports_supplier_payments') && <DropdownItem to="/reports/supplier-payments" icon="fa-truck" title="Supplier Payments & Payables Report" />}
               </NavDropdown>
             )}
@@ -534,7 +534,7 @@ const MainLayout = () => {
                   {hasPerm('reports_profit_ledger') && <MobileDropdownItem to="/reports/profit-ledger" icon="fa-bar-chart" title="Profit / Ledger" onClick={closeMobileMenu} />}
                   {hasPerm('reports_expense') && <MobileDropdownItem to="/reports/expenses" icon="fa-calculator" title="Expense Report" onClick={closeMobileMenu} />}
                   {hasPerm('reports_financial') && <MobileDropdownItem to="/reports/bank-deposits" icon="fa-building" title="Bank Deposit Report" onClick={closeMobileMenu} />}
-                  {hasPerm('reports_customer_receipts') && <MobileDropdownItem to="/reports/customer-receipts" icon="fa-users" title="Customer Receipts & Dues" onClick={closeMobileMenu} />}
+                  {hasPerm('reports_customer_receipts') && <MobileDropdownItem to="/reports/customer-receipts" icon="fa-users" title="Customer Receipts & Overdue Report" onClick={closeMobileMenu} />}
                   {hasPerm('reports_supplier_payments') && <MobileDropdownItem to="/reports/supplier-payments" icon="fa-truck" title="Supplier Payments & Payables" onClick={closeMobileMenu} />}
                 </MobileNavDropdown>
               )}

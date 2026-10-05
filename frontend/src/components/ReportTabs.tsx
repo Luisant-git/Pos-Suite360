@@ -24,7 +24,7 @@ const ReportTabs = () => {
     { name: 'Stock as on Date', path: '/reports/stock', icon: <Box size={14} /> },
     { name: 'Profit & Ledger', path: '/reports/profit-ledger', icon: <PieChart size={14} /> },
     { name: 'Expense Report', path: '/reports/expenses', icon: <DollarSign size={14} /> },
-    { name: 'Customer Receipts & Dues', path: '/reports/customer-receipts', icon: <Users size={14} /> },
+    { name: 'Customer Receipts & Overdue Report', path: '/reports/customer-receipts', icon: <Users size={14} /> },
     { name: 'Supplier Payments & Payables', path: '/reports/supplier-payments', icon: <Truck size={14} /> },
     { name: 'Bank Deposit Report', path: '/reports/bank-deposits', icon: <Building size={14} /> },
   ];

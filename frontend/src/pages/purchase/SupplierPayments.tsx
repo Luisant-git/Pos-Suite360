@@ -392,14 +392,14 @@ const SupplierPayments = () => {
                       <table className="w-full text-left text-[12px] whitespace-nowrap">
                         <thead className="bg-[#F8FAFC] border-b border-[#E2E8F0] sticky top-0">
                           <tr>
-                            <th className="px-3 py-2 font-bold text-black font-bold">Entry / Inv No</th>
-                            <th className="px-3 py-2 font-bold text-black font-bold">Bill Date</th>
-                            <th className="px-3 py-2 font-bold text-black font-bold text-right">Bill Total</th>
-                            <th className="px-3 py-2 font-bold text-[#10B981] text-right">Pur. Returns</th>
-                            <th className="px-3 py-2 font-bold text-black font-bold text-right">Paid Amount</th>
-                            <th className="px-3 py-2 font-bold text-[#E11D48] text-right">Pending Balance</th>
-                            <th className="px-3 py-2 font-bold text-[#3B82F6] text-right print:hidden">Paying Now</th>
-                            <th className="px-3 py-2 font-bold text-[#059669] text-right print:hidden">Balance After</th>
+                            <th className="px-3 py-2 font-bold text-black uppercase">Type</th>
+                            <th className="px-3 py-2 font-bold text-black uppercase">Document No.</th>
+                            <th className="px-3 py-2 font-bold text-black uppercase">Date</th>
+                            <th className="px-3 py-2 font-bold text-black uppercase">Reference No.</th>
+                            <th className="px-3 py-2 font-bold text-black text-right uppercase">Amount</th>
+                            <th className="px-3 py-2 font-bold text-black text-right uppercase">Outstanding</th>
+                            <th className="px-3 py-2 font-bold text-[#3B82F6] text-right uppercase print:hidden">Payment</th>
+                            <th className="px-3 py-2 font-bold text-black text-center uppercase print:hidden">Matched</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -409,18 +409,17 @@ const SupplierPayments = () => {
                             return displayedBills.length > 0 ? displayedBills.map((bill, idx) => {
                               const currentPending = bill.pending;
                               const payingNow = allocations[bill.id] || 0;
-                              const balanceAfter = currentPending - payingNow;
                               const isCleared = currentPending === 0;
                               
                               return (
                                 <tr key={bill.id || idx} className={`border-b border-[#E2E8F0] hover:bg-[#F8FAFC] ${isCleared ? 'bg-[#ECFDF5]' : ''}`}>
-                                  <td className="px-3 py-2 font-bold text-black font-bold">
+                                  <td className="px-3 py-2 font-bold text-[#3B82F6]">PUR</td>
+                                  <td className="px-3 py-2 font-bold text-black">
                                     {bill.entryNo}
                                   </td>
                                   <td className="px-3 py-2 text-black font-bold">{getMalaysiaDateStr(bill.date)}</td>
+                                  <td className="px-3 py-2 text-black">-</td>
                                   <td className="px-3 py-2 text-right text-black font-bold">{formatCurrency(bill.total)}</td>
-                                  <td className="px-3 py-2 text-right text-[#10B981]">{formatCurrency(bill.returned || 0)}</td>
-                                  <td className="px-3 py-2 text-right text-[#10B981]">{formatCurrency(bill.received)}</td>
                                   <td className="px-3 py-2 text-right font-bold text-[#E11D48]">{formatCurrency(bill.pending)}</td>
                                   <td className="px-2 py-1 text-right print:hidden">
                                     <input
@@ -443,7 +442,22 @@ const SupplierPayments = () => {
                                       className={`w-[100px] text-right px-2 py-1 border rounded text-[13px] font-bold outline-none focus:border-[#3B82F6] ${payingNow > 0 ? 'bg-[#EFF6FF] border-[#3B82F6] text-[#2563EB]' : 'bg-white border-[#CBD5E1]'}`}
                                     />
                                   </td>
-                                  <td className="px-3 py-2 text-right font-bold text-[#059669] print:hidden">{formatCurrency(balanceAfter)}</td>
+                                  <td className="px-3 py-2 text-center print:hidden">
+                                    <input
+                                      type="checkbox"
+                                      checked={payingNow === currentPending && currentPending > 0}
+                                      disabled={isCleared}
+                                      onChange={(e) => {
+                                        const isChecked = e.target.checked;
+                                        const val = isChecked ? currentPending : 0;
+                                        const newAllocations = { ...allocations, [bill.id]: val };
+                                        setAllocations(newAllocations);
+                                        const newTotal = (Object.values(newAllocations) as number[]).reduce((sum: number, curr: number) => sum + (curr || 0), 0);
+                                        setValue('amount', newTotal as any, { shouldValidate: true });
+                                      }}
+                                      className="w-4 h-4 text-[#3B82F6] bg-gray-100 border-gray-300 rounded focus:ring-[#3B82F6] cursor-pointer disabled:cursor-not-allowed"
+                                    />
+                                  </td>
                                 </tr>
                               );
                             }) : (
@@ -468,12 +482,13 @@ const SupplierPayments = () => {
                             
                             return (
                               <tr>
-                                <td colSpan={2} className="px-3 py-2 text-right font-bold text-black uppercase">Totals:</td>
+                                <td colSpan={4} className="px-3 py-2 text-right font-bold text-black uppercase">Totals:</td>
                                 <td className="px-3 py-2 text-right font-bold text-black">{formatCurrency(totals.total)}</td>
-                                <td className="px-3 py-2 text-right font-bold text-[#10B981]">{formatCurrency(totals.returned)}</td>
-                                <td className="px-3 py-2 text-right font-bold text-[#10B981]">{formatCurrency(totals.paid)}</td>
                                 <td className="px-3 py-2 text-right font-bold text-[#E11D48]">{formatCurrency(totals.pending)}</td>
-                                <td colSpan={2} className="print:hidden"></td>
+                                <td className="px-3 py-2 text-right font-bold text-[#3B82F6] print:hidden">
+                                  {formatCurrency((Object.values(allocations) as number[]).reduce((sum: number, curr: number) => sum + (curr || 0), 0))}
+                                </td>
+                                <td className="print:hidden"></td>
                               </tr>
                             );
                           })()}

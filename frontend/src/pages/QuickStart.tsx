@@ -79,7 +79,7 @@ const menuData = [
       { name: 'Stock As On Date', path: '/reports/stock', icon: FileText, authKey: 'reports_financial' },
       { name: 'Profit / Ledger', path: '/reports/profit-ledger', icon: FileText, authKey: 'reports_financial' },
       { name: 'Expense Report', path: '/reports/expenses', icon: FileText, authKey: 'reports_financial' },
-      { name: 'Customer Receipts & Dues', path: '/reports/customer-receipts', icon: Users, authKey: 'reports_financial' },
+      { name: 'Customer Receipts & Overdue Report', path: '/reports/customer-receipts', icon: Users, authKey: 'reports_financial' },
       { name: 'Supplier Payments & Payables', path: '/reports/supplier-payments', icon: Truck, authKey: 'reports_financial' },
     ]
   }

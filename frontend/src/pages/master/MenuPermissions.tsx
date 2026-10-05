@@ -74,7 +74,7 @@ const MODULES = [
       { id: 'reports_stock', name: 'Stock As On Date' },
       { id: 'reports_profit_ledger', name: 'Profit / Ledger' },
       { id: 'reports_expense', name: 'Expense Report' },
-      { id: 'reports_customer_receipts', name: 'Customer Receipts & Dues Report' },
+      { id: 'reports_customer_receipts', name: 'Customer Receipts & Overdue Report' },
       { id: 'reports_supplier_payments', name: 'Supplier Payments & Payables Report' },
     ]
   },

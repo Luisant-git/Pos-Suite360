@@ -26,7 +26,7 @@ export const generateNativePdf = (sale: any, settings: any): string => {
   // Header
   doc.setFontSize(14);
   doc.setFont("helvetica", "bold");
-  const companyName = settings?.companyName || 'NASA FRESH MART';
+  const companyName = settings?.shopName || 'NASA FRESH MART';
   const companyNumber = settings?.companyNumber ? `(${settings.companyNumber})` : '(001634825-A)';
   doc.text(`${companyName} ${companyNumber}`, 105, 15, { align: 'center' });
   
@@ -133,7 +133,7 @@ export const generateNativePdf = (sale: any, settings: any): string => {
   return doc.output('datauristring');
 };
 
-export const generateBillByBillPdf = (companyName: string, entityName: string, entityType: 'Customer' | 'Supplier', bills: any[], totals: any) => {
+export const generateBillByBillPdf = (companyName: string, entityName: string, entityType: 'Customer' | 'Supplier', bills: any[], totals: any, reportTitle: string = 'PENDING BALANCE BILL BY BILL') => {
   const doc = new jsPDF('p', 'mm', 'a4');
   
   // Header
@@ -143,7 +143,7 @@ export const generateBillByBillPdf = (companyName: string, entityName: string, e
 
   doc.setFontSize(14);
   doc.setFont("helvetica", "bold");
-  doc.text('PENDING BALANCE BILL BY BILL', 105, 22, { align: 'center' });
+  doc.text(reportTitle, 105, 22, { align: 'center' });
   
   doc.setFontSize(11);
   doc.setFont("helvetica", "bold");

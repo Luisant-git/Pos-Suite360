@@ -14,4 +14,5 @@ export declare class CreateProductDto {
     wholesaleRate?: number;
     reorderLevel?: number;
     currentStock?: number;
+    currentBirds?: number;
 }

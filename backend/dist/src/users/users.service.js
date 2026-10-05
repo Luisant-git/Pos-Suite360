@@ -58,14 +58,22 @@ let UsersService = class UsersService {
     }
     async createUser(data) {
         const { username, password, name, roleId } = data;
-        return this.prisma.user.create({
-            data: {
-                username,
-                password,
-                name,
-                roleId,
-            },
-        });
+        try {
+            return await this.prisma.user.create({
+                data: {
+                    username,
+                    password,
+                    name,
+                    roleId,
+                },
+            });
+        }
+        catch (error) {
+            if (error.code === 'P2002') {
+                throw new common_1.ConflictException('Username already exists');
+            }
+            throw error;
+        }
     }
     async updatePassword(userId, hash) {
         return this.prisma.user.update({
@@ -80,10 +88,18 @@ let UsersService = class UsersService {
                 delete updateData.password;
             }
         }
-        return this.prisma.user.update({
-            where: { id },
-            data: updateData,
-        });
+        try {
+            return await this.prisma.user.update({
+                where: { id },
+                data: updateData,
+            });
+        }
+        catch (error) {
+            if (error.code === 'P2002') {
+                throw new common_1.ConflictException('Username already exists');
+            }
+            throw error;
+        }
     }
     async deleteUser(id) {
         return this.prisma.user.delete({

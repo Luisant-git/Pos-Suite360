@@ -27,6 +27,7 @@ class CreateProductDto {
     wholesaleRate;
     reorderLevel;
     currentStock;
+    currentBirds;
 }
 exports.CreateProductDto = CreateProductDto;
 __decorate([
@@ -109,4 +110,10 @@ __decorate([
     (0, class_validator_1.Min)(0),
     __metadata("design:type", Number)
 ], CreateProductDto.prototype, "currentStock", void 0);
+__decorate([
+    (0, class_validator_1.IsNumber)(),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.Min)(0),
+    __metadata("design:type", Number)
+], CreateProductDto.prototype, "currentBirds", void 0);
 //# sourceMappingURL=create-product.dto.js.map

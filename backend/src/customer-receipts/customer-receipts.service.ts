@@ -84,6 +84,9 @@ export class CustomerReceiptsService {
         customer: true,
         paymentType: true,
         paymentMode: true,
+        allocations: {
+          include: { sale: true }
+        }
       },
     });
   }

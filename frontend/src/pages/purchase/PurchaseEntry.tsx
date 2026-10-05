@@ -151,10 +151,10 @@ const PurchaseEntry = () => {
 
   // Update default entry no
   useEffect(() => {
-    if (nextEntryData?.entryNo) {
+    if (!editId && nextEntryData?.entryNo) {
       setValue('entryNo', nextEntryData.entryNo);
     }
-  }, [nextEntryData, setValue]);
+  }, [nextEntryData, editId, setValue]);
 
   // Watch values for calculation
   const items = watch('items');
@@ -303,7 +303,11 @@ const PurchaseEntry = () => {
     printAfterSaveRef.current = print;
     setIsSaveModalOpen(false);
     if (pendingSavePayload) {
-      createMutation.mutate(pendingSavePayload as any);
+      if (editId) {
+        updateMutation.mutate(pendingSavePayload as any);
+      } else {
+        createMutation.mutate(pendingSavePayload as any);
+      }
       setPendingSavePayload(null);
     }
   };

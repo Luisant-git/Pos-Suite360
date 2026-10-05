@@ -17,6 +17,8 @@ export declare class SettingsController {
         signatureImage: string | null;
         yearlyInvoiceReset: boolean;
         allowEditSaleInvoice: boolean;
+        allowEditPurchaseInvoice: boolean;
+        allowEditReceipts: boolean;
         enableCustomerRates: boolean;
     }>;
     updateSettings(data: any): Promise<{
@@ -34,6 +36,8 @@ export declare class SettingsController {
         signatureImage: string | null;
         yearlyInvoiceReset: boolean;
         allowEditSaleInvoice: boolean;
+        allowEditPurchaseInvoice: boolean;
+        allowEditReceipts: boolean;
         enableCustomerRates: boolean;
     }>;
     uploadSignature(file: Express.Multer.File): Promise<{

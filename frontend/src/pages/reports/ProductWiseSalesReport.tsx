@@ -2,7 +2,9 @@ import { getMalaysiaDateStr, formatMalaysiaDate } from '../../utils/date';
 import React, { useState } from 'react';
 import { Loader2 } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
-import { CornerDownLeft, Calendar, Package } from 'lucide-react';
+import { CornerDownLeft, Calendar, Package, Download, Printer } from 'lucide-react';
+import { exportToExcel } from '../../utils/exportExcel';
+import { exportTableToPdf, type PdfColumn } from '../../utils/exportPdf';
 import api from '../../services/api';
 import ReportTabs from '../../components/ReportTabs';
 import { useSettings } from '../../contexts/SettingsContext';
@@ -10,7 +12,7 @@ import SearchableSelect from '../../components/SearchableSelect';
 import { useNavigate } from 'react-router-dom';
 
 const ProductWiseSalesReport = () => {
-  const { formatCurrency } = useSettings();
+  const { formatCurrency, settings } = useSettings();
   const navigate = useNavigate();
   
   // Default to today
@@ -38,6 +40,66 @@ const ProductWiseSalesReport = () => {
     },
   });
 
+  const handleExportExcel = () => {
+    const exportData: any[] = [];
+    reportData.forEach((group: any) => {
+      group.items.forEach((item: any) => {
+        exportData.push({
+          'Product Name': group.productName,
+          'Invoice No': item.invoiceNo,
+          'Date': formatMalaysiaDate(item.date),
+          'Qty': item.qty,
+          'Sales Value': item.value
+        });
+      });
+      exportData.push({
+        'Product Name': `SUBTOTAL: ${group.productName}`,
+        'Invoice No': '',
+        'Date': '',
+        'Qty': group.totalQty,
+        'Sales Value': group.totalValue
+      });
+    });
+
+    exportToExcel(exportData, `Product_Wise_Sales_${filterFromDate}_to_${filterToDate}`, {
+      title: 'Product Wise Sales Report',
+      shopName: settings?.shopName,
+      totalCount: exportData.length
+    });
+  };
+
+  const handleExportPdf = () => {
+    const cols: PdfColumn[] = [
+      { header: 'Product Name', dataKey: 'productName' },
+      { header: 'Invoice No', dataKey: 'invoiceNo' },
+      { header: 'Date', dataKey: 'date' },
+      { header: 'Qty', dataKey: 'qty' },
+      { header: 'Sales Value', dataKey: 'value' }
+    ];
+
+    const pdfData: any[] = [];
+    reportData.forEach((group: any) => {
+      group.items.forEach((item: any) => {
+        pdfData.push({
+          productName: group.productName,
+          invoiceNo: item.invoiceNo,
+          date: formatMalaysiaDate(item.date),
+          qty: item.qty,
+          value: formatCurrency(item.value)
+        });
+      });
+      pdfData.push({
+        productName: `SUBTOTAL: ${group.productName}`,
+        invoiceNo: '',
+        date: '',
+        qty: group.totalQty.toString(),
+        value: formatCurrency(group.totalValue)
+      });
+    });
+
+    exportTableToPdf(cols, pdfData, `Product_Wise_Sales_${filterFromDate}_to_${filterToDate}`, 'Product Wise Sales Report', settings?.shopName, pdfData.length);
+  };
+
   return (
     <div className="absolute inset-0 bg-[#F7F7F7] flex flex-col font-sans overflow-y-auto lg:overflow-hidden z-10 p-2 sm:p-4">
       <ReportTabs />
@@ -50,6 +112,22 @@ const ProductWiseSalesReport = () => {
               <div className="flex items-center gap-2">
                 <CornerDownLeft size={18} className="shrink-0" />
                 <h2 className="font-bold text-[13px] md:text-[14px] uppercase tracking-wide">Product Wise Sales Report</h2>
+              </div>
+              <div className="flex items-center gap-2 shrink-0">
+                <button 
+                  onClick={handleExportExcel}
+                  disabled={reportData.length === 0}
+                  className="bg-[#10B981] hover:bg-[#059669] text-white px-3 py-1.5 rounded flex items-center gap-1.5 text-[12px] font-bold transition-colors disabled:opacity-50"
+                >
+                  <Download size={14} /> <span className="hidden md:inline">Export Excel</span>
+                </button>
+                <button 
+                  onClick={handleExportPdf}
+                  disabled={reportData.length === 0}
+                  className="bg-[#EF4444] hover:bg-[#DC2626] text-white px-3 py-1.5 rounded flex items-center gap-1.5 text-[12px] font-bold transition-colors disabled:opacity-50"
+                >
+                  <Printer size={14} /> <span className="hidden md:inline">Print PDF</span>
+                </button>
               </div>
             </div>
           </div>

@@ -49,6 +49,8 @@ let SettingsService = class SettingsService {
                 signatureImage: data.signatureImage,
                 yearlyInvoiceReset: data.yearlyInvoiceReset,
                 allowEditSaleInvoice: data.allowEditSaleInvoice,
+                allowEditPurchaseInvoice: data.allowEditPurchaseInvoice,
+                allowEditReceipts: data.allowEditReceipts,
                 enableCustomerRates: data.enableCustomerRates,
             },
             create: {
@@ -64,6 +66,8 @@ let SettingsService = class SettingsService {
                 signatureImage: data.signatureImage,
                 yearlyInvoiceReset: data.yearlyInvoiceReset || false,
                 allowEditSaleInvoice: data.allowEditSaleInvoice || false,
+                allowEditPurchaseInvoice: data.allowEditPurchaseInvoice || false,
+                allowEditReceipts: data.allowEditReceipts || false,
                 enableCustomerRates: data.enableCustomerRates || false,
             },
         });

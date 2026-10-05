@@ -12,6 +12,7 @@ export declare class PurchasesService {
             amount: import("@prisma/client-runtime-utils").Decimal;
             purchaseId: number;
             quantity: import("@prisma/client-runtime-utils").Decimal;
+            noOfBirds: number;
         }[];
     } & {
         id: number;
@@ -34,12 +35,12 @@ export declare class PurchasesService {
             createdAt: Date;
             updatedAt: Date;
             name: string;
-            contactPerson: string | null;
             phone: string | null;
             email: string | null;
             address: string | null;
             gstNumber: string | null;
             openingBalance: import("@prisma/client-runtime-utils").Decimal;
+            contactPerson: string | null;
             openingBalanceType: string;
             accountNo: string | null;
             ifscCode: string | null;
@@ -52,6 +53,16 @@ export declare class PurchasesService {
             name: string;
             description: string | null;
         };
+        items: {
+            id: number;
+            tax: import("@prisma/client-runtime-utils").Decimal;
+            productId: number;
+            rate: import("@prisma/client-runtime-utils").Decimal;
+            amount: import("@prisma/client-runtime-utils").Decimal;
+            purchaseId: number;
+            quantity: import("@prisma/client-runtime-utils").Decimal;
+            noOfBirds: number;
+        }[];
     } & {
         id: number;
         invoiceNo: string;
@@ -73,12 +84,12 @@ export declare class PurchasesService {
             createdAt: Date;
             updatedAt: Date;
             name: string;
-            contactPerson: string | null;
             phone: string | null;
             email: string | null;
             address: string | null;
             gstNumber: string | null;
             openingBalance: import("@prisma/client-runtime-utils").Decimal;
+            contactPerson: string | null;
             openingBalanceType: string;
             accountNo: string | null;
             ifscCode: string | null;
@@ -119,6 +130,7 @@ export declare class PurchasesService {
                 wholesaleRate: import("@prisma/client-runtime-utils").Decimal;
                 reorderLevel: import("@prisma/client-runtime-utils").Decimal;
                 currentStock: import("@prisma/client-runtime-utils").Decimal;
+                currentBirds: number;
             };
         } & {
             id: number;
@@ -128,6 +140,7 @@ export declare class PurchasesService {
             amount: import("@prisma/client-runtime-utils").Decimal;
             purchaseId: number;
             quantity: import("@prisma/client-runtime-utils").Decimal;
+            noOfBirds: number;
         })[];
     } & {
         id: number;
@@ -152,9 +165,36 @@ export declare class PurchasesService {
         amount: import("@prisma/client-runtime-utils").Decimal;
         purchaseId: number;
         quantity: import("@prisma/client-runtime-utils").Decimal;
+        noOfBirds: number;
     } | null>;
     getNextEntryNo(): Promise<string>;
     remove(id: number): Promise<{
+        id: number;
+        invoiceNo: string;
+        date: Date;
+        supplierInvoiceNo: string | null;
+        invoiceDate: Date | null;
+        supplierId: number;
+        subtotal: import("@prisma/client-runtime-utils").Decimal;
+        tax: import("@prisma/client-runtime-utils").Decimal;
+        discount: import("@prisma/client-runtime-utils").Decimal;
+        grandTotal: import("@prisma/client-runtime-utils").Decimal;
+        paymentModeId: number;
+        createdAt: Date;
+        updatedAt: Date;
+    }>;
+    update(id: number, createPurchaseDto: CreatePurchaseDto, userId?: number): Promise<{
+        items: {
+            id: number;
+            tax: import("@prisma/client-runtime-utils").Decimal;
+            productId: number;
+            rate: import("@prisma/client-runtime-utils").Decimal;
+            amount: import("@prisma/client-runtime-utils").Decimal;
+            purchaseId: number;
+            quantity: import("@prisma/client-runtime-utils").Decimal;
+            noOfBirds: number;
+        }[];
+    } & {
         id: number;
         invoiceNo: string;
         date: Date;

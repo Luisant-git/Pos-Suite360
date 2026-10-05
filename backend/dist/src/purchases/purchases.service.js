@@ -24,7 +24,7 @@ let PurchasesService = class PurchasesService {
                 data: {
                     invoiceNo: createPurchaseDto.invoiceNo,
                     supplierInvoiceNo: createPurchaseDto.supplierInvoiceNo,
-                    date: new Date(createPurchaseDto.date),
+                    date: new Date(`${createPurchaseDto.date}T00:00:00+08:00`),
                     supplierId: createPurchaseDto.supplierId,
                     paymentModeId: createPurchaseDto.paymentModeId,
                     subtotal: createPurchaseDto.subtotal,
@@ -35,6 +35,7 @@ let PurchasesService = class PurchasesService {
                         create: createPurchaseDto.items.map((item) => ({
                             productId: item.productId,
                             quantity: item.quantity,
+                            noOfBirds: item.noOfBirds || 0,
                             rate: item.rate,
                             tax: item.tax || 0,
                             amount: item.amount,
@@ -64,6 +65,7 @@ let PurchasesService = class PurchasesService {
                     where: { id: item.productId },
                     data: {
                         currentStock: { increment: item.quantity },
+                        currentBirds: { increment: item.noOfBirds || 0 },
                         purchaseRate: newPurchaseRate,
                         wholesaleRate: newWholesaleRate,
                         sellingRate: newSellingRate,
@@ -72,12 +74,15 @@ let PurchasesService = class PurchasesService {
                 });
                 await tx.stockTransaction.create({
                     data: {
-                        date: new Date(createPurchaseDto.date),
+                        date: new Date(`${createPurchaseDto.date}T00:00:00+08:00`),
                         productId: item.productId,
                         type: client_1.TransactionType.PURCHASE,
                         quantityIn: item.quantity,
                         quantityOut: 0,
                         balance: updatedProduct.currentStock,
+                        birdsIn: item.noOfBirds || 0,
+                        birdsOut: 0,
+                        birdsBalance: updatedProduct.currentBirds,
                         reference: purchase.invoiceNo,
                     },
                 });
@@ -93,11 +98,9 @@ let PurchasesService = class PurchasesService {
         if (query?.fromDate || query?.toDate) {
             where.date = {};
             if (query.fromDate)
-                where.date.gte = new Date(query.fromDate);
+                where.date.gte = new Date(`${query.fromDate}T00:00:00+08:00`);
             if (query.toDate) {
-                const toDate = new Date(query.toDate);
-                toDate.setHours(23, 59, 59, 999);
-                where.date.lte = toDate;
+                where.date.lte = new Date(`${query.toDate}T23:59:59.999+08:00`);
             }
         }
         if (query?.supplierId) {
@@ -117,6 +120,7 @@ let PurchasesService = class PurchasesService {
             include: {
                 supplier: true,
                 paymentMode: true,
+                items: true,
             },
             orderBy: [
                 { date: 'desc' },
@@ -177,6 +181,7 @@ let PurchasesService = class PurchasesService {
                     where: { id: item.productId },
                     data: {
                         currentStock: { decrement: item.quantity },
+                        currentBirds: { decrement: item.noOfBirds || 0 },
                     },
                 });
                 await tx.stockTransaction.create({
@@ -187,6 +192,9 @@ let PurchasesService = class PurchasesService {
                         quantityIn: 0,
                         quantityOut: item.quantity,
                         balance: updatedProduct.currentStock,
+                        birdsIn: 0,
+                        birdsOut: item.noOfBirds || 0,
+                        birdsBalance: updatedProduct.currentBirds,
                         reference: `Reverted ${purchase.invoiceNo}`,
                     },
                 });
@@ -197,6 +205,115 @@ let PurchasesService = class PurchasesService {
             return tx.purchase.delete({
                 where: { id },
             });
+        });
+    }
+    async update(id, createPurchaseDto, userId = 1) {
+        return this.prisma.$transaction(async (tx) => {
+            const existingPurchase = await tx.purchase.findUnique({
+                where: { id },
+                include: { items: true },
+            });
+            if (!existingPurchase) {
+                throw new common_1.BadRequestException(`Purchase invoice not found: ${id}`);
+            }
+            for (const oldItem of existingPurchase.items) {
+                const updatedProduct = await tx.product.update({
+                    where: { id: oldItem.productId },
+                    data: {
+                        currentStock: { decrement: oldItem.quantity },
+                        currentBirds: { decrement: oldItem.noOfBirds || 0 },
+                    },
+                });
+                await tx.stockTransaction.create({
+                    data: {
+                        date: new Date(),
+                        productId: oldItem.productId,
+                        type: client_1.TransactionType.PURCHASE_RETURN,
+                        quantityIn: 0,
+                        quantityOut: oldItem.quantity,
+                        balance: updatedProduct.currentStock,
+                        birdsIn: 0,
+                        birdsOut: oldItem.noOfBirds || 0,
+                        birdsBalance: updatedProduct.currentBirds,
+                        reference: `Reverted for Edit ${existingPurchase.invoiceNo}`,
+                    },
+                });
+            }
+            await tx.purchaseItem.deleteMany({
+                where: { purchaseId: id },
+            });
+            const updatedPurchase = await tx.purchase.update({
+                where: { id },
+                data: {
+                    invoiceNo: createPurchaseDto.invoiceNo || existingPurchase.invoiceNo,
+                    supplierInvoiceNo: createPurchaseDto.supplierInvoiceNo,
+                    date: new Date(`${createPurchaseDto.date}T00:00:00+08:00`),
+                    supplierId: createPurchaseDto.supplierId,
+                    paymentModeId: createPurchaseDto.paymentModeId,
+                    subtotal: createPurchaseDto.subtotal,
+                    tax: createPurchaseDto.tax || 0,
+                    discount: createPurchaseDto.discount || 0,
+                    grandTotal: createPurchaseDto.grandTotal,
+                    items: {
+                        create: createPurchaseDto.items.map((item) => ({
+                            productId: item.productId,
+                            quantity: item.quantity,
+                            noOfBirds: item.noOfBirds || 0,
+                            rate: item.rate,
+                            tax: item.tax || 0,
+                            amount: item.amount,
+                        })),
+                    },
+                },
+                include: { items: true },
+            });
+            for (const item of createPurchaseDto.items) {
+                const currentProduct = await tx.product.findUnique({ where: { id: item.productId } });
+                if (!currentProduct) {
+                    throw new common_1.BadRequestException(`Product not found: ${item.productId}`);
+                }
+                let newPurchaseRate = Number(currentProduct.purchaseRate);
+                let newWholesaleRate = Number(currentProduct.wholesaleRate);
+                let newSellingRate = Number(currentProduct.sellingRate);
+                let newMrp = Number(currentProduct.mrp);
+                if (item.rate && item.rate > newPurchaseRate)
+                    newPurchaseRate = item.rate;
+                if (item.wRate && item.wRate > newWholesaleRate)
+                    newWholesaleRate = item.wRate;
+                if (item.sRate !== undefined && item.sRate > 0)
+                    newSellingRate = item.sRate;
+                if (item.mrp && item.mrp > newMrp)
+                    newMrp = item.mrp;
+                const updatedProduct = await tx.product.update({
+                    where: { id: item.productId },
+                    data: {
+                        currentStock: { increment: item.quantity },
+                        currentBirds: { increment: item.noOfBirds || 0 },
+                        purchaseRate: newPurchaseRate,
+                        wholesaleRate: newWholesaleRate,
+                        sellingRate: newSellingRate,
+                        mrp: newMrp,
+                    },
+                });
+                await tx.stockTransaction.create({
+                    data: {
+                        date: new Date(`${createPurchaseDto.date}T00:00:00+08:00`),
+                        productId: item.productId,
+                        type: client_1.TransactionType.PURCHASE,
+                        quantityIn: item.quantity,
+                        quantityOut: 0,
+                        balance: updatedProduct.currentStock,
+                        birdsIn: item.noOfBirds || 0,
+                        birdsOut: 0,
+                        birdsBalance: updatedProduct.currentBirds,
+                        reference: updatedPurchase.invoiceNo,
+                    },
+                });
+            }
+            return updatedPurchase;
+        }).catch(err => {
+            console.error('PRISMA ERROR IN PURCHASE UPDATE:', err);
+            throw new common_1.BadRequestException(err.message || 'Error updating purchase');
         });
     }
 };

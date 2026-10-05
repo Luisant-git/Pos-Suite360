@@ -373,8 +373,11 @@ const CustomerReceipts = () => {
                               return acc;
                             }, { total: 0, returned: 0, received: 0, pending: 0 });
                             const customer = customers.find((c: any) => c.id === selectedCustomerId);
-                            const companyName = storeSettings?.companyName || 'NJ FRESH AND FROZEN SDN BHD';
-                            const url = generateBillByBillPdf(companyName, customer?.name || 'Unknown', 'Customer', displayedBills, totals) as unknown as string;
+                            const companyName = storeSettings?.shopName || 'NJ FRESH AND FROZEN SDN BHD';
+                            let reportTitle = 'PENDING BALANCE BILL BY BILL';
+                            if (billFilter === 'Paid') reportTitle = 'PAID BILL BY BILL';
+                            if (billFilter === 'All') reportTitle = 'ALL BILLS BY BILL';
+                            const url = generateBillByBillPdf(companyName, customer?.name || 'Unknown', 'Customer', displayedBills, totals, reportTitle) as unknown as string;
                             setPdfUrl(url);
                             setPdfModalOpen(true);
                           }}
@@ -540,7 +543,15 @@ const CustomerReceipts = () => {
                 <button 
                   type="button" 
                   onClick={() => {
-                    reset();
+                    reset({
+                      receiptNo: nextReceiptNoData?.receiptNo || 'Generating...',
+                      date: getMalaysiaDateStr(),
+                      customerId: 0,
+                      paymentModeId: 0,
+                      amount: 0 as any,
+                      reference: '',
+                      remarks: ''
+                    });
                     setEditingId(null);
                     setAllocations({});
                     queryClient.invalidateQueries({ queryKey: ['nextReceiptNo'] });
@@ -662,14 +673,15 @@ const CustomerReceipts = () => {
                   <th className="px-3 py-2 border-r border-[#334155]">Customer</th>
                   <th className="px-3 py-2 border-r border-[#444]">Payment Type</th>
                   <th className="px-3 py-2 text-right border-r border-[#334155]">Amount Paid</th>
+                  <th className="px-3 py-2 border-r border-[#334155]">Allocated Bills</th>
                   {storeSettings?.allowEditReceipts && <th className="px-3 py-2 text-center w-20">Action</th>}
                 </tr>
               </thead>
               <tbody>
                 {historyLoading ? (
-                  <TableLoader columns={storeSettings?.allowEditReceipts ? 6 : 5} text="Loading history..." />
+                  <TableLoader columns={storeSettings?.allowEditReceipts ? 7 : 6} text="Loading history..." />
                 ) : filteredHistory.length === 0 ? (
-                  <tr><td colSpan={storeSettings?.allowEditReceipts ? 6 : 5} className="text-center p-4 text-black font-bold">No receipt records found.</td></tr>
+                  <tr><td colSpan={storeSettings?.allowEditReceipts ? 7 : 6} className="text-center p-4 text-black font-bold">No receipt records found.</td></tr>
                 ) : (
                   paginatedHistory.map((r: any, idx: number) => (
                     <tr key={r.id} className={`border-b border-[#E2E8F0] ${idx % 2 === 0 ? 'bg-white' : 'bg-[#F8FAFC]'}`}>
@@ -678,6 +690,11 @@ const CustomerReceipts = () => {
                       <td className="px-3 py-2 border-r border-[#E2E8F0] font-bold text-black font-bold">{r.customer?.name}</td>
                       <td className="px-3 py-3 border-r border-[#E5E7EB] text-black font-bold">{r.paymentType?.name || r.paymentMode?.name || '-'}</td>
                       <td className="px-3 py-2 text-right font-bold text-[#059669]">{formatCurrency(r.amount)}</td>
+                      <td className="px-3 py-2 border-r border-[#E2E8F0] text-[11px] text-gray-600 whitespace-pre-wrap min-w-[150px]">
+                        {r.allocations && r.allocations.length > 0 
+                          ? r.allocations.map((a: any) => `${a.sale?.invoiceNo || 'N/A'} (${formatCurrency(a.amount)})`).join(', ')
+                          : '-'}
+                      </td>
                       {storeSettings?.allowEditReceipts && (
                         <td className="px-3 py-2 text-center border-l border-[#E2E8F0]">
                           <button

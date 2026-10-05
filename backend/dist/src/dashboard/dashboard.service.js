@@ -103,6 +103,11 @@ let DashboardService = class DashboardService {
             where: { date: { gte: start, lt: end } },
         });
         const expensesToday = expensesAggregate._sum.amount ? Number(expensesAggregate._sum.amount) : 0;
+        const collectionsAggregate = await this.prisma.customerReceipt.aggregate({
+            _sum: { amount: true },
+            where: { date: { gte: start, lt: end } },
+        });
+        const collectionsInPeriod = collectionsAggregate._sum.amount ? Number(collectionsAggregate._sum.amount) : 0;
         const productsCount = await this.prisma.product.count();
         const lowStockResult = await this.prisma.$queryRaw `
       SELECT COUNT(*) as count FROM "Product" WHERE "currentStock" <= "minStock"
@@ -112,7 +117,7 @@ let DashboardService = class DashboardService {
             where: { date: { gte: start, lt: end } },
         });
         const lowStockProductsRaw = await this.prisma.$queryRaw `
-      SELECT id, name, "currentStock", "minStock" 
+      SELECT id, name, code, "currentStock", "minStock" 
       FROM "Product" 
       WHERE "currentStock" <= "minStock" 
       ORDER BY "currentStock" ASC 
@@ -121,6 +126,7 @@ let DashboardService = class DashboardService {
         const lowStockProducts = lowStockProductsRaw.map((p) => ({
             id: Number(p.id),
             name: p.name,
+            code: p.code,
             currentStock: Number(p.currentStock),
             minStock: Number(p.minStock),
         }));
@@ -138,6 +144,11 @@ let DashboardService = class DashboardService {
                 sales: Number(d.sales),
             };
         });
+        const recentBankDeposits = await this.prisma.bankDeposit.findMany({
+            where: { date: { gte: start, lt: end } },
+            orderBy: { date: 'desc' },
+            take: 15
+        });
         return {
             cashSalesToday,
             creditSalesToday,
@@ -146,16 +157,18 @@ let DashboardService = class DashboardService {
             pendingPayables,
             pendingReceivables,
             expensesToday,
+            collectionsInPeriod,
             productsCount,
             lowStockCount,
             billsToday,
             lowStockProducts,
             chartData,
-            unpaidCustomerBills: await this.getTopUnpaidCustomerBills(15),
-            unpaidSupplierBills: await this.getTopUnpaidSupplierBills(15)
+            recentBankDeposits,
+            unpaidCustomerBills: await this.getTopUnpaidCustomerBills(15, start, end),
+            unpaidSupplierBills: await this.getTopUnpaidSupplierBills(15, start, end)
         };
     }
-    async getTopUnpaidCustomerBills(limit) {
+    async getTopUnpaidCustomerBills(limit, start, end) {
         const customers = await this.prisma.customer.findMany();
         let allUnpaidBills = [];
         for (const customer of customers) {
@@ -163,11 +176,15 @@ let DashboardService = class DashboardService {
                 const { balance } = await this.customerReceiptsService.getBalance(customer.id);
                 if (balance > 0) {
                     const unpaid = await this.customerReceiptsService.getUnpaidBills(customer.id);
-                    const pendingBills = unpaid.filter(b => b.pending > 0).map(b => ({
+                    let pendingBills = unpaid.filter(b => b.pending > 0).map(b => ({
                         ...b,
                         entityName: customer.name,
                         entityId: customer.id
                     }));
+                    pendingBills = pendingBills.filter(b => {
+                        const bDate = new Date(b.date);
+                        return bDate >= start && bDate < end;
+                    });
                     allUnpaidBills.push(...pendingBills);
                 }
             }
@@ -177,7 +194,7 @@ let DashboardService = class DashboardService {
         allUnpaidBills.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
         return allUnpaidBills.slice(0, limit);
     }
-    async getTopUnpaidSupplierBills(limit) {
+    async getTopUnpaidSupplierBills(limit, start, end) {
         const suppliers = await this.prisma.supplier.findMany();
         let allUnpaidBills = [];
         for (const supplier of suppliers) {
@@ -185,11 +202,15 @@ let DashboardService = class DashboardService {
                 const { balance } = await this.supplierPaymentsService.getBalance(supplier.id);
                 if (balance > 0) {
                     const unpaid = await this.supplierPaymentsService.getUnpaidBills(supplier.id);
-                    const pendingBills = unpaid.filter(b => b.pending > 0).map(b => ({
+                    let pendingBills = unpaid.filter(b => b.pending > 0).map(b => ({
                         ...b,
                         entityName: supplier.name,
                         entityId: supplier.id
                     }));
+                    pendingBills = pendingBills.filter(b => {
+                        const bDate = new Date(b.date);
+                        return bDate >= start && bDate < end;
+                    });
                     allUnpaidBills.push(...pendingBills);
                 }
             }

@@ -15,6 +15,7 @@ const class_validator_1 = require("class-validator");
 class PurchaseItemDto {
     productId;
     quantity;
+    noOfBirds;
     rate;
     tax;
     amount;
@@ -30,6 +31,11 @@ __decorate([
     (0, class_validator_1.IsNumber)(),
     __metadata("design:type", Number)
 ], PurchaseItemDto.prototype, "quantity", void 0);
+__decorate([
+    (0, class_validator_1.IsNumber)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Number)
+], PurchaseItemDto.prototype, "noOfBirds", void 0);
 __decorate([
     (0, class_validator_1.IsNumber)(),
     __metadata("design:type", Number)

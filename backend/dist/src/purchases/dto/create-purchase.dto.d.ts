@@ -1,6 +1,7 @@
 declare class PurchaseItemDto {
     productId: number;
     quantity: number;
+    noOfBirds?: number;
     rate: number;
     tax?: number;
     amount: number;

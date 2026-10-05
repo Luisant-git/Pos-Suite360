@@ -25,7 +25,7 @@ let SupplierPaymentsService = class SupplierPaymentsService {
             return await this.prisma.supplierPayment.create({
                 data: {
                     paymentNo: data.paymentNo,
-                    date: new Date(data.date || new Date()),
+                    date: data.date ? new Date(`${data.date}T00:00:00+08:00`) : new Date(),
                     supplierId: Number(data.supplierId),
                     amount: Number(data.amount),
                     paymentTypeId: Number(data.paymentTypeId),
@@ -48,6 +48,40 @@ let SupplierPaymentsService = class SupplierPaymentsService {
         catch (error) {
             console.error('Error creating supplier payment:', error);
             throw new common_1.BadRequestException('Failed to record payment. ' + (error.message || ''));
+        }
+    }
+    async update(id, data, userId) {
+        if (!data.supplierId || !data.amount || !data.paymentTypeId) {
+            throw new common_1.BadRequestException('Missing required fields');
+        }
+        try {
+            return await this.prisma.supplierPayment.update({
+                where: { id },
+                data: {
+                    date: data.date ? new Date(`${data.date}T00:00:00+08:00`) : new Date(),
+                    supplierId: Number(data.supplierId),
+                    amount: Number(data.amount),
+                    paymentTypeId: Number(data.paymentTypeId),
+                    reference: data.reference,
+                    remarks: data.remarks,
+                    userId: userId,
+                    allocations: data.allocations && Array.isArray(data.allocations) ? {
+                        deleteMany: {},
+                        create: data.allocations.filter((a) => Number(a.amount) > 0).map((a) => ({
+                            purchaseId: a.purchaseId ? Number(a.purchaseId) : null,
+                            amount: Number(a.amount)
+                        }))
+                    } : undefined,
+                },
+                include: {
+                    supplier: true,
+                    paymentType: true,
+                },
+            });
+        }
+        catch (error) {
+            console.error('Error updating supplier payment:', error);
+            throw new common_1.BadRequestException('Failed to update payment. ' + (error.message || ''));
         }
     }
     async findAll() {
@@ -241,10 +275,8 @@ let SupplierPaymentsService = class SupplierPaymentsService {
         });
         const creditModeId = creditMode?.id || -1;
         const report = [];
-        const start = startDate ? new Date(startDate) : null;
-        const end = endDate ? new Date(endDate) : null;
-        if (end)
-            end.setHours(23, 59, 59, 999);
+        const start = startDate ? new Date(`${startDate}T00:00:00+08:00`) : null;
+        const end = endDate ? new Date(`${endDate}T23:59:59.999+08:00`) : null;
         for (const s of suppliers) {
             let forwardingBalance = 0;
             const openingBal = Number(s.openingBalance) || 0;

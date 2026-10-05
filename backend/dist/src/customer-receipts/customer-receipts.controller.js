@@ -37,6 +37,10 @@ let CustomerReceiptsController = class CustomerReceiptsController {
         const userId = req.user?.userId;
         return this.customerReceiptsService.create(createCustomerReceiptDto, userId);
     }
+    async update(id, updateData, req) {
+        const userId = req.user?.userId;
+        return this.customerReceiptsService.update(Number(id), updateData, userId);
+    }
     async findAll() {
         return this.customerReceiptsService.findAll();
     }
@@ -78,6 +82,15 @@ __decorate([
     __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)
 ], CustomerReceiptsController.prototype, "create", null);
+__decorate([
+    (0, common_1.Put)(':id'),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)()),
+    __param(2, (0, common_1.Request)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object, Object]),
+    __metadata("design:returntype", Promise)
+], CustomerReceiptsController.prototype, "update", null);
 __decorate([
     (0, common_1.Get)(),
     __metadata("design:type", Function),

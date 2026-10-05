@@ -6,8 +6,10 @@ export declare class ReportsService {
         grossSales: number;
         totalSalesReturns: number;
         netOperatingRevenue: number;
+        openingStockValue: number;
         grossPurchases: number;
         totalPurchaseReturns: number;
+        closingStockValue: number;
         netCogs: number;
         grossProfit: number;
         itemizedExpenses: {
@@ -17,4 +19,5 @@ export declare class ReportsService {
         totalExpenses: number;
         netProfit: number;
     }>;
+    getProductWiseSales(fromDate?: string, toDate?: string, productId?: number): Promise<unknown[]>;
 }

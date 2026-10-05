@@ -47,7 +47,7 @@ let SalesService = class SalesService {
             const sale = await tx.sale.create({
                 data: {
                     invoiceNo: finalInvoiceNo,
-                    date: new Date(createSaleDto.date),
+                    date: new Date(`${createSaleDto.date}T00:00:00+08:00`),
                     customerId: createSaleDto.customerId,
                     userId: userId,
                     paymentModeId: createSaleDto.paymentModeId,
@@ -74,17 +74,21 @@ let SalesService = class SalesService {
                     where: { id: item.productId },
                     data: {
                         currentStock: { decrement: item.quantity },
+                        currentBirds: { decrement: item.noOfBirds || 0 },
                         ...(item.rate > 0 && { sellingRate: item.rate }),
                     },
                 });
                 await tx.stockTransaction.create({
                     data: {
-                        date: new Date(createSaleDto.date),
+                        date: new Date(`${createSaleDto.date}T00:00:00+08:00`),
                         productId: item.productId,
                         type: client_1.TransactionType.SALE,
                         quantityIn: 0,
                         quantityOut: item.quantity,
                         balance: updatedProduct.currentStock,
+                        birdsIn: 0,
+                        birdsOut: item.noOfBirds || 0,
+                        birdsBalance: updatedProduct.currentBirds,
                         reference: sale.invoiceNo,
                     },
                 });
@@ -100,11 +104,9 @@ let SalesService = class SalesService {
         if (query?.fromDate || query?.toDate) {
             where.date = {};
             if (query.fromDate)
-                where.date.gte = new Date(query.fromDate);
+                where.date.gte = new Date(`${query.fromDate}T00:00:00+08:00`);
             if (query.toDate) {
-                const toDate = new Date(query.toDate);
-                toDate.setHours(23, 59, 59, 999);
-                where.date.lte = toDate;
+                where.date.lte = new Date(`${query.toDate}T23:59:59.999+08:00`);
             }
         }
         if (query?.customerId) {
@@ -194,6 +196,7 @@ let SalesService = class SalesService {
                     where: { id: item.productId },
                     data: {
                         currentStock: { increment: item.quantity },
+                        currentBirds: { increment: item.noOfBirds || 0 },
                     },
                 });
                 await tx.stockTransaction.create({
@@ -204,6 +207,9 @@ let SalesService = class SalesService {
                         quantityIn: item.quantity,
                         quantityOut: 0,
                         balance: updatedProduct.currentStock,
+                        birdsIn: item.noOfBirds || 0,
+                        birdsOut: 0,
+                        birdsBalance: updatedProduct.currentBirds,
                         reference: `Reverted ${sale.invoiceNo}`,
                     },
                 });
@@ -230,6 +236,7 @@ let SalesService = class SalesService {
                     where: { id: oldItem.productId },
                     data: {
                         currentStock: { increment: oldItem.quantity },
+                        currentBirds: { increment: oldItem.noOfBirds || 0 },
                     },
                 });
                 await tx.stockTransaction.create({
@@ -240,6 +247,9 @@ let SalesService = class SalesService {
                         quantityIn: oldItem.quantity,
                         quantityOut: 0,
                         balance: updatedProduct.currentStock,
+                        birdsIn: oldItem.noOfBirds || 0,
+                        birdsOut: 0,
+                        birdsBalance: updatedProduct.currentBirds,
                         reference: `Reverted for Edit ${existingSale.invoiceNo}`,
                     },
                 });
@@ -251,7 +261,7 @@ let SalesService = class SalesService {
                 where: { id },
                 data: {
                     invoiceNo: createSaleDto.invoiceNo || existingSale.invoiceNo,
-                    date: new Date(createSaleDto.date),
+                    date: new Date(`${createSaleDto.date}T00:00:00+08:00`),
                     customerId: createSaleDto.customerId,
                     userId: userId,
                     paymentModeId: createSaleDto.paymentModeId,
@@ -278,17 +288,21 @@ let SalesService = class SalesService {
                     where: { id: item.productId },
                     data: {
                         currentStock: { decrement: item.quantity },
+                        currentBirds: { decrement: item.noOfBirds || 0 },
                         ...(item.rate > 0 && { sellingRate: item.rate }),
                     },
                 });
                 await tx.stockTransaction.create({
                     data: {
-                        date: new Date(createSaleDto.date),
+                        date: new Date(`${createSaleDto.date}T00:00:00+08:00`),
                         productId: item.productId,
                         type: client_1.TransactionType.SALE,
                         quantityIn: 0,
                         quantityOut: item.quantity,
                         balance: updatedProduct.currentStock,
+                        birdsIn: 0,
+                        birdsOut: item.noOfBirds || 0,
+                        birdsBalance: updatedProduct.currentBirds,
                         reference: updatedSale.invoiceNo,
                     },
                 });

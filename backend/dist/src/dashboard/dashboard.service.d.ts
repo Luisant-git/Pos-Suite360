@@ -14,18 +14,28 @@ export declare class DashboardService {
         pendingPayables: number;
         pendingReceivables: number;
         expensesToday: number;
+        collectionsInPeriod: number;
         productsCount: number;
         lowStockCount: number;
         billsToday: number;
         lowStockProducts: {
             id: number;
             name: any;
+            code: any;
             currentStock: number;
             minStock: number;
         }[];
         chartData: {
             name: string;
             sales: number;
+        }[];
+        recentBankDeposits: {
+            id: number;
+            date: Date;
+            createdAt: Date;
+            updatedAt: Date;
+            amount: import("@prisma/client-runtime-utils").Decimal;
+            depositType: string;
         }[];
         unpaidCustomerBills: any[];
         unpaidSupplierBills: any[];

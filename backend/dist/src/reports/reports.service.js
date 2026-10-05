@@ -22,12 +22,10 @@ let ReportsService = class ReportsService {
         if (fromDateStr || toDateStr) {
             whereDate.date = {};
             if (fromDateStr) {
-                whereDate.date.gte = new Date(fromDateStr);
+                whereDate.date.gte = new Date(`${fromDateStr}T00:00:00+08:00`);
             }
             if (toDateStr) {
-                const toDate = new Date(toDateStr);
-                toDate.setHours(23, 59, 59, 999);
-                whereDate.date.lte = toDate;
+                whereDate.date.lte = new Date(`${toDateStr}T23:59:59.999+08:00`);
             }
         }
         const sales = await this.prisma.sale.aggregate({
@@ -52,6 +50,8 @@ let ReportsService = class ReportsService {
         });
         const totalPurchaseReturns = Number(purchaseReturns._sum.totalAmount || 0);
         const netCogs = grossPurchases - totalPurchaseReturns;
+        const openingStockValue = 0;
+        const closingStockValue = 0;
         const grossProfit = netOperatingRevenue - netCogs;
         const expenses = await this.prisma.expense.findMany({
             where: whereDate,
@@ -77,14 +77,64 @@ let ReportsService = class ReportsService {
             grossSales,
             totalSalesReturns,
             netOperatingRevenue,
+            openingStockValue,
             grossPurchases,
             totalPurchaseReturns,
+            closingStockValue,
             netCogs,
             grossProfit,
             itemizedExpenses,
             totalExpenses,
             netProfit,
         };
+    }
+    async getProductWiseSales(fromDate, toDate, productId) {
+        const whereDate = {};
+        if (fromDate || toDate) {
+            whereDate.date = {};
+            if (fromDate) {
+                whereDate.date.gte = new Date(`${fromDate}T00:00:00+08:00`);
+            }
+            if (toDate) {
+                whereDate.date.lte = new Date(`${toDate}T23:59:59.999+08:00`);
+            }
+        }
+        const saleItems = await this.prisma.saleItem.findMany({
+            where: {
+                sale: whereDate,
+                ...(productId ? { productId } : {}),
+            },
+            include: {
+                sale: true,
+                product: true
+            }
+        });
+        const productGroups = {};
+        for (const item of saleItems) {
+            if (!item.product)
+                continue;
+            const productKey = `${item.product.code ? item.product.code + ' - ' : ''}${item.product.name}`;
+            if (!productGroups[productKey]) {
+                productGroups[productKey] = {
+                    productName: productKey,
+                    items: [],
+                    totalQty: 0,
+                    totalValue: 0
+                };
+            }
+            const qty = Number(item.quantity) || 0;
+            const value = Number(item.amount) || 0;
+            productGroups[productKey].items.push({
+                invoiceNo: item.sale?.invoiceNo || '-',
+                date: item.sale?.date || new Date(),
+                qty: qty,
+                value: value,
+                saleId: item.saleId
+            });
+            productGroups[productKey].totalQty += qty;
+            productGroups[productKey].totalValue += value;
+        }
+        return Object.values(productGroups).sort((a, b) => a.productName.localeCompare(b.productName));
     }
 };
 exports.ReportsService = ReportsService;

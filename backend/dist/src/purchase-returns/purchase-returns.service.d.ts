@@ -9,6 +9,7 @@ export declare class PurchaseReturnsService {
             productId: number;
             rate: import("@prisma/client-runtime-utils").Decimal;
             amount: import("@prisma/client-runtime-utils").Decimal;
+            noOfBirds: number;
             returnQty: import("@prisma/client-runtime-utils").Decimal;
             purchaseReturnId: number;
         }[];
@@ -44,12 +45,12 @@ export declare class PurchaseReturnsService {
             createdAt: Date;
             updatedAt: Date;
             name: string;
-            contactPerson: string | null;
             phone: string | null;
             email: string | null;
             address: string | null;
             gstNumber: string | null;
             openingBalance: import("@prisma/client-runtime-utils").Decimal;
+            contactPerson: string | null;
             openingBalanceType: string;
             accountNo: string | null;
             ifscCode: string | null;
@@ -75,12 +76,14 @@ export declare class PurchaseReturnsService {
                 wholesaleRate: import("@prisma/client-runtime-utils").Decimal;
                 reorderLevel: import("@prisma/client-runtime-utils").Decimal;
                 currentStock: import("@prisma/client-runtime-utils").Decimal;
+                currentBirds: number;
             };
         } & {
             id: number;
             productId: number;
             rate: import("@prisma/client-runtime-utils").Decimal;
             amount: import("@prisma/client-runtime-utils").Decimal;
+            noOfBirds: number;
             returnQty: import("@prisma/client-runtime-utils").Decimal;
             purchaseReturnId: number;
         })[];
@@ -116,12 +119,12 @@ export declare class PurchaseReturnsService {
             createdAt: Date;
             updatedAt: Date;
             name: string;
-            contactPerson: string | null;
             phone: string | null;
             email: string | null;
             address: string | null;
             gstNumber: string | null;
             openingBalance: import("@prisma/client-runtime-utils").Decimal;
+            contactPerson: string | null;
             openingBalanceType: string;
             accountNo: string | null;
             ifscCode: string | null;
@@ -147,12 +150,14 @@ export declare class PurchaseReturnsService {
                 wholesaleRate: import("@prisma/client-runtime-utils").Decimal;
                 reorderLevel: import("@prisma/client-runtime-utils").Decimal;
                 currentStock: import("@prisma/client-runtime-utils").Decimal;
+                currentBirds: number;
             };
         } & {
             id: number;
             productId: number;
             rate: import("@prisma/client-runtime-utils").Decimal;
             amount: import("@prisma/client-runtime-utils").Decimal;
+            noOfBirds: number;
             returnQty: import("@prisma/client-runtime-utils").Decimal;
             purchaseReturnId: number;
         })[];

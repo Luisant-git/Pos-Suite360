@@ -25,7 +25,7 @@ let CustomerReceiptsService = class CustomerReceiptsService {
             return await this.prisma.customerReceipt.create({
                 data: {
                     receiptNo: data.receiptNo,
-                    date: new Date(data.date || new Date()),
+                    date: data.date ? new Date(`${data.date}T00:00:00+08:00`) : new Date(),
                     customerId: Number(data.customerId),
                     amount: Number(data.amount),
                     paymentTypeId: Number(data.paymentTypeId),
@@ -50,6 +50,40 @@ let CustomerReceiptsService = class CustomerReceiptsService {
             throw new common_1.BadRequestException('Failed to record receipt. ' + (error.message || ''));
         }
     }
+    async update(id, data, userId) {
+        if (!data.customerId || !data.amount || !data.paymentTypeId) {
+            throw new common_1.BadRequestException('Missing required fields');
+        }
+        try {
+            return await this.prisma.customerReceipt.update({
+                where: { id },
+                data: {
+                    date: data.date ? new Date(`${data.date}T00:00:00+08:00`) : new Date(),
+                    customerId: Number(data.customerId),
+                    amount: Number(data.amount),
+                    paymentTypeId: Number(data.paymentTypeId),
+                    reference: data.reference,
+                    remarks: data.remarks,
+                    userId: userId,
+                    allocations: data.allocations && Array.isArray(data.allocations) ? {
+                        deleteMany: {},
+                        create: data.allocations.filter((a) => Number(a.amount) > 0).map((a) => ({
+                            saleId: a.saleId ? Number(a.saleId) : null,
+                            amount: Number(a.amount)
+                        }))
+                    } : undefined,
+                },
+                include: {
+                    customer: true,
+                    paymentType: true,
+                },
+            });
+        }
+        catch (error) {
+            console.error('Error updating customer receipt:', error);
+            throw new common_1.BadRequestException('Failed to update receipt. ' + (error.message || ''));
+        }
+    }
     async findAll() {
         return this.prisma.customerReceipt.findMany({
             orderBy: [
@@ -60,6 +94,9 @@ let CustomerReceiptsService = class CustomerReceiptsService {
                 customer: true,
                 paymentType: true,
                 paymentMode: true,
+                allocations: {
+                    include: { sale: true }
+                }
             },
         });
     }
@@ -241,10 +278,8 @@ let CustomerReceiptsService = class CustomerReceiptsService {
         });
         const creditModeId = creditMode?.id || -1;
         const report = [];
-        const start = startDate ? new Date(startDate) : null;
-        const end = endDate ? new Date(endDate) : null;
-        if (end)
-            end.setHours(23, 59, 59, 999);
+        const start = startDate ? new Date(`${startDate}T00:00:00+08:00`) : null;
+        const end = endDate ? new Date(`${endDate}T23:59:59.999+08:00`) : null;
         for (const c of customers) {
             let forwardingBalance = 0;
             const openingBal = Number(c.openingBalance) || 0;

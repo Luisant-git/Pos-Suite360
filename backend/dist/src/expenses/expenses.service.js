@@ -20,7 +20,7 @@ let ExpensesService = class ExpensesService {
     create(createExpenseDto) {
         return this.prisma.expense.create({
             data: {
-                date: new Date(createExpenseDto.date),
+                date: new Date(`${createExpenseDto.date}T00:00:00+08:00`),
                 expenseCategoryId: createExpenseDto.expenseCategoryId,
                 amount: createExpenseDto.amount,
                 paymentModeId: createExpenseDto.paymentModeId,
@@ -33,7 +33,7 @@ let ExpensesService = class ExpensesService {
         if (query?.startDate || query?.endDate) {
             where.date = {};
             if (query.startDate)
-                where.date.gte = new Date(query.startDate);
+                where.date.gte = new Date(`${query.startDate}T00:00:00+08:00`);
             if (query.endDate) {
                 const end = new Date(query.endDate);
                 end.setHours(23, 59, 59, 999);

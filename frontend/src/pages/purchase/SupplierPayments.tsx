@@ -373,8 +373,11 @@ const SupplierPayments = () => {
                               return acc;
                             }, { total: 0, returned: 0, paid: 0, pending: 0 });
                             const supplier = suppliers.find((s: any) => s.id === selectedSupplierId);
-                            const companyName = storeSettings?.companyName || 'NJ FRESH AND FROZEN SDN BHD';
-                            const url = generateBillByBillPdf(companyName, supplier?.name || 'Unknown', 'Supplier', displayedBills, totals) as unknown as string;
+                            const companyName = storeSettings?.shopName || 'NJ FRESH AND FROZEN SDN BHD';
+                            let reportTitle = 'PENDING BALANCE BILL BY BILL';
+                            if (billFilter === 'Paid') reportTitle = 'PAID BILL BY BILL';
+                            if (billFilter === 'All') reportTitle = 'ALL BILLS BY BILL';
+                            const url = generateBillByBillPdf(companyName, supplier?.name || 'Unknown', 'Supplier', displayedBills, totals, reportTitle) as unknown as string;
                             setPdfUrl(url);
                             setPdfModalOpen(true);
                           }}
@@ -540,7 +543,15 @@ const SupplierPayments = () => {
                 <button 
                   type="button" 
                   onClick={() => {
-                    reset();
+                    reset({
+                      paymentNo: nextPaymentNoData?.paymentNo || 'Generating...',
+                      date: getMalaysiaDateStr(),
+                      supplierId: 0,
+                      paymentModeId: 0,
+                      amount: 0 as any,
+                      reference: '',
+                      remarks: ''
+                    });
                     setEditingId(null);
                     setAllocations({});
                     queryClient.invalidateQueries({ queryKey: ['nextPaymentNo'] });
@@ -662,14 +673,15 @@ const SupplierPayments = () => {
                   <th className="px-3 py-2 border-r border-[#334155]">Supplier</th>
                   <th className="px-3 py-2 border-r border-[#334155]">Mode</th>
                   <th className="px-3 py-2 text-right border-r border-[#334155]">Amount Paid</th>
+                  <th className="px-3 py-2 border-r border-[#334155]">Allocated Bills</th>
                   {storeSettings?.allowEditReceipts && <th className="px-3 py-2 text-center w-20">Action</th>}
                 </tr>
               </thead>
               <tbody>
                 {historyLoading ? (
-                  <TableLoader columns={storeSettings?.allowEditReceipts ? 6 : 5} text="Loading history..." />
+                  <TableLoader columns={storeSettings?.allowEditReceipts ? 7 : 6} text="Loading history..." />
                 ) : filteredHistory.length === 0 ? (
-                  <tr><td colSpan={storeSettings?.allowEditReceipts ? 6 : 5} className="text-center p-4 text-black font-bold">No payment records found.</td></tr>
+                  <tr><td colSpan={storeSettings?.allowEditReceipts ? 7 : 6} className="text-center p-4 text-black font-bold">No payment records found.</td></tr>
                 ) : (
                   paginatedHistory.map((p: any, idx: number) => (
                     <tr key={p.id} className={`border-b border-[#E2E8F0] ${idx % 2 === 0 ? 'bg-white' : 'bg-[#F8FAFC]'}`}>
@@ -680,6 +692,11 @@ const SupplierPayments = () => {
                         {p.paymentMode?.name || '-'}
                       </td>
                       <td className="px-3 py-2 text-right font-bold text-[#E11D48]">{formatCurrency(p.amount)}</td>
+                      <td className="px-3 py-2 border-r border-[#E2E8F0] text-[11px] text-gray-600 whitespace-pre-wrap min-w-[150px]">
+                        {p.allocations && p.allocations.length > 0 
+                          ? p.allocations.map((a: any) => `${a.purchase?.invoiceNo || 'N/A'} (${formatCurrency(a.amount)})`).join(', ')
+                          : '-'}
+                      </td>
                       {storeSettings?.allowEditReceipts && (
                         <td className="px-3 py-2 text-center border-l border-[#E2E8F0]">
                           <button

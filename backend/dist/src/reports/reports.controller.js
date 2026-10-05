@@ -24,6 +24,9 @@ let ReportsController = class ReportsController {
     async getProfitLoss(fromDate, toDate) {
         return this.reportsService.getProfitLoss(fromDate, toDate);
     }
+    async getProductWiseSales(fromDate, toDate, productId) {
+        return this.reportsService.getProductWiseSales(fromDate, toDate, productId ? Number(productId) : undefined);
+    }
 };
 exports.ReportsController = ReportsController;
 __decorate([
@@ -34,6 +37,15 @@ __decorate([
     __metadata("design:paramtypes", [String, String]),
     __metadata("design:returntype", Promise)
 ], ReportsController.prototype, "getProfitLoss", null);
+__decorate([
+    (0, common_1.Get)('product-wise-sales'),
+    __param(0, (0, common_1.Query)('fromDate')),
+    __param(1, (0, common_1.Query)('toDate')),
+    __param(2, (0, common_1.Query)('productId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String, String]),
+    __metadata("design:returntype", Promise)
+], ReportsController.prototype, "getProductWiseSales", null);
 exports.ReportsController = ReportsController = __decorate([
     (0, common_1.Controller)('reports'),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),

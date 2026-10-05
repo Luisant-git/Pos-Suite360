@@ -8,12 +8,50 @@ export declare class SupplierPaymentsService {
             createdAt: Date;
             updatedAt: Date;
             name: string;
-            contactPerson: string | null;
             phone: string | null;
             email: string | null;
             address: string | null;
             gstNumber: string | null;
             openingBalance: import("@prisma/client-runtime-utils").Decimal;
+            contactPerson: string | null;
+            openingBalanceType: string;
+            accountNo: string | null;
+            ifscCode: string | null;
+            bankBranch: string | null;
+        };
+        paymentType: {
+            id: number;
+            createdAt: Date;
+            updatedAt: Date;
+            name: string;
+            description: string | null;
+        } | null;
+    } & {
+        id: number;
+        date: Date;
+        supplierId: number;
+        paymentModeId: number | null;
+        createdAt: Date;
+        updatedAt: Date;
+        amount: import("@prisma/client-runtime-utils").Decimal;
+        reference: string | null;
+        remarks: string | null;
+        paymentTypeId: number | null;
+        userId: number;
+        paymentNo: string;
+    }>;
+    update(id: number, data: any, userId: number): Promise<{
+        supplier: {
+            id: number;
+            createdAt: Date;
+            updatedAt: Date;
+            name: string;
+            phone: string | null;
+            email: string | null;
+            address: string | null;
+            gstNumber: string | null;
+            openingBalance: import("@prisma/client-runtime-utils").Decimal;
+            contactPerson: string | null;
             openingBalanceType: string;
             accountNo: string | null;
             ifscCode: string | null;
@@ -46,12 +84,12 @@ export declare class SupplierPaymentsService {
             createdAt: Date;
             updatedAt: Date;
             name: string;
-            contactPerson: string | null;
             phone: string | null;
             email: string | null;
             address: string | null;
             gstNumber: string | null;
             openingBalance: import("@prisma/client-runtime-utils").Decimal;
+            contactPerson: string | null;
             openingBalanceType: string;
             accountNo: string | null;
             ifscCode: string | null;

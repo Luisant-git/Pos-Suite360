@@ -23,8 +23,12 @@ let PurchasesController = class PurchasesController {
         this.purchasesService = purchasesService;
     }
     create(createPurchaseDto, req) {
-        const userId = (req.user?.userId && req.user.userId > 0) ? req.user.userId : 1;
+        const userId = req.user?.userId;
         return this.purchasesService.create(createPurchaseDto, userId);
+    }
+    update(id, createPurchaseDto, req) {
+        const userId = req.user?.userId;
+        return this.purchasesService.update(+id, createPurchaseDto, userId);
     }
     findAll(query) {
         return this.purchasesService.findAll(query);
@@ -51,6 +55,15 @@ __decorate([
     __metadata("design:paramtypes", [create_purchase_dto_1.CreatePurchaseDto, Object]),
     __metadata("design:returntype", void 0)
 ], PurchasesController.prototype, "create", null);
+__decorate([
+    (0, common_1.Put)(':id'),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)()),
+    __param(2, (0, common_1.Request)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, create_purchase_dto_1.CreatePurchaseDto, Object]),
+    __metadata("design:returntype", void 0)
+], PurchasesController.prototype, "update", null);
 __decorate([
     (0, common_1.Get)(),
     __param(0, (0, common_1.Query)()),

@@ -393,7 +393,7 @@ const CustomerReceipts = () => {
                         <thead className="bg-[#F8FAFC] border-b border-[#E2E8F0] sticky top-0">
                           <tr>
                             <th className="px-3 py-2 font-bold text-black uppercase">Type</th>
-                            <th className="px-3 py-2 font-bold text-black uppercase">Document No.</th>
+                            <th className="px-3 py-2 font-bold text-black uppercase">Invoice No.</th>
                             <th className="px-3 py-2 font-bold text-black uppercase">Date</th>
                             <th className="px-3 py-2 font-bold text-black uppercase">Reference No.</th>
                             <th className="px-3 py-2 font-bold text-black text-right uppercase">Amount</th>

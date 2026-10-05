@@ -47,6 +47,7 @@ const SupplierPayments = () => {
   // PDF Modal State
   const [pdfModalOpen, setPdfModalOpen] = useState(false);
   const [pdfUrl, setPdfUrl] = useState('');
+  const [pdfTitle, setPdfTitle] = useState('Bill-by-Bill Breakdown');
 
   // Pagination for History
   const [currentPage, setCurrentPage] = useState(1);
@@ -379,6 +380,7 @@ const SupplierPayments = () => {
                             if (billFilter === 'All') reportTitle = 'ALL BILLS BY BILL';
                             const url = generateBillByBillPdf(companyName, supplier?.name || 'Unknown', 'Supplier', displayedBills, totals, reportTitle) as unknown as string;
                             setPdfUrl(url);
+      setPdfTitle(`${supplier?.name} - Bill by Bill`);
                             setPdfModalOpen(true);
                           }}
                           className="bg-white text-[#E11D48] hover:bg-gray-100 p-1 rounded transition-colors"
@@ -748,7 +750,7 @@ const SupplierPayments = () => {
         isOpen={pdfModalOpen} 
         onClose={() => setPdfModalOpen(false)} 
         pdfUrl={pdfUrl} 
-        title="Bill-by-Bill Breakdown" 
+        title={pdfTitle} 
       />
     </div>
   );

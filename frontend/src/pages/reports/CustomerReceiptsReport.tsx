@@ -26,6 +26,7 @@ const CustomerReceiptsReport = () => {
 
   const [pdfModalOpen, setPdfModalOpen] = useState(false);
   const [pdfUrl, setPdfUrl] = useState('');
+  const [pdfTitle, setPdfTitle] = useState('Bill-by-Bill Breakdown');
   const [printingId, setPrintingId] = useState<number | null>(null);
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -250,6 +251,7 @@ const CustomerReceiptsReport = () => {
       const companyName = settings?.shopName || 'NJ FRESH AND FROZEN SDN BHD';
       const url = generateBillByBillPdf(companyName, customerName, 'Customer', unpaidBills, totals) as unknown as string;
       setPdfUrl(url);
+      setPdfTitle(`${customerName} - Bill by Bill`);
       setPdfModalOpen(true);
     } catch (err) {
       console.error(err);
@@ -594,7 +596,7 @@ const CustomerReceiptsReport = () => {
         isOpen={pdfModalOpen} 
         onClose={() => setPdfModalOpen(false)} 
         pdfUrl={pdfUrl} 
-        title="PENDING BALANCE BILL BY BILL" 
+        title={pdfTitle} 
       />
     </div>
   );

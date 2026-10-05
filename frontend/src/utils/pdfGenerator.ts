@@ -192,6 +192,28 @@ export const generateBillByBillPdf = (companyName: string, entityName: string, e
           data.cell.styles.fontStyle = 'bold';
           data.cell.styles.fillColor = [226, 232, 240]; // Slate 200 for highlight
           data.cell.styles.textColor = [0, 0, 0]; // Explicitly black
+        } else {
+          // Color Type (INV/PUR)
+          if (data.column.index === 0) {
+            data.cell.styles.textColor = [59, 130, 246]; // Blue-500
+          }
+          // Color Outstanding
+          if (data.column.index === 5) {
+            if (entityType === 'Customer') {
+              data.cell.styles.textColor = [5, 150, 105]; // Emerald-600
+            } else {
+              data.cell.styles.textColor = [225, 29, 72]; // Rose-600
+            }
+          }
+        }
+      }
+      if (data.section === 'head') {
+        if (data.column.index === 5) {
+          if (entityType === 'Customer') {
+            data.cell.styles.textColor = [5, 150, 105]; // Emerald-600
+          } else {
+            data.cell.styles.textColor = [225, 29, 72]; // Rose-600
+          }
         }
       }
     }

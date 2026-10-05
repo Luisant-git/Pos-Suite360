@@ -478,32 +478,82 @@ const CustomerReceiptsReport = () => {
               <table className="w-full text-left text-[12px] whitespace-nowrap">
                 <thead>
                   <tr className="bg-[#0F172A] text-white font-bold">
-                    <th className="px-3 py-2.5 border-r border-[#1E293B] text-center w-12">S.No</th>
-                    <th className="px-3 py-2.5 border-r border-[#1E293B]">Receipt No</th>
-                    <th className="px-3 py-2.5 border-r border-[#1E293B]">Date</th>
-                    <th className="px-3 py-2.5 border-r border-[#1E293B]">Customer</th>
-                    <th className="px-3 py-2.5 border-r border-[#1E293B]">Payment Mode</th>
-                    <th className="px-3 py-2.5 border-r border-[#1E293B]">Reference</th>
-                    <th className="px-3 py-2.5 text-right font-bold">Amount Collected</th>
+                    <th className="px-3 py-2.5 border-r border-[#1E293B]">RECEIPT</th>
+                    <th className="px-3 py-2.5 border-r border-[#1E293B]">DATE</th>
+                    <th className="px-3 py-2.5 border-r border-[#1E293B]">DEBTOR #</th>
+                    <th className="px-3 py-2.5 border-r border-[#1E293B]">DEBTOR NAME</th>
+                    <th className="px-3 py-2.5 text-right border-r border-[#1E293B]">AMT. REC.</th>
+                    <th className="px-3 py-2.5 text-right border-r border-[#1E293B]">OPEN CR</th>
+                    <th className="px-3 py-2.5 border-r border-[#1E293B]">PAYMENT FOR</th>
+                    <th className="px-3 py-2.5 border-r border-[#1E293B]">ON</th>
+                    <th className="px-3 py-2.5 text-center border-r border-[#1E293B]">DAYS</th>
+                    <th className="px-3 py-2.5 text-right border-r border-[#1E293B]">ORIG. AMT</th>
+                    <th className="px-3 py-2.5 text-right border-r border-[#1E293B]">AMT. PAID</th>
+                    <th className="px-3 py-2.5 text-right border-r border-[#1E293B]">OUT'DING</th>
                   </tr>
                 </thead>
                 <tbody>
                   {historyLoading ? (
-                    <TableLoader columns={7} />
+                    <TableLoader columns={12} />
                   ) : filteredHistory.length === 0 ? (
-                    <tr><td colSpan={7} className="text-center p-6 text-black font-bold">No receipt vouchers found.</td></tr>
+                    <tr><td colSpan={12} className="text-center p-6 text-black font-bold">No receipt vouchers found.</td></tr>
                   ) : (
-                    paginatedList.map((r: any, index: number) => (
-                      <tr key={r.id} className={`border-b border-[#E2E8F0] ${index % 2 === 0 ? 'bg-white' : 'bg-[#F8FAFC]'} hover:bg-[#EFF6FF]`}>
-                        <td className="px-3 py-2.5 border-r border-[#E2E8F0] text-center text-black font-bold">{(currentPage - 1) * entriesPerPage + index + 1}</td>
-                        <td className="px-3 py-2.5 border-r border-[#E2E8F0] font-bold text-[#3B82F6]">{r.receiptNo}</td>
-                        <td className="px-3 py-2.5 border-r border-[#E2E8F0] text-black font-bold">{formatMalaysiaDate(r.date)}</td>
-                        <td className="px-3 py-2.5 border-r border-[#E2E8F0] font-bold text-[#0F172A]">{r.customer?.name || '-'}</td>
-                        <td className="px-3 py-2.5 border-r border-[#E2E8F0] text-black font-bold">{r.paymentType?.name || r.paymentMode?.name || '-'}</td>
-                        <td className="px-3 py-2.5 border-r border-[#E2E8F0] text-black font-bold">{r.reference || '-'}</td>
-                        <td className="px-3 py-2.5 text-right font-bold text-[#10B981]">{formatCurrency(r.amount)}</td>
-                      </tr>
-                    ))
+                    paginatedList.map((r: any, idx: number) => {
+                      const rowSpan = Math.max(r.allocations?.length || 1, 1);
+                      const openCr = r.amount - (r.allocations?.reduce((sum: number, a: any) => sum + Number(a.amount || 0), 0) || 0);
+                      
+                      return (
+                        <React.Fragment key={r.id}>
+                          <tr className={`border-b ${r.allocations && r.allocations.length > 1 ? 'border-dashed border-[#CBD5E1]' : 'border-[#E2E8F0]'} ${idx % 2 === 0 ? 'bg-white' : 'bg-[#F8FAFC]'}`}>
+                            <td rowSpan={rowSpan} className="px-3 py-2.5 border-r border-[#E2E8F0] font-bold text-[#059669] align-top">{r.receiptNo}</td>
+                            <td rowSpan={rowSpan} className="px-3 py-2.5 border-r border-[#E2E8F0] text-black font-bold align-top">{formatMalaysiaDate(r.date)}</td>
+                            <td rowSpan={rowSpan} className="px-3 py-2.5 border-r border-[#E2E8F0] font-bold text-black align-top">{r.customer?.code || r.customerId}</td>
+                            <td rowSpan={rowSpan} className="px-3 py-2.5 border-r border-[#E2E8F0] font-bold text-black align-top">{r.customer?.name}</td>
+                            <td rowSpan={rowSpan} className="px-3 py-2.5 text-right font-bold text-[#059669] border-r border-[#E2E8F0] align-top">{formatCurrency(r.amount)}</td>
+                            <td rowSpan={rowSpan} className="px-3 py-2.5 text-right font-bold text-black border-r border-[#E2E8F0] align-top">{formatCurrency(openCr > 0 ? openCr : 0)}</td>
+                            
+                            {r.allocations && r.allocations.length > 0 ? (
+                              <>
+                                <td className="px-3 py-2.5 border-r border-[#E2E8F0] text-black font-bold">{r.allocations[0].sale?.invoiceNo || '-'}</td>
+                                <td className="px-3 py-2.5 border-r border-[#E2E8F0] text-black">{r.allocations[0].sale?.date ? formatMalaysiaDate(r.allocations[0].sale.date) : '-'}</td>
+                                <td className="px-3 py-2.5 border-r border-[#E2E8F0] text-center text-black">
+                                  {r.allocations[0].sale?.date ? Math.floor((new Date(r.date).getTime() - new Date(r.allocations[0].sale.date).getTime()) / (1000 * 3600 * 24)) : '-'}
+                                </td>
+                                <td className="px-3 py-2.5 border-r border-[#E2E8F0] text-right text-black">{formatCurrency(r.allocations[0].sale?.grandTotal || 0)}</td>
+                                <td className="px-3 py-2.5 border-r border-[#E2E8F0] text-right font-bold text-[#059669]">{formatCurrency(r.allocations[0].amount)}</td>
+                                <td className="px-3 py-2.5 border-r border-[#E2E8F0] text-right text-black">
+                                  {formatCurrency((r.allocations[0].sale?.grandTotal || 0) - r.allocations[0].amount)}
+                                </td>
+                              </>
+                            ) : (
+                              <>
+                                <td className="px-3 py-2.5 border-r border-[#E2E8F0] text-black text-center">-</td>
+                                <td className="px-3 py-2.5 border-r border-[#E2E8F0] text-black text-center">-</td>
+                                <td className="px-3 py-2.5 border-r border-[#E2E8F0] text-black text-center">-</td>
+                                <td className="px-3 py-2.5 border-r border-[#E2E8F0] text-black text-center">-</td>
+                                <td className="px-3 py-2.5 border-r border-[#E2E8F0] text-black text-center">-</td>
+                                <td className="px-3 py-2.5 border-r border-[#E2E8F0] text-black text-center">-</td>
+                              </>
+                            )}
+                          </tr>
+                          
+                          {r.allocations && r.allocations.slice(1).map((a: any, i: number) => (
+                            <tr key={i} className={`border-b ${i === r.allocations.length - 2 ? 'border-[#E2E8F0]' : 'border-dashed border-[#CBD5E1]'} ${idx % 2 === 0 ? 'bg-white' : 'bg-[#F8FAFC]'}`}>
+                              <td className="px-3 py-2.5 border-r border-[#E2E8F0] text-black font-bold">{a.sale?.invoiceNo || '-'}</td>
+                              <td className="px-3 py-2.5 border-r border-[#E2E8F0] text-black">{a.sale?.date ? formatMalaysiaDate(a.sale.date) : '-'}</td>
+                              <td className="px-3 py-2.5 border-r border-[#E2E8F0] text-center text-black">
+                                {a.sale?.date ? Math.floor((new Date(r.date).getTime() - new Date(a.sale.date).getTime()) / (1000 * 3600 * 24)) : '-'}
+                              </td>
+                              <td className="px-3 py-2.5 border-r border-[#E2E8F0] text-right text-black">{formatCurrency(a.sale?.grandTotal || 0)}</td>
+                              <td className="px-3 py-2.5 border-r border-[#E2E8F0] text-right font-bold text-[#059669]">{formatCurrency(a.amount)}</td>
+                              <td className="px-3 py-2.5 border-r border-[#E2E8F0] text-right text-black">
+                                {formatCurrency((a.sale?.grandTotal || 0) - a.amount)}
+                              </td>
+                            </tr>
+                          ))}
+                        </React.Fragment>
+                      );
+                    })
                   )}
                 </tbody>
               </table>

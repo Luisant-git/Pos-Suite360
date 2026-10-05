@@ -685,8 +685,8 @@ const CustomerReceipts = () => {
                 <tr className="bg-[#1E293B] text-white font-bold">
                   <th className="px-3 py-2 border-r border-[#334155]">RECEIPT</th>
                   <th className="px-3 py-2 border-r border-[#334155]">DATE</th>
-                  <th className="px-3 py-2 border-r border-[#334155]">DEBTOR #</th>
-                  <th className="px-3 py-2 border-r border-[#334155]">DEBTOR NAME</th>
+                  {/* <th className="px-3 py-2 border-r border-[#334155]">DEBTOR #</th> */}
+                  <th className="px-3 py-2 border-r border-[#334155]">CUSTOMER NAME</th>
                   <th className="px-3 py-2 text-right border-r border-[#334155]">AMT. REC.</th>
                   <th className="px-3 py-2 text-right border-r border-[#334155]">OPEN CR</th>
                   <th className="px-3 py-2 border-r border-[#334155]">PAYMENT FOR</th>
@@ -713,7 +713,7 @@ const CustomerReceipts = () => {
                         <tr className={`border-b ${r.allocations && r.allocations.length > 1 ? 'border-dashed border-[#CBD5E1]' : 'border-[#E2E8F0]'} ${idx % 2 === 0 ? 'bg-white' : 'bg-[#F8FAFC]'}`}>
                           <td rowSpan={rowSpan} className="px-3 py-2 border-r border-[#E2E8F0] font-bold text-[#059669] align-top">{r.receiptNo}</td>
                           <td rowSpan={rowSpan} className="px-3 py-2 border-r border-[#E2E8F0] text-black font-bold align-top">{getMalaysiaDateStr(r.date)}</td>
-                          <td rowSpan={rowSpan} className="px-3 py-2 border-r border-[#E2E8F0] font-bold text-black align-top">{r.customer?.code || r.customerId}</td>
+                          {/* <td rowSpan={rowSpan} className="px-3 py-2 border-r border-[#E2E8F0] font-bold text-black align-top">{r.customer?.code || r.customerId}</td> */}
                           <td rowSpan={rowSpan} className="px-3 py-2 border-r border-[#E2E8F0] font-bold text-black align-top">{r.customer?.name}</td>
                           <td rowSpan={rowSpan} className="px-3 py-2 text-right font-bold text-[#059669] border-r border-[#E2E8F0] align-top">{formatCurrency(r.amount)}</td>
                           <td rowSpan={rowSpan} className="px-3 py-2 text-right font-bold text-black border-r border-[#E2E8F0] align-top">{formatCurrency(openCr > 0 ? openCr : 0)}</td>

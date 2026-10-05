@@ -320,7 +320,7 @@ const SupplierPaymentsReport = () => {
   };
 
   return (
-    <div className="absolute inset-0 bg-[#F8FAFC] flex flex-col font-sans overflow-y-auto lg:overflow-hidden z-10 p-2 sm:p-4">
+    <div className={`${isExpanded ? 'fixed inset-0 z-[9999]' : 'absolute inset-0 z-10'} bg-[#F8FAFC] flex flex-col font-sans overflow-y-auto lg:overflow-hidden p-2 sm:p-4`}>
       
       <ReportTabs />
 
@@ -397,7 +397,7 @@ const SupplierPaymentsReport = () => {
         </div>
 
 
-                <div className={isExpanded ? 'fixed inset-4 lg:inset-8 z-[100] bg-[#F8FAFC] flex flex-col overflow-hidden rounded-xl shadow-2xl border border-[#E2E8F0]' : 'flex flex-col flex-1 min-h-0'}>
+                <div className="flex flex-col flex-1 min-h-0">
         {/* Filters - always visible, fully responsive */}
         <div className="bg-white p-2 sm:p-3 border-b border-[#E6E9ED] shrink-0">
           <div className="flex flex-col gap-2">
@@ -475,14 +475,22 @@ const SupplierPaymentsReport = () => {
               {reportMode === 'consolidation' ? 'OVERALL SUPPLIER PAYABLES CONSOLIDATION' : 'SUPPLIER PAYMENTS HISTORY'}
             </h2>
           </div>
-          <div className="flex items-center gap-2">
-            <span className="text-[11px] font-bold text-black whitespace-nowrap shrink-0">{activeList.length} Records Found</span>
+          <div className="flex items-center gap-3">
+            <span className="text-[11px] font-bold text-gray-600 whitespace-nowrap shrink-0">{activeList.length} Records Found</span>
             <button
+              type="button"
               onClick={() => setIsExpanded(!isExpanded)}
-              className="p-1 rounded hover:bg-gray-200 text-gray-600 transition-colors shrink-0"
-              title={isExpanded ? "Minimize" : "Maximize"}
+              className={`flex items-center gap-1.5 px-3 py-1.5 text-[12px] font-bold rounded transition-colors ${
+                isExpanded 
+                  ? 'bg-red-50 text-red-600 hover:bg-red-100 border border-red-200' 
+                  : 'bg-[#1E293B] text-white hover:bg-[#0F172A] shadow-sm'
+              }`}
             >
-              {isExpanded ? <Minimize2 size={14} /> : <Maximize2 size={14} />}
+              {isExpanded ? (
+                <><Minimize2 size={14} /> Exit Full View</>
+              ) : (
+                <><Maximize2 size={14} /> Full View</>
+              )}
             </button>
           </div>
         </div>

@@ -613,16 +613,24 @@ const CustomerReceipts = () => {
           </div>
 
           <div className="p-3 border-b border-[#E2E8F0] grid grid-cols-1 md:grid-cols-3 gap-2">
-            <select
-              value={filterCustomer}
-              onChange={(e) => setFilterCustomer(e.target.value)}
-              className="w-full px-2 py-1.5 border border-[#CBD5E1] rounded text-[12px] outline-none focus:border-[#3B82F6]"
-            >
-              <option value="">-- All Customers --</option>
-              {customers.map((c: any) => (
-                <option key={c.id} value={c.id}>{c.name}</option>
-              ))}
-            </select>
+            <Select
+              value={filterCustomer ? { value: filterCustomer, label: customers.find((c: any) => c.id.toString() === filterCustomer)?.name || '-- All Customers --' } : null}
+              onChange={(option: any) => setFilterCustomer(option ? option.value.toString() : '')}
+              options={[
+                { value: '', label: '-- All Customers --' },
+                ...customers.map((c: any) => ({
+                  value: c.id.toString(),
+                  label: c.name
+                }))
+              ]}
+              isClearable
+              placeholder="-- All Customers --"
+              styles={{
+                control: (base) => ({ ...base, minHeight: '34px', height: '34px', fontSize: '12px', borderColor: '#CBD5E1' }),
+                valueContainer: (base) => ({ ...base, padding: '0 8px' }),
+                input: (base) => ({ ...base, margin: '0', padding: '0' })
+              }}
+            />
             <input
               type="date"
               value={filterFromDate}

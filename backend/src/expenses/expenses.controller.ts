@@ -1,9 +1,13 @@
-import { Controller, Get, Post, Body, Param, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Query, Put } from '@nestjs/common';
 import { ExpensesService } from './expenses.service';
 import { CreateExpenseDto } from './dto/create-expense.dto';
 
 @Controller('expenses')
 export class ExpensesController {
+  @Put(':id')
+  update(@Param('id') id: string, @Body() updateData: any) {
+    return this.expensesService.update(+id, updateData);
+  }
   constructor(private readonly expensesService: ExpensesService) {}
 
   @Post()

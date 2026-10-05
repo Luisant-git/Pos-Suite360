@@ -70,6 +70,18 @@ let ExpensesService = class ExpensesService {
             },
         });
     }
+    async update(id, updateData) {
+        return this.prisma.expense.update({
+            where: { id },
+            data: {
+                date: updateData.date ? new Date(updateData.date) : undefined,
+                amount: updateData.amount,
+                notes: updateData.notes,
+                expenseCategoryId: updateData.expenseCategoryId,
+                paymentModeId: updateData.paymentModeId,
+            },
+        });
+    }
 };
 exports.ExpensesService = ExpensesService;
 exports.ExpensesService = ExpensesService = __decorate([

@@ -18,6 +18,9 @@ const expenses_service_1 = require("./expenses.service");
 const create_expense_dto_1 = require("./dto/create-expense.dto");
 let ExpensesController = class ExpensesController {
     expensesService;
+    update(id, updateData) {
+        return this.expensesService.update(+id, updateData);
+    }
     constructor(expensesService) {
         this.expensesService = expensesService;
     }
@@ -32,6 +35,14 @@ let ExpensesController = class ExpensesController {
     }
 };
 exports.ExpensesController = ExpensesController;
+__decorate([
+    (0, common_1.Put)(':id'),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", void 0)
+], ExpensesController.prototype, "update", null);
 __decorate([
     (0, common_1.Post)(),
     __param(0, (0, common_1.Body)()),

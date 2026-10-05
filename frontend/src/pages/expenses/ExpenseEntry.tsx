@@ -1,6 +1,6 @@
 import { getMalaysiaDateStr, formatMalaysiaDate } from '../../utils/date';
 import { useState } from 'react';
-import { X, Briefcase, PlusSquare, Download, Filter, RefreshCw } from 'lucide-react';
+import { X, Briefcase, PlusSquare, Download, Filter, RefreshCw, Edit, XCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
@@ -16,6 +16,7 @@ const ExpenseEntry = () => {
   const queryClient = useQueryClient();
 
   // New Expense Form State
+  const [editingId, setEditingId] = useState<number | null>(null);
   const [expenseDate, setExpenseDate] = useState(getMalaysiaDateStr());
   const [categoryId, setCategoryId] = useState('');
   const [amount, setAmount] = useState('');
@@ -69,10 +70,7 @@ const ExpenseEntry = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['expenses'] });
       toast.success('Expense saved successfully!');
-      setAmount('');
-      setNotes('');
-      setCategoryId('');
-      setPaymentModeId('');
+      resetForm();
     },
     onError: (err: any) => {
       console.error(err);
@@ -80,18 +78,58 @@ const ExpenseEntry = () => {
     }
   });
 
+
+  const updateMutation = useMutation({
+    mutationFn: async (payload: any) => {
+      const res = await api.put(`/expenses/${editingId}`, payload);
+      return res.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['expenses'] });
+      toast.success('Expense updated successfully!');
+      resetForm();
+    },
+    onError: (err: any) => {
+      console.error(err);
+      toast.error(`Failed to update expense: ${err.message}`);
+    }
+  });
+
+  const resetForm = () => {
+    setEditingId(null);
+    setAmount('');
+    setNotes('');
+    setCategoryId('');
+    setPaymentModeId('');
+    setExpenseDate(getMalaysiaDateStr());
+  };
+
+  const handleEdit = (exp: any) => {
+    setEditingId(exp.id);
+    setExpenseDate(exp.date ? exp.date.substring(0, 10) : getMalaysiaDateStr());
+    setCategoryId(exp.expenseCategoryId?.toString() || '');
+    setAmount(exp.amount?.toString() || '');
+    setPaymentModeId(exp.paymentModeId?.toString() || '');
+    setNotes(exp.notes || '');
+  };
+
   const handleSave = () => {
     if (!categoryId || !amount || !paymentModeId) {
       toast.error('Please fill out all required fields');
       return;
     }
-    createMutation.mutate({
+    const payload = {
       date: expenseDate,
       expenseCategoryId: Number(categoryId),
       amount: Number(amount),
       paymentModeId: Number(paymentModeId),
       notes
-    });
+    };
+    if (editingId) {
+      updateMutation.mutate(payload);
+    } else {
+      createMutation.mutate(payload);
+    }
   };
 
   const setQuickDate = (type: 'today' | 'thisMonth' | 'all') => {
@@ -182,7 +220,7 @@ const ExpenseEntry = () => {
           <div className="w-full lg:w-1/3 bg-white rounded-lg shadow-sm border border-gray-200 flex flex-col self-start">
             <div className="px-4 py-3 border-b border-gray-200 bg-gray-50 rounded-t-lg">
               <h3 className="font-bold text-[#0f172a] text-sm flex items-center gap-2 uppercase">
-                LOG NEW EXPENSE
+                {editingId ? 'EDIT EXPENSE' : 'LOG NEW EXPENSE'}
               </h3>
             </div>
             
@@ -239,10 +277,15 @@ const ExpenseEntry = () => {
                 ></textarea>
               </div>
 
-              <div className="pt-2">
-                <button onClick={handleSave} disabled={createMutation.isPending} className="w-full bg-[#0f172a] hover:bg-gray-800 text-white font-bold py-2.5 px-4 rounded shadow-md flex justify-center items-center gap-2 transition-colors disabled:opacity-50">
-                  <PlusSquare size={18} /> {createMutation.isPending ? 'Saving...' : 'Save Expense'}
+              <div className="pt-2 flex gap-2">
+                <button onClick={handleSave} disabled={createMutation.isPending || updateMutation.isPending} className="flex-1 bg-[#0f172a] hover:bg-gray-800 text-white font-bold py-2.5 px-4 rounded shadow-md flex justify-center items-center gap-2 transition-colors disabled:opacity-50">
+                  <PlusSquare size={18} /> {editingId ? (updateMutation.isPending ? 'Updating...' : 'Update Expense') : (createMutation.isPending ? 'Saving...' : 'Save Expense')}
                 </button>
+                {editingId && (
+                  <button onClick={resetForm} className="bg-red-500 hover:bg-red-600 text-white font-bold py-2.5 px-4 rounded shadow-md flex justify-center items-center gap-2 transition-colors">
+                    <XCircle size={18} /> Cancel
+                  </button>
+                )}
               </div>
             </div>
           </div>
@@ -336,7 +379,8 @@ const ExpenseEntry = () => {
                       <th className="px-4 py-3 font-bold border-r border-gray-600 text-left">Category</th>
                       <th className="px-4 py-3 font-bold border-r border-gray-600 text-center w-36">Mode</th>
                       <th className="px-4 py-3 font-bold border-r border-gray-600 text-left">Notes / Remarks</th>
-                      <th className="px-4 py-3 font-bold text-right w-36">Amount (RM)</th>
+                      <th className="px-4 py-3 font-bold text-right w-36 border-r border-gray-600">Amount (RM)</th>
+                      <th className="px-4 py-3 font-bold text-center w-20 print:hidden">Action</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -353,7 +397,16 @@ const ExpenseEntry = () => {
                           <td className="px-4 py-2.5 font-bold text-[#16A34A]">{exp.category?.name || '-'}</td>
                           <td className="px-4 py-2.5 text-center text-black font-bold">{exp.paymentMode?.name || '-'}</td>
                           <td className="px-4 py-2.5 text-black font-bold text-xs">{exp.notes || '-'}</td>
-                          <td className="px-4 py-2.5 text-right font-bold text-red-600">{formatCurrency(exp.amount)}</td>
+                          <td className="px-4 py-2.5 text-right font-bold text-red-600 border-r border-gray-200">{formatCurrency(exp.amount)}</td>
+                          <td className="px-4 py-2.5 text-center print:hidden">
+                            <button 
+                              onClick={() => handleEdit(exp)}
+                              className="text-blue-600 hover:bg-blue-100 p-1.5 rounded transition-colors"
+                              title="Edit Expense"
+                            >
+                              <Edit size={16} />
+                            </button>
+                          </td>
                         </tr>
                       ))
                     )}

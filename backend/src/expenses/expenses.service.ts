@@ -61,4 +61,18 @@ export class ExpensesService {
       },
     });
   }
+
+  async update(id: number, updateData: any) {
+    return this.prisma.expense.update({
+      where: { id },
+      data: {
+        date: updateData.date ? new Date(updateData.date) : undefined,
+        amount: updateData.amount,
+        notes: updateData.notes,
+        expenseCategoryId: updateData.expenseCategoryId,
+        paymentModeId: updateData.paymentModeId,
+      },
+    });
+  }
+
 }

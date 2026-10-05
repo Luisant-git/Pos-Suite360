@@ -267,7 +267,7 @@ let CustomerReceiptsService = class CustomerReceiptsService {
                 totalOldUnallocatedCollected = 0;
             }
         }
-        return bills;
+        return bills.filter(b => b.pending > 0);
     }
     async getConsolidationReport(startDate, endDate) {
         const customers = await this.prisma.customer.findMany({

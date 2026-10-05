@@ -298,7 +298,7 @@ export class SupplierPaymentsService {
       }
     }
 
-    return bills;
+    return bills.filter(b => b.pending > 0);
   }
 
   async getConsolidationReport(startDate?: string, endDate?: string) {

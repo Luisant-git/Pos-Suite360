@@ -22,124 +22,124 @@ export declare class SupplierPaymentsController {
     }[]>;
     getUnpaidBills(id: string): Promise<any[]>;
     create(createSupplierPaymentDto: any, req: any): Promise<{
-        supplier: {
-            id: number;
+        paymentType: {
             createdAt: Date;
             updatedAt: Date;
+            id: number;
             name: string;
+            description: string | null;
+        } | null;
+        supplier: {
+            createdAt: Date;
+            updatedAt: Date;
+            id: number;
+            name: string;
+            contactPerson: string | null;
             phone: string | null;
             email: string | null;
             address: string | null;
-            gstNumber: string | null;
             openingBalance: import("@prisma/client-runtime-utils").Decimal;
-            contactPerson: string | null;
             openingBalanceType: string;
+            gstNumber: string | null;
             accountNo: string | null;
             ifscCode: string | null;
             bankBranch: string | null;
         };
-        paymentType: {
-            id: number;
-            createdAt: Date;
-            updatedAt: Date;
-            name: string;
-            description: string | null;
-        } | null;
     } & {
-        id: number;
         date: Date;
-        supplierId: number;
-        paymentModeId: number | null;
-        createdAt: Date;
-        updatedAt: Date;
         amount: import("@prisma/client-runtime-utils").Decimal;
         reference: string | null;
         remarks: string | null;
+        createdAt: Date;
+        updatedAt: Date;
+        id: number;
+        paymentModeId: number | null;
         paymentTypeId: number | null;
         userId: number;
         paymentNo: string;
+        supplierId: number;
     }>;
     update(id: string, updateData: any, req: any): Promise<{
-        supplier: {
-            id: number;
+        paymentType: {
             createdAt: Date;
             updatedAt: Date;
+            id: number;
             name: string;
+            description: string | null;
+        } | null;
+        supplier: {
+            createdAt: Date;
+            updatedAt: Date;
+            id: number;
+            name: string;
+            contactPerson: string | null;
             phone: string | null;
             email: string | null;
             address: string | null;
-            gstNumber: string | null;
             openingBalance: import("@prisma/client-runtime-utils").Decimal;
-            contactPerson: string | null;
             openingBalanceType: string;
+            gstNumber: string | null;
             accountNo: string | null;
             ifscCode: string | null;
             bankBranch: string | null;
         };
-        paymentType: {
-            id: number;
-            createdAt: Date;
-            updatedAt: Date;
-            name: string;
-            description: string | null;
-        } | null;
     } & {
-        id: number;
         date: Date;
-        supplierId: number;
-        paymentModeId: number | null;
-        createdAt: Date;
-        updatedAt: Date;
         amount: import("@prisma/client-runtime-utils").Decimal;
         reference: string | null;
         remarks: string | null;
+        createdAt: Date;
+        updatedAt: Date;
+        id: number;
+        paymentModeId: number | null;
         paymentTypeId: number | null;
         userId: number;
         paymentNo: string;
+        supplierId: number;
     }>;
     findAll(): Promise<({
-        supplier: {
-            id: number;
-            createdAt: Date;
-            updatedAt: Date;
-            name: string;
-            phone: string | null;
-            email: string | null;
-            address: string | null;
-            gstNumber: string | null;
-            openingBalance: import("@prisma/client-runtime-utils").Decimal;
-            contactPerson: string | null;
-            openingBalanceType: string;
-            accountNo: string | null;
-            ifscCode: string | null;
-            bankBranch: string | null;
-        };
         paymentMode: {
-            id: number;
             createdAt: Date;
             updatedAt: Date;
+            id: number;
             name: string;
             description: string | null;
         } | null;
         paymentType: {
-            id: number;
             createdAt: Date;
             updatedAt: Date;
+            id: number;
             name: string;
             description: string | null;
         } | null;
+        supplier: {
+            createdAt: Date;
+            updatedAt: Date;
+            id: number;
+            name: string;
+            contactPerson: string | null;
+            phone: string | null;
+            email: string | null;
+            address: string | null;
+            openingBalance: import("@prisma/client-runtime-utils").Decimal;
+            openingBalanceType: string;
+            gstNumber: string | null;
+            accountNo: string | null;
+            ifscCode: string | null;
+            bankBranch: string | null;
+        };
     } & {
-        id: number;
         date: Date;
-        supplierId: number;
-        paymentModeId: number | null;
-        createdAt: Date;
-        updatedAt: Date;
         amount: import("@prisma/client-runtime-utils").Decimal;
         reference: string | null;
         remarks: string | null;
+        createdAt: Date;
+        updatedAt: Date;
+        id: number;
+        paymentModeId: number | null;
         paymentTypeId: number | null;
         userId: number;
         paymentNo: string;
+        supplierId: number;
     })[]>;
 }

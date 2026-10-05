@@ -547,7 +547,7 @@ const CustomerReceipts = () => {
                       receiptNo: nextReceiptNoData?.receiptNo || 'Generating...',
                       date: getMalaysiaDateStr(),
                       customerId: 0,
-                      paymentModeId: 0,
+                      paymentTypeId: 0,
                       amount: 0 as any,
                       reference: '',
                       remarks: ''

@@ -547,7 +547,7 @@ const SupplierPayments = () => {
                       paymentNo: nextPaymentNoData?.paymentNo || 'Generating...',
                       date: getMalaysiaDateStr(),
                       supplierId: 0,
-                      paymentModeId: 0,
+                      paymentTypeId: 0,
                       amount: 0 as any,
                       reference: '',
                       remarks: ''

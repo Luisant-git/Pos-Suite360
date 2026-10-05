@@ -1,5 +1,6 @@
 import { X, Download } from 'lucide-react';
 import { createPortal } from 'react-dom';
+import { useEffect } from 'react';
 
 interface PdfViewerModalProps {
   isOpen: boolean;
@@ -9,6 +10,16 @@ interface PdfViewerModalProps {
 }
 
 const PdfViewerModal = ({ isOpen, onClose, pdfUrl, title }: PdfViewerModalProps) => {
+  useEffect(() => {
+    if (isOpen) {
+      const originalTitle = document.title;
+      document.title = title;
+      return () => {
+        document.title = originalTitle;
+      };
+    }
+  }, [isOpen, title]);
+
   if (!isOpen) return null;
 
   return createPortal(

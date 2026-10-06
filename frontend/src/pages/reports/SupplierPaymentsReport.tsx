@@ -507,16 +507,16 @@ const SupplierPaymentsReport = () => {
             <button
               type="button"
               onClick={() => setIsExpanded(!isExpanded)}
-              className={`flex items-center gap-1.5 px-3 py-1.5 text-[12px] font-bold rounded transition-colors ${
+              className={`flex items-center gap-1.5 px-2 sm:px-3 py-1.5 text-[12px] font-bold rounded transition-colors ${
                 isExpanded 
                   ? 'bg-red-50 text-red-600 hover:bg-red-100 border border-red-200' 
                   : 'bg-[#1E293B] text-white hover:bg-[#0F172A] shadow-sm'
               }`}
             >
               {isExpanded ? (
-                <><Minimize2 size={14} /> Exit Full View</>
+                <><Minimize2 size={14} /> <span className="hidden sm:inline">Exit Full View</span></>
               ) : (
-                <><Maximize2 size={14} /> Full View</>
+                <><Maximize2 size={14} /> <span className="hidden sm:inline">Full View</span></>
               )}
             </button>
           </div>

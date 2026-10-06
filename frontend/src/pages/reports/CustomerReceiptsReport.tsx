@@ -98,11 +98,12 @@ const CustomerReceiptsReport = () => {
     if (searchTerm && !item.customer?.name?.toLowerCase().includes(searchTerm.toLowerCase()) && !item.receiptNo?.toLowerCase().includes(searchTerm.toLowerCase())) {
       return false;
     }
-    if (startDate && new Date(item.date) < new Date(startDate)) return false;
-    if (endDate) {
-      const end = new Date(endDate);
-      end.setHours(23, 59, 59, 999);
-      if (new Date(item.date) > end) return false;
+    if (startDate || endDate) {
+      const d = new Date(item.date);
+      const tzDate = new Date(d.toLocaleString('en-US', { timeZone: 'Asia/Kuala_Lumpur' }));
+      const dateStr = `${tzDate.getFullYear()}-${String(tzDate.getMonth() + 1).padStart(2, '0')}-${String(tzDate.getDate()).padStart(2, '0')}`;
+      if (startDate && dateStr < startDate) return false;
+      if (endDate && dateStr > endDate) return false;
     }
     return true;
   });

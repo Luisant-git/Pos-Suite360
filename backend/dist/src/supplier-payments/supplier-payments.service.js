@@ -161,6 +161,20 @@ let SupplierPaymentsService = class SupplierPaymentsService {
             where: { supplierId },
             include: { allocations: true }
         });
+        let excludedAllocations = {};
+        if (excludePaymentId) {
+            const exAlloc = await this.prisma.supplierPaymentAllocation.findMany({
+                where: { supplierPaymentId: excludePaymentId }
+            });
+            exAlloc.forEach(a => {
+                if (a.purchaseId) {
+                    excludedAllocations[a.purchaseId] = Number(a.amount);
+                }
+                else {
+                    excludedAllocations['OB'] = Number(a.amount);
+                }
+            });
+        }
         let totalOldUnallocatedPaid = 0;
         allPayments.forEach(p => {
             if (excludePaymentId && p.id === excludePaymentId)
@@ -251,8 +265,15 @@ let SupplierPaymentsService = class SupplierPaymentsService {
         }
         for (const bill of bills) {
             const remainingPending = bill.pending;
-            const currentTotalPaid = Number(totalOldUnallocatedPaid.toFixed(2));
             bill.received = bill.allocated;
+            if (remainingPending <= 0) {
+                bill.pending = 0;
+                continue;
+            }
+            if (excludedAllocations[bill.id] !== undefined) {
+                continue;
+            }
+            const currentTotalPaid = Number(totalOldUnallocatedPaid.toFixed(2));
             if (remainingPending <= 0) {
                 bill.pending = 0;
                 continue;

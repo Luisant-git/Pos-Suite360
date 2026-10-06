@@ -166,11 +166,24 @@ export class SupplierPaymentsService {
       throw new BadRequestException('Supplier not found');
     }
 
-    // 1. Get total paid using all payments to calculate unallocated amounts
     const allPayments = await this.prisma.supplierPayment.findMany({
       where: { supplierId },
       include: { allocations: true }
     });
+
+    let excludedAllocations: Record<string | number, number> = {};
+    if (excludePaymentId) {
+      const exAlloc = await this.prisma.supplierPaymentAllocation.findMany({
+        where: { supplierPaymentId: excludePaymentId }
+      });
+      exAlloc.forEach(a => {
+        if (a.purchaseId) {
+          excludedAllocations[a.purchaseId] = Number(a.amount);
+        } else {
+          excludedAllocations['OB'] = Number(a.amount);
+        }
+      });
+    }
     
     let totalOldUnallocatedPaid = 0;
     allPayments.forEach(p => {
@@ -277,10 +290,21 @@ export class SupplierPaymentsService {
     // 3. Apply FIFO for the old unallocated payments over the remaining pending balances
     for (const bill of bills) {
       const remainingPending = bill.pending;
-      const currentTotalPaid = Number(totalOldUnallocatedPaid.toFixed(2));
       
       // Calculate total received initially from specific allocations
       bill.received = bill.allocated;
+
+      if (remainingPending <= 0) {
+         bill.pending = 0;
+         continue;
+      }
+
+      // DO NOT apply FIFO to bills that were specifically allocated by the payment we are editing.
+      if (excludedAllocations[bill.id] !== undefined) {
+         continue;
+      }
+
+      const currentTotalPaid = Number(totalOldUnallocatedPaid.toFixed(2));
 
       if (remainingPending <= 0) {
          bill.pending = 0;

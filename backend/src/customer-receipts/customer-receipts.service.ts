@@ -168,11 +168,24 @@ export class CustomerReceiptsService {
       throw new BadRequestException('Customer not found');
     }
 
-    // 1. Get total collected using all receipts to calculate unallocated amounts
     const allReceipts = await this.prisma.customerReceipt.findMany({
       where: { customerId },
       include: { allocations: true }
     });
+
+    let excludedAllocations: Record<string | number, number> = {};
+    if (excludeReceiptId) {
+      const exAlloc = await this.prisma.customerReceiptAllocation.findMany({
+        where: { customerReceiptId: excludeReceiptId }
+      });
+      exAlloc.forEach(a => {
+        if (a.saleId) {
+          excludedAllocations[a.saleId] = Number(a.amount);
+        } else {
+          excludedAllocations['OB'] = Number(a.amount);
+        }
+      });
+    }
     
     let totalOldUnallocatedCollected = 0;
     allReceipts.forEach(r => {
@@ -279,10 +292,22 @@ export class CustomerReceiptsService {
     // 3. Apply FIFO for the old unallocated receipts over the remaining pending balances
     for (const bill of bills) {
       const remainingPending = bill.pending;
-      const currentTotalCollected = Number(totalOldUnallocatedCollected.toFixed(2));
       
       // Calculate total received initially from specific allocations
       bill.received = bill.allocated;
+
+      if (remainingPending <= 0) {
+         bill.pending = 0;
+         continue;
+      }
+
+      // DO NOT apply FIFO to bills that were specifically allocated by the receipt we are editing.
+      // This ensures they appear in the edit screen with their true pending balance so the user can modify them.
+      if (excludedAllocations[bill.id] !== undefined) {
+         continue;
+      }
+
+      const currentTotalCollected = Number(totalOldUnallocatedCollected.toFixed(2));
 
       if (remainingPending <= 0) {
          bill.pending = 0;

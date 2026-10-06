@@ -164,6 +164,20 @@ let CustomerReceiptsService = class CustomerReceiptsService {
             where: { customerId },
             include: { allocations: true }
         });
+        let excludedAllocations = {};
+        if (excludeReceiptId) {
+            const exAlloc = await this.prisma.customerReceiptAllocation.findMany({
+                where: { customerReceiptId: excludeReceiptId }
+            });
+            exAlloc.forEach(a => {
+                if (a.saleId) {
+                    excludedAllocations[a.saleId] = Number(a.amount);
+                }
+                else {
+                    excludedAllocations['OB'] = Number(a.amount);
+                }
+            });
+        }
         let totalOldUnallocatedCollected = 0;
         allReceipts.forEach(r => {
             if (excludeReceiptId && r.id === excludeReceiptId)
@@ -254,8 +268,15 @@ let CustomerReceiptsService = class CustomerReceiptsService {
         }
         for (const bill of bills) {
             const remainingPending = bill.pending;
-            const currentTotalCollected = Number(totalOldUnallocatedCollected.toFixed(2));
             bill.received = bill.allocated;
+            if (remainingPending <= 0) {
+                bill.pending = 0;
+                continue;
+            }
+            if (excludedAllocations[bill.id] !== undefined) {
+                continue;
+            }
+            const currentTotalCollected = Number(totalOldUnallocatedCollected.toFixed(2));
             if (remainingPending <= 0) {
                 bill.pending = 0;
                 continue;

@@ -16,7 +16,7 @@ import PdfViewerModal from '../../components/PdfViewerModal';
 const SupplierPaymentsReport = () => {
   const { formatCurrency, settings } = useSettings();
   const [reportMode, setReportMode] = useState<'consolidation' | 'history'>('consolidation');
-  const [showClearedOnly, setShowClearedOnly] = useState(false);
+  const showClearedOnly = false; // const [showClearedOnly, setShowClearedOnly] = useState(false);
 
   const [searchTerm, setSearchTerm] = useState('');
   const [startDate, setStartDate] = useState('');
@@ -492,7 +492,7 @@ const SupplierPaymentsReport = () => {
             </h2>
           </div>
           <div className="flex items-center gap-3">
-            {reportMode === 'consolidation' && (
+            {/* {reportMode === 'consolidation' && (
               <label className="flex items-center gap-1.5 cursor-pointer text-[11px] font-bold text-gray-600 bg-white border border-gray-200 px-2 py-1.5 rounded transition-colors hover:bg-gray-50 shrink-0">
                 <input 
                   type="checkbox" 
@@ -502,7 +502,7 @@ const SupplierPaymentsReport = () => {
                 />
                 Show Cleared Bills Only
               </label>
-            )}
+            )} */}
             <span className="text-[11px] font-bold text-gray-600 whitespace-nowrap shrink-0">{activeList.length} Records Found</span>
             <button
               type="button"

@@ -184,8 +184,9 @@ const CustomerReceipts = () => {
   // Filter history
   const filteredHistory = receipts.filter((r: any) => {
     if (filterCustomer && r.customerId.toString() !== filterCustomer) return false;
-    if (filterFromDate && new Date(r.date) < new Date(filterFromDate)) return false;
-    if (filterToDate && new Date(r.date) > new Date(filterToDate)) return false;
+    const dateStr = getMalaysiaDateStr(r.date);
+    if (filterFromDate && dateStr < filterFromDate) return false;
+    if (filterToDate && dateStr > filterToDate) return false;
     return true;
   });
 

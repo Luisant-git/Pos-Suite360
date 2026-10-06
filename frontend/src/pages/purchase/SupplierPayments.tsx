@@ -184,8 +184,9 @@ const SupplierPayments = () => {
   // Filter history
   const filteredHistory = payments.filter((p: any) => {
     if (filterSupplier && p.supplierId.toString() !== filterSupplier) return false;
-    if (filterFromDate && new Date(p.date) < new Date(filterFromDate)) return false;
-    if (filterToDate && new Date(p.date) > new Date(filterToDate)) return false;
+    const dateStr = getMalaysiaDateStr(p.date);
+    if (filterFromDate && dateStr < filterFromDate) return false;
+    if (filterToDate && dateStr > filterToDate) return false;
     return true;
   });
 

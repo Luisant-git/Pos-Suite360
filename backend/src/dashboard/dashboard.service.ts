@@ -67,44 +67,11 @@ export class DashboardService {
     });
     const creditPurchasesToday = creditPurchasesAggregate._sum.grandTotal ? Number(creditPurchasesAggregate._sum.grandTotal) : 0;
 
-    // --- PENDING BALANCES (Across all time) ---
-    // Supplier Payables (What we owe) = Purchases + Opening(Cr - Dr) - Payments - PurchaseReturns
-    const allPurchases = await this.prisma.purchase.aggregate({ _sum: { grandTotal: true } });
-    const allPayments = await this.prisma.supplierPayment.aggregate({ _sum: { amount: true } });
-    const allPurchaseReturns = await this.prisma.purchaseReturn.aggregate({ _sum: { totalAmount: true } });
-    const supplierOpenings = await this.prisma.$queryRaw`
-      SELECT 
-        SUM(CASE WHEN "openingBalanceType" = 'Cr' THEN "openingBalance" ELSE 0 END) as cr_total,
-        SUM(CASE WHEN "openingBalanceType" = 'Dr' THEN "openingBalance" ELSE 0 END) as dr_total
-      FROM "Supplier"
-    ` as any[];
-    
-    const supplierCr = Number(supplierOpenings[0]?.cr_total || 0);
-    const supplierDr = Number(supplierOpenings[0]?.dr_total || 0);
-    const pendingPayables = 
-      (Number(allPurchases._sum.grandTotal) || 0) + 
-      (supplierCr - supplierDr) - 
-      (Number(allPayments._sum.amount) || 0) - 
-      (Number(allPurchaseReturns._sum.totalAmount) || 0);
+    const supplierReport = await this.supplierPaymentsService.getConsolidationReport();
+    const pendingPayables = supplierReport.reduce((sum, s) => sum + (s.netPending > 0 ? s.netPending : 0), 0);
 
-    // Customer Receivables (What customers owe us) = Sales + Opening(Dr - Cr) - Receipts - SalesReturns
-    const allSales = await this.prisma.sale.aggregate({ _sum: { grandTotal: true } });
-    const allReceipts = await this.prisma.customerReceipt.aggregate({ _sum: { amount: true } });
-    const allSalesReturns = await this.prisma.salesReturn.aggregate({ _sum: { totalAmount: true } });
-    const customerOpenings = await this.prisma.$queryRaw`
-      SELECT 
-        SUM(CASE WHEN "openingBalanceType" = 'Dr' THEN "openingBalance" ELSE 0 END) as dr_total,
-        SUM(CASE WHEN "openingBalanceType" = 'Cr' THEN "openingBalance" ELSE 0 END) as cr_total
-      FROM "Customer"
-    ` as any[];
-    
-    const customerDr = Number(customerOpenings[0]?.dr_total || 0);
-    const customerCr = Number(customerOpenings[0]?.cr_total || 0);
-    const pendingReceivables = 
-      (Number(allSales._sum.grandTotal) || 0) + 
-      (customerDr - customerCr) - 
-      (Number(allReceipts._sum.amount) || 0) - 
-      (Number(allSalesReturns._sum.totalAmount) || 0);
+    const customerReport = await this.customerReceiptsService.getConsolidationReport();
+    const pendingReceivables = customerReport.reduce((sum, c) => sum + (c.netPending > 0 ? c.netPending : 0), 0);
 
     // Today's Expenses
     const expensesAggregate = await this.prisma.expense.aggregate({

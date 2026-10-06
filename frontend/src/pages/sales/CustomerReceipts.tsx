@@ -184,9 +184,15 @@ const CustomerReceipts = () => {
   // Filter history
   const filteredHistory = receipts.filter((r: any) => {
     if (filterCustomer && r.customerId.toString() !== filterCustomer) return false;
-    const dateStr = getMalaysiaDateStr(r.date);
-    if (filterFromDate && dateStr < filterFromDate) return false;
-    if (filterToDate && dateStr > filterToDate) return false;
+    
+    if (filterFromDate || filterToDate) {
+      const d = new Date(r.date);
+      const tzDate = new Date(d.toLocaleString('en-US', { timeZone: 'Asia/Kuala_Lumpur' }));
+      const dateStr = `${tzDate.getFullYear()}-${String(tzDate.getMonth() + 1).padStart(2, '0')}-${String(tzDate.getDate()).padStart(2, '0')}`;
+      if (filterFromDate && dateStr < filterFromDate) return false;
+      if (filterToDate && dateStr > filterToDate) return false;
+    }
+    
     return true;
   });
 

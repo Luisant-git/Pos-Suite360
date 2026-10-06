@@ -184,9 +184,15 @@ const SupplierPayments = () => {
   // Filter history
   const filteredHistory = payments.filter((p: any) => {
     if (filterSupplier && p.supplierId.toString() !== filterSupplier) return false;
-    const dateStr = getMalaysiaDateStr(p.date);
-    if (filterFromDate && dateStr < filterFromDate) return false;
-    if (filterToDate && dateStr > filterToDate) return false;
+    
+    if (filterFromDate || filterToDate) {
+      const d = new Date(p.date);
+      const tzDate = new Date(d.toLocaleString('en-US', { timeZone: 'Asia/Kuala_Lumpur' }));
+      const dateStr = `${tzDate.getFullYear()}-${String(tzDate.getMonth() + 1).padStart(2, '0')}-${String(tzDate.getDate()).padStart(2, '0')}`;
+      if (filterFromDate && dateStr < filterFromDate) return false;
+      if (filterToDate && dateStr > filterToDate) return false;
+    }
+    
     return true;
   });
 

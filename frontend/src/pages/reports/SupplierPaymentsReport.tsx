@@ -16,7 +16,7 @@ import PdfViewerModal from '../../components/PdfViewerModal';
 const SupplierPaymentsReport = () => {
   const { formatCurrency, settings } = useSettings();
   const [reportMode, setReportMode] = useState<'consolidation' | 'history'>('consolidation');
-  const [hideCleared, setHideCleared] = useState(true);
+  const [showClearedOnly, setShowClearedOnly] = useState(false);
 
   const [searchTerm, setSearchTerm] = useState('');
   const [startDate, setStartDate] = useState('');
@@ -77,19 +77,17 @@ const SupplierPaymentsReport = () => {
 
   // Filter Consolidation List for table display
   const filteredConsolidation = searchFilteredConsolidation.filter((item: any) => {
-    const hasActivity = Number(item.totalPurchases || 0) > 0 || Number(item.totalPayments || 0) > 0 || Number(item.totalReturns || 0) > 0;
     const hasPending = Math.abs(Number(item.netPending || 0)) >= 0.005;
     
-    // First apply the Cleared Bills filter
-    if (hideCleared && !hasPending) {
-       return false;
-    }
+    if (showClearedOnly && hasPending) return false;
+    if (!showClearedOnly && !hasPending) return false;
 
     if (startDate || endDate) {
-      return hasActivity || hasPending;
-    } else {
-      return hasPending || !hideCleared;
+      const hasActivity = Number(item.totalPurchases || 0) > 0 || Number(item.totalPayments || 0) > 0 || Number(item.totalReturns || 0) > 0;
+      return hasActivity;
     }
+
+    return true;
   });
 
   // Filter Payments History List
@@ -498,11 +496,11 @@ const SupplierPaymentsReport = () => {
               <label className="flex items-center gap-1.5 cursor-pointer text-[11px] font-bold text-gray-600 bg-white border border-gray-200 px-2 py-1.5 rounded transition-colors hover:bg-gray-50 shrink-0">
                 <input 
                   type="checkbox" 
-                  checked={!hideCleared} 
-                  onChange={(e) => setHideCleared(!e.target.checked)} 
+                  checked={showClearedOnly} 
+                  onChange={(e) => setShowClearedOnly(e.target.checked)} 
                   className="rounded text-[#3B82F6] focus:ring-[#3B82F6] w-3.5 h-3.5 cursor-pointer" 
                 />
-                Show Cleared Bills
+                Show Cleared Bills Only
               </label>
             )}
             <span className="text-[11px] font-bold text-gray-600 whitespace-nowrap shrink-0">{activeList.length} Records Found</span>

@@ -4,141 +4,141 @@ export declare class CustomerReceiptsService {
     constructor(prisma: PrismaService);
     create(data: any, userId: number): Promise<{
         customer: {
+            id: number;
             createdAt: Date;
             updatedAt: Date;
-            id: number;
             name: string;
             contactPerson: string | null;
             phone: string;
             email: string | null;
             address: string | null;
-            shippingAddress: string | null;
             openingBalance: import("@prisma/client-runtime-utils").Decimal;
             openingBalanceType: string;
+            shippingAddress: string | null;
             creditLimit: import("@prisma/client-runtime-utils").Decimal;
             creditDays: number;
         };
         paymentType: {
+            id: number;
             createdAt: Date;
             updatedAt: Date;
-            id: number;
             name: string;
             description: string | null;
         } | null;
     } & {
-        receiptNo: string;
+        id: number;
         date: Date;
-        amount: import("@prisma/client-runtime-utils").Decimal;
-        reference: string | null;
-        remarks: string | null;
+        paymentModeId: number | null;
         createdAt: Date;
         updatedAt: Date;
-        id: number;
         customerId: number;
-        paymentModeId: number | null;
+        amount: import("@prisma/client-runtime-utils").Decimal;
+        receiptNo: string;
+        reference: string | null;
+        remarks: string | null;
         paymentTypeId: number | null;
         userId: number;
     }>;
     update(id: number, data: any, userId: number): Promise<{
         customer: {
+            id: number;
             createdAt: Date;
             updatedAt: Date;
-            id: number;
             name: string;
             contactPerson: string | null;
             phone: string;
             email: string | null;
             address: string | null;
-            shippingAddress: string | null;
             openingBalance: import("@prisma/client-runtime-utils").Decimal;
             openingBalanceType: string;
+            shippingAddress: string | null;
             creditLimit: import("@prisma/client-runtime-utils").Decimal;
             creditDays: number;
         };
         paymentType: {
+            id: number;
             createdAt: Date;
             updatedAt: Date;
-            id: number;
             name: string;
             description: string | null;
         } | null;
     } & {
-        receiptNo: string;
+        id: number;
         date: Date;
-        amount: import("@prisma/client-runtime-utils").Decimal;
-        reference: string | null;
-        remarks: string | null;
+        paymentModeId: number | null;
         createdAt: Date;
         updatedAt: Date;
-        id: number;
         customerId: number;
-        paymentModeId: number | null;
+        amount: import("@prisma/client-runtime-utils").Decimal;
+        receiptNo: string;
+        reference: string | null;
+        remarks: string | null;
         paymentTypeId: number | null;
         userId: number;
     }>;
     findAll(): Promise<({
-        customer: {
-            createdAt: Date;
-            updatedAt: Date;
-            id: number;
-            name: string;
-            contactPerson: string | null;
-            phone: string;
-            email: string | null;
-            address: string | null;
-            shippingAddress: string | null;
-            openingBalance: import("@prisma/client-runtime-utils").Decimal;
-            openingBalanceType: string;
-            creditLimit: import("@prisma/client-runtime-utils").Decimal;
-            creditDays: number;
-        };
         paymentMode: {
+            id: number;
             createdAt: Date;
             updatedAt: Date;
-            id: number;
-            name: string;
-            description: string | null;
-        } | null;
-        paymentType: {
-            createdAt: Date;
-            updatedAt: Date;
-            id: number;
             name: string;
             description: string | null;
         } | null;
         allocations: ({
             sale: {
-                date: Date;
-                createdAt: Date;
-                updatedAt: Date;
                 id: number;
-                customerId: number;
-                paymentModeId: number;
-                userId: number;
                 invoiceNo: string;
+                date: Date;
                 subtotal: import("@prisma/client-runtime-utils").Decimal;
                 tax: import("@prisma/client-runtime-utils").Decimal;
                 discount: import("@prisma/client-runtime-utils").Decimal;
                 grandTotal: import("@prisma/client-runtime-utils").Decimal;
+                paymentModeId: number;
+                createdAt: Date;
+                updatedAt: Date;
+                customerId: number;
+                userId: number;
             } | null;
         } & {
-            amount: import("@prisma/client-runtime-utils").Decimal;
-            createdAt: Date;
             id: number;
+            createdAt: Date;
+            amount: import("@prisma/client-runtime-utils").Decimal;
             saleId: number | null;
             customerReceiptId: number;
         })[];
+        customer: {
+            id: number;
+            createdAt: Date;
+            updatedAt: Date;
+            name: string;
+            contactPerson: string | null;
+            phone: string;
+            email: string | null;
+            address: string | null;
+            openingBalance: import("@prisma/client-runtime-utils").Decimal;
+            openingBalanceType: string;
+            shippingAddress: string | null;
+            creditLimit: import("@prisma/client-runtime-utils").Decimal;
+            creditDays: number;
+        };
+        paymentType: {
+            id: number;
+            createdAt: Date;
+            updatedAt: Date;
+            name: string;
+            description: string | null;
+        } | null;
     } & {
-        receiptNo: string;
+        id: number;
         date: Date;
-        amount: import("@prisma/client-runtime-utils").Decimal;
-        reference: string | null;
-        remarks: string | null;
+        paymentModeId: number | null;
         createdAt: Date;
         updatedAt: Date;
-        id: number;
         customerId: number;
-        paymentModeId: number | null;
+        amount: import("@prisma/client-runtime-utils").Decimal;
+        receiptNo: string;
+        reference: string | null;
+        remarks: string | null;
         paymentTypeId: number | null;
         userId: number;
     })[]>;
@@ -147,7 +147,7 @@ export declare class CustomerReceiptsService {
         totalReturns: number;
     }>;
     generateReceiptNo(): Promise<string>;
-    getUnpaidBills(customerId: number): Promise<any[]>;
+    getUnpaidBills(customerId: number, excludeReceiptId?: number): Promise<any[]>;
     getConsolidationReport(startDate?: string, endDate?: string): Promise<{
         customerId: number;
         customerName: string;

@@ -4,71 +4,71 @@ export declare class ExpensesService {
     private prisma;
     constructor(prisma: PrismaService);
     create(createExpenseDto: CreateExpenseDto): import("@prisma/client").Prisma.Prisma__ExpenseClient<{
+        id: number;
         date: Date;
-        amount: import("@prisma/client-runtime-utils").Decimal;
-        notes: string | null;
+        paymentModeId: number;
         createdAt: Date;
         updatedAt: Date;
-        id: number;
         expenseCategoryId: number;
-        paymentModeId: number;
+        amount: import("@prisma/client-runtime-utils").Decimal;
+        notes: string | null;
     }, never, import("@prisma/client/runtime/client").DefaultArgs, import("@prisma/client").Prisma.PrismaClientOptions>;
     findAll(query?: any): import("@prisma/client").Prisma.PrismaPromise<({
-        category: {
-            createdAt: Date;
-            updatedAt: Date;
-            id: number;
-            name: string;
-        };
         paymentMode: {
+            id: number;
             createdAt: Date;
             updatedAt: Date;
-            id: number;
             name: string;
             description: string | null;
         };
+        category: {
+            id: number;
+            createdAt: Date;
+            updatedAt: Date;
+            name: string;
+        };
     } & {
+        id: number;
         date: Date;
-        amount: import("@prisma/client-runtime-utils").Decimal;
-        notes: string | null;
+        paymentModeId: number;
         createdAt: Date;
         updatedAt: Date;
-        id: number;
         expenseCategoryId: number;
-        paymentModeId: number;
+        amount: import("@prisma/client-runtime-utils").Decimal;
+        notes: string | null;
     })[]>;
     findOne(id: number): import("@prisma/client").Prisma.Prisma__ExpenseClient<({
-        category: {
-            createdAt: Date;
-            updatedAt: Date;
-            id: number;
-            name: string;
-        };
         paymentMode: {
+            id: number;
             createdAt: Date;
             updatedAt: Date;
-            id: number;
             name: string;
             description: string | null;
         };
+        category: {
+            id: number;
+            createdAt: Date;
+            updatedAt: Date;
+            name: string;
+        };
     } & {
+        id: number;
         date: Date;
-        amount: import("@prisma/client-runtime-utils").Decimal;
-        notes: string | null;
+        paymentModeId: number;
         createdAt: Date;
         updatedAt: Date;
-        id: number;
         expenseCategoryId: number;
-        paymentModeId: number;
+        amount: import("@prisma/client-runtime-utils").Decimal;
+        notes: string | null;
     }) | null, null, import("@prisma/client/runtime/client").DefaultArgs, import("@prisma/client").Prisma.PrismaClientOptions>;
     update(id: number, updateData: any): Promise<{
+        id: number;
         date: Date;
-        amount: import("@prisma/client-runtime-utils").Decimal;
-        notes: string | null;
+        paymentModeId: number;
         createdAt: Date;
         updatedAt: Date;
-        id: number;
         expenseCategoryId: number;
-        paymentModeId: number;
+        amount: import("@prisma/client-runtime-utils").Decimal;
+        notes: string | null;
     }>;
 }

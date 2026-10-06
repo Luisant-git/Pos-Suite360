@@ -150,7 +150,7 @@ let SupplierPaymentsService = class SupplierPaymentsService {
         }
         return `PAY-${nextNo.toString().padStart(6, '0')}`;
     }
-    async getUnpaidBills(supplierId) {
+    async getUnpaidBills(supplierId, excludePaymentId) {
         const supplier = await this.prisma.supplier.findUnique({
             where: { id: supplierId },
         });
@@ -163,6 +163,8 @@ let SupplierPaymentsService = class SupplierPaymentsService {
         });
         let totalOldUnallocatedPaid = 0;
         allPayments.forEach(p => {
+            if (excludePaymentId && p.id === excludePaymentId)
+                return;
             const paymentAmount = Number(p.amount) || 0;
             if (!p.allocations || p.allocations.length === 0) {
                 totalOldUnallocatedPaid += paymentAmount;
@@ -194,6 +196,8 @@ let SupplierPaymentsService = class SupplierPaymentsService {
         });
         const mappedAllocations = {};
         allAllocations.forEach(a => {
+            if (excludePaymentId && a.supplierPaymentId === excludePaymentId)
+                return;
             if (a.purchaseId) {
                 mappedAllocations[a.purchaseId] = (mappedAllocations[a.purchaseId] || 0) + Number(a.amount);
             }

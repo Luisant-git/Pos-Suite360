@@ -26,8 +26,11 @@ export class CustomerReceiptsController {
   }
 
   @Get('unpaid-bills/:id')
-  async getUnpaidBills(@Param('id') id: string) {
-    return this.customerReceiptsService.getUnpaidBills(Number(id));
+  async getUnpaidBills(
+    @Param('id') id: string,
+    @Query('excludeReceiptId') excludeReceiptId?: string
+  ) {
+    return this.customerReceiptsService.getUnpaidBills(Number(id), excludeReceiptId ? Number(excludeReceiptId) : undefined);
   }
 
   @Post()

@@ -159,7 +159,7 @@ export class CustomerReceiptsService {
     return `REC-${nextNo.toString().padStart(6, '0')}`;
   }
 
-  async getUnpaidBills(customerId: number) {
+  async getUnpaidBills(customerId: number, excludeReceiptId?: number) {
     const customer = await this.prisma.customer.findUnique({
       where: { id: customerId },
     });
@@ -176,6 +176,7 @@ export class CustomerReceiptsService {
     
     let totalOldUnallocatedCollected = 0;
     allReceipts.forEach(r => {
+      if (excludeReceiptId && r.id === excludeReceiptId) return; // Skip this receipt!
       const receiptAmount = Number(r.amount) || 0;
       if (!r.allocations || r.allocations.length === 0) {
         totalOldUnallocatedCollected += receiptAmount;
@@ -213,6 +214,7 @@ export class CustomerReceiptsService {
     
     const mappedAllocations: Record<number, number> = {};
     allAllocations.forEach(a => {
+      if (excludeReceiptId && a.customerReceiptId === excludeReceiptId) return; // Skip this allocation!
       if (a.saleId) {
         mappedAllocations[a.saleId] = (mappedAllocations[a.saleId] || 0) + Number(a.amount);
       }

@@ -96,7 +96,11 @@ const SupplierPayments = () => {
           const res = await api.get(`/supplier-payments/balance/${selectedSupplierId}`);
           setCurrentBalance(res.data.balance);
           
-          const billsRes = await api.get(`/supplier-payments/unpaid-bills/${selectedSupplierId}`);
+          let url = `/supplier-payments/unpaid-bills/${selectedSupplierId}`;
+          if (editingId) {
+            url += `?excludePaymentId=${editingId}`;
+          }
+          const billsRes = await api.get(url);
           setUnpaidBills(billsRes.data);
         } catch (error) {
           console.error(error);
@@ -112,7 +116,7 @@ const SupplierPayments = () => {
       }
     };
     fetchBalance();
-  }, [selectedSupplierId]);
+  }, [selectedSupplierId, editingId]);
 
   const createMutation = useMutation({
     mutationFn: (data: PaymentFormValues) => api.post('/supplier-payments', data),

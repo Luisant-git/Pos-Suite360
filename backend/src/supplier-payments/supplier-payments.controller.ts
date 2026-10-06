@@ -26,8 +26,11 @@ export class SupplierPaymentsController {
   }
 
   @Get('unpaid-bills/:id')
-  async getUnpaidBills(@Param('id') id: string) {
-    return this.supplierPaymentsService.getUnpaidBills(Number(id));
+  async getUnpaidBills(
+    @Param('id') id: string,
+    @Query('excludePaymentId') excludePaymentId?: string
+  ) {
+    return this.supplierPaymentsService.getUnpaidBills(Number(id), excludePaymentId ? Number(excludePaymentId) : undefined);
   }
 
   @Post()

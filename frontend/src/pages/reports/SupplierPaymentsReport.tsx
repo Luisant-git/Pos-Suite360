@@ -66,16 +66,24 @@ const SupplierPaymentsReport = () => {
     return [{ value: '', label: 'All / Clear Search' }, ...Array.from(optionsMap.values())];
   }, [consolidationData, paymentsHistory]);
 
-  // Filter Consolidation List
-  const filteredConsolidation = consolidationData.filter((item: any) => {
+  // Pre-filter for search (Totals are based on this, regardless of 0 pending)
+  const searchFilteredConsolidation = consolidationData.filter((item: any) => {
     if (searchTerm && !item.supplierName.toLowerCase().includes(searchTerm.toLowerCase()) && !item.phone.includes(searchTerm)) {
       return false;
     }
-    
-    // Only show suppliers with actual pending dues (or overpayments)
-    if (Number(item.netPending || 0) === 0) return false;
-
     return true;
+  });
+
+  // Filter Consolidation List for table display
+  const filteredConsolidation = searchFilteredConsolidation.filter((item: any) => {
+    const hasActivity = Number(item.totalPurchases || 0) > 0 || Number(item.totalPayments || 0) > 0 || Number(item.totalReturns || 0) > 0;
+    const hasPending = Number(item.netPending || 0) !== 0;
+    
+    if (startDate || endDate) {
+      return hasActivity;
+    } else {
+      return hasPending;
+    }
   });
 
   // Filter Payments History List
@@ -92,10 +100,12 @@ const SupplierPaymentsReport = () => {
     return true;
   });
 
-  // Summary Totals
-  const totalPurchases = filteredConsolidation.reduce((sum: number, i: any) => sum + Number(i.totalPurchases || 0), 0);
-  const totalPaid = filteredConsolidation.reduce((sum: number, i: any) => sum + Number(i.totalPayments || 0), 0);
-  const totalPendingPayables = filteredConsolidation.reduce((sum: number, i: any) => sum + Number(i.netPending > 0 ? i.netPending : 0), 0);
+  // Summary Totals (Based on search results, not hiding 0 pending dues)
+  const totalPurchases = searchFilteredConsolidation.reduce((sum: number, i: any) => sum + Number(i.totalPurchases || 0), 0);
+  const totalPaid = reportMode === 'consolidation'
+    ? searchFilteredConsolidation.reduce((sum: number, i: any) => sum + Number(i.totalPayments || 0), 0)
+    : filteredHistory.reduce((sum: number, item: any) => sum + Number(item.amount), 0);
+  const totalPendingPayables = searchFilteredConsolidation.reduce((sum: number, i: any) => sum + Number(i.netPending > 0 ? i.netPending : 0), 0);
 
   const activeList = reportMode === 'consolidation' ? filteredConsolidation : filteredHistory;
   const totalPages = Math.ceil(activeList.length / entriesPerPage);
@@ -320,15 +330,16 @@ const SupplierPaymentsReport = () => {
   };
 
   return (
+    <>
     <div className={`${isExpanded ? 'fixed inset-0 z-[9999]' : 'absolute inset-0 z-10'} bg-[#F8FAFC] flex flex-col font-sans overflow-y-auto lg:overflow-hidden p-2 sm:p-4`}>
       
-      <ReportTabs />
+      {!isExpanded && <ReportTabs />}
 
       {/* Top Header Card with Summary Stats */}
       <div className="bg-white border border-[#E2E8F0] shadow-sm rounded-md mb-2 p-2 sm:p-3 sm:mb-3 shrink-0">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-3 border-b border-[#E2E8F0] pb-3">
+        <div className={`flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 ${isExpanded ? '' : 'mb-3 border-b border-[#E2E8F0] pb-3'}`}>
           
-          <div className="flex items-center gap-2">
+          <div className={`flex items-center gap-2 ${isExpanded ? 'hidden' : ''}`}>
             <div className="bg-[#10B981] text-white p-2 rounded-lg shadow-sm shrink-0">
               <Truck size={18} />
             </div>
@@ -362,17 +373,19 @@ const SupplierPaymentsReport = () => {
               </button>
             </div>
 
-            <button type="button" onClick={handleExcelExport} className="bg-[#10B981] hover:bg-[#059669] text-white px-3 py-1.5 rounded text-[12px] font-bold flex items-center gap-1.5 transition-colors shrink-0">
-              <Download size={14} /> <span className="hidden sm:inline">Excel</span>
-            </button>
-            <button type="button" onClick={handlePdfExport} className="bg-[#EF4444] hover:bg-[#DC2626] text-white px-3 py-1.5 rounded text-[12px] font-bold flex items-center gap-1.5 transition-colors shrink-0">
-              <Download size={14} /> <span className="hidden sm:inline">PDF</span>
-            </button>
+            <div className="flex items-center gap-2">
+              <button type="button" onClick={handleExcelExport} className="bg-[#10B981] hover:bg-[#059669] text-white px-3 py-1.5 rounded text-[12px] font-bold flex items-center gap-1.5 transition-colors shrink-0">
+                <Download size={14} /> <span className="hidden sm:inline">Excel</span>
+              </button>
+              <button type="button" onClick={handlePdfExport} className="bg-[#EF4444] hover:bg-[#DC2626] text-white px-3 py-1.5 rounded text-[12px] font-bold flex items-center gap-1.5 transition-colors shrink-0">
+                <Download size={14} /> <span className="hidden sm:inline">PDF</span>
+              </button>
+            </div>
           </div>
         </div>
 
         {/* Stat Summary Cards */}
-        <div className="flex overflow-x-auto md:grid md:grid-cols-3 gap-2 sm:gap-3 mb-3 pb-1 snap-x scrollbar-hide">
+        <div className={`flex overflow-x-auto md:grid md:grid-cols-3 gap-2 sm:gap-3 snap-x scrollbar-hide ${isExpanded ? 'hidden' : 'mb-3 pb-1'}`}>
           <div className="min-w-[220px] md:min-w-0 snap-start bg-[#EFF6FF] border border-[#BFDBFE] p-2.5 rounded-md flex justify-between items-center">
             <div>
               <p className="text-[10px] font-bold text-[#1E40AF] uppercase">Total Purchases</p>
@@ -395,11 +408,10 @@ const SupplierPaymentsReport = () => {
             <AlertCircle className="text-[#EF4444]" size={20} />
           </div>
         </div>
+      </div>
 
-
-                <div className="flex flex-col flex-1 min-h-0">
-        {/* Filters - always visible, fully responsive */}
-        <div className="bg-white p-2 sm:p-3 border-b border-[#E6E9ED] shrink-0">
+      {/* Filters - always visible, fully responsive */}
+      <div className="bg-white p-2 sm:p-3 border-b border-[#E6E9ED] shrink-0">
           <div className="flex flex-col gap-2">
             {/* Row 1: Search + Reset */}
             <div className="flex gap-2 items-center">
@@ -465,9 +477,8 @@ const SupplierPaymentsReport = () => {
             </div>
           </div>
         </div>
-      </div>
       {/* Main Table Section */}
-      <div className="bg-white border border-[#E2E8F0] shadow-sm rounded-md overflow-hidden flex flex-col flex-1">
+      <div className="bg-white border border-[#E2E8F0] shadow-sm rounded-md overflow-hidden flex flex-col min-h-0 min-w-0 flex-1">
         <div className="bg-[#F8FAFC] border-b border-[#E2E8F0] px-3 py-2 flex justify-between items-center shrink-0 gap-2">
           <div className="flex items-center gap-1.5 text-black font-bold min-w-0">
             <FileText size={14} className="shrink-0" />
@@ -613,7 +624,7 @@ const SupplierPaymentsReport = () => {
         pdfUrl={pdfUrl} 
         title={pdfTitle} 
       />
-    </div>
+    </>
   );
 };
 

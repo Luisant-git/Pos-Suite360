@@ -30,8 +30,8 @@ let CustomerReceiptsController = class CustomerReceiptsController {
     async getConsolidationReport(startDate, endDate) {
         return this.customerReceiptsService.getConsolidationReport(startDate, endDate);
     }
-    async getUnpaidBills(id) {
-        return this.customerReceiptsService.getUnpaidBills(Number(id));
+    async getUnpaidBills(id, excludeReceiptId) {
+        return this.customerReceiptsService.getUnpaidBills(Number(id), excludeReceiptId ? Number(excludeReceiptId) : undefined);
     }
     async create(createCustomerReceiptDto, req) {
         const userId = req.user?.userId;
@@ -70,8 +70,9 @@ __decorate([
 __decorate([
     (0, common_1.Get)('unpaid-bills/:id'),
     __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Query)('excludeReceiptId')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [String, String]),
     __metadata("design:returntype", Promise)
 ], CustomerReceiptsController.prototype, "getUnpaidBills", null);
 __decorate([

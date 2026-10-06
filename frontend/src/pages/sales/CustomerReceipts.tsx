@@ -96,7 +96,11 @@ const CustomerReceipts = () => {
           const res = await api.get(`/customer-receipts/balance/${selectedCustomerId}`);
           setCurrentBalance(res.data.balance);
           
-          const billsRes = await api.get(`/customer-receipts/unpaid-bills/${selectedCustomerId}`);
+          let url = `/customer-receipts/unpaid-bills/${selectedCustomerId}`;
+          if (editingId) {
+            url += `?excludeReceiptId=${editingId}`;
+          }
+          const billsRes = await api.get(url);
           setUnpaidBills(billsRes.data);
         } catch (error) {
           console.error(error);
@@ -112,7 +116,7 @@ const CustomerReceipts = () => {
       }
     };
     fetchBalance();
-  }, [selectedCustomerId]);
+  }, [selectedCustomerId, editingId]);
 
   const createMutation = useMutation({
     mutationFn: (data: ReceiptFormValues) => api.post('/customer-receipts', data),

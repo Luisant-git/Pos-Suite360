@@ -26,11 +26,11 @@ export declare class DashboardController {
             sales: number;
         }[];
         recentBankDeposits: {
+            id: number;
             date: Date;
-            amount: import("@prisma/client-runtime-utils").Decimal;
             createdAt: Date;
             updatedAt: Date;
-            id: number;
+            amount: import("@prisma/client-runtime-utils").Decimal;
             depositType: string;
         }[];
         unpaidCustomerBills: any[];
